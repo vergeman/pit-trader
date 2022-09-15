@@ -1,0 +1,13 @@
+version: '3.3'
+services:
+  minimal-notebook:
+    image: "jupyter/minimal-notebook:notebook-6.4.12"
+    ports:
+      - "8888:8888"
+    security_opt:
+      # NB: hotfix for ubuntu glib v. docker version issue
+      - seccomp:unconfined
+    volumes:
+      - type: bind
+        source: ./model
+        target: /home/jovyan/work
