@@ -1,13 +1,27 @@
 version: '3.3'
 services:
-  minimal-notebook:
-    image: "jupyter/minimal-notebook:notebook-6.4.12"
+  pytorch-minimal-notebook:
+    build: './model/'
+    # NB: root to open device: /dev/video0
+    user: root
+    environment:
+      - GRANT_SUDO="yes"
+      - DISPLAY="$DISPLAY"
     ports:
       - "8888:8888"
-    security_opt:
-      # NB: hotfix for ubuntu glib v. docker version issue
-      - seccomp:unconfined
+    devices:
+      - "dev/video0:/dev/video0"
+
     volumes:
       - type: bind
         source: ./model
         target: /home/jovyan/work
+      - type: bind
+        source: ./data
+        target: /home/jovyan/data
+
+      # run gui output to xserver
+      # requires "xhost +local:docker"
+      - type: bind
+        source: /tmp/.X11-unix
+        target: /tmp/.X11-unix
