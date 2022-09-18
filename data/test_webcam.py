@@ -58,7 +58,8 @@ mp_face_detection = mp.solutions.face_detection
 with mp_hands.Hands(
     model_complexity=0,
     min_detection_confidence=0.5,
-    min_tracking_confidence=0.5) as hands, mp_face_detection.FaceDetection(
+    min_tracking_confidence=0.5) as hands,\
+mp_face_detection.FaceDetection(
     model_selection=0, min_detection_confidence=0.5) as face_detection:
 
   while cap.isOpened():
