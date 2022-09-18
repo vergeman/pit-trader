@@ -100,6 +100,12 @@ with mp_hands.Hands(
       for detection in resultsFace.detections:
         mp_drawing.draw_detection(image, detection)
 
+        print( detection.location_data )
+        #
+        # detection.location_data.relative_keypoints
+        # len 6 array of x,y pairs normalized points (see docs)
+        #
+
     # resize input
     # Flip the image horizontally for a selfie-view display.
 
