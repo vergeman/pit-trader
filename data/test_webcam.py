@@ -2,6 +2,59 @@
 # scratchpad media pipe demo
 # https://google.github.io/mediapipe/solutions/hands.html
 #
+
+#
+# TODO: merge csv writer to single function
+# pass writer to hand, face functions
+#
+import csv
+
+def output_csv_hand_landmarks(key, hand_landmarks):
+
+  if key == -1: return
+
+  csv_path = 'data/landmarks.csv'
+  with open(csv_path, 'a', newline="") as _file:
+    writer = csv.writer(_file)
+
+    for i, landmark in enumerate(hand_landmarks.landmark):
+      writer.writerow([key, landmark.x,landmark.y, landmark.z])
+      print(i, [landmark.x, landmark.y, landmark.z])
+
+  print("--------")
+  return
+
+
+
+def output_csv_face(key, location_data):
+
+  if key == -1: return
+  csv_path = 'data/landmarks.csv'
+
+  points = []
+  with open(csv_path, 'a', newline="") as _file:
+    writer = csv.writer(_file)
+
+    # test write flat for csv
+    for point in location_data.relative_keypoints:
+      points.append(point.x)
+      points.append(point.y)
+
+    writer.writerow([key] + points)
+
+  print(location_data)
+  print("--------")
+  # explore data
+  #print(location_data.relative_bounding_box)
+  #relative_keypoints:
+  #len6 array of obj [ (x,y), (x,y), (x,y)...]
+  #print(location_data.relative_keypoints[0])
+  #print(location_data.relative_keypoints[0].x, location_data.relative_keypoints[0].y )
+  #print("===============")
+
+  return
+
+
 print("WEBCAM")
 
 import cv2
@@ -75,18 +128,26 @@ mp_face_detection.FaceDetection(
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     resultsHands = hands.process(image)
     resultsFace = face_detection.process(image)
-
-    # Draw the hand annotations on the image.
     image.flags.writeable = True
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
+    # KeyPress input
+    # will wait for N ms or until key is pressed (whichever sooner)
+    # NB: large values hang input loop
+    key = cv2.waitKey(5)
+    #print("K", key)
+
+
+    #
+    # Draw the hand annotations on the image.
+    # assume multiple hands per frame is possible
+    #
     if resultsHands.multi_hand_landmarks:
       for hand_landmarks in resultsHands.multi_hand_landmarks:
 
-        for i, landmark in enumerate(hand_landmarks.landmark):
-          print(i, [landmark.x, landmark.y, landmark.z])
-
-        print("--------")
+        #for i, landmark in enumerate(hand_landmarks.landmark):
+        #  print(i, [landmark.x, landmark.y, landmark.z])
+        output_csv_hand_landmarks(key, hand_landmarks)
 
 
         mp_drawing.draw_landmarks(
@@ -96,16 +157,22 @@ mp_face_detection.FaceDetection(
             mp_drawing_styles.get_default_hand_landmarks_style(),
             mp_drawing_styles.get_default_hand_connections_style())
 
+    #
     # draw face detection
+    # loop can detect multiple faces per frame
+    #
     if resultsFace.detections:
       for detection in resultsFace.detections:
         mp_drawing.draw_detection(image, detection)
 
-        print( detection.location_data )
+        output_csv_face(key, detection.location_data)
+        # detection.location_data.relative_bounding_box
+        # { xmin, ymin, width,height }
         #
         # detection.location_data.relative_keypoints
         # len 6 array of x,y pairs normalized points (see docs)
-        #
+        # [ {x,y}, {x,y}...]
+        #output_csv_
 
     # resize input
     # Flip the image horizontally for a selfie-view display.
