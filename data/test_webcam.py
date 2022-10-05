@@ -2,73 +2,41 @@
 # scratchpad media pipe demo
 # https://google.github.io/mediapipe/solutions/hands.html
 #
-
-#
-# TODO: merge csv writer to single function
-# pass writer to hand, face functions
-#
+from Landmark import Landmark
+import cv2
+import mediapipe as mp
 import csv
 
-def output_csv_hand_landmarks(key, hand_landmarks):
+def output_csv_all(key, landmark):
 
   if key == -1: return
+  csv_path = '/home/jovyan/data/landmarks.csv'
 
-  csv_path = 'data/landmarks.csv'
   with open(csv_path, 'a', newline="") as _file:
     writer = csv.writer(_file)
 
-    for i, landmark in enumerate(hand_landmarks.landmark):
-      writer.writerow([key, landmark.x,landmark.y, landmark.z])
-      print(i, [landmark.x, landmark.y, landmark.z])
-
-  print("--------")
-  return
-
-
-
-def output_csv_face(key, location_data):
-
-  if key == -1: return
-  csv_path = 'data/landmarks.csv'
-
-  points = []
-  with open(csv_path, 'a', newline="") as _file:
-    writer = csv.writer(_file)
-
-    # test write flat for csv
-    for point in location_data.relative_keypoints:
-      points.append(point.x)
-      points.append(point.y)
-
-    writer.writerow([key] + points)
-
-  print(location_data)
-  print("--------")
-  # explore data
-  #print(location_data.relative_bounding_box)
-  #relative_keypoints:
-  #len6 array of obj [ (x,y), (x,y), (x,y)...]
-  #print(location_data.relative_keypoints[0])
-  #print(location_data.relative_keypoints[0].x, location_data.relative_keypoints[0].y )
-  #print("===============")
-
-  return
-
+    # flattened size
+    # key -> 1, Left(x,y,z *21) -> 63, Right(x,y,z *21) -> 63, face(x,y * 6) -> 12
+    # len 139 total
+    row = [key] + landmark.to_row()
+    writer.writerow(row)
 
 print("WEBCAM")
 
-import cv2
 cap=cv2.VideoCapture(0)
 print( cap.isOpened() )
-import mediapipe as mp
+
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_hands = mp.solutions.hands
 mp_face_detection = mp.solutions.face_detection
 
+
+landmark = Landmark()
+
 # For static images:
 # IMAGE_FILES = []
-# with mp_hands.Hands(
+# with mp_hands.Hands(0
 #     static_image_mode=True,
 #     max_num_hands=2,
 #     min_detection_confidence=0.5) as hands:
@@ -107,6 +75,7 @@ mp_face_detection = mp.solutions.face_detection
 #       mp_drawing.plot_landmarks(
 #         hand_world_landmarks, mp_hands.HAND_CONNECTIONS, azimuth=5)
 
+
 #For webcam input:
 with mp_hands.Hands(
     model_complexity=0,
@@ -126,6 +95,12 @@ mp_face_detection.FaceDetection(
     # pass by reference.
     image.flags.writeable = False
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+    # hands orientation assumes input is 'selfie mode' (flip)
+    # image needs to be flipped prior to feeding it for processing
+    # for proper hand label
+    image = cv2.flip(image, 1)
+
     resultsHands = hands.process(image)
     resultsFace = face_detection.process(image)
     image.flags.writeable = True
@@ -137,18 +112,29 @@ mp_face_detection.FaceDetection(
     key = cv2.waitKey(5)
     #print("K", key)
 
-
     #
     # Draw the hand annotations on the image.
     # assume multiple hands per frame is possible
     #
+    print("---------------------------")
+
+    # Handedness
+    # assumes selfie mode
+
+    landmark.setHandedness(resultsHands.multi_handedness)
+
+    landmark.setHandLandmarks(resultsHands.multi_hand_landmarks)
+
+    landmark.setFaceDetections(resultsFace.detections)
+
+    output_csv_all(key, landmark)
+    #print(landmark.to_row())
+    #
+    # DRAW
+    #
     if resultsHands.multi_hand_landmarks:
+
       for hand_landmarks in resultsHands.multi_hand_landmarks:
-
-        #for i, landmark in enumerate(hand_landmarks.landmark):
-        #  print(i, [landmark.x, landmark.y, landmark.z])
-        output_csv_hand_landmarks(key, hand_landmarks)
-
 
         mp_drawing.draw_landmarks(
             image,
@@ -162,10 +148,12 @@ mp_face_detection.FaceDetection(
     # loop can detect multiple faces per frame
     #
     if resultsFace.detections:
+
       for detection in resultsFace.detections:
+
         mp_drawing.draw_detection(image, detection)
 
-        output_csv_face(key, detection.location_data)
+        #output_csv_face(key, detection.location_data)
         # detection.location_data.relative_bounding_box
         # { xmin, ymin, width,height }
         #
@@ -179,7 +167,10 @@ mp_face_detection.FaceDetection(
 
     # are landmarks normalized, independent of webcam dims?
     # image = cv2.resize(image, (800, 400))
-    image = cv2.flip(image, 1)
+
+
+    # ifnalize
+    # csv_write(landmark)
 
     cv2.imshow('MediaPipe Hands + Face', image)
 
