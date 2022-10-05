@@ -19,6 +19,9 @@ services:
       - type: bind
         source: ./data
         target: /home/jovyan/data
+      - type: bind
+        source: ./scratch
+        target: /home/jovyan/scratch
 
       # run gui output to xserver
       # requires "xhost +local:docker"
