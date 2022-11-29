@@ -10,8 +10,17 @@ class Landmark:
         self.handedness = []
         self.hand_landmarks = [ [], [] ]
         self.relative_keypoints = []
+
+        # default opencv width height
+        self.width = 640
+        self.height= 480
         print("__INIT__")
 
+    def setWidth(self, width):
+        self.width = width
+
+    def setHeight(self, height):
+        self.height = height
 
     def setHandedness(self, multi_handedness):
 
@@ -89,10 +98,11 @@ class Landmark:
         left = 0 if self.handedness[0] == "Left" else 1
         right = 1 if left == 0 else 0
 
-        val = self.hand_landmarks[left] + self.hand_landmarks[right] + \
+        val = [self.width, self.height] + \
+            self.hand_landmarks[left] + self.hand_landmarks[right] + \
             self.relative_keypoints
 
-        print("V", val)
+        print("Landmark", val)
         return val
 
 

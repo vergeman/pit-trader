@@ -16,15 +16,35 @@ def output_csv_all(key, landmark):
     writer = csv.writer(_file)
 
     # flattened size
-    # key -> 1, Left(x,y,z *21) -> 63, Right(x,y,z *21) -> 63, face(x,y * 6) -> 12
-    # len 139 total
+    # key -> 1, Capture Width -> 1, Capture Height -> 1,
+    # Left(x,y,z *21) -> 63, Right(x,y,z *21) -> 63, face(x,y * 6) -> 12
+    # len 141 total
     row = [key] + landmark.to_row()
     writer.writerow(row)
 
 print("WEBCAM")
 
-cap=cv2.VideoCapture(0)
+cap = cv2.VideoCapture(0)
+
+# Capture Dims
+# ffmpeg -f video4linux2 -list_formats all -i /dev/video0
+# YUYV 4:2:2 : 640x480 160x120 320x180 320x240 424x240 640x360 640x480
+# Motion-JPEG : 848x480 960x540 1280x720
+#
+# to enable motion jpeg and larger window below
+# keep at default for now (640 x 480)
+#
+#fourcc = cv2.VideoWriter_fourcc(*'MJPG')
+#cap.set(cv2.CAP_PROP_FOURCC, fourcc)
+#cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+#cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+#
+# default 640x480
+#print("WIDTH", cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+#print("HEIGHT", cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
 print( cap.isOpened() )
+
 
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
@@ -93,6 +113,7 @@ mp_face_detection.FaceDetection(
 
     # To improve performance, optionally mark the image as not writeable to
     # pass by reference.
+    # need to convert opencv (BGR) to RGB for media hands process
     image.flags.writeable = False
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
@@ -104,6 +125,10 @@ mp_face_detection.FaceDetection(
     resultsHands = hands.process(image)
     resultsFace = face_detection.process(image)
     image.flags.writeable = True
+    # need to convert back to rgb for proper display
+    # convert to use lib, convert back to display
+    # want to convert before drawing landmarks or else landmarks
+    # also get converted (unintended)
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
     # KeyPress input
@@ -120,6 +145,8 @@ mp_face_detection.FaceDetection(
 
     # Handedness
     # assumes selfie mode
+    landmark.setWidth( cap.get(cv2.CAP_PROP_FRAME_WIDTH) )
+    landmark.setHeight( cap.get(cv2.CAP_PROP_FRAME_HEIGHT) )
 
     landmark.setHandedness(resultsHands.multi_handedness)
 
@@ -171,7 +198,6 @@ mp_face_detection.FaceDetection(
 
     # ifnalize
     # csv_write(landmark)
-
     cv2.imshow('MediaPipe Hands + Face', image)
 
     if cv2.waitKey(5) & 0xFF == 27:
