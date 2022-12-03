@@ -112,17 +112,3 @@ class Landmark:
 if __name__ == "__main__":
     l = Landmark()
     print("MAIN")
-
-
-#resultsHands.multi_handedness
-#NB: this needs to be inverted in selfie mode
-#classification {
-  # index: 1
-  # score: 0.9612538814544678
-  # label: "Right"
-#}
-
-    # if key != -1:
-    #     print("RES", dir(resultsHands))
-    #     print("WOLRD", resultsHands.multi_hand_world_landmarks)
-    #     print("ML", resultsHands.multi_handedness)
