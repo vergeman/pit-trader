@@ -148,6 +148,10 @@ mp_face_detection.FaceDetection(
     landmark.setWidth( cap.get(cv2.CAP_PROP_FRAME_WIDTH) )
     landmark.setHeight( cap.get(cv2.CAP_PROP_FRAME_HEIGHT) )
 
+    # set and re-orient coords around relative base point
+    landmark.setBasePoints(resultsFace.detections,
+                               mp_face_detection.FaceKeyPoint.NOSE_TIP)
+
     landmark.setHandLandmarks(resultsHands)
 
     landmark.setFaceDetections(resultsFace.detections)
