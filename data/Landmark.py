@@ -29,18 +29,18 @@ class Landmark:
 
 
     # set relative base coordinates
-    def setBasePoints(self, detections, baseKeyPoint):
+    def setBasePoints(self, detections, baseKeyPoint, relativize = True):
 
         if detections is None or baseKeyPoint is None:
             return
 
         for detection in detections:
             base = mp_face_detection.get_key_point(detection, baseKeyPoint)
-            self.base_x = base.x
-            self.base_y = base.y
+            self.base_x = base.x if relativize else 0
+            self.base_y = base.y if relativize else 0
 
 
-    def setHandLandmarks(self, resultsHands, relativize = True):
+    def setHandLandmarks(self, resultsHands):
 
         # 2 hands,
         # 21 landmarks, 3 points (x,y,z) -> 63 flat points
@@ -60,13 +60,13 @@ class Landmark:
 
             for j, landmark in enumerate(hand_landmarks.landmark):
                 k = 3*j
-                _hand_landmarks[k] = landmark.x - self.base_x if relativize else 0
-                _hand_landmarks[k+1] = landmark.y - self.base_y if relativize else 0
+                _hand_landmarks[k] = landmark.x - self.base_x
+                _hand_landmarks[k+1] = landmark.y - self.base_y
                 _hand_landmarks[k+2] = landmark.z
 
         #print(self.hand_landmarks)
 
-    def setFaceDetections(self, detections, relativize = True):
+    def setFaceDetections(self, detections):
 
         if detections is None:
             return
@@ -87,14 +87,11 @@ class Landmark:
             #detection.location_data.relative_bounding_box
             for i, point in enumerate(detection.location_data.relative_keypoints):
                 j = i*2
-                self.face_landmarks[j] = point.x - self.base_x if relativize else 0
-                self.face_landmarks[j+1] = point.y - self.base_y if relativize else 0
+                self.face_landmarks[j] = point.x - self.base_x
+                self.face_landmarks[j+1] = point.y - self.base_y
 
         #print(self.face_landmarks)
 
-    def setRelative(self, point):
-        left, right, face - base.x, base.y
-        pass
 
     def to_row(self):
         # combined data
@@ -104,6 +101,7 @@ class Landmark:
             self.face_landmarks
 
         #print("Landmark", val)
+        print("Base", self.base_x, self.base_y)
         print("L", self.left_hand_landmarks)
         print("R", self.right_hand_landmarks)
         return val
