@@ -96,8 +96,8 @@ class Landmark:
     def to_row(self):
         # combined data
 
-        val = [self.width, self.height] + \
-            self.left_hand_landmarks + self.right_hand_landmarks + \
+        val = self.left_hand_landmarks + \
+            self.right_hand_landmarks + \
             self.face_landmarks
 
         #print("Landmark", val)
