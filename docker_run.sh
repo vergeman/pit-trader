@@ -10,5 +10,6 @@
 # run as exec lighter?
 
 docker exec -e DISPLAY=$DISPLAY -it pit-trader_pytorch-minimal-notebook_1 \
-       python data/test_webcam.py
+       bash
+       #python data/test_webcam.py
 
