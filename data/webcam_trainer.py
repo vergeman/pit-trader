@@ -1,3 +1,4 @@
+# webcam_trainer.py
 #
 # scratchpad media pipe demo
 # https://google.github.io/mediapipe/solutions/hands.html
