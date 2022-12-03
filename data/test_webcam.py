@@ -152,9 +152,9 @@ mp_face_detection.FaceDetection(
 
     landmark.setHandLandmarks(resultsHands.multi_hand_landmarks)
 
-    landmark.setFaceDetections(resultsFace.detections)
+    #landmark.setFaceDetections(resultsFace.detections)
 
-    output_csv_all(key, landmark)
+    #output_csv_all(key, landmark)
     #print(landmark.to_row())
     #
     # DRAW
