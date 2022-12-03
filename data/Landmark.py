@@ -9,7 +9,7 @@ class Landmark:
     def __init__(self):
         self.handedness = []
         self.hand_landmarks = [ [], [] ]
-        self.relative_keypoints = []
+        self.face_landmarks = []
 
         # default opencv width height
         self.width = 640
@@ -73,7 +73,7 @@ class Landmark:
 
     def setFaceDetections(self, detections):
         #6 (x,y) keypoints = 12 points
-        self.relative_keypoints = [-1] * 6 * 2
+        self.face_landmarks = [-1] * 6 * 2
 
         if detections is None:
             return
@@ -86,10 +86,10 @@ class Landmark:
             #detection.location_data.relative_bounding_box
             for i, point in enumerate(detection.location_data.relative_keypoints):
                 j = i*2
-                self.relative_keypoints[j] = point.x
-                self.relative_keypoints[j+1] = point.y
+                self.face_landmarks[j] = point.x
+                self.face_landmarks[j+1] = point.y
 
-        #print(self.relative_keypoints)
+        #print(self.face_landmarks)
 
 
     def to_row(self):
@@ -100,7 +100,7 @@ class Landmark:
 
         val = [self.width, self.height] + \
             self.hand_landmarks[left] + self.hand_landmarks[right] + \
-            self.relative_keypoints
+            self.face_landmarks
 
         print("Landmark", val)
         return val
