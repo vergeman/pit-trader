@@ -148,9 +148,7 @@ mp_face_detection.FaceDetection(
     landmark.setWidth( cap.get(cv2.CAP_PROP_FRAME_WIDTH) )
     landmark.setHeight( cap.get(cv2.CAP_PROP_FRAME_HEIGHT) )
 
-    landmark.setHandedness(resultsHands.multi_handedness)
-
-    landmark.setHandLandmarks(resultsHands.multi_hand_landmarks)
+    landmark.setHandLandmarks(resultsHands)
 
     landmark.setFaceDetections(resultsFace.detections)
 

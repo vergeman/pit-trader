@@ -7,8 +7,8 @@
 class Landmark:
 
     def __init__(self):
-        self.handedness = []
-        self.hand_landmarks = [ [], [] ]
+        self.left_hand_landmarks = []
+        self.right_hand_landmarks = []
         self.face_landmarks = []
 
         # default opencv width height
@@ -22,50 +22,30 @@ class Landmark:
     def setHeight(self, height):
         self.height = height
 
-    def setHandedness(self, multi_handedness):
 
-        self.handedness = [None, None]
+    def setHandLandmarks(self, resultsHands):
 
-        if multi_handedness is None:
-            return
-
-        # we assume world of max two hands, take most likely
-        # assume hand order corresponds with hand_landmarks order
-        for i, hand in enumerate(multi_handedness):
-            if i > 1: continue
-
-            #print("HAND", hand)
-            self.handedness[i] = hand.classification[0].label
-
-            #for classification in hand.classification:
-                #print("C", classification.label, classification.score)
-                #set something
-
-        print(self.handedness)
-        print("---------------------------")
-        pass
-
-
-    def setHandLandmarks(self, multi_hand_landmarks):
         # 2 hands,
         # 21 landmarks, 3 points (x,y,z) -> 63 flat points
-        self.hand_landmarks = [
-            [-1] * 21 * 3,
-            [-1] * 21 * 3
-        ]
+        self.left_hand_landmarks = [-1] * 21 * 3
+        self.right_hand_landmarks = [-1] * 21 * 3
 
-        if multi_hand_landmarks is None:
+        if resultsHands.multi_hand_landmarks is None:
             return
 
-        #output_csv_hand_landmarks(key, hand_landmarks)
-        #foreach hand i
-        for i, hand_landmarks in enumerate(multi_hand_landmarks):
-            #print(hand_landmarks)
+        for i, hand_landmarks in enumerate(resultsHands.multi_hand_landmarks):
+
+            #yes if classifier labels as two left's will overwrite
+            handedness = resultsHands.multi_handedness[i].classification[0].label #Left, Right
+
+            _hand_landmarks = self.left_hand_landmarks if handedness == "Left" else \
+                self.right_hand_landmarks
+
             for j, landmark in enumerate(hand_landmarks.landmark):
                 k = 3*j
-                self.hand_landmarks[i][k] = landmark.x
-                self.hand_landmarks[i][k+1] = landmark.y
-                self.hand_landmarks[i][k+2] = landmark.z
+                _hand_landmarks[k] = landmark.x
+                _hand_landmarks[k+1] = landmark.y
+                _hand_landmarks[k+2] = landmark.z
 
         #print(self.hand_landmarks)
 
@@ -94,15 +74,14 @@ class Landmark:
 
     def to_row(self):
         # combined data
-        # consistent left/right hand ordering
-        left = 0 if self.handedness[0] == "Left" else 1
-        right = 1 if left == 0 else 0
 
         val = [self.width, self.height] + \
-            self.hand_landmarks[left] + self.hand_landmarks[right] + \
+            self.left_hand_landmarks + self.right_hand_landmarks + \
             self.face_landmarks
 
-        print("Landmark", val)
+        #print("Landmark", val)
+        print("L", self.left_hand_landmarks)
+        print("R", self.right_hand_landmarks)
         return val
 
 
