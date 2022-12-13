@@ -11,7 +11,7 @@ import csv
 def output_csv_all(key, landmark):
 
   if key == -1: return
-  csv_path = '/home/jovyan/data/landmarks.csv'
+  csv_path = '/home/jovyan/train/data/landmarks.csv'
 
   with open(csv_path, 'a', newline="") as _file:
     writer = csv.writer(_file)

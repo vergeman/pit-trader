@@ -3,27 +3,24 @@
 
 ## Tentative Architecture
 
-* Data Capture: opencv + mediapipe, generate labeled training data
-  from webcam, and possibly other images.
+* `/train`: Data Capture using opencv + mediapipe, generate labeled
+  training data from webcam, and possibly other images.
 
-* Model: notebook that will use labeled data, classify the gestures,
+* `/model`: notebook(s) ingests labeled data, classifies the gestures,
   build a model.
 
-* Frontend: Deployed onnyx.js with model, use mediapipe + react for
-  live inference and game layer.
-
-Each looks like they'll be their own container. (python conda, notebook, js)
+* `/app`: Deployed onnyx.js with model, use mediapipe + react for live
+  inference and maybe game layer.
 
 
+## Docker Related Setup
 
-## Setup Notes
+#### X windows + Camera Setup
 
-* sudo needed to access `dev/video0` webcam
-
-#### X windows
-
+* see `docker-compose.yml` and `docker_run.sh`
 * To "receive" GUI: `xhost +local:docker` on host
-* running `docker exec` needs to set `DISPLAY` variable
+* `docker exec` necessary to pass `DISPLAY` env variable
+* sudo needed to access `dev/video0` webcam
 * need to bind mount `/tmp/.X11-unix`
 
 
@@ -60,8 +57,3 @@ print("HEIGHT", cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 ```
 
 ----
-
-## TODO:
-
-[] Separate out opencv and mediapipe to its own "build data" container
-[] rename /data to /trainer
