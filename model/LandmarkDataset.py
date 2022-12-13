@@ -53,6 +53,6 @@ if __name__ == "__main__":
 
     dataloader = DataLoader(dataset, batch_size=4, shuffle=True)
 
-    #train_batch, label_batch = next( iter(dataloader) )
-    for batch_idx, sample in enumerate(dataloader):
-        print(batch_idx, sample[0])
+    label_batch, train_batch = next( iter(dataloader) )
+    # for batch_idx, sample in enumerate(dataloader):
+    #    print(batch_idx, sample[0])
