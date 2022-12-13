@@ -2,7 +2,10 @@ version: '3.3'
 services:
   pytorch-minimal-notebook:
     build: './model/'
+    #
     # NB: root to open device: /dev/video0
+    # see docker_run.sh for container video
+    #
     user: root
     environment:
       - GRANT_SUDO="yes"
@@ -11,11 +14,13 @@ services:
       - "8888:8888"
     devices:
       - "dev/video0:/dev/video0"
-
+    #
+    # directories accessible within jupyter env
+    #
     volumes:
       - type: bind
         source: ./model
-        target: /home/jovyan/work
+        target: /home/jovyan/model
       - type: bind
         source: ./data
         target: /home/jovyan/data
@@ -24,7 +29,7 @@ services:
         target: /home/jovyan/scratch
 
       # run gui output to xserver
-      # requires "xhost +local:docker"
+      # requires "xhost +local:docker" prior to run
       - type: bind
         source: /tmp/.X11-unix
         target: /tmp/.X11-unix
