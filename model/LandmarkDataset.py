@@ -1,9 +1,10 @@
 import os
 import torch
 import pandas as pd
+import numpy as np
 from torch.utils.data import Dataset, DataLoader
 from torchvision.transforms import Lambda, Compose
-
+from torch.utils.data.sampler import SubsetRandomSampler
 
 class LandmarkDataset(Dataset):
     """PyTorch Custom Dataset and Dataloader reference:
@@ -51,8 +52,33 @@ if __name__ == "__main__":
     dataset = LandmarkDataset("/home/jovyan/train/data/landmarks.csv",
                               transform=transformations)
 
-    dataloader = DataLoader(dataset, batch_size=4, shuffle=True)
+    # Splitting
+    # https://stackoverflow.com/questions/50544730/how-do-i-split-a-custom-dataset-into-training-and-test-datasets/50544887#50544887
+    # https://pytorch.org/docs/stable/data.html#torch.utils.data.Sampler
+    # NB: subset is taken within indices
+    # TODO: not only need to randomize 'indices', but also fair split across classes
+    # might be easier to filter csv to train.csv, valid.csv
+    #
 
-    label_batch, train_batch = next( iter(dataloader) )
-    # for batch_idx, sample in enumerate(dataloader):
-    #    print(batch_idx, sample[0])
+    split_p = .2
+    split = int( np.floor( .2 * len(dataset) ) )
+    indices = list( range(len(dataset)) )
+    train_indices, val_indices = indices[split:], indices[:split]
+
+    train_sampler = SubsetRandomSampler(train_indices)
+    valid_sampler = SubsetRandomSampler(val_indices)
+
+    train_dataloader = DataLoader(dataset, batch_size=4, sampler=train_sampler)
+    valid_dataloader = DataLoader(dataset, batch_size=4, sampler=valid_sampler)
+
+    # label_batch, train_batch = next( iter(train_dataloader) )
+
+    def print_dataloader(dataloader):
+        for batch_idx, sample in enumerate(dataloader):
+            print(batch_idx, sample[0])
+
+    print("TRAIN")
+    print_dataloader(train_dataloader)
+
+    print("VALID")
+    print_dataloader(valid_dataloader)
