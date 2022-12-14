@@ -43,7 +43,8 @@ class Landmark:
     def setHandLandmarks(self, resultsHands):
 
         # 2 hands,
-        # 21 landmarks, 3 points (x,y,z) -> 63 flat points
+        # 21 landmarks, 3 points (x,y,z) -> 63 flattened digits per hand
+        # 2 * 63 -> 126 total (L, R)
         self.left_hand_landmarks = [-1] * 21 * 3
         self.right_hand_landmarks = [-1] * 21 * 3
 

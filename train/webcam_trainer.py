@@ -19,7 +19,8 @@ def output_csv_all(key, landmark):
     # flattened size
     # key -> 1, Capture Width -> 1, Capture Height -> 1,
     # Left(x,y,z *21) -> 63, Right(x,y,z *21) -> 63, face(x,y * 6) -> 12
-    # len 141 total
+    # key (label) = 1, hands + face = 138
+    # total len 139
     row = [key] + landmark.to_row()
     writer.writerow(row)
 
