@@ -57,9 +57,11 @@ async function main(session, i) {
 
         //console.log(session)
         // read from results
+        /*
         document.write(`data of result tensor ${i}: ${JSON.stringify(results)} <br/>`);
         document.write(`data of softmax ${i}: ${JSON.stringify(probs)} <br/>`);
         document.write(`class: ${argMax(probs)}  <br/>`);
+*/
 
     } catch (e) {
         document.write(`failed to inference ONNX model: ${e}.`);
