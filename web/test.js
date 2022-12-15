@@ -45,13 +45,14 @@ async function main(session, i) {
 
         const tensorA = new ort.Tensor('float32', dataA, [138]);
         const tensorB = new ort.Tensor('float32', dataB, [138]);
-
+        const live = new ort.Tensor('float32', data, [138]);
+        //console.log("L", live.data);
         // feed inputs and run
         // seems to work logits match
-        const results = await session.run({'landmarks': tensorB});
+        const results = await session.run({'landmarks': live});
         const output = results.class.data;
         const probs = softmax(output);
-        console.log("O", output);
+        //console.log("O", output);
         console.log("P", probs);
 
 
@@ -76,14 +77,13 @@ load().then( (session) => {
 
     //how intensive is onnx?
 
-    /*
     setInterval( () => {
         main(session, i);
         i++;
     }, 250);
-    */
 
-    main(session, i);
+
+    //main(session, i);
 }).catch( (e) => {
     document.write(`failed to inference ONNX model: ${e}.`);
 });
