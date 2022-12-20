@@ -1,5 +1,13 @@
 version: '3.3'
 services:
+  web:
+    build: './web/'
+    ports:
+      - "3000:3000"
+    volumes:
+      - type: bind
+        source: ./web
+        target: /web
   pytorch-minimal-notebook:
     build: './model/'
     #
