@@ -1,5 +1,11 @@
 version: '3.3'
 services:
+  web:
+    build: './web/'
+    volumes:
+      - type: bind
+        source: ./web
+        target: /web
   pytorch-minimal-notebook:
     build: './model/'
     #
