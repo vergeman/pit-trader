@@ -1,25 +1,23 @@
 import { useEffect, useState } from "react";
 
-export default function useHandsDetection(canvasRef) {
-
+export default function useHandsDetection(canvasRef, landmarks: Landmarks) {
   const [hands, setHands] = useState(null);
 
   const onHandResults = function (results) {
-    //handLandmarks = new Array(126).fill(-1);
+    landmarks.resetHandLandmarks();
 
     if (results.multiHandLandmarks) {
-      //const canvasElement = canvasRef.current;
       const canvasCtx = canvasRef.current.getContext("2d");
 
       for (const [
         hand_idx,
-        landmarks,
+        _landmarks,
       ] of results.multiHandLandmarks.entries()) {
-        window.drawConnectors(canvasCtx, landmarks, window.HAND_CONNECTIONS, {
+        window.drawConnectors(canvasCtx, _landmarks, window.HAND_CONNECTIONS, {
           color: "#00FF00",
           lineWidth: 5,
         });
-        window.drawLandmarks(canvasCtx, landmarks, {
+        window.drawLandmarks(canvasCtx, _landmarks, {
           color: "#FF0000",
           lineWidth: 2,
         });
@@ -27,12 +25,9 @@ export default function useHandsDetection(canvasRef) {
         //multiHandedness[0,1].label "Left / Right"
         //multiHandLandmarks[ {x,y,z..}] //30 * 21 * 2 hands -> 126
         const hand = results.multiHandedness[hand_idx];
-        console.log("HAND", hand_idx, hand.label);
 
-        //updateHandLandmarks(hand.label, landmarks, handLandmarks);
+        landmarks.setHandLandmarks(hand.label, _landmarks);
       }
-
-      //console.log("HAND", handLandmarks);
     }
     //canvasCtx.restore();
   };

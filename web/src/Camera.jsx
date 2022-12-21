@@ -2,16 +2,14 @@ import { useEffect, useRef } from "react";
 import useFaceDetection from "./useFaceDetection.js";
 import useHandsDetection from "./useHandsDetection.js";
 
-export default function Camera() {
+export default function Camera(props) {
   //TODO: params isActive on/off given keystroke from above
 
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
 
-  //let faceLandmarks = new Array(12).fill(-1);
-
-  const faceDetection = useFaceDetection(canvasRef);
-  const hands = useHandsDetection(canvasRef);
+  const faceDetection = useFaceDetection(canvasRef, props.landmarks);
+  const hands = useHandsDetection(canvasRef, props.landmarks);
   console.log("FD", faceDetection);
   console.log("HANDS", hands);
 
@@ -22,7 +20,7 @@ export default function Camera() {
       onFrame: async () => {
         await faceDetection.send({ image: videoRef.current });
         await hands.send({ image: videoRef.current });
-        //await testData();
+        //await props.landmarks.print()
       },
       width: 1280,
       height: 720,

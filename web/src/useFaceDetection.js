@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export default function useFaceDetection(canvasRef) {
+export default function useFaceDetection(canvasRef, landmarks:Landmarks) {
 
   const [faceDetection, setFaceDetection] = useState(null);
 
@@ -18,7 +18,7 @@ export default function useFaceDetection(canvasRef) {
     );
 
     //RESET
-    //faceLandmarks = new Array(12).fill(-1);
+    landmarks.resetFaceLandmarks();
 
     if (results.detections.length > 0) {
       window.drawRectangle(canvasCtx, results.detections[0].boundingBox, {
@@ -32,10 +32,8 @@ export default function useFaceDetection(canvasRef) {
         radius: 5,
       });
 
-      //console.log("FACE", results.detections[0].landmarks);
-      //OUTPUT HERE
       //detections[ {landmarks: [ {x,y,z} ] } ]
-      //updateFaceLandmarks(null, results.detections[0].landmarks, faceLandmarks);
+      landmarks.setFaceLandmarks(results.detections[0].landmarks);
     }
   };
 
