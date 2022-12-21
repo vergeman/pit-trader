@@ -1,8 +1,8 @@
 export default class Landmarks {
   constructor() {
+    //data
     this.handLandmarks = new Array(126).fill(-1);
     this.faceLandmarks = new Array(12).fill(-1);
-    this.data = new Array(138).fill(-1);
   }
 
   resetHandLandmarks() {
@@ -34,7 +34,7 @@ export default class Landmarks {
     }
   }
 
-  async get() {
+  get() {
     return [].concat(this.handLandmarks, this.faceLandmarks);
   }
 
