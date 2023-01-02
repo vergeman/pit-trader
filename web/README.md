@@ -1,3 +1,13 @@
+# Pit Trader Web
+
+### Notes
+
+* html5 webcam (`navigator.mediaDevices.getUserMedia`) requires secure context -
+  can't access from `192.168.*` ip. `localhost` is ok.
+
+
+---
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
