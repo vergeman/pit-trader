@@ -158,6 +158,13 @@ class KeyClassMapping():
                           self.index, "execute market")
     self.index += 1
 
+    # out out out
+    self._generateMapping(self.mapping, "-", "-", self.index, "cancel")
+    self._generateMapping(self.mapping, f"{self.OFFER_TOGGLE_NAME}+-", f"{self.OFFER_TOGGLE_NAME}+-",
+                          self.index, "cancel")
+    self.index += 1
+
+
 
 
 if __name__ == "__main__":
