@@ -4,24 +4,30 @@
 # https://google.github.io/mediapipe/solutions/hands.html
 #
 from Landmark import Landmark
+from KeyClassMapping import KeyClassMapping
 import cv2
 import mediapipe as mp
 import csv
 
-def output_csv_all(key, landmark):
+def output_csv_all(keyMapVal, landmark):
 
-  if key == -1: return
+  if keyMapVal is None: return
+
   csv_path = '/home/jovyan/train/data/landmarks.csv'
 
   with open(csv_path, 'a', newline="") as _file:
     writer = csv.writer(_file)
 
-    # flattened size
-    # key -> 1, Capture Width -> 1, Capture Height -> 1,
-    # Left(x,y,z *21) -> 63, Right(x,y,z *21) -> 63, face(x,y * 6) -> 12
-    # key (label) = 1, hands + face = 138
-    # total len 139
-    row = [key] + landmark.to_row()
+    # flattened size: see Landmark.py
+    # label class (keyMapVal.index) -> 1
+    # Hand: 21 points, each with 3 (x,y,z) coordinates
+    # Face: 6 points, each with 2 (x,y) coordinates
+    # Left -> 63, Right -> 63, face -> 12
+    # label + 2*hands + face
+    # 1 + 2*63 + 12 = 1 + 126 + 12 = 139
+
+    print(keyMapVal)
+    row = [keyMapVal.get('index')] + landmark.to_row()
     writer.writerow(row)
 
 print("WEBCAM")
@@ -36,6 +42,7 @@ mp_hands = mp.solutions.hands
 mp_face_detection = mp.solutions.face_detection
 
 landmark = Landmark()
+keyClassMapping = KeyClassMapping()
 
 with mp_hands.Hands(
     model_complexity=0,
@@ -75,13 +82,14 @@ mp_face_detection.FaceDetection(
     # will wait for N ms or until key is pressed (whichever sooner)
     # NB: large values hang input loop
     key = cv2.waitKey(5)
-    #print("K", key)
+
+    keyVal = keyClassMapping.getKeyVal(key)
 
     #
     # Draw the hand annotations on the image.
     # assume multiple hands per frame is possible
     #
-    print("---------------------------")
+    # print("---------------------------")
 
     # Handedness
     # assumes selfie mode
@@ -96,8 +104,8 @@ mp_face_detection.FaceDetection(
 
     landmark.setFaceDetections(resultsFace.detections)
 
-    output_csv_all(key, landmark)
-    #print(landmark.to_row())
+    output_csv_all(keyVal, landmark)
+
     #
     # DRAW
     #

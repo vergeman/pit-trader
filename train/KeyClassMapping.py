@@ -68,6 +68,7 @@ class KeyClassMapping():
   def getKeyVal(self, key):
     if (key == self.OFFER_TOGGLE_KEYCODE):
       self.offer_toggle = not self.offer_toggle
+      print("OFFER TOGGLE:", self.offer_toggle)
 
     # creates combined lookup key for generated mapping
     if (key != -1):
@@ -76,7 +77,7 @@ class KeyClassMapping():
         keyMap = f"{self.OFFER_TOGGLE_NAME}+{chr(key)}"
 
       keyVal = self.mapping.get( keyMap, None)
-      print("KEYMAP", " ".join([str(key), str(self.offer_toggle), keyMap]), "->", keyVal)
+      #print("KEYMAP", " ".join([str(key), str(self.offer_toggle), keyMap]), "->", keyVal)
       return keyVal
 
 
