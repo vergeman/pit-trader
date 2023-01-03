@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 
-export default function useFaceDetection(canvasRef, landmarks:Landmarks) {
-
+export default function useFaceDetection(canvasRef, landmarks: Landmarks) {
   const [faceDetection, setFaceDetection] = useState(null);
 
   const onFaceResults = function (results) {
@@ -9,6 +8,11 @@ export default function useFaceDetection(canvasRef, landmarks:Landmarks) {
     const canvasElement = canvasRef.current;
     const canvasCtx = canvasRef.current.getContext("2d");
 
+    //clears previous render
+    canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+
+    //draws 'video'
+    /*
     canvasCtx.drawImage(
       results.image,
       0,
@@ -16,6 +20,7 @@ export default function useFaceDetection(canvasRef, landmarks:Landmarks) {
       canvasElement.width,
       canvasElement.height
     );
+    */
 
     //RESET
     landmarks.resetFaceLandmarks();

@@ -8,11 +8,12 @@ export default function Demo() {
 
   const landmarks = new Landmarks();
   const classifier = new Classifier(landmarks);
-
+  console.log("Demo.jsx");
   //TODO; defautl garbage class
   const [gestureClass, setGestureClass] = useState(null);
 
   useEffect(() => {
+    console.log("Demo.jsx: useEffect");
     classifier.load().then( async() => {
 
       const interval = setInterval(async () => {
