@@ -28,19 +28,21 @@
 #
 
 # Shift key
-SHIFT = "SHIFT"
+# make sure to change resultant OFFER_ONES, OFFER_TENS
+# elements to represent appropriate keypress.
+OFFER_TOGGLE = "SHIFT"
 
 # bids [0..9]
-ONES = list(range(0, 10))
+BID_ONES = list(range(0, 10))
 
 # offers [0..9] - note the keyboard ordering corresponds to 0 first
-SHIFT_ONES = [")", "!", "@", "#", "$", "%", "^", "&", "*", "("]
+OFFER_ONES = [")", "!", "@", "#", "$", "%", "^", "&", "*", "("]
 
 # bids [10, 20...100]
-TENS = [ 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p' ]
+BID_TENS = [ 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p' ]
 
 # offers [10, 20...100]
-SHIFT_TENS = [t.upper() for t in TENS]
+OFFER_TENS = [t.upper() for t in BID_TENS]
 
 def _generateMapping(mapping, key, keypress, index, description):
 
@@ -56,32 +58,32 @@ def build():
   mapping = {}
 
   # bid ones
-  for key in ONES:
-    value = key
-    _generateMapping(mapping, str(key), str(key), index, f"{value} bid")
+  for keyPress in BID_ONES:
+    value = keyPress
+    _generateMapping(mapping, str(keyPress), str(keyPress), index, f"{value} bid")
     index = index+1
 
   # offer ones
-  for i, key in enumerate(SHIFT_ONES):
+  for i, keyPress in enumerate(OFFER_ONES):
     value = i
-    _generateMapping(mapping, f"{SHIFT}_{i}", key, index, f"offer {value}")
+    _generateMapping(mapping, f"{OFFER_TOGGLE}_{i}", keyPress, index, f"offer {value}")
     index = index+1
 
   # bid tens
-  for i, key in enumerate(TENS, 1):
+  for i, keyPress in enumerate(BID_TENS, 1):
     value = i * 10
-    _generateMapping(mapping, key, key, index, f"{value} bid")
+    _generateMapping(mapping, keyPress, keyPress, index, f"{value} bid")
     index = index+1
 
   # offer tens
-  for i, key in enumerate(SHIFT_TENS, 1):
+  for i, keyPress in enumerate(OFFER_TENS, 1):
     value = i * 10
-    _generateMapping(mapping, f"{SHIFT}_{key.lower()}", key, index, f"offer {value}")
+    _generateMapping(mapping, f"{OFFER_TOGGLE}_{keyPress.lower()}", keyPress, index, f"offer {value}")
     index = index+1
 
   # Misc
   _generateMapping(mapping, "m", "m", index, "execute market")
-  _generateMapping(mapping, "SHIFT_m", "M", index, "execute market")
+  _generateMapping(mapping, f"{OFFER_TOGGLE}_m", "M", index, "execute market")
   index += 1
 
   return mapping, index
