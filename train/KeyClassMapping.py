@@ -52,16 +52,32 @@ class KeyClassMapping():
   QTY_BID_TENS = ["z", "x", "c", "v", "b", "n", "m", ",", ".", "/"]
   QTY_OFFER_TENS = [i.upper() for i in QTY_BID_ONES[:7] ] + ["<", ">", "?"]
 
-  def __init__(self, OFFER_TOGGLE = "ALT"):
+  def __init__(self, OFFER_TOGGLE_NAME = "ALT", OFFER_TOGGLE_KEYCODE=233):
 
     # OFFER_TOGGLE
-    # make sure to change resultant OFFER_ONES, PRICE_OFFER_TENS
-    # elements to represent appropriate keypress.
-    self.OFFER_TOGGLE = OFFER_TOGGLE
+    self.OFFER_TOGGLE_NAME = OFFER_TOGGLE_NAME
+    self.OFFER_TOGGLE_KEYCODE = OFFER_TOGGLE_KEYCODE
+
+    self.offer_toggle = False
     self.mapping = {};
     self.index = 0;
 
     self.build();
+
+
+  def getKeyVal(self, key):
+    if (key == self.OFFER_TOGGLE_KEYCODE):
+      self.offer_toggle = not self.offer_toggle
+
+    # creates combined lookup key for generated mapping
+    if (key != -1):
+      keyMap = chr(key)
+      if self.offer_toggle:
+        keyMap = f"{self.OFFER_TOGGLE_NAME}+{chr(key)}"
+
+      keyVal = self.mapping.get( keyMap, None)
+      print("KEYMAP", " ".join([str(key), str(self.offer_toggle), keyMap]), "->", keyVal)
+      return keyVal
 
 
   def _generateMapping(self, mapping, key, keypress, index, description):
@@ -92,10 +108,9 @@ class KeyClassMapping():
 
     # price offer ones
     for i, keyPress in enumerate(self.PRICE_OFFER_ONES, 1):
-      key = f"{self.OFFER_TOGGLE}+{keyPress}"
+      key = f"{self.OFFER_TOGGLE_NAME}+{keyPress}"
       value = i % 10 # wrap to 0
       self._generateMapping(self.mapping, key, key, self.index, f"offer {value}")
-      #self._generateMapping(self.mapping, f"{self.OFFER_TOGGLE}_{value}", keyPress, self.index, f"offer {value}")
       self.index = self.index+1
 
 
@@ -113,7 +128,7 @@ class KeyClassMapping():
 
     # qty sell ones
     for i, keyPress in enumerate(self.QTY_BID_ONES, 1):
-      key = f"{self.OFFER_TOGGLE}+{keyPress}"
+      key = f"{self.OFFER_TOGGLE_NAME}+{keyPress}"
       value = i % 10
       self._generateMapping(self.mapping, key, key, self.index, f"{value} at")
       self.index = self.index+1
@@ -127,7 +142,7 @@ class KeyClassMapping():
 
     # qty offer tens
     for i, keyPress in enumerate(self.QTY_BID_TENS, 1):
-      key = f"{self.OFFER_TOGGLE}+{keyPress}"
+      key = f"{self.OFFER_TOGGLE_NAME}+{keyPress}"
       value = i * 10
       self._generateMapping(self.mapping, key, key, self.index, f"{value} at")
       self.index = self.index+1
@@ -138,12 +153,9 @@ class KeyClassMapping():
   def buildMisc(self):
     # spacebar
     self._generateMapping(self.mapping, " ", " ", self.index, "execute market")
-    self._generateMapping(self.mapping, f"{self.OFFER_TOGGLE}+ ", f"{self.OFFER_TOGGLE}+ ",
+    self._generateMapping(self.mapping, f"{self.OFFER_TOGGLE_NAME}+ ", f"{self.OFFER_TOGGLE_NAME}+ ",
                           self.index, "execute market")
     self.index += 1
-
-  def get(self, key):
-    return self.mapping.get(key, None)
 
 
 
