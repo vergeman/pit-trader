@@ -1,28 +1,34 @@
 #
 # For training we build list of mappings based on the keyboard sequence numbers
-# 1-9, 0, and the set of letters immediately below. (qwerty..) from the view point of a keyboard.
+# 1-9, 0, and the set of letters immediately below. (qwerty..) from the view
+# point of a keyboard.
 #
-# This is to streamline gesture labeling by forming the gesture with one hand,
-# while pressing the respective key with the other, to assign the label to
-# gesture's data in real-time.
+# This is to streamline gesture labeling by forming the signal with one hand,
+# and pressing the designated key with the other in real-time.
 #
-#
+# GESTURES
 # Price is held out in front of body
 # Qty is expressed around the chin (single digit) or forehead (tens)
+# https://tradepractices.files.wordpress.com/2012/07/commodity-and-futures-handsignals.pdf
 #
-# The SHIFT key is toggled to denote an offer (selling.)
+# LABELING
+# The ALT key is toggled to denote an offer (selling.)
 #
-# This SHIFT 'toggle' nonsense is a result of being unable to capture combined
-# characters via openCV's "waitKey()" function (bits aren't returned), e.g
-# (Shift + 1, Cntrl + 2). This is OS / UI specific, so for compatibility and
-# ease just treat SHIFT as a key to be toggled on/off while gesture labeling.
+# This 'toggle' nonsense is a result of being unable to reliably capture
+# combination key presses via openCV's "waitKey()" function; e.g (ALT+1,
+# CNTL+2, SHIFT+a, etc.)
 #
+# Remedy is to use an on/off toggle while labeling to indicate selling.
+#
+# NB: SHIFT as a toggle is inconsistent: for numeric digits 0-9, e.g. (!, @,
+# 3..) waitkey() does return shifted, 'combined' values. But letters aren't
+# "shifted" / capitalized. Go figure. Hence ALT as default.
 #
 # mapping obj:
 # key : stringified combination of key input
-#   SHIFT: denotes 'SHIFT' key is toggled alongside input key
+#   OFFER_TOGGLE: denotes "sell" key toggle
 # keypress: resulting keypress (if we didn't have to toggle)
-# index : classifier label associated with input data
+# index : sequential classifier label associated with input data
 # description: description of gesture
 #
 
@@ -31,35 +37,30 @@
 #
 class KeyClassMapping():
 
-  # OFFER_TOGGLE
-  # make sure to change resultant OFFER_ONES, PRICE_OFFER_TENS
-  # elements to represent appropriate keypress.
-  OFFER_TOGGLE = "SHIFT"
-
   #
   # PRICE
   #
-
-  # bids [1..9, 0]
+  # [1..9, 0]
   PRICE_BID_ONES = list(range(1, 10)) + [0]
-
-  # offers [1..9, 0] -
-  PRICE_OFFER_ONES = ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")"]
+  PRICE_OFFER_ONES = list(range(1, 10)) + [0]
 
   #
   # QUANTITY
   #
-
   QTY_BID_ONES = ["a", "s", "d", "f", "g", "h", "j", "k", "l", ";"]
   QTY_OFFER_ONES = [i.upper() for i in QTY_BID_ONES[:9] ] + [":"]
   QTY_BID_TENS = ["z", "x", "c", "v", "b", "n", "m", ",", ".", "/"]
   QTY_OFFER_TENS = [i.upper() for i in QTY_BID_ONES[:7] ] + ["<", ">", "?"]
 
-  def __init__(self, OFFER_TOGGLE = "SHIFT"):
-    self.OFFER_TOGGLE = OFFER_TOGGLE
+  def __init__(self, OFFER_TOGGLE = "ALT"):
 
+    # OFFER_TOGGLE
+    # make sure to change resultant OFFER_ONES, PRICE_OFFER_TENS
+    # elements to represent appropriate keypress.
+    self.OFFER_TOGGLE = OFFER_TOGGLE
     self.mapping = {};
     self.index = 0;
+
     self.build();
 
 
@@ -84,14 +85,17 @@ class KeyClassMapping():
   def buildPrice(self):
     # price bid ones
     for keyPress in self.PRICE_BID_ONES:
+      key = str(keyPress)
       value = keyPress
-      self._generateMapping(self.mapping, str(keyPress), str(keyPress), self.index, f"{value} bid")
+      self._generateMapping(self.mapping, key, key, self.index, f"{value} bid")
       self.index = self.index+1
 
     # price offer ones
     for i, keyPress in enumerate(self.PRICE_OFFER_ONES, 1):
+      key = f"{self.OFFER_TOGGLE}+{keyPress}"
       value = i % 10 # wrap to 0
-      self._generateMapping(self.mapping, f"{self.OFFER_TOGGLE}_{value}", keyPress, self.index, f"offer {value}")
+      self._generateMapping(self.mapping, key, key, self.index, f"offer {value}")
+      #self._generateMapping(self.mapping, f"{self.OFFER_TOGGLE}_{value}", keyPress, self.index, f"offer {value}")
       self.index = self.index+1
 
 
@@ -102,29 +106,30 @@ class KeyClassMapping():
 
     # qty buy ones
     for i, keyPress in enumerate(self.QTY_BID_ONES, 1):
+      key = str(keyPress)
       value = i % 10
-      self._generateMapping(self.mapping, str(keyPress), str(keyPress),
-                            self.index, f"for {value}")
+      self._generateMapping(self.mapping, key, key, self.index, f"for {value}")
       self.index = self.index+1
 
     # qty sell ones
     for i, keyPress in enumerate(self.QTY_BID_ONES, 1):
+      key = f"{self.OFFER_TOGGLE}+{keyPress}"
       value = i % 10
-      self._generateMapping(self.mapping, f"{self.OFFER_TOGGLE}_{keyPress}", self.QTY_OFFER_ONES[i % 10],
-                            self.index, f"{value} at")
+      self._generateMapping(self.mapping, key, key, self.index, f"{value} at")
       self.index = self.index+1
 
     # qty bid tens
     for i, keyPress in enumerate(self.QTY_BID_TENS, 1):
+      key = keyPress
       value = i * 10
-      self._generateMapping(self.mapping, keyPress, keyPress, self.index, f"for {value}")
+      self._generateMapping(self.mapping, key, key, self.index, f"for {value}")
       self.index = self.index+1
 
     # qty offer tens
     for i, keyPress in enumerate(self.QTY_BID_TENS, 1):
+      key = f"{self.OFFER_TOGGLE}+{keyPress}"
       value = i * 10
-      self._generateMapping(self.mapping, f"{self.OFFER_TOGGLE}_{keyPress}", self.QTY_OFFER_TENS[i % 10],
-                            self.index, f"{value} at")
+      self._generateMapping(self.mapping, key, key, self.index, f"{value} at")
       self.index = self.index+1
 
   #
@@ -133,8 +138,13 @@ class KeyClassMapping():
   def buildMisc(self):
     # spacebar
     self._generateMapping(self.mapping, " ", " ", self.index, "execute market")
-    self._generateMapping(self.mapping, f"{self.OFFER_TOGGLE}_ ", " ", self.index, "execute market")
+    self._generateMapping(self.mapping, f"{self.OFFER_TOGGLE}+ ", f"{self.OFFER_TOGGLE}+ ",
+                          self.index, "execute market")
     self.index += 1
+
+  def get(self, key):
+    return self.mapping.get(key, None)
+
 
 
 if __name__ == "__main__":
