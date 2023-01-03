@@ -164,6 +164,11 @@ class KeyClassMapping():
                           self.index, "cancel")
     self.index += 1
 
+    # garbage class
+    self._generateMapping(self.mapping, "`", "`", self.index, "none")
+    self._generateMapping(self.mapping, f"{self.OFFER_TOGGLE_NAME}+", f"{self.OFFER_TOGGLE_NAME}+`",
+                          self.index, "none")
+    self.index += 1
 
 
 
