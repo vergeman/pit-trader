@@ -7,6 +7,9 @@
 # gesture's data in real-time.
 #
 #
+# Price is held out in front of body
+# Qty is expressed around the chin (single digit) or forehead (tens)
+#
 # The SHIFT key is toggled to denote an offer (selling.)
 #
 # This SHIFT 'toggle' nonsense is a result of being unable to capture combined
@@ -29,22 +32,28 @@
 class KeyClassMapping():
 
   # OFFER_TOGGLE
-  # make sure to change resultant OFFER_ONES, OFFER_TENS
+  # make sure to change resultant OFFER_ONES, PRICE_OFFER_TENS
   # elements to represent appropriate keypress.
   OFFER_TOGGLE = "SHIFT"
 
-  # bids [0..9]
-  BID_ONES = list(range(0, 10))
+  #
+  # PRICE
+  #
 
-  # offers [0..9] - note the keyboard ordering corresponds to 0 first
-  OFFER_ONES = [")", "!", "@", "#", "$", "%", "^", "&", "*", "("]
+  # bids [1..9, 0]
+  PRICE_BID_ONES = list(range(1, 10)) + [0]
 
-  # bids [10, 20...100]
-  BID_TENS = [ 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p' ]
+  # offers [1..9, 0] -
+  PRICE_OFFER_ONES = ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")"]
 
-  # offers [10, 20...100]
-  OFFER_TENS = [t.upper() for t in BID_TENS]
+  #
+  # QUANTITY
+  #
 
+  QTY_BID_ONES = ["a", "s", "d", "f", "g", "h", "j", "k", "l", ";"]
+  QTY_OFFER_ONES = [i.upper() for i in QTY_BID_ONES[:9] ] + [":"]
+  QTY_BID_TENS = ["z", "x", "c", "v", "b", "n", "m", ",", ".", "/"]
+  QTY_OFFER_TENS = [i.upper() for i in QTY_BID_ONES[:7] ] + ["<", ">", "?"]
 
   def __init__(self, OFFER_TOGGLE = "SHIFT"):
     self.OFFER_TOGGLE = OFFER_TOGGLE
@@ -62,36 +71,69 @@ class KeyClassMapping():
       "description": description
     }
 
-
   def build(self):
+    self.buildPrice()
+    self.buildQty()
+    self.buildMisc()
 
-    # bid ones
-    for keyPress in self.BID_ONES:
+
+  #
+  # PRICE
+  # only single digits
+  # 1 to 0 keyboard rows
+  def buildPrice(self):
+    # price bid ones
+    for keyPress in self.PRICE_BID_ONES:
       value = keyPress
       self._generateMapping(self.mapping, str(keyPress), str(keyPress), self.index, f"{value} bid")
       self.index = self.index+1
 
-    # offer ones
-    for i, keyPress in enumerate(self.OFFER_ONES):
-      value = i
-      self._generateMapping(self.mapping, f"{self.OFFER_TOGGLE}_{i}", keyPress, self.index, f"offer {value}")
+    # price offer ones
+    for i, keyPress in enumerate(self.PRICE_OFFER_ONES, 1):
+      value = i % 10 # wrap to 0
+      self._generateMapping(self.mapping, f"{self.OFFER_TOGGLE}_{value}", keyPress, self.index, f"offer {value}")
       self.index = self.index+1
 
-    # bid tens
-    for i, keyPress in enumerate(self.BID_TENS, 1):
+
+  #
+  # QTY
+  # 'a' and 'z' keyboard rows
+  def buildQty(self):
+
+    # qty buy ones
+    for i, keyPress in enumerate(self.QTY_BID_ONES, 1):
+      value = i % 10
+      self._generateMapping(self.mapping, str(keyPress), str(keyPress),
+                            self.index, f"for {value}")
+      self.index = self.index+1
+
+    # qty sell ones
+    for i, keyPress in enumerate(self.QTY_BID_ONES, 1):
+      value = i % 10
+      self._generateMapping(self.mapping, f"{self.OFFER_TOGGLE}_{keyPress}", self.QTY_OFFER_ONES[i % 10],
+                            self.index, f"{value} at")
+      self.index = self.index+1
+
+    # qty bid tens
+    for i, keyPress in enumerate(self.QTY_BID_TENS, 1):
       value = i * 10
-      self._generateMapping(self.mapping, keyPress, keyPress, self.index, f"{value} bid")
+      self._generateMapping(self.mapping, keyPress, keyPress, self.index, f"for {value}")
       self.index = self.index+1
 
-    # offer tens
-    for i, keyPress in enumerate(self.OFFER_TENS, 1):
+    # qty offer tens
+    for i, keyPress in enumerate(self.QTY_BID_TENS, 1):
       value = i * 10
-      self._generateMapping(self.mapping, f"{self.OFFER_TOGGLE}_{keyPress.lower()}", keyPress, self.index, f"offer {value}")
+      self._generateMapping(self.mapping, f"{self.OFFER_TOGGLE}_{keyPress}", self.QTY_OFFER_TENS[i % 10],
+                            self.index, f"{value} at")
       self.index = self.index+1
 
-    # Misc
-    self._generateMapping(self.mapping, "m", "m", self.index, "execute market")
-    self._generateMapping(self.mapping, f"{self.OFFER_TOGGLE}_m", "M", self.index, "execute market")
+  #
+  # MISC
+  #
+  def buildMisc(self):
+    # spacebar
+    self._generateMapping(self.mapping, " ", " ", self.index, "execute market")
+    self._generateMapping(self.mapping, f"{self.OFFER_TOGGLE}_ ", " ", self.index, "execute market")
     self.index += 1
 
 
