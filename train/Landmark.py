@@ -83,13 +83,14 @@ class Landmark:
         #
         for detection in detections:
 
-            #output_csv_face(key, detection.location_data)
-            #also detection.location_data.format,
-            #detection.location_data.relative_bounding_box
-            for i, point in enumerate(detection.location_data.relative_keypoints):
-                j = i*2
-                self.face_landmarks[j] = point.x - self.base_x
-                self.face_landmarks[j+1] = point.y - self.base_y
+          #output_csv_face(key, detection.location_data)
+          #also detection.location_data.format,
+          #detection.location_data.relative_bounding_box
+          #print(self.base_x, self.base_y, detection.location_data)
+          for i, point in enumerate(detection.location_data.relative_keypoints):
+            j = i*2
+            self.face_landmarks[j] = point.x - self.base_x
+            self.face_landmarks[j+1] = point.y - self.base_y
 
         #print(self.face_landmarks)
 
@@ -103,6 +104,7 @@ class Landmark:
 
         #print("Landmark", val)
         print("Base", self.base_x, self.base_y)
+        print("Face", self.face_landmarks)
         print("L", self.left_hand_landmarks)
         print("R", self.right_hand_landmarks)
         return val
