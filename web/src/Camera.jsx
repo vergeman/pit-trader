@@ -15,8 +15,8 @@ export default function Camera(props) {
   const {control, fpsControl } = useControl(controlRef);
   const faceDetection = useFaceDetection(canvasRef, props.landmarks);
   const hands = useHandsDetection(canvasRef, props.landmarks);
-  console.log("FD", faceDetection);
-  console.log("HANDS", hands);
+  //console.log("FD", faceDetection);
+  //console.log("HANDS", hands);
 
   useEffect(() => {
     console.log("useEffect Camera", window.Camera);

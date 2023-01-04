@@ -16,7 +16,7 @@ export default function Demo() {
     classifier.load().then(async () => {
       const interval = setInterval(async () => {
         const res = await classifier.classify();
-
+        classifier.landmarks.print();
         setGestureClass(res);
       }, 250);
 
@@ -31,8 +31,9 @@ export default function Demo() {
       <Camera landmarks={landmarks} />
 
       {gestureClass && gestureClass.probs && (
-        <p>
-          <table style={{ margin: "0 auto" }}>
+
+        <table style={{ margin: "0 auto" }}>
+          <thead>
             <tr>
               {gestureClass.probs.map((prob, i) => {
                 return (
@@ -46,13 +47,16 @@ export default function Demo() {
                 );
               })}
             </tr>
+          </thead>
+          <tbody>
             <tr>
               {gestureClass.probs.map((prob, i) => (
                 <td>{prob}</td>
               ))}
             </tr>
-          </table>
-        </p>
+          </tbody>
+        </table>
+
       )}
     </div>
   );

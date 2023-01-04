@@ -38,7 +38,7 @@ export default class Landmarks {
     return [].concat(this.handLandmarks, this.faceLandmarks);
   }
 
-  async print() {
-    console.log(this.get());
+  print() {
+    console.log(JSON.stringify( this.get()) );
   }
 }
