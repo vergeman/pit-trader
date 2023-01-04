@@ -16,7 +16,7 @@ export default function Demo() {
     classifier.load().then(async () => {
       const interval = setInterval(async () => {
         const res = await classifier.classify();
-        classifier.landmarks.print();
+        //console.log( JSON.stringify([res.arg, classifier.landmarks.get() ]));
         setGestureClass(res);
       }, 250);
 

@@ -32,8 +32,13 @@ export default function Camera(props) {
 
         //await props.landmarks.print()
       },
+      width: 640,
+      height: 480,
+
+      /*
       width: 1280,
       height: 720,
+      */
     });
 
     camera.start();
