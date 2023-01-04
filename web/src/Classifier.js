@@ -21,7 +21,14 @@ export default class Classifier {
 
   softmax(arr) {
     return arr.map(function(value,index) {
-      return Math.exp(value) / arr.map( function(y /*value*/){ return Math.exp(y) } ).reduce( function(a,b){ return a+b });
+
+      const val =  Math.exp(value);
+
+      const sum = arr
+            .map( function(y){ return Math.exp(y); } )
+            .reduce( function(a,b){ return a+b; });
+
+      return (val/sum);
     });
   }
 
@@ -39,8 +46,16 @@ export default class Classifier {
       const probs = this.softmax(output);
       const arg = this.argMax(probs);
 
-      //console.log("P", probs, arg);
-      return {probs, arg};
+      const strProbs = Array
+            .from( probs )
+            .map(p => p.toFixed(4));
+
+      // console.log("P", strProbs, arg);
+
+      return {
+        probs: strProbs,
+        arg
+      };
 
     } catch(e) {
       //err
