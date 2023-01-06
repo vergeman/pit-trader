@@ -1,9 +1,9 @@
-
 export default class Classifier {
 
   constructor(landmarks) {
     this.session = null;
     this.landmarks = landmarks;
+    console.log("CLASSIFIER");
   }
 
   async load(filename = './onnx_model.onnx') {

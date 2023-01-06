@@ -4,6 +4,7 @@ export default function useHandsDetection(canvasRef, landmarks: Landmarks) {
   const [hands, setHands] = useState(null);
 
   const onHandResults = function (results) {
+
     landmarks.resetHandLandmarks();
 
     if (results.multiHandLandmarks) {
@@ -52,7 +53,7 @@ export default function useHandsDetection(canvasRef, landmarks: Landmarks) {
     hands.onResults(onHandResults);
 
     setHands(hands);
-  }, []);
+  }, [landmarks]);
 
   return hands;
 }

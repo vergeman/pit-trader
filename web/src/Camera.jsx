@@ -1,11 +1,11 @@
-import { useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
+import React from "react";
 import useFaceDetection from "./useFaceDetection.js";
 import useHandsDetection from "./useHandsDetection.js";
 import useControl from "./useControl.js";
 
-export default function Camera(props) {
+function Camera(props) {
   //TODO: params isActive on/off given keystroke from above
-  //TODO: verify this doesn't re-render
   //TODO: promises in onFrame could optimize - Promise.all doesn't work
 
   const controlRef = useRef(null);
@@ -18,17 +18,28 @@ export default function Camera(props) {
   //console.log("FD", faceDetection);
   //console.log("HANDS", hands);
 
+
   useEffect(() => {
-    console.log("useEffect Camera", window.Camera);
+    console.log("Camera [useEffect]", window.Camera);
     //console.log("control", control);
 
     const camera = new window.Camera(videoRef.current, {
       onFrame: async () => {
 
-        fpsControl.tick();
+        if (fpsControl) fpsControl.tick();
 
-        await faceDetection.send({ image: videoRef.current });
-        await hands.send({ image: videoRef.current });
+        if (faceDetection) {
+          await faceDetection.send({ image: videoRef.current });
+        }
+
+        if (hands) {
+          await hands.send({ image: videoRef.current });
+        }
+
+        if (props.classifier) {
+          const res = await props.classifier.classify();
+          props.setGestureClass(res);
+        }
 
         //await props.landmarks.print()
       },
@@ -42,7 +53,7 @@ export default function Camera(props) {
     });
 
     camera.start();
-  }, [faceDetection, hands]);
+  }, [props.classifier, faceDetection, hands]);
 
   return (
     <div>
@@ -60,3 +71,5 @@ export default function Camera(props) {
     </div>
   );
 }
+
+export default React.memo(Camera);
