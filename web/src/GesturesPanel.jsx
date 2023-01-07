@@ -1,8 +1,11 @@
-export default function GesturesClass(props) {
+export default function GesturesPanel(props) {
 
   if( !props.results || !props.results.probs) return null;
 
   const results = props.results;
+  const inputBufferState = results.inputBufferState;
+
+  if (!results.inputBufferState) return null;
 
   return (
 
@@ -10,12 +13,13 @@ export default function GesturesClass(props) {
       <thead>
         <tr>
           {results.probs.map((prob, i) => {
+            const bg = (i === results.arg ?
+                        (inputBufferState.inputState === 2 ? "yellow" : "blue") :
+                        "white");
             return (
               <th
                 key={`head-${i}`}
-                style={{
-                  background: i === results.arg ? "yellow" : "white",
-                }}
+                style={{background: bg}}
               >
                 {i}
               </th>
@@ -30,6 +34,16 @@ export default function GesturesClass(props) {
           ))}
         </tr>
       </tbody>
+
+
+      {inputBufferState &&
+        <tfoot>
+          <td>State: {inputBufferState.inputState}</td>
+          <td>Val: {inputBufferState.value}</td>
+        </tfoot>
+      }
+
+
     </table>
 
   );

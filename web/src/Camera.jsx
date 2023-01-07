@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import React from "react";
 import useFaceDetection from "./useFaceDetection.js";
 import useHandsDetection from "./useHandsDetection.js";
@@ -22,6 +22,7 @@ function Camera(props) {
   useEffect(() => {
     console.log("Camera [useEffect]", window.Camera);
     //console.log("control", control);
+    let _arg = null;
 
     const camera = new window.Camera(videoRef.current, {
       onFrame: async () => {
@@ -37,8 +38,18 @@ function Camera(props) {
         }
 
         if (props.classifier) {
+
           const res = await props.classifier.classify();
-          props.setGestureClass(res);
+
+          //NOTE: minimize renders? - wait for change
+          //if (res && res.arg !==_arg) {
+          //_arg = res.arg;
+          //fpsControl -i secs
+
+          //at this point only want "valid", filtered results to trigger render
+          props.setGestureData(res);
+          //}
+
         }
 
         //await props.landmarks.print()

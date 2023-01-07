@@ -1,8 +1,12 @@
+import InputBufferState from "./input/InputBufferState.js";
+
 export default class Classifier {
 
-  constructor(landmarks) {
+  constructor(landmarks, inputBufferState) {
     this.session = null;
     this.landmarks = landmarks;
+    this.inputBufferState = new InputBufferState();
+
     console.log("CLASSIFIER");
   }
 
@@ -44,18 +48,33 @@ export default class Classifier {
       const results = await this.session.run({'landmarks': live});
       const output = results.class.data;
       const probs = this.softmax(output);
-      const arg = this.argMax(probs);
+      let arg = this.argMax(probs);
 
-      const strProbs = Array
-            .from( probs )
-            .map(p => p.toFixed(4));
+      let strProbs = Array
+          .from( probs )
+          .map(p => p.toFixed(4));
 
-      // console.log("P", strProbs, arg);
-
-      return {
+      const res = {
         probs: strProbs,
         arg
       };
+
+      //POST-PROCESS
+
+      //THRESHOLD
+      // console.log("P", strProbs, arg);
+      //if (strProbs.every( prob => prob < .9) ) {
+      //arg = 6;
+      //}
+
+      //MOVING AVG / WINDOW / FILTER
+
+
+      //STATE - should have value now
+      this.inputBufferState.update(res);
+      res.inputBufferState = this.inputBufferState;
+
+      return res;
 
     } catch(e) {
       //err
