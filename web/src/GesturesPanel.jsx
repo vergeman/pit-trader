@@ -4,6 +4,7 @@ export default function GesturesPanel(props) {
 
   const results = props.results;
   const inputBufferState = results.inputBufferState;
+  const probBuffer = results.probBuffer;
 
   if (!results.inputBufferState) return null;
 
@@ -38,8 +39,12 @@ export default function GesturesPanel(props) {
 
       {inputBufferState &&
         <tfoot>
-          <td>State: {inputBufferState.inputState}</td>
-          <td>Val: {inputBufferState.value}</td>
+          <tr>
+            <td>State: {inputBufferState.inputState}</td>
+            <td>Val: {inputBufferState.value}</td>
+            <td>Window: {JSON.stringify(probBuffer)} </td>
+            <td>Finals: {JSON.stringify(inputBufferState.gestureFinals)} </td>
+          </tr>
         </tfoot>
       }
 

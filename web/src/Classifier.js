@@ -1,4 +1,5 @@
 import InputBufferState from "./input/InputBufferState.js";
+import EMABuffer from './input/EMABuffer.js';
 
 export default class Classifier {
 
@@ -6,6 +7,8 @@ export default class Classifier {
     this.session = null;
     this.landmarks = landmarks;
     this.inputBufferState = new InputBufferState();
+    this.emaBuffer = new EMABuffer();
+
 
     console.log("CLASSIFIER");
   }
@@ -47,33 +50,37 @@ export default class Classifier {
 
       const results = await this.session.run({'landmarks': live});
       const output = results.class.data;
-      const probs = this.softmax(output);
+      let probs = this.softmax(output);
       let arg = this.argMax(probs);
 
+      //POST-PROCESS
+
+      //MOVING AVG / WINDOW / FILTER
+      //Disabled for now see EMABuffer.js
+      //probs = this.emaBuffer.calc(probs, 2);
+
       let strProbs = Array
-          .from( probs )
-          .map(p => p.toFixed(4));
+        .from(probs)
+        .map(p => p.toFixed(4));
 
       const res = {
         probs: strProbs,
         arg
       };
 
-      //POST-PROCESS
 
-      //THRESHOLD
-      // console.log("P", strProbs, arg);
-      //if (strProbs.every( prob => prob < .9) ) {
-      //arg = 6;
-      //}
-
-      //MOVING AVG / WINDOW / FILTER
-
+      //THRESHOLD super sensitive to reduce noise
+      //if too high, can get jumpy on edge and trigger false "finals"
+      //e.g. 95/94/95/94 -> triggers final, clear, then another final clear
+      //2 executions
+      if (strProbs.every( prob => prob < .95) ) {
+        res.arg = 6;
+      }
 
       //STATE - should have value now
       this.inputBufferState.update(res);
       res.inputBufferState = this.inputBufferState;
-
+      //res.probBuffer = this.emaBuffer.probBuffer
       return res;
 
     } catch(e) {
@@ -81,4 +88,5 @@ export default class Classifier {
       console.log("ERR", e);
     }
   }
+
 }
