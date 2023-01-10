@@ -1,6 +1,7 @@
 class INPUT_STATE {
   static IDLE = 1;
   static PENDING = 2;
+  static LOCKED = 3;
 }
 
 const TIMEOUT = 750;
@@ -16,6 +17,8 @@ class InputBufferState {
     this.gestureValue = null;
     this._gestureValue = null;
     this.value = 0;
+
+    this.gestureFinals = [];
   }
 
   getGestureValue(classNum) {
@@ -33,16 +36,20 @@ class InputBufferState {
     return vals[parseInt(classNum)];
   }
 
+  //TODO: replace implementation with requestAnimationFrame
   setTimer() {
+
     this.timer = setTimeout(() => {
       console.log("FINAL", this.value);
+      this.gestureFinals.push(this.value);
 
       this.value = 0;
       this.digit_length = 0;
       this.gestureValue = null;
       this._gestureValue = null;
 
-      this.inputState = INPUT_STATE.IDLE;
+      //this gets reset to IDLE when a non null gesture is detected
+      this.inputState = INPUT_STATE.LOCKED;
     }, TIMEOUT);
   }
 
@@ -53,7 +60,7 @@ class InputBufferState {
   //keep simple - work for just compound number (not qty or price)
   //ex: 72
   update(gestureData) {
-    if (gestureData === null) return;
+    if (gestureData === null) return null;
 
     const gestureValue = this.getGestureValue(gestureData.arg);
     const digit_length =
@@ -61,6 +68,16 @@ class InputBufferState {
 
     console.log(this.inputState, gestureValue, digit_length);
 
+    //post submit
+    //locked until detect null gesture
+    if (this.inputState === INPUT_STATE.LOCKED) {
+      if (gestureValue === null){
+        this.inputState = INPUT_STATE.IDLE;
+      }
+    }
+
+
+    //"start"
     if (this.inputState === INPUT_STATE.IDLE) {
       if (gestureValue !== null) {
         this.inputState = INPUT_STATE.PENDING;
