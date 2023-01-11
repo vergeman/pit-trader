@@ -3,7 +3,8 @@ services:
   web:
     build: './web/'
     ports:
-      - "3000:3000"
+      - 3000:3000
+      - 9229:9229
     volumes:
       - type: bind
         source: ./web
