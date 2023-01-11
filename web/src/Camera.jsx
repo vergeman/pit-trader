@@ -18,7 +18,6 @@ function Camera(props) {
   //console.log("FD", faceDetection);
   //console.log("HANDS", hands);
 
-
   useEffect(() => {
     console.log("Camera [useEffect]", window.Camera);
     //console.log("control", control);
@@ -27,7 +26,24 @@ function Camera(props) {
     const camera = new window.Camera(videoRef.current, {
       onFrame: async () => {
 
-        if (fpsControl) fpsControl.tick();
+        if (fpsControl) {
+          fpsControl.tick();
+
+
+          /*
+           * Developing at < 30 fps - presumably there are faster machines but that
+           * would likely entail rethinking input handling / timings.
+           * So we slow it down by throttling a frame.
+           *
+           * NB: conceptually don't want to drop a frame, as that would speed things
+           * up; want consistency.
+           */
+
+          const lastFPS = fpsControl.g.slice(-1);  //most recent fps rate
+          if ( lastFPS > 30) {
+            await new Promise(resolve => setTimeout(resolve, 1/lastFPS * 1000) );
+          }
+        }
 
         if (faceDetection) {
           await faceDetection.send({ image: videoRef.current });

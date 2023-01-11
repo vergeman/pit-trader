@@ -2,12 +2,13 @@
  * Issue with recognition delay
  *
  * Any kind of windowing or smoothing tends to invoke a noticeable latency with
- * gesture recognition
+ * gesture recognition - root is the FPS is just too slow with hands.
  *
- * Moving average "buffer" from a low probability to high probability requires 2
- * or 3 frames to pass a threshold e.g from 0 to .4 to .99. Fast frame rates
- * result a noticeable gesture pause for the probabilities to "average up" past
- * a threshold. On lower frame rates, compound gestures are extremely frustrating.
+ * Moving average: value from a low probability to high probability requires 2
+ * or 3 high probability frames to pass a threshold e.g from 0 -> .4 -> .99.
+ * Even fast rates have a noticeable gesture hold period / delay for the
+ * probabilities to "average up" past a threshold.
+ * On lower frame rates, compound gestures are extremely frustrating.
  *
  * Similarly, a simple window buffer sequence with majority vote of classes e.g. [1, garbage, 1,...]
  * requires at the same 2,3 "frames" to decide a gesture
