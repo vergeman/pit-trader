@@ -32,6 +32,8 @@ export default function useFaceDetection(canvasRef, landmarks: Landmarks) {
         fillColor: "#00000000",
       });
 
+      //NB: landmarks order for facedetection in FaceKeypoint order left/right
+      //seem inverted - selfie mode maybe?
       window.drawLandmarks(canvasCtx, results.detections[0].landmarks, {
         color: "red",
         radius: 5,
@@ -60,7 +62,7 @@ export default function useFaceDetection(canvasRef, landmarks: Landmarks) {
     faceDetection.onResults(onFaceResults);
 
     setFaceDetection(faceDetection);
-  }, []);
+  }, [landmarks]);
 
   return faceDetection;
 }

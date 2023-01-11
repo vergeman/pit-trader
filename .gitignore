@@ -2,3 +2,5 @@
 scratch/*
 !scratch/.gitkeep
 __pycache__/
+*.bkup
+model_*.onnx

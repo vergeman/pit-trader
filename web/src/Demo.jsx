@@ -1,42 +1,45 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer, useState } from "react";
 import { Link } from "react-router-dom";
-import Camera from './Camera.jsx';
-import Landmarks from './Landmarks.js';
-import Classifier from './Classifier.js';
+import Landmarks from "./Landmarks.js";
+import Classifier from "./Classifier.js";
+import Camera from "./Camera.jsx";
+import GesturesPanel from './GesturesPanel.jsx';
 
 export default function Demo() {
 
-  const landmarks = new Landmarks();
-  const classifier = new Classifier(landmarks);
-  console.log("Demo.jsx");
-  //TODO; defautl garbage class
-  const [gestureClass, setGestureClass] = useState(null);
+  const [gestureData, setGestureData] = useState(null);
+  const [landmarks, setLandmarks] = useState(null);
+  const [classifier, setClassifier] = useState(null);
+
 
   useEffect(() => {
-    console.log("Demo.jsx: useEffect");
-    classifier.load().then( async() => {
+    console.log("[Demo.jsx]: useEffect init");
+    const landmarks = new Landmarks();
+    const classifier = new Classifier(landmarks);
 
-      const interval = setInterval(async () => {
+    setLandmarks(landmarks);
+    setClassifier(classifier);
 
-        const res = await classifier.classify();
+    classifier.load();
+  }, []);
 
-        setGestureClass(res);
-      }, 250);
-
-      return () => clearInterval(interval);
-
-    })
-  }, [])
-
-
+  /*
+   * TODO: create HOC
+   * move Camera component to Wrapper
+   * move classifier, landmark to Wrapper
+   * pass setGestureclass to Wrapper
+   *
+   * <Demo>
+   *   <GestureData setGesture>
+   *      <Camera landmark, classifier>
+   */
   return (
     <div className="container">
       <Link to="/">Home</Link>
       <h1>Hello World</h1>
-      <Camera landmarks={landmarks} />
-      <p>{JSON.stringify(gestureClass)}</p>
+      <Camera landmarks={landmarks} classifier={classifier}
+              setGestureData={setGestureData} />
+      <GesturesPanel results={gestureData} />
     </div>
-
   );
-
 }
