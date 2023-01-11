@@ -7,30 +7,7 @@ import GesturesPanel from './GesturesPanel.jsx';
 
 export default function Demo() {
 
-  const reducer = (state, action) => {
-
-    switch (action.type) {
-      case 'update':
-        console.log('reducer update');
-        return {
-          ...state,
-          res: action.res
-        };
-
-
-      default:
-        console.log('reducer default');
-        return {
-          ...state,
-          res: action.res
-        };
-
-    }
-  };
-
-  const [gestureD, dispatch] = useReducer(reducer, null);
   const [gestureData, setGestureData] = useState(null);
-
   const [landmarks, setLandmarks] = useState(null);
   const [classifier, setClassifier] = useState(null);
 
@@ -61,9 +38,8 @@ export default function Demo() {
       <Link to="/">Home</Link>
       <h1>Hello World</h1>
       <Camera landmarks={landmarks} classifier={classifier}
-              gestureReducer={dispatch}
               setGestureData={setGestureData} />
-      <GesturesPanel results={gestureD && gestureD.res} />
+      <GesturesPanel results={gestureData} />
     </div>
   );
 }

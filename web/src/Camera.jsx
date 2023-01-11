@@ -63,8 +63,7 @@ function Camera(props) {
           //fpsControl -i secs
 
           //at this point only want "valid", filtered results to trigger render
-          //props.setGestureData(res);
-          props.gestureReducer({type: 'update', res});
+          props.setGestureData(res);
           //}
 
         }
