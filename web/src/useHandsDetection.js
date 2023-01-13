@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export default function useHandsDetection(canvasRef, landmarks: Landmarks) {
+export default function useHandsDetection(canvasRef, landmarks) {
   const [hands, setHands] = useState(null);
 
   const onHandResults = function (results) {
@@ -34,15 +34,15 @@ export default function useHandsDetection(canvasRef, landmarks: Landmarks) {
   };
 
   useEffect(() => {
-    console.log("[HandsDetection] useEffect");
+    console.log("[HandsDetection] useEffect init");
 
-    const hands = new window.Hands({
+    const _hands = new window.Hands({
       locateFile: (file) => {
         return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
       },
     });
 
-    hands.setOptions({
+    _hands.setOptions({
       selfieMode: true,
       maxNumHands: 2,
       modelComplexity: 1,
@@ -50,9 +50,14 @@ export default function useHandsDetection(canvasRef, landmarks: Landmarks) {
       minTrackingConfidence: 0.5,
     });
 
-    hands.onResults(onHandResults);
+    setHands(_hands);
+  }, []);
 
-    setHands(hands);
+  useEffect(() => {
+    console.log("[HandsDetection] useEffect landmarks", hands);
+    if(hands) {
+      hands.onResults(onHandResults);
+    }
   }, [landmarks]);
 
   return hands;

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export default function useFaceDetection(canvasRef, landmarks: Landmarks) {
+export default function useFaceDetection(canvasRef, landmarks) {
   const [faceDetection, setFaceDetection] = useState(null);
 
   const onFaceResults = function (results) {
@@ -45,23 +45,28 @@ export default function useFaceDetection(canvasRef, landmarks: Landmarks) {
   };
 
   useEffect(() => {
-    console.log("[FaceDetection] useEffect");
+    console.log("[FaceDetection] useEffect init");
 
-    const faceDetection = new window.FaceDetection({
+    const _faceDetection = new window.FaceDetection({
       locateFile: (file) => {
         return `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}`;
       },
     });
 
-    faceDetection.setOptions({
+    _faceDetection.setOptions({
       selfieMode: true,
       model: "short",
       minDetectionConfidence: 0.5,
     });
 
-    faceDetection.onResults(onFaceResults);
+    setFaceDetection(_faceDetection);
+  }, []);
 
-    setFaceDetection(faceDetection);
+  useEffect( () => {
+    console.log("[FaceDetection] useEffect landmarks", faceDetection);
+    if (faceDetection) {
+      faceDetection.onResults(onFaceResults);
+    }
   }, [landmarks]);
 
   return faceDetection;
