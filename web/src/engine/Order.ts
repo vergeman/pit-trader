@@ -56,10 +56,28 @@ export class Order {
     this._checkSetComplete();
     oppOrder._checkSetComplete();
 
-    //TODO: not sure
-    //add to orderFills[] in both sides?
+    //NB: "this" can be market or limit order
+    //but oppOrder will be a limit (market order never joins the queue)
     this._orderFills.push(oppOrder);
     oppOrder._orderFills.push(this);
+  }
+
+  //TODO: update when decide price "decimals"
+  priceFilled(): number {
+    if (this.orderType === OrderType.Market) {
+      //wAvg
+      let qtyPrice = 0;
+      let totalQty = 0;
+
+      for (let order of this._orderFills) {
+        qtyPrice += order.qtyFilled * order.price
+        totalQty += order.qtyFilled;
+      }
+
+      return (qtyPrice / totalQty);
+    }
+
+    return this.price;
   }
 
   _checkSetComplete(): void {

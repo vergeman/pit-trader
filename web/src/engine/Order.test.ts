@@ -1,6 +1,36 @@
 import { OrderType, Order } from "./Order";
+import MatchingEngine from "./MatchingEngine";
 
 describe("Order", () => {
+
+  it("priceFilled() returns weighted avg price buys", () => {
+    const me = new MatchingEngine();
+    const o1 = new Order("123", OrderType.Limit, 50, 100);
+    const o2 = new Order("123", OrderType.Limit, 50, 50);
+    const o3 = new Order("123", OrderType.Market, -100, 1);
+    me.process(o1)
+    me.process(o2)
+    me.process(o3);
+
+    expect(o3.priceFilled()).toEqual(75);
+    expect(o2.priceFilled()).toEqual(50);
+    expect(o1.priceFilled()).toEqual(100);
+  })
+
+  it("priceFilled() returns weighted avg price sells", () => {
+    const me = new MatchingEngine();
+    const o1 = new Order("123", OrderType.Limit, -50, 100);
+    const o2 = new Order("123", OrderType.Limit, -50, 50);
+    const o3 = new Order("123", OrderType.Market, 100, Number.NaN);
+    me.process(o1)
+    me.process(o2)
+    me.process(o3);
+
+    expect(o3.priceFilled()).toEqual(75);
+    expect(o2.priceFilled()).toEqual(50);
+    expect(o1.priceFilled()).toEqual(100);
+  })
+
   it("maintains accurate timestamps", async () => {
     const o1 = new Order("123", OrderType.Market, 50, 100);
     await new Promise((resolve) => setTimeout(resolve, 100));
