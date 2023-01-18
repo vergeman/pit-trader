@@ -5,7 +5,7 @@ export enum OrderType {
   Limit,
 }
 
-export enum Status {
+export enum OrderStatus {
   New,
   Live,
   Complete,
@@ -21,11 +21,11 @@ export class Order {
   private _qtyFilled: number; // filled quantity
   private _orderFills: Order[];
   private _price: number;
-  private _status: Status;
+  private _status: OrderStatus;
   private _timestamp: number;
 
   //TODO: what is my price resolution (no decimals)
-
+  //TODO: player submits hit/lift own order -> pre risk check
   constructor(
     player_id: string,
     orderType: OrderType,
@@ -35,12 +35,12 @@ export class Order {
     this._player_id = player_id;
     this._orderType = orderType;
     this._qty = qty;
-    this._price = price;
+    this._price = orderType === OrderType.Limit ? price : Number.NaN;
 
     this._id = uuidv4();
     this._qtyFilled = 0;
     this._orderFills = [];
-    this._status = Status.New;
+    this._status = OrderStatus.New;
     this._timestamp = Date.now();
   }
 
@@ -64,7 +64,7 @@ export class Order {
 
   _checkSetComplete(): void {
     if (this.qty === 0) {
-      this._status = Status.Complete;
+      this._status = OrderStatus.Complete;
     }
   }
 
@@ -81,8 +81,7 @@ export class Order {
   }
 
   reject() {
-    //status reject
-    this._status = Status.Rejected;
+    this._status = OrderStatus.Rejected;
   }
 
   canTransact(oppOrder: Order): boolean {
@@ -95,7 +94,9 @@ export class Order {
   get id(): string {
     return this._id;
   }
-
+  get player_id(): string{
+    return this._player_id;
+  }
   get price(): number {
     return this._price;
   }
@@ -105,6 +106,12 @@ export class Order {
   set qty(num: number) {
     this._qty = num;
   }
+  get qtyFilled(): number {
+    return this._qtyFilled;
+  }
+  set status(status: OrderStatus) {
+    this._status = status;
+  }
   get orderType(): OrderType {
     return this._orderType;
   }
@@ -113,6 +120,9 @@ export class Order {
   }
   get orderFills(): Order[] {
     return this._orderFills;
+  }
+  get status(): OrderStatus {
+    return this._status;
   }
 }
 

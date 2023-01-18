@@ -1,4 +1,4 @@
-import { OrderType, Order } from "./Order";
+import { OrderStatus, OrderType, Order } from "./Order";
 import Heap from "heap-js";
 
 export default class MatchingEngine {
@@ -34,6 +34,7 @@ export default class MatchingEngine {
 
   //sort descending price, FIFO
   maxComparator(a: Order, b: Order): number {
+
     //highest price
     if (a.price > b.price) {
       return -1;
@@ -72,6 +73,7 @@ export default class MatchingEngine {
 
     //choose opposing order
     let oppOrder = oppQueue.peek();
+    order.status = OrderStatus.Live;
 
     // MARKET
     if (order.orderType === OrderType.Market) {
@@ -84,13 +86,18 @@ export default class MatchingEngine {
       //sweep orders until filled
       while (order.qty && oppOrder) {
         order.execute(oppOrder);
+
         if (oppOrder.qty === 0) {
           oppQueue.poll();
           oppOrder = oppQueue.peek();
         }
       }
 
-      //TODO: policy? no more limit orders but active market order qty remains
+      //TODO: unsure policy - no more limit orders but active market order qty remains
+      //marking as complete with partial fill, doesn't join queue
+      if (order.qty !== 0) {
+        order.status = OrderStatus.Complete;
+      }
     }
 
     //LIMIT
@@ -111,7 +118,7 @@ export default class MatchingEngine {
     }
   }
 
-  //cancel(order) setStatus and remove from queue
+  //cancel(order) setOrderStatus and remove from queue
 
   //riskChecker() - likely move out to separate class
 
