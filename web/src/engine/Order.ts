@@ -1,39 +1,67 @@
+import { v4 as uuidv4 } from "uuid";
+
 export enum OrderType {
   Market,
-  Limit
+  Limit,
+}
+
+export enum Status {
+  New,
+  Live,
+  Complete,
+  Cancelled,
+  Rejected,
 }
 
 export class Order {
-
-  private _type: OrderType;
-  private _qty: number;
+  private _id: string;
+  private _player_id: string;
+  private _orderType: OrderType;
+  private _qty: number; // initial quantity
+  private _qtyFilled: number; // filled quantity
+  private _orderFills: Order[];
   private _price: number;
+  private _status: Status;
   private _timestamp: number;
 
   //TODO: what is my price resolution (no decimals)
 
-  constructor(type: OrderType, qty: number, price: number) {
-    // player reference /id, timestamp/ordering,
-    // type: market, limit, cancel  - think that's all we'll support initially
-    // buy/sell, qty, price,
-    // filled/remaining, other-side of order component
-
-    //this._id = new uuid
-    //this._playerId;
-    //
-    this._type = type;
+  constructor(
+    player_id: string,
+    orderType: OrderType,
+    qty: number,
+    price: number
+  ) {
+    this._player_id = player_id;
+    this._orderType = orderType;
     this._qty = qty;
     this._price = price;
+
+    this._id = uuidv4();
+    this._qtyFilled = 0;
+    this._orderFills = [];
+    this._status = Status.New;
     this._timestamp = Date.now();
   }
 
-  get price(): number { return this._price };
+  execute(order:Order) {}
+
+  get id(): string {
+    return this._id;
+  }
+
+  get price(): number {
+    return this._price;
+  }
 
   get orderType(): OrderType {
-    return this._type;
+    return this._orderType;
   }
   get timestamp(): number {
     return this._timestamp;
+  }
+  get orderFills(): Order[] {
+    return this._orderFills;
   }
 }
 
