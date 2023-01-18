@@ -5,12 +5,12 @@ describe("maxComparator / minComparator", () => {
   it("ensure maxComparator orders priority queue by max price then timestamp", async () => {
     const me = new MatchingEngine();
 
-    const o1 = new Order(OrderType.Market, 50, 100);
+    const o1 = new Order("123", OrderType.Market, 50, 100);
     await new Promise((resolve) => setTimeout(resolve, 100));
 
-    const o2 = new Order(OrderType.Market, 50, 101);
+    const o2 = new Order("123", OrderType.Market, 50, 101);
 
-    const o3 = new Order(OrderType.Market, 50, 100);
+    const o3 = new Order("123", OrderType.Market, 50, 100);
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     me.addBid(o1);
@@ -27,12 +27,12 @@ describe("maxComparator / minComparator", () => {
   it("ensure minComparator orders priority queue by max price then timestamp", async () => {
     const me = new MatchingEngine();
 
-    const o1 = new Order(OrderType.Market, -50, 100);
+    const o1 = new Order("123", OrderType.Market, -50, 100);
     await new Promise((resolve) => setTimeout(resolve, 100));
 
-    const o2 = new Order(OrderType.Market, -50, 101);
+    const o2 = new Order("123", OrderType.Market, -50, 101);
 
-    const o3 = new Order(OrderType.Market, -50, 100);
+    const o3 = new Order("123", OrderType.Market, -50, 100);
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     me.addOffer(o1);
@@ -48,9 +48,9 @@ describe("maxComparator / minComparator", () => {
 
   it("supports removal of element from queue if needed (e.g. canceled)", () => {
     const me = new MatchingEngine();
-    const o1 = new Order(OrderType.Market, -50, 100);
-    const o2 = new Order(OrderType.Market, -50, 101);
-    const o3 = new Order(OrderType.Market, -50, 102);
+    const o1 = new Order("123", OrderType.Market, -50, 100);
+    const o2 = new Order("123", OrderType.Market, -50, 101);
+    const o3 = new Order("123", OrderType.Market, -50, 102);
 
     me.addOffer(o1);
     me.addOffer(o2);
