@@ -1,4 +1,4 @@
-import { OrderType, Order } from "./Order";
+import { OrderStatus, OrderType, Order } from "./Order";
 import MatchingEngine from "./MatchingEngine";
 
 describe("Order", () => {
@@ -51,4 +51,10 @@ describe("Order", () => {
     expect(typeof o1.id == "string").toBeTruthy();
     expect(o1.id.length).toEqual(36);
   });
+
+  it("cancelled() sets status to Cancelled", () => {
+    const o1 = new Order("123", OrderType.Limit, 50, 100);
+    o1.cancelled();
+    expect(o1.status).toBe(OrderStatus.Cancelled);
+  })
 });

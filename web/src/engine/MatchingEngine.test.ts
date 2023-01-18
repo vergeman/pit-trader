@@ -1,12 +1,10 @@
 import MatchingEngine from "./MatchingEngine";
 import { OrderStatus, OrderType, Order } from "./Order";
 
-
 // TODO: cancel() operation
 // TODO: effect on player - what happens post execute? what do we need
 
 describe("process() basic operations", () => {
-
   it("adds a limit order to each empty queue", () => {
     const me = new MatchingEngine();
     const o1 = new Order("Player 1", OrderType.Limit, 50, 100);
@@ -75,7 +73,6 @@ describe("process() basic operations", () => {
     const bid = me.bids.peek();
     expect(bid && bid.qty).toEqual(450);
   });
-
 });
 
 describe("process() orders fill on multiple orders", () => {
@@ -144,6 +141,71 @@ describe("process() orders fill on multiple orders", () => {
     expect(o2.status).toBe(OrderStatus.Complete);
     expect(o3.status).toBe(OrderStatus.Complete);
   });
+});
+
+describe("cancel() mechanics", () => {
+  it("limit order is removed from queue, promotion of next best bid/offer", () => {
+    const me = new MatchingEngine();
+    const o1 = new Order("123", OrderType.Limit, 50, 99);
+    const o2 = new Order("123", OrderType.Limit, 50, 100);
+    const o3 = new Order("123", OrderType.Limit, 50, 101);
+
+    me.process(o1);
+    me.process(o2);
+    me.process(o3);
+    expect(me.bids.size()).toEqual(3);
+
+    me.cancel(o3);
+    expect(me.bids.size()).toEqual(2);
+    expect(me.bids.peek()).toEqual(o2);
+    expect(o3.status).toBe(OrderStatus.Cancelled);
+
+    me.cancel(o1);
+    expect(me.bids.size()).toEqual(1);
+    expect(me.bids.peek()).toEqual(o2);
+    expect(o1.status).toBe(OrderStatus.Cancelled);
+  });
+
+  it("verify cancelled limit order can have partial fill", () => {
+    const me = new MatchingEngine();
+    const o1 = new Order("1", OrderType.Limit, 50, 99);
+    const o2 = new Order("2", OrderType.Limit, 50, 100);
+    const o3 = new Order("3", OrderType.Limit, -25, 100);
+
+    me.process(o1);
+    me.process(o2);
+    me.process(o3);
+
+    expect(me.bids.size()).toEqual(2);
+    expect(o3.status).toBe(OrderStatus.Complete);
+    me.cancel(o2);
+    expect(me.bids.size()).toEqual(1);
+    expect(o2.qtyFilled).toEqual(25);
+    expect(o2.qty).toEqual(25);
+    expect(o2.status).toBe(OrderStatus.Cancelled);
+  });
+
+  it("verify cancels proper order by ref", () => {
+    const me = new MatchingEngine();
+    const o1 = new Order("1", OrderType.Limit, 50, 100);
+    const o2 = new Order("1", OrderType.Limit, 50, 100);
+    const o3 = new Order("1", OrderType.Limit, 50, 100);
+    const o4 = new Order("1", OrderType.Limit, 50, 100);
+    const o5 = new Order("1", OrderType.Limit, 50, 100);
+    const o6 = new Order("1", OrderType.Limit, -50, 101)
+    const o7 = new Order("1", OrderType.Limit, -50, 101)
+    me.process(o1);
+    me.process(o2);
+    me.process(o3);
+    me.process(o4);
+    me.process(o5);
+    me.process(o6);
+    me.process(o7);
+
+    me.cancel(o3);
+    expect(me.bids.contains(o3)).not.toBeTruthy();
+    expect(o3.status).toBe(OrderStatus.Cancelled);
+  })
 });
 
 describe("maxComparator / minComparator", () => {

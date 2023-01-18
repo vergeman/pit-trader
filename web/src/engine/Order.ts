@@ -98,6 +98,9 @@ export class Order {
     }
   }
 
+  cancelled() {
+    this._status = OrderStatus.Cancelled;
+  }
   reject() {
     this._status = OrderStatus.Rejected;
   }

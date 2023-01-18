@@ -34,7 +34,6 @@ export default class MatchingEngine {
 
   //sort descending price, FIFO
   maxComparator(a: Order, b: Order): number {
-
     //highest price
     if (a.price > b.price) {
       return -1;
@@ -59,6 +58,23 @@ export default class MatchingEngine {
 
     //and then earliest submission FIFO
     return a.timestamp < b.timestamp ? -1 : 1;
+  }
+
+  cancel(order: Order): void {
+    //NB: disallow market order cancel()
+    //in case gesture results in weird submission / timing
+    if (order.orderType === OrderType.Market) return;
+
+    //remove from bid or offer queue
+    if (order.qty > 0 || order.qtyFilled > 0) {
+      this.bids.remove(order);
+    }
+
+    if (order.qty < 0 || order.qtyFilled < 0) {
+      this.offers.remove(order);
+    }
+
+    order.cancelled();
   }
 
   process(order: Order) {
