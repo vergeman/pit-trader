@@ -1,8 +1,6 @@
 import Order from "./Order";
-import {
-  PriorityQueue,
-  ICompare, //  (a: T, b: T): number;
-} from "@datastructures-js/priority-queue";
+import Heap from 'heap-js';
+
 
 export default class MatchingEngine {
   //Possible classes:
@@ -11,12 +9,12 @@ export default class MatchingEngine {
   //* RiskCheck(Player, Order)
   //* Reporter - could just expose Matching Engine bits?
 
-  private _bids: PriorityQueue<Order>;
-  private _offers: PriorityQueue<Order>;
+  private _bids: Heap<Order>;
+  private _offers: Heap<Order>;
 
   constructor() {
-    this._bids = new PriorityQueue<Order>(this.maxComparator);
-    this._offers = new PriorityQueue<Order>(this.minComparator);
+    this._bids = new Heap<Order>(this.maxComparator);
+    this._offers = new Heap<Order>(this.minComparator);
   }
 
   get bids() {
@@ -28,11 +26,11 @@ export default class MatchingEngine {
   }
 
   addBid(order: Order) {
-    this._bids.enqueue(order);
+    this._bids.add(order);
   }
 
   addOffer(order: Order) {
-    this._offers.enqueue(order);
+    this._offers.add(order);
   }
 
   //sort descending price, FIFO
