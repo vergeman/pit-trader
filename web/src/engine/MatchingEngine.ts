@@ -1,6 +1,5 @@
-import Order from "./Order";
-import Heap from 'heap-js';
-
+import { OrderType, Order } from "./Order";
+import Heap from "heap-js";
 
 export default class MatchingEngine {
   //Possible classes:
@@ -61,10 +60,58 @@ export default class MatchingEngine {
     return a.timestamp < b.timestamp ? -1 : 1;
   }
 
-  process(order: number) {
-    //state logic
-    //returns Transaction, success / error
+  process(order: Order) {
+    //choose opposing queue to execute against
+    if (order.qty === 0) throw new Error("bad quantity");
+    let queue = this.offers;
+    let oppQueue = this.bids;
+    if (order.qty > 0) {
+      queue = this.bids;
+      oppQueue = this.offers;
+    }
+
+    //choose opposing order
+    let oppOrder = oppQueue.peek();
+
+    // MARKET
+    if (order.orderType === OrderType.Market) {
+      //no opposite orders exist
+      if (oppOrder === undefined) {
+        order.reject();
+        throw new Error("rejected");
+      }
+
+      //sweep orders until filled
+      while (order.qty && oppOrder) {
+        order.execute(oppOrder);
+        if (oppOrder.qty === 0) {
+          oppQueue.poll();
+          oppOrder = oppQueue.peek();
+        }
+      }
+
+      //TODO: policy? no more limit orders but active market order qty remains
+    }
+
+    //LIMIT
+    if (order.orderType === OrderType.Limit) {
+      while (order.qty && oppOrder && order.canTransact(oppOrder)) {
+        order.execute(oppOrder);
+
+        if (oppOrder.qty === 0) {
+          oppQueue.poll();
+          oppOrder = oppQueue.peek();
+        }
+      }
+
+      //order qty remains with no valid opposite side candidates
+      if (order.qty) {
+        queue.add(order);
+      }
+    }
   }
+
+  //cancel(order) setStatus and remove from queue
 
   //riskChecker() - likely move out to separate class
 

@@ -44,7 +44,53 @@ export class Order {
     this._timestamp = Date.now();
   }
 
-  execute(order:Order) {}
+  execute(oppOrder: Order) {
+    //determine which qty to use Min
+    const abs_qty = Math.min(Math.abs(this.qty), Math.abs(oppOrder.qty));
+
+    //deduct & apply qtys
+    this._fill(abs_qty);
+    oppOrder._fill(abs_qty);
+
+    //update both status
+    this._checkSetComplete();
+    oppOrder._checkSetComplete();
+
+    //TODO: not sure
+    //add to orderFills[] in both sides?
+    this._orderFills.push(oppOrder);
+    oppOrder._orderFills.push(this);
+  }
+
+  _checkSetComplete(): void {
+    if (this.qty === 0) {
+      this._status = Status.Complete;
+    }
+  }
+
+  //deduct from qty
+  _fill(num: number): void {
+    if (this.qty > 0) {
+      this.qty -= num;
+      this._qtyFilled += num;
+    }
+    if (this.qty < 0) {
+      this.qty += num;
+      this._qtyFilled -= num;
+    }
+  }
+
+  reject() {
+    //status reject
+    this._status = Status.Rejected;
+  }
+
+  canTransact(oppOrder: Order): boolean {
+    if (!oppOrder) return false;
+    const canBuy = this.qty > 0 && this.price >= oppOrder.price;
+    const canSell = this.qty < 0 && this.price <= oppOrder.price;
+    return canBuy || canSell;
+  }
 
   get id(): string {
     return this._id;
@@ -53,7 +99,12 @@ export class Order {
   get price(): number {
     return this._price;
   }
-
+  get qty(): number {
+    return this._qty;
+  }
+  set qty(num: number) {
+    this._qty = num;
+  }
   get orderType(): OrderType {
     return this._orderType;
   }
