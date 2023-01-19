@@ -27,7 +27,9 @@ def output_csv_all(keyMapVal, landmark):
     # 1 + 2*63 + 12 = 1 + 126 + 12 = 139
 
     print(keyMapVal)
-    row = [keyMapVal.get('index')] + landmark.to_row()
+    label = keyMapVal.get('index')
+    # label = 15 # for manual class override
+    row = [label] + landmark.to_row()
     writer.writerow(row)
 
 print("WEBCAM")
