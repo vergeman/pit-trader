@@ -4,6 +4,7 @@ import Landmarks from "./Landmarks.js";
 import Classifier from "./Classifier.js";
 import Camera from "./Camera.jsx";
 import GesturesPanel from './GesturesPanel.jsx';
+import MarketView from './MarketView';
 
 export default function Demo() {
 
@@ -39,7 +40,11 @@ export default function Demo() {
       <h1>Hello World</h1>
       <Camera landmarks={landmarks} classifier={classifier}
               setGestureData={setGestureData} />
+
       <GesturesPanel results={gestureData} />
+      <MarketView gestureFinals={gestureData &&
+                                 gestureData.inputBufferState &&
+                                 gestureData.inputBufferState.gestureFinals}/>
     </div>
   );
 }

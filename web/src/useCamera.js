@@ -44,6 +44,7 @@ export default function useCamera(
     }
 
     if (classifier) {
+      //res contains inputBufferState
       const res = await classifier.classify();
 
       //NOTE: minimize renders? - wait for change

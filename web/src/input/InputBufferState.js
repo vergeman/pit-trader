@@ -43,6 +43,8 @@ class InputBufferState {
       console.log("FINAL", this.value);
       this.gestureFinals.push(this.value);
 
+      //possible submit here
+
       this.value = 0;
       this.digit_length = 0;
       this.gestureValue = null;
@@ -62,6 +64,7 @@ class InputBufferState {
   update(gestureData) {
     if (gestureData === null) return null;
 
+    //TODO: larger mapping of classifier class index and gesture value
     const gestureValue = this.getGestureValue(gestureData.arg);
     const digit_length =
       gestureValue === null ? 0 : String(gestureValue).length;
@@ -86,6 +89,7 @@ class InputBufferState {
 
     if (this.inputState === INPUT_STATE.PENDING && gestureValue !== null) {
       //replace
+      //need to deduct previous _gestureValue
       if (digit_length === this.digit_length) {
         if (this.value !== gestureValue) {
           this.value -= this._gestureValue;
@@ -103,7 +107,7 @@ class InputBufferState {
       //smaller digits, add
       if (digit_length < this.digit_length) {
         //add
-        this.value = this.value + gestureValue;
+        this.value += gestureValue;
         this.resetTimer();
         this.setTimer(TIMEOUT);
       }
