@@ -28,7 +28,9 @@
 # key : stringified combination of key input
 #   OFFER_TOGGLE: denotes "sell" key toggle
 # keypress: resulting keypress (if we didn't have to toggle)
-# index : sequential classifier label associated with input data
+# index : sequential classifier label associated with input data (deprecated,
+#   deferred to DataLoader)
+# filename: human class label
 # description: description of gesture
 #
 
@@ -81,12 +83,13 @@ class KeyClassMapping():
       return keyVal
 
 
-  def _generateMapping(self, mapping, key, keypress, index, description):
+  def _generateMapping(self, mapping, key, keypress, index, description, filename):
 
     mapping[key] = {
       "keypress": keypress,
-      "index": index,
-      "description": description
+      "index": index,  # TODO: defer to auto assign by DataLoader
+      "description": description,
+      "filename": filename
     }
 
   def build(self):
@@ -104,14 +107,16 @@ class KeyClassMapping():
     for keyPress in self.PRICE_BID_ONES:
       key = str(keyPress)
       value = keyPress
-      self._generateMapping(self.mapping, key, key, self.index, f"{value} bid")
+      filename = f"PRICE_BID_{value}.csv"
+      self._generateMapping(self.mapping, key, key, self.index, f"{value} bid", filename)
       self.index = self.index+1
 
     # price offer ones
     for i, keyPress in enumerate(self.PRICE_OFFER_ONES, 1):
       key = f"{self.OFFER_TOGGLE_NAME}+{keyPress}"
       value = i % 10 # wrap to 0
-      self._generateMapping(self.mapping, key, key, self.index, f"offer {value}")
+      filename = f"PRICE_OFFER_{value}.csv"
+      self._generateMapping(self.mapping, key, key, self.index, f"offer {value}", filename)
       self.index = self.index+1
 
 
@@ -124,28 +129,32 @@ class KeyClassMapping():
     for i, keyPress in enumerate(self.QTY_BID_ONES, 1):
       key = str(keyPress)
       value = i % 10
-      self._generateMapping(self.mapping, key, key, self.index, f"for {value}")
+      filename = f"QTY_BID_{value:03d}.csv"
+      self._generateMapping(self.mapping, key, key, self.index, f"for {value}", filename)
       self.index = self.index+1
 
     # qty sell ones
     for i, keyPress in enumerate(self.QTY_BID_ONES, 1):
       key = f"{self.OFFER_TOGGLE_NAME}+{keyPress}"
       value = i % 10
-      self._generateMapping(self.mapping, key, key, self.index, f"{value} at")
+      filename = f"QTY_OFFER_{value:03d}.csv"
+      self._generateMapping(self.mapping, key, key, self.index, f"{value} at", filename)
       self.index = self.index+1
 
     # qty bid tens
     for i, keyPress in enumerate(self.QTY_BID_TENS, 1):
       key = keyPress
       value = i * 10
-      self._generateMapping(self.mapping, key, key, self.index, f"for {value}")
+      filename = f"QTY_BID_{value:03d}.csv"
+      self._generateMapping(self.mapping, key, key, self.index, f"for {value}", filename)
       self.index = self.index+1
 
     # qty offer tens
     for i, keyPress in enumerate(self.QTY_BID_TENS, 1):
       key = f"{self.OFFER_TOGGLE_NAME}+{keyPress}"
       value = i * 10
-      self._generateMapping(self.mapping, key, key, self.index, f"{value} at")
+      filename = f"QTY_OFFER_{value:03d}.csv"
+      self._generateMapping(self.mapping, key, key, self.index, f"{value} at", filename)
       self.index = self.index+1
 
   #
@@ -153,21 +162,21 @@ class KeyClassMapping():
   #
   def buildMisc(self):
     # spacebar
-    self._generateMapping(self.mapping, " ", " ", self.index, "execute market")
+    self._generateMapping(self.mapping, " ", " ", self.index, "execute market", "EXECUTE.csv")
     self._generateMapping(self.mapping, f"{self.OFFER_TOGGLE_NAME}+ ", f"{self.OFFER_TOGGLE_NAME}+ ",
-                          self.index, "execute market")
+                          self.index, "execute market", "EXECUTE.csv")
     self.index += 1
 
     # out out out
-    self._generateMapping(self.mapping, "-", "-", self.index, "cancel")
+    self._generateMapping(self.mapping, "-", "-", self.index, "cancel", "CANCEL.csv")
     self._generateMapping(self.mapping, f"{self.OFFER_TOGGLE_NAME}+-", f"{self.OFFER_TOGGLE_NAME}+-",
-                          self.index, "cancel")
+                          self.index, "cancel", "CANCEL.csv")
     self.index += 1
 
     # garbage class
-    self._generateMapping(self.mapping, "`", "`", self.index, "none")
+    self._generateMapping(self.mapping, "`", "`", self.index, "none", "GARBAGE.csv")
     self._generateMapping(self.mapping, f"{self.OFFER_TOGGLE_NAME}+`", f"{self.OFFER_TOGGLE_NAME}+`",
-                          self.index, "none")
+                          self.index, "none", "GARBAGE.csv")
     self.index += 1
 
 

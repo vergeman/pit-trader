@@ -13,7 +13,11 @@ def output_csv_all(keyMapVal, landmark):
 
   if keyMapVal is None: return
 
-  csv_path = '/home/jovyan/train/data/landmarks.csv'
+  #csv_path = '/home/jovyan/train/data/landmarks.csv'
+  _file = keyMapVal.get('filename', None)
+  if (not _file): return
+
+  csv_path = f"/home/jovyan/train/data/{_file}"
 
   with open(csv_path, 'a', newline="") as _file:
     writer = csv.writer(_file)
@@ -25,12 +29,14 @@ def output_csv_all(keyMapVal, landmark):
     # Left -> 63, Right -> 63, face -> 12
     # label + 2*hands + face
     # 1 + 2*63 + 12 = 1 + 126 + 12 = 139
-
     print(keyMapVal)
-    label = keyMapVal.get('index')
-    # label = 15 # for manual class override
-    row = [label] + landmark.to_row()
+
+    # NB: class index will be mapped and generated at DataLoader.
+    # human label is indicated by filename (see KeyClassMapping.py)
+    # (label no longer part of internal csv data)
+    row = landmark.to_row()
     writer.writerow(row)
+  _file.close()
 
 print("WEBCAM")
 
