@@ -1,4 +1,5 @@
 import os
+import glob
 import torch
 import pandas as pd
 import numpy as np
@@ -15,10 +16,28 @@ class LandmarkDataset(Dataset):
     target_transform: transform on label
     """
 
-    def __init__(self, csv_file, transform = None, target_transform = None):
-        self.landmark_frames = pd.read_csv(csv_file, header=None)
-        self.transform = transform
-        self.target_transform = target_transform
+
+    def __init__(self, csv_dir, transform = None, target_transform = None):
+
+      self.file_list = []
+      self.landmark_frames = pd.DataFrame()
+      self.classMap = {}
+      self.numClass = 0
+
+      # concatenate directory, assign class index
+      self.file_list = sorted( glob.glob(csv_dir + "*.csv") )
+      for class_idx, filename in enumerate(self.file_list):
+        className = filename.replace('.csv', '').split('/')[-1]
+        self.classMap[class_idx] = className
+
+        landmark_frame = pd.read_csv(filename, header=None)
+        landmark_frame.insert(0, "class_idx", class_idx)
+
+        self.landmark_frames = pd.concat([self.landmark_frames, landmark_frame])
+        self.numClass += 1
+
+      self.transform = transform
+      self.target_transform = target_transform
 
 
     def __len__(self):
@@ -49,7 +68,7 @@ if __name__ == "__main__":
         Lambda(lambda x: torch.tensor(x.values))
     ])
 
-    dataset = LandmarkDataset("/home/jovyan/train/data/landmarks.csv",
+    dataset = LandmarkDataset("/home/jovyan/train/data/",
                               transform=transformations)
 
     # Splitting
