@@ -5,6 +5,7 @@
 #
 from Landmark import Landmark
 from KeyClassMapping import KeyClassMapping
+from Meta import Meta
 import cv2
 import mediapipe as mp
 import csv
@@ -51,6 +52,8 @@ mp_face_detection = mp.solutions.face_detection
 
 landmark = Landmark()
 keyClassMapping = KeyClassMapping()
+meta = Meta("/home/jovyan/train/data/meta.json")
+meta.load()
 
 with mp_hands.Hands(
     model_complexity=0,
@@ -113,6 +116,9 @@ mp_face_detection.FaceDetection(
     landmark.setFaceDetections(resultsFace.detections)
 
     output_csv_all(keyVal, landmark)
+
+    if keyVal:
+      meta.update(keyVal.get("filename", None), keyVal)
 
     #
     # DRAW
