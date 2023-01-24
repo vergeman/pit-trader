@@ -10,17 +10,16 @@ import cv2
 import mediapipe as mp
 import csv
 
-def output_csv_all(keyMapVal, landmark):
+def output_csv_all(data_path, keyMapVal, landmark):
 
   if keyMapVal is None: return
 
-  #csv_path = '/home/jovyan/train/data/landmarks.csv'
   _file = keyMapVal.get('filename', None)
   if (not _file): return
 
-  csv_path = f"/home/jovyan/train/data/{_file}"
+  csv_file = f"{data_path}/{_file}"
 
-  with open(csv_path, 'a', newline="") as _file:
+  with open(csv_file, 'a', newline="") as _file:
     writer = csv.writer(_file)
 
     # flattened size: see Landmark.py
@@ -39,21 +38,21 @@ def output_csv_all(keyMapVal, landmark):
     writer.writerow(row)
   _file.close()
 
-print("WEBCAM")
 
 cap = cv2.VideoCapture(0)
-print( cap.isOpened() )
-
+print("Webcam Open:", cap.isOpened() )
 
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_hands = mp.solutions.hands
 mp_face_detection = mp.solutions.face_detection
 
+data_path = "/home/jovyan/train/data"
 landmark = Landmark()
 keyClassMapping = KeyClassMapping()
-meta = Meta("/home/jovyan/train/data/meta.json")
+meta = Meta(f"{data_path}/meta.json")
 meta.load()
+
 
 with mp_hands.Hands(
     model_complexity=0,
@@ -115,7 +114,7 @@ mp_face_detection.FaceDetection(
 
     landmark.setFaceDetections(resultsFace.detections)
 
-    output_csv_all(keyVal, landmark)
+    output_csv_all(data_path, keyVal, landmark)
 
     if keyVal:
       meta.update(keyVal.get("filename", None), keyVal)
