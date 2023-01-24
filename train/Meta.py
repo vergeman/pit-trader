@@ -10,7 +10,7 @@ class Meta():
   def __init__(self, filename = "meta.json"):
     self.filename = filename
     self.file_meta_map = {}
-
+    self.index_meta_map = {}
 
   def load(self):
     try:
@@ -36,13 +36,25 @@ class Meta():
     self.save()
 
 
-  def save(self):
+  def update_index(self, filename, index):
+    '''Called by pytorch Dataset class (LandmarkDataset.py) to export model aligned
+    index alongside metadata for downstream use
+    '''
+
+    if filename is not None and index is not None:
+      _m = self.file_meta_map.get(filename)
+      if _m:
+        _m['index'] = index
+
+
+  def save(self, filename = None):
+    f = filename or self.filename
     try:
-      with open(self.filename, "w") as _file:
+      with open(f, "w") as _file:
         json.dump(self.file_meta_map, _file, sort_keys=True)
       _file.close()
     except:
-      print("There was an error writing meta file", self.filename)
+      print("There was an error writing meta file", f)
 
 
 if __name__ == "__main__":
