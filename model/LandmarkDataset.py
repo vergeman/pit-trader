@@ -21,20 +21,24 @@ class LandmarkDataset(Dataset):
 
       self.file_list = []
       self.landmark_frames = pd.DataFrame()
-      self.classMap = {}
-      self.numClass = 0
+      self.class_map = {}
+      self.num_class = 0
+      self.input_size = 0
 
       # concatenate directory, assign class index
       self.file_list = sorted( glob.glob(csv_dir + "*.csv") )
       for class_idx, filename in enumerate(self.file_list):
-        className = filename.replace('.csv', '').split('/')[-1]
-        self.classMap[class_idx] = className
+        class_name = filename.replace('.csv', '').split('/')[-1]
+        self.class_map[class_idx] = class_name
 
         landmark_frame = pd.read_csv(filename, header=None)
+        self.input_size = len(landmark_frame.columns)
+
+        # add class label
         landmark_frame.insert(0, "class_idx", class_idx)
 
         self.landmark_frames = pd.concat([self.landmark_frames, landmark_frame])
-        self.numClass += 1
+        self.num_class += 1
 
       self.transform = transform
       self.target_transform = target_transform
