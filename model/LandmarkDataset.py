@@ -53,8 +53,8 @@ class LandmarkDataset(Dataset):
 
       self.transform = transform
       self.target_transform = target_transform
-
-      self.meta.save(f"{model_dir}/meta.json")
+      self.meta.build_index_meta_map()
+      self.meta.save(filename = f"{model_dir}/meta.json", obj = self.meta.index_meta_map)
 
 
     def __len__(self):

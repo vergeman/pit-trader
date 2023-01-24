@@ -5,6 +5,10 @@ class Meta():
   '''takes KeyClassMapping and builds a filename.csv -> meta mapping. Reads and
   exports to file provides meta info about training classes for eventual
   downstream use in web
+
+  alongside /data, and /model - this generates a meta.json that carries
+  metadata alongside class labels
+
   '''
 
   def __init__(self, filename = "meta.json"):
@@ -33,7 +37,7 @@ class Meta():
     self.file_meta_map[key] = val
 
     # write out any update
-    self.save()
+    self.save(filename = self.filename, obj = self.file_meta_map)
 
 
   def update_index(self, filename, index):
@@ -47,11 +51,16 @@ class Meta():
         _m['index'] = index
 
 
-  def save(self, filename = None):
+  def build_index_meta_map(self):
+    for _, meta in self.file_meta_map.items():
+      self.index_meta_map[ meta.get('index') ] = meta
+
+
+  def save(self, filename = None, obj = None):
     f = filename or self.filename
     try:
       with open(f, "w") as _file:
-        json.dump(self.file_meta_map, _file, sort_keys=True)
+        json.dump(obj, _file, sort_keys=True)
       _file.close()
     except:
       print("There was an error writing meta file", f)
