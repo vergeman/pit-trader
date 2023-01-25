@@ -37,6 +37,9 @@
 #
 # KEYS
 #
+import math
+
+
 class KeyClassMapping():
 
   #
@@ -62,7 +65,6 @@ class KeyClassMapping():
 
     self.offer_toggle = False
     self.mapping = {};
-    self.index = 0;
 
     self.build();
 
@@ -83,11 +85,15 @@ class KeyClassMapping():
       return keyVal
 
 
-  def _generateMapping(self, mapping, key, keypress, index, description, filename):
+  def _generateMapping(self, mapping, key, keypress, gestureType, action, value, description, filename):
+    ''' see GestureBuilder.ts for string enums equivalents
+    '''
 
     mapping[key] = {
+      "gestureType": gestureType,   # Qty, Price, Action
+      "action": action, 	          # None, Buy, Sell, Garbage, Cancel
+      "value": value,               # number (qty, price, NaN)
       "keypress": keypress,
-      "index": index,  # TODO: defer to auto assign by DataLoader
       "description": description,
       "filename": filename
     }
@@ -103,85 +109,84 @@ class KeyClassMapping():
   # only single digits
   # 1 to 0 keyboard rows
   def buildPrice(self):
+    gestureType = "Price"
+
     # price bid ones
     for keyPress in self.PRICE_BID_ONES:
       key = str(keyPress)
       value = keyPress
       filename = f"PRICE_BID_{value}.csv"
-      self._generateMapping(self.mapping, key, key, self.index, f"{value} bid", filename)
-      self.index = self.index+1
+      self._generateMapping(self.mapping, key, key, gestureType, "Buy", value, f"{value} bid", filename)
 
     # price offer ones
     for i, keyPress in enumerate(self.PRICE_OFFER_ONES, 1):
       key = f"{self.OFFER_TOGGLE_NAME}+{keyPress}"
       value = i % 10 # wrap to 0
       filename = f"PRICE_OFFER_{value}.csv"
-      self._generateMapping(self.mapping, key, key, self.index, f"offer {value}", filename)
-      self.index = self.index+1
+      self._generateMapping(self.mapping, key, key, gestureType, "Sell", value, f"offer {value}", filename)
 
 
   #
   # QTY
   # 'a' and 'z' keyboard rows
   def buildQty(self):
+    gestureType = "Qty"
 
     # qty buy ones
     for i, keyPress in enumerate(self.QTY_BID_ONES, 1):
       key = str(keyPress)
       value = i % 10
       filename = f"QTY_BID_{value:03d}.csv"
-      self._generateMapping(self.mapping, key, key, self.index, f"for {value}", filename)
-      self.index = self.index+1
+      self._generateMapping(self.mapping, key, key, gestureType, "Buy", value, f"for {value}", filename)
 
     # qty sell ones
     for i, keyPress in enumerate(self.QTY_BID_ONES, 1):
       key = f"{self.OFFER_TOGGLE_NAME}+{keyPress}"
       value = i % 10
       filename = f"QTY_OFFER_{value:03d}.csv"
-      self._generateMapping(self.mapping, key, key, self.index, f"{value} at", filename)
-      self.index = self.index+1
+      self._generateMapping(self.mapping, key, key, gestureType, "Sell", value, f"{value} at", filename)
 
     # qty bid tens
     for i, keyPress in enumerate(self.QTY_BID_TENS, 1):
       key = keyPress
       value = i * 10
       filename = f"QTY_BID_{value:03d}.csv"
-      self._generateMapping(self.mapping, key, key, self.index, f"for {value}", filename)
-      self.index = self.index+1
+      self._generateMapping(self.mapping, key, key, gestureType, "Buy", value, f"for {value}", filename)
 
     # qty offer tens
     for i, keyPress in enumerate(self.QTY_BID_TENS, 1):
       key = f"{self.OFFER_TOGGLE_NAME}+{keyPress}"
       value = i * 10
       filename = f"QTY_OFFER_{value:03d}.csv"
-      self._generateMapping(self.mapping, key, key, self.index, f"{value} at", filename)
-      self.index = self.index+1
+      self._generateMapping(self.mapping, key, key, gestureType, "Sell", value, f"{value} at", filename)
 
   #
   # MISC
   #
   def buildMisc(self):
     # spacebar
-    self._generateMapping(self.mapping, " ", " ", self.index, "execute market", "EXECUTE.csv")
+    gestureType = "Price"
+    value = math.nan
+    self._generateMapping(self.mapping, " ", " ", gestureType, "Market", value, "execute market", "MARKET.csv")
     self._generateMapping(self.mapping, f"{self.OFFER_TOGGLE_NAME}+ ", f"{self.OFFER_TOGGLE_NAME}+ ",
-                          self.index, "execute market", "EXECUTE.csv")
-    self.index += 1
+                          gestureType, "Market", value, "execute market", "MARKET.csv")
 
     # out out out
-    self._generateMapping(self.mapping, "-", "-", self.index, "cancel", "CANCEL.csv")
+    gestureType = "Action"
+    value = math.nan
+    self._generateMapping(self.mapping, "-", "-", gestureType, "Cancel", value, "cancel", "CANCEL.csv")
     self._generateMapping(self.mapping, f"{self.OFFER_TOGGLE_NAME}+-", f"{self.OFFER_TOGGLE_NAME}+-",
-                          self.index, "cancel", "CANCEL.csv")
-    self.index += 1
+                          gestureType, "Cancel", value, "cancel", "CANCEL.csv")
 
     # garbage class
-    self._generateMapping(self.mapping, "`", "`", self.index, "none", "GARBAGE.csv")
+    gestureType = "Action"
+    value = math.nan
+    self._generateMapping(self.mapping, "`", "`", gestureType, "Garbage", value, "garbage class", "GARBAGE.csv")
     self._generateMapping(self.mapping, f"{self.OFFER_TOGGLE_NAME}+`", f"{self.OFFER_TOGGLE_NAME}+`",
-                          self.index, "none", "GARBAGE.csv")
-    self.index += 1
+                          gestureType, "Garbage", value, "garbage class", "GARBAGE.csv")
 
 
 
 if __name__ == "__main__":
   keyClassMapping = KeyClassMapping()
-  print(keyClassMapping.index)
   print(keyClassMapping.mapping)

@@ -8,14 +8,33 @@
 export enum GestureType {
   Qty,    //+/- number
   Price,  //number
-  Action  //Execute, Cancel
+  Action  //Cancel, Garbage
 }
+
+export enum GestureAction {
+  None,
+  Buy,
+  Sell,
+  Market, //replace but needs quantity to determine
+  Garbage,
+  Cancel
+}
+
+/*
+ * 1 bid: {type: Price, action: Buy, value: 1, digit_length: 1}
+ * offer 10: {type: Price, action: Sell, value: 10, digit_length: 2}
+ * Market {type: Price, action: Buy/Sell, value: NaN, digit_length: 1}
+ * for 10: {type: Qty, action: Buy, value: 10, digit_length: 2}
+ * 20 at: {type: Qty, action: Sell, value: 20, digit_length: 2}
+ * Cancel {type: Action, action: Cancel, value: NaN, digit_length: 1}
+ * Garbage {type: Action, action: Garbage, value: NaN, digit_length: 1}
+ */
 
 export interface Gesture {
   type: GestureType,
-  action: string | null,
-  digit_length: number,
+  action: GestureAction,
   value: number,
+  digit_length: number,
 }
 
 export default class GestureBuilder {
@@ -50,8 +69,8 @@ export default class GestureBuilder {
   //e.g. 95/94/95/94 -> triggers final, clear, then another final clear
   //2 executions
 
-  checkProbablityThreshold(gestureData: any) {
-    if (gestureData.strProbs.every( prob  => prob < .95)) {
+  checkProbabilityThreshold(gestureData: any) {
+    if (gestureData.probs.every( (prob: string) => parseFloat(prob) < .95)) {
       gestureData.arg = this.garbage_idx;
     }
   }
@@ -63,6 +82,9 @@ export default class GestureBuilder {
   // "10": {"description": "offer 4", "filename": "PRICE_OFFER_4.csv", "index": 10, "keypress": "ALT+4"},
   build(gestureData: any): Gesture {
     const meta = this.meta[ gestureData.arg ] as any;
+    console.log("META", meta)
+
+    if (!meta) return { type: GestureType.Action, action: GestureAction.None, value: NaN, digit_length: 0};
     const value = meta.value;
     const type = (GestureType as any)[meta.type];
     const digit_length = value === null ? 0 : String(value).length;
