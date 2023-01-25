@@ -1,45 +1,24 @@
-//GestureMap return gesture types
-//These are coupled with classifier - think of classifier as a pointer
-//and the map/gesture as direct, expanded info
-//
-//gesture gets used in inputBufferState - which takes the type or action; uses
-//timers to adds/subtracts sequential gestures to determine ultimate value and action
-
-export enum GestureType {
-  Qty,    //+/- number
-  Price,  //number
-  Action  //Cancel, Garbage
-}
-
-export enum GestureAction {
-  None,
-  Buy,
-  Sell,
-  Market, //replace but needs quantity to determine
-  Garbage,
-  Cancel
-}
-
-/*
- * 1 bid: {type: Price, action: Buy, value: 1, digit_length: 1}
- * offer 10: {type: Price, action: Sell, value: 10, digit_length: 2}
- * Market {type: Price, action: Buy/Sell, value: NaN, digit_length: 1}
- * for 10: {type: Qty, action: Buy, value: 10, digit_length: 2}
- * 20 at: {type: Qty, action: Sell, value: 20, digit_length: 2}
- * Cancel {type: Action, action: Cancel, value: NaN, digit_length: 1}
- * Garbage {type: Action, action: Garbage, value: NaN, digit_length: 1}
+/* GestureMap return gesture types
+ * These are coupled with classifier - think of classifier as a pointer
+ * and the map/gesture as direct, expanded info
  */
 
-export interface Gesture {
-  type: GestureType,
-  action: GestureAction,
-  value: number,
-  digit_length: number,
+import { Gesture, GestureAction, GestureType } from "./Gesture";
+
+interface IMeta {
+  [index: string]: {
+    action: string;
+    description: string;
+    filename: string;
+    gestureType: string;
+    index: number;
+    keypress: string;
+    value: number | null;
+  };
 }
 
 export default class GestureBuilder {
-
-  public meta: Gesture | any;
+  public meta: IMeta;
   private _garbage_idx: number;
 
   constructor() {
@@ -47,25 +26,25 @@ export default class GestureBuilder {
     this._garbage_idx = -1;
   }
 
-  async load(meta_filename: string = './meta.json') {
-
-    //TODO: load as meta interface / class
+  async load(meta_filename: string = "./meta.json") {
     this.meta = await fetch(meta_filename)
-      .then(res => res.json())
-      .catch(e => {
+      .then((res) => res.json())
+      .catch((e) => {
         console.error("ERR loading meta", e);
         return {};
       });
 
     //Find Garbage class
-    const class_meta = Object.values(this.meta)
-      .find( m => (m as any).action == "Garbage")
+    //TODO: enumify
+    const class_meta = Object.values(this.meta).find(
+      (m) => (m as any).action == "Garbage"
+    );
 
     this._garbage_idx = (class_meta as any).index;
   }
 
   get garbage_idx(): number {
-    return this._garbage_idx
+    return this._garbage_idx;
   }
 
   //THRESHOLD super sensitive to reduce noise
@@ -74,36 +53,31 @@ export default class GestureBuilder {
   //2 executions
 
   checkProbabilityThreshold(gestureData: any) {
-    if (gestureData.probs.every( (prob: string) => parseFloat(prob) < .95)) {
+    if (gestureData.probs.every((prob: string) => parseFloat(prob) < 0.95)) {
       gestureData.arg = this.garbage_idx;
     }
   }
-
-  //TODO: add value:number, type:string
 
   //expand
   //{"0": {"description": "execute market", "filename": "EXECUTE.csv", "index": 0, "keypress": " "},
   // "10": {"description": "offer 4", "filename": "PRICE_OFFER_4.csv", "index": 10, "keypress": "ALT+4"},
   build(gestureData: any): Gesture {
-    const meta = this.meta[ gestureData.arg ] as any;
-    console.log("META", meta)
+    const meta = this.meta[gestureData.arg];
 
-    if (!meta) return { type: GestureType.Action, action: GestureAction.None, value: NaN, digit_length: 0};
-    const value = meta.value;
-    const type = (GestureType as any)[meta.type];
-    const digit_length = value === null ? 0 : String(value).length;
+    console.log("META", meta);
 
-    //Gesture
-    return {
-      ...meta,
-      type,
-      action: null,
-      digit_length
-    };
+    if (!meta) {
+      return new Gesture(GestureType.Action, GestureAction.None, null);
+    }
+
+    return new Gesture(
+      meta.gestureType as GestureType,
+      meta.action as GestureAction,
+      meta.value
+    );
   }
 
-
-/*
+  /*
   getGestureValue(classNum) {
     const vals = {
       0: 1,

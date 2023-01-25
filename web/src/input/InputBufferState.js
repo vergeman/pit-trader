@@ -45,12 +45,11 @@ class InputBufferState {
 
   //keep simple - work for just compound number (not qty or price)
   //ex: 72
-  update(gestureData) {
-    if (gestureData === null) return null;
+  update(gesture) {
+    if (gesture === null) return null;
 
-    const gesture = gestureData.gesture;
     const gestureValue = gesture.value;
-    const digit_length = gesture.digit_length;
+    const digit_length = gesture.digit_length();
 
     console.log(this.inputState, gestureValue, digit_length);
 
