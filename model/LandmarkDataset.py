@@ -1,10 +1,15 @@
 import os
+import sys
+import glob
 import torch
 import pandas as pd
 import numpy as np
 from torch.utils.data import Dataset, DataLoader
 from torchvision.transforms import Lambda, Compose
 from torch.utils.data.sampler import SubsetRandomSampler
+
+sys.path.append('/home/jovyan/train')
+from Meta import Meta
 
 class LandmarkDataset(Dataset):
     """PyTorch Custom Dataset and Dataloader reference:
@@ -15,10 +20,41 @@ class LandmarkDataset(Dataset):
     target_transform: transform on label
     """
 
-    def __init__(self, csv_file, transform = None, target_transform = None):
-        self.landmark_frames = pd.read_csv(csv_file, header=None)
-        self.transform = transform
-        self.target_transform = target_transform
+
+
+    def __init__(self, data_dir, model_dir, transform = None, target_transform = None):
+
+      self.file_list = []
+      self.landmark_frames = pd.DataFrame()
+      self.class_map = {}
+      self.num_class = 0
+      self.input_size = 0
+
+      self.meta = Meta(f"{data_dir}/meta.json")
+      self.meta.load()
+
+      # concatenate directory, assign class index
+      self.file_list = sorted( glob.glob(data_dir + "/*.csv") )
+      for class_idx, filename in enumerate(self.file_list):
+        class_name = filename.replace('.csv', '').split('/')[-1]
+        self.class_map[class_idx] = class_name
+
+        landmark_frame = pd.read_csv(filename, header=None)
+        self.input_size = len(landmark_frame.columns)
+
+        # add class label to dataframe and meta.json
+        landmark_frame.insert(0, "class_idx", class_idx)
+        _f = filename.split('/')[-1]
+        self.meta.update_index(_f, class_idx) if _f else None
+
+        # concat each datafile into mem
+        self.landmark_frames = pd.concat([self.landmark_frames, landmark_frame])
+        self.num_class += 1
+
+      self.transform = transform
+      self.target_transform = target_transform
+      self.meta.build_index_meta_map()
+      self.meta.save(filename = f"{model_dir}/meta.json", obj = self.meta.index_meta_map)
 
 
     def __len__(self):
@@ -41,7 +77,7 @@ class LandmarkDataset(Dataset):
         return label, landmarks
 
 #
-# python -i LandmarkDataset.py
+# ~/python -i LandmarkDataset.py
 #
 if __name__ == "__main__":
 
@@ -49,7 +85,8 @@ if __name__ == "__main__":
         Lambda(lambda x: torch.tensor(x.values))
     ])
 
-    dataset = LandmarkDataset("/home/jovyan/train/data/landmarks.csv",
+    dataset = LandmarkDataset("/home/jovyan/train/data",
+                              "/home/jovyan/model",
                               transform=transformations)
 
     # Splitting

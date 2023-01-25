@@ -5,17 +5,21 @@
 #
 from Landmark import Landmark
 from KeyClassMapping import KeyClassMapping
+from Meta import Meta
 import cv2
 import mediapipe as mp
 import csv
 
-def output_csv_all(keyMapVal, landmark):
+def output_csv_all(data_path, keyMapVal, landmark):
 
   if keyMapVal is None: return
 
-  csv_path = '/home/jovyan/train/data/landmarks.csv'
+  _file = keyMapVal.get('filename', None)
+  if (not _file): return
 
-  with open(csv_path, 'a', newline="") as _file:
+  csv_file = f"{data_path}/{_file}"
+
+  with open(csv_file, 'a', newline="") as _file:
     writer = csv.writer(_file)
 
     # flattened size: see Landmark.py
@@ -25,24 +29,30 @@ def output_csv_all(keyMapVal, landmark):
     # Left -> 63, Right -> 63, face -> 12
     # label + 2*hands + face
     # 1 + 2*63 + 12 = 1 + 126 + 12 = 139
-
     print(keyMapVal)
-    row = [keyMapVal.get('index')] + landmark.to_row()
-    writer.writerow(row)
 
-print("WEBCAM")
+    # NB: class index will be mapped and generated at DataLoader.
+    # human label is indicated by filename (see KeyClassMapping.py)
+    # (label no longer part of internal csv data)
+    row = landmark.to_row()
+    writer.writerow(row)
+  _file.close()
+
 
 cap = cv2.VideoCapture(0)
-print( cap.isOpened() )
-
+print("Webcam Open:", cap.isOpened() )
 
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_hands = mp.solutions.hands
 mp_face_detection = mp.solutions.face_detection
 
+data_path = "/home/jovyan/train/data"
 landmark = Landmark()
 keyClassMapping = KeyClassMapping()
+meta = Meta(f"{data_path}/meta.json")
+meta.load()
+
 
 with mp_hands.Hands(
     model_complexity=0,
@@ -104,7 +114,10 @@ mp_face_detection.FaceDetection(
 
     landmark.setFaceDetections(resultsFace.detections)
 
-    output_csv_all(keyVal, landmark)
+    output_csv_all(data_path, keyVal, landmark)
+
+    if keyVal:
+      meta.update(keyVal.get("filename", None), keyVal)
 
     #
     # DRAW
