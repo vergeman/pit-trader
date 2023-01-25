@@ -49,6 +49,7 @@ export default class GestureBuilder {
 
   async load(meta_filename: string = './meta.json') {
 
+    //TODO: load as meta interface / class
     this.meta = await fetch(meta_filename)
       .then(res => res.json())
       .catch(e => {
@@ -56,8 +57,11 @@ export default class GestureBuilder {
         return {};
       });
 
-    //Object.values(this.meta) //loop by some criteria
-    this._garbage_idx = 6;
+    //Find Garbage class
+    const class_meta = Object.values(this.meta)
+      .find( m => (m as any).action == "Garbage")
+
+    this._garbage_idx = (class_meta as any).index;
   }
 
   get garbage_idx(): number {
