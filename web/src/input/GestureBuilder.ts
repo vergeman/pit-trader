@@ -52,17 +52,18 @@ export default class GestureBuilder {
   //e.g. 95/94/95/94 -> triggers final, clear, then another final clear
   //2 executions
 
-  checkProbabilityThreshold(gestureData: any) {
-    if (gestureData.probs.every((prob: string) => parseFloat(prob) < 0.95)) {
-      gestureData.arg = this.garbage_idx;
+  checkGarbageThreshold(probs: string[], arg: number, threshold: number): number {
+    if (probs.every((prob: string) => parseFloat(prob) < threshold)) {
+      return this.garbage_idx;
     }
+    return arg;
   }
 
   //expand
   //{"0": {"description": "execute market", "filename": "EXECUTE.csv", "index": 0, "keypress": " "},
   // "10": {"description": "offer 4", "filename": "PRICE_OFFER_4.csv", "index": 10, "keypress": "ALT+4"},
-  build(gestureData: any): Gesture {
-    const meta = this.meta[gestureData.arg];
+  build(argMax: number): Gesture {
+    const meta = this.meta[argMax];
 
     console.log("META", meta);
 
