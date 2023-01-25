@@ -1,5 +1,6 @@
 import InputBufferState from "./input/InputBufferState.js";
 import EMABuffer from './input/EMABuffer.js';
+import GestureBuilder from './input/GestureBuilder.ts';
 
 export default class Classifier {
 
@@ -9,17 +10,20 @@ export default class Classifier {
     this.inputBufferState = new InputBufferState();
     this.emaBuffer = new EMABuffer();
 
-
+    this.gestureBuilder = new GestureBuilder();
     console.log("CLASSIFIER");
   }
 
-  async load(filename = './onnx_model.onnx') {
-    try {
+  async load(model_filename = './onnx_model.onnx') {
 
-      this.session = await window.ort.InferenceSession.create(filename);
+    await this.gestureBuilder.load();
+
+    try {
+      this.session = await window.ort.InferenceSession.create(model_filename);
       console.log("SESSION", this.session);
       return this.session;
     } catch(e) {}
+
   }
 
   argMax(array) {
@@ -63,25 +67,30 @@ export default class Classifier {
         .from(probs)
         .map(p => p.toFixed(4));
 
-      const res = {
+      const gestureData = {
         probs: strProbs,
         arg
       };
 
+      //console.log("ARG", this.gestureBuilder.meta[arg]);
 
       //THRESHOLD super sensitive to reduce noise
       //if too high, can get jumpy on edge and trigger false "finals"
       //e.g. 95/94/95/94 -> triggers final, clear, then another final clear
       //2 executions
+      //TODO: lookup the garbage class and set
       if (strProbs.every( prob => prob < .95) ) {
-        res.arg = 6;
+        gestureData.arg = 6;
       }
 
+      gestureData.gesture = this.gestureBuilder.build( gestureData.arg );
+
       //STATE - should have value now
-      this.inputBufferState.update(res);
-      res.inputBufferState = this.inputBufferState;
+      this.inputBufferState.update(gestureData);
+      gestureData.inputBufferState = this.inputBufferState;
       //res.probBuffer = this.emaBuffer.probBuffer
-      return res;
+
+      return gestureData;
 
     } catch(e) {
       //err
