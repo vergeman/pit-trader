@@ -73,17 +73,9 @@ export default class Classifier {
       };
 
       //console.log("ARG", this.gestureBuilder.meta[arg]);
+      this.gestureBuilder.checkProbabilityThreshold(gestureData);
 
-      //THRESHOLD super sensitive to reduce noise
-      //if too high, can get jumpy on edge and trigger false "finals"
-      //e.g. 95/94/95/94 -> triggers final, clear, then another final clear
-      //2 executions
-      //TODO: lookup the garbage class and set
-      if (strProbs.every( prob => prob < .95) ) {
-        gestureData.arg = 6;
-      }
-
-      gestureData.gesture = this.gestureBuilder.build( gestureData.arg );
+      gestureData.gesture = this.gestureBuilder.build( gestureData );
 
       //STATE - should have value now
       this.inputBufferState.update(gestureData);

@@ -21,9 +21,11 @@ export interface Gesture {
 export default class GestureBuilder {
 
   public meta: Gesture | any;
+  private _garbage_idx: number;
 
   constructor() {
     this.meta = {};
+    this._garbage_idx = -1;
   }
 
   async load(meta_filename: string = './meta.json') {
@@ -35,20 +37,32 @@ export default class GestureBuilder {
         return {};
       });
 
+    //Object.values(this.meta) //loop by some criteria
+    this._garbage_idx = 6;
   }
 
-  //TODO: getGarbageClass() for probability tolerance
-  loadGarbageClass(){}
-  checkTolerance(gestureData: any) {}
+  get garbage_idx(): number {
+    return this._garbage_idx
+  }
+
+  //THRESHOLD super sensitive to reduce noise
+  //if too high, can get jumpy on edge and trigger false "finals"
+  //e.g. 95/94/95/94 -> triggers final, clear, then another final clear
+  //2 executions
+
+  checkProbablityThreshold(gestureData: any) {
+    if (gestureData.strProbs.every( prob  => prob < .95)) {
+      gestureData.arg = this.garbage_idx;
+    }
+  }
 
   //TODO: add value:number, type:string
 
   //expand
   //{"0": {"description": "execute market", "filename": "EXECUTE.csv", "index": 0, "keypress": " "},
   // "10": {"description": "offer 4", "filename": "PRICE_OFFER_4.csv", "index": 10, "keypress": "ALT+4"},
-  build(classifier_arg: any): Gesture {
-
-    const meta = this.meta[ classifier_arg ] as any;
+  build(gestureData: any): Gesture {
+    const meta = this.meta[ gestureData.arg ] as any;
     const value = meta.value;
     const type = (GestureType as any)[meta.type];
     const digit_length = value === null ? 0 : String(value).length;

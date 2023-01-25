@@ -21,25 +21,11 @@ class InputBufferState {
     this.gestureFinals = [];
   }
 
-  getGestureValue(classNum) {
-    const vals = {
-      0: 1,
-      1: 2,
-      2: 3,
-      3: 10,
-      4: 70,
-      5: 100,
-      6: null,
-      null: null,
-    };
-
-    return vals[parseInt(classNum)];
-  }
-
   //TODO: replace implementation with requestAnimationFrame
   setTimer() {
 
     this.timer = setTimeout(() => {
+      //TODO: FINAL
       console.log("FINAL", this.value);
       this.gestureFinals.push(this.value);
 
@@ -62,9 +48,9 @@ class InputBufferState {
   update(gestureData) {
     if (gestureData === null) return null;
 
-    const gestureValue = this.getGestureValue(gestureData.arg);
-    const digit_length =
-      gestureValue === null ? 0 : String(gestureValue).length;
+    const gesture = gestureData.gesture;
+    const gestureValue = gesture.value;
+    const digit_length = gesture.digit_length;
 
     console.log(this.inputState, gestureValue, digit_length);
 
