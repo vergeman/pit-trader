@@ -1,6 +1,6 @@
 import { Gesture, GestureType, GestureAction } from "./Gesture";
-import { NumberSM, INPUT_STATE } from "./NumberSM.js";
-import { ActionSM } from "./ActionSM.js";
+import { NumberSM } from "./NumberSM";
+import { ActionSM } from "./ActionSM";
 
 export default class GestureDecision {
   public qtySM: NumberSM;
@@ -8,7 +8,7 @@ export default class GestureDecision {
   public actionSM: ActionSM;
   private _qty: number | null;
   private _price: number | null;
-  private _action: GestureAction | null;
+  private _action: GestureAction;
 
   constructor() {
     this.qtySM = new NumberSM(GestureType.Qty, this.setQtyFn.bind(this));
@@ -20,7 +20,7 @@ export default class GestureDecision {
 
     this._qty = null;
     this._price = null;
-    this._action = null;
+    this._action = GestureAction.None;
   }
 
   setQtyFn(value: number) {
@@ -81,7 +81,7 @@ export default class GestureDecision {
   reset() {
     this._qty = null;
     this._price = null;
-    this._action = null;
+    this._action = GestureAction.None;
 
     this.qtySM.resetAll();
     this.priceSM.resetAll();

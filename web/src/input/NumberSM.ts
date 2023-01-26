@@ -1,29 +1,27 @@
-import { GestureType } from "./Gesture.ts";
-
-//TODO: change to enum
-class INPUT_STATE {
-  static IDLE = 1;
-  static PENDING = 2;
-  static LOCKED = 3;
-}
+import { Gesture, GestureType } from "./Gesture";
+import INPUT_STATE from "./Input_State";
 
 const TIMEOUT = 750;
 class NumberSM {
   //arg, probs
-  constructor(gestureType, onFinalTimeout) {
+
+  public onFinalTimeout: (value: number) => void;
+  public gestureType: GestureType;
+  private inputState: INPUT_STATE;
+  private timer: NodeJS.Timeout | undefined;
+  private digit_length: number;
+  private _gestureValue: number;  //previous gestureValue
+  private value: number;
+
+  constructor(gestureType: GestureType, onFinalTimeout: (value: number) => void) {
     this.onFinalTimeout = onFinalTimeout; //cb function when 'final' value is determined
     this.gestureType = gestureType;
 
     this.inputState = INPUT_STATE.IDLE; // or class
-    this._inputState = this.inputState;
-    this.startTime = null;
-
+    this.timer = undefined;
     this.digit_length = 0;
-    this.gestureValue = null;
-    this._gestureValue = null;
+    this._gestureValue = 0;
     this.value = 0;
-
-    this.gestureFinals = [];
   }
 
   //TODO: replace implementation with requestAnimationFrame
@@ -45,8 +43,7 @@ class NumberSM {
   resetValues() {
     this.value = 0;
     this.digit_length = 0;
-    this.gestureValue = null;
-    this._gestureValue = null;
+    this._gestureValue = 0;
   }
 
   resetTimer() {
@@ -55,7 +52,7 @@ class NumberSM {
 
   //keep simple - work for just compound number (not qty or price)
   //ex: 72
-  update(gesture) {
+  update(gesture: Gesture) {
     if (gesture === null) return null;
 
     const gestureValue = gesture.value;
@@ -99,7 +96,7 @@ class NumberSM {
       if (digit_length > this.digit_length) {
         this.value = gestureValue;
         this.resetTimer();
-        this.setTimer(TIMEOUT);
+        this.setTimer();
       }
 
       //smaller digits, add
@@ -107,7 +104,7 @@ class NumberSM {
         //add
         this.value = this.value + gestureValue;
         this.resetTimer();
-        this.setTimer(TIMEOUT);
+        this.setTimer();
       }
 
       this._gestureValue = gestureValue;

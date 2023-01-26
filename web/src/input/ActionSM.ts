@@ -1,25 +1,20 @@
-import { Gesture, GestureAction, GestureType } from "./Gesture.ts";
-
-//TODO: change to enum
-//TODO: extend base class? move INPUT_STATE and TIMEOUT to parent GestureDecision
-class INPUT_STATE {
-  static IDLE = 1;
-  static PENDING = 2;
-  static LOCKED = 3;
-}
+import { Gesture, GestureAction, GestureType } from "./Gesture";
+import INPUT_STATE from "./Input_State";
 
 const TIMEOUT = 750;
-
 class ActionSM {
   //arg, probs
-  constructor(gestureType, onFinalTimeout) {
+  public onFinalTimeout: (action: GestureAction) => void;
+  public gestureType: GestureType;
+  private inputState: INPUT_STATE;
+  private timer: NodeJS.Timeout | undefined;
+  private action: GestureAction;
+
+  constructor(gestureType: GestureType, onFinalTimeout: (action: GestureAction) => void) {
     this.onFinalTimeout = onFinalTimeout; //cb function when 'final' value is determined
     this.gestureType = gestureType;
     this.inputState = INPUT_STATE.IDLE; // or class
-    this._inputState = this.inputState;
-    this.startTime = null;
-
-    this.action = null;
+    this.action = GestureAction.None;
   }
 
   //TODO: replace implementation with requestAnimationFrame
@@ -39,22 +34,21 @@ class ActionSM {
   }
 
   resetValues() {
-    this.action = null;
+    this.action = GestureAction.None;
   }
 
   resetTimer() {
     clearTimeout(this.timer);
   }
 
-  update(gesture) {
+  update(gesture: Gesture) {
     if (gesture === null) return null;
 
     //Cancel: type: Action, Action: Cancel, value = null
     //Market: type: Price, Action: Market, value = null
     //Garbage: type: Action, Action: Garbage, value = null
     const action = gesture.action;
-
-    if (action === Gesture.Garbage) return null;
+    if (action === GestureAction.Garbage) return null;
     //console.log(`[ActionSM] ${this.gestureType} update():`, this.action);
 
     //post submit
@@ -78,7 +72,7 @@ class ActionSM {
       if ([GestureAction.Cancel, GestureAction.Market].includes(action)) {
         this.action = action;
         this.resetTimer();
-        this.setTimer(TIMEOUT);
+        this.setTimer();
       }
     }
   }
