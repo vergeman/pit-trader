@@ -1,15 +1,17 @@
-import InputBufferState from "./input/InputBufferState.js";
+
 import EMABuffer from "./input/EMABuffer.js";
 import GestureBuilder from "./input/GestureBuilder.ts";
+import GestureDecision from "./input/GestureDecision.ts";
 
 export default class Classifier {
   constructor(landmarks, inputBufferState) {
     this.session = null;
     this.landmarks = landmarks;
-    this.inputBufferState = new InputBufferState();
+
     this.emaBuffer = new EMABuffer();
 
     this.gestureBuilder = new GestureBuilder();
+    this.gestureDecision = new GestureDecision();
     console.log("CLASSIFIER");
   }
 
@@ -67,14 +69,16 @@ export default class Classifier {
       const gesture = this.gestureBuilder.build(argMax);
 
       //STATE - should have value now
-      this.inputBufferState.update(gesture);
+      this.gestureDecision.calc(gesture);
+
 
       return {
         probs,
         argMax,
         gesture,
-        inputBufferState: this.inputBufferState,
+        inputBufferState: {}, //TODO: replace
       };
+
     } catch (e) {
       //err
       console.log("ERR", e);
