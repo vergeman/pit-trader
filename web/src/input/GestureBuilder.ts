@@ -37,7 +37,7 @@ export default class GestureBuilder {
     //Find Garbage class
     //TODO: enumify
     const class_meta = Object.values(this.meta).find(
-      (m) => (m as any).action == "Garbage"
+      (m) => (m as any).action === GestureAction.Garbage
     );
 
     this._garbage_idx = (class_meta as any).index;
@@ -52,7 +52,11 @@ export default class GestureBuilder {
   //e.g. 95/94/95/94 -> triggers final, clear, then another final clear
   //2 executions
 
-  checkGarbageThreshold(probs: string[], arg: number, threshold: number): number {
+  checkGarbageThreshold(
+    probs: string[],
+    arg: number,
+    threshold: number
+  ): number {
     if (probs.every((prob: string) => parseFloat(prob) < threshold)) {
       return this.garbage_idx;
     }
@@ -65,7 +69,7 @@ export default class GestureBuilder {
   build(argMax: number): Gesture {
     const meta = this.meta[argMax];
 
-    console.log("META", meta);
+    //console.log("META", meta);
 
     if (!meta) {
       return new Gesture(GestureType.Action, GestureAction.None, null);
@@ -77,21 +81,4 @@ export default class GestureBuilder {
       meta.value
     );
   }
-
-  /*
-  getGestureValue(classNum) {
-    const vals = {
-      0: 1,
-      1: 2,
-      2: 3,
-      3: 10,
-      4: 70,
-      5: 100,
-      6: null,
-      null: null,
-    };
-
-    return vals[parseInt(classNum)];
-  }
-*/
 }
