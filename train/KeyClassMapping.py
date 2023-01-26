@@ -165,24 +165,27 @@ class KeyClassMapping():
   def buildMisc(self):
     # spacebar
     gestureType = "Price"
+    action = "Market"
     value = None
     self._generateMapping(self.mapping, " ", " ", gestureType, "Market", value, "execute market", "MARKET.csv")
     self._generateMapping(self.mapping, f"{self.OFFER_TOGGLE_NAME}+ ", f"{self.OFFER_TOGGLE_NAME}+ ",
-                          gestureType, "Market", value, "execute market", "MARKET.csv")
+                          gestureType, action, value, "execute market", "MARKET.csv")
 
     # out out out
     gestureType = "Action"
+    action = "Cancel"
     value = None
     self._generateMapping(self.mapping, "-", "-", gestureType, "Cancel", value, "cancel", "CANCEL.csv")
     self._generateMapping(self.mapping, f"{self.OFFER_TOGGLE_NAME}+-", f"{self.OFFER_TOGGLE_NAME}+-",
-                          gestureType, "Cancel", value, "cancel", "CANCEL.csv")
+                          gestureType, action, value, "cancel", "CANCEL.csv")
 
     # garbage class
     gestureType = "Action"
+    action = "Garbage"
     value = None
     self._generateMapping(self.mapping, "`", "`", gestureType, "Garbage", value, "garbage class", "GARBAGE.csv")
     self._generateMapping(self.mapping, f"{self.OFFER_TOGGLE_NAME}+`", f"{self.OFFER_TOGGLE_NAME}+`",
-                          gestureType, "Garbage", value, "garbage class", "GARBAGE.csv")
+                          gestureType, action, value, "garbage class", "GARBAGE.csv")
 
 
 
