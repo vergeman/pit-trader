@@ -14,7 +14,7 @@ export default function GesturesPanel(props) {
       <thead>
         <tr>
           {results.probs.map((prob, i) => {
-            const bg = (i === results.arg ?
+            const bg = (i === results.argMax ?
                         (inputBufferState.inputState === 2 ? "yellow" : "blue") :
                         "white");
             return (
@@ -41,6 +41,8 @@ export default function GesturesPanel(props) {
         <tfoot>
           <tr>
             <td>State: {inputBufferState.inputState}</td>
+            <td>Type: {results && results.gesture.type}</td>
+            <td>Action: {results && results.gesture.action}</td>
             <td>Val: {inputBufferState.value}</td>
             <td>Window: {JSON.stringify(probBuffer)} </td>
             <td>Finals: {JSON.stringify(inputBufferState.gestureFinals)} </td>
