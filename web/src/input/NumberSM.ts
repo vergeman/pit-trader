@@ -10,10 +10,13 @@ class NumberSM {
   private inputState: INPUT_STATE;
   private timer: NodeJS.Timeout | undefined;
   private digit_length: number;
-  private _gestureValue: number;  //previous gestureValue
+  private _gestureValue: number; //previous gestureValue
   private value: number;
 
-  constructor(gestureType: GestureType, onFinalTimeout: (value: number) => void) {
+  constructor(
+    gestureType: GestureType,
+    onFinalTimeout: (value: number) => void
+  ) {
     this.onFinalTimeout = onFinalTimeout; //cb function when 'final' value is determined
     this.gestureType = gestureType;
 
@@ -50,15 +53,20 @@ class NumberSM {
     clearTimeout(this.timer);
   }
 
+  unlock() {
+    if (this.inputState === INPUT_STATE.LOCKED) {
+      this.inputState = INPUT_STATE.IDLE;
+    }
+  }
+
   //keep simple - work for just compound number (not qty or price)
   //ex: 72
   update(gesture: Gesture) {
     if (gesture === null) return null;
+    if (this.gestureType !== gesture.type) return null;
 
     const gestureValue = gesture.value;
     const digit_length = gesture.digit_length();
-
-    if (this.gestureType !== gesture.type) return null;
 
     console.log(
       `[NumberSM] ${this.gestureType} update():`,
@@ -66,15 +74,6 @@ class NumberSM {
       gestureValue,
       digit_length
     );
-
-    //post submit
-    //locked until detect null gesture
-    //right now only gestureValue === null
-    if (this.inputState === INPUT_STATE.LOCKED) {
-      if (gestureValue === null) {
-        this.inputState = INPUT_STATE.IDLE;
-      }
-    }
 
     //"start"
     if (this.inputState === INPUT_STATE.IDLE) {

@@ -10,7 +10,10 @@ class ActionSM {
   private timer: NodeJS.Timeout | undefined;
   private action: GestureAction;
 
-  constructor(gestureType: GestureType, onFinalTimeout: (action: GestureAction) => void) {
+  constructor(
+    gestureType: GestureType,
+    onFinalTimeout: (action: GestureAction) => void
+  ) {
     this.onFinalTimeout = onFinalTimeout; //cb function when 'final' value is determined
     this.gestureType = gestureType;
     this.inputState = INPUT_STATE.IDLE; // or class
@@ -41,24 +44,28 @@ class ActionSM {
     clearTimeout(this.timer);
   }
 
+  unlock() {
+    if (this.inputState === INPUT_STATE.LOCKED) {
+      this.inputState = INPUT_STATE.IDLE;
+    }
+  }
+
   update(gesture: Gesture) {
     if (gesture === null) return null;
+    const action = gesture.action;
+
+    //allow actions and isMarket
+    const isMarket =
+      gesture.type === GestureType.Price &&
+      gesture.action === GestureAction.Market;
+
+    if (!(isMarket || gesture.type === GestureType.Action)) {
+      return null; //(includes garbage)
+    }
 
     //Cancel: type: Action, Action: Cancel, value = null
     //Market: type: Price, Action: Market, value = null
     //Garbage: type: Action, Action: Garbage, value = null
-    const action = gesture.action;
-    if (action === GestureAction.Garbage) return null;
-    //console.log(`[ActionSM] ${this.gestureType} update():`, this.action);
-
-    //post submit
-    //locked until detect null gesture
-    //TODO: might not work once paired with either qty + price + action
-    if (this.inputState === INPUT_STATE.LOCKED) {
-      if (action === null) {
-        this.inputState = INPUT_STATE.IDLE;
-      }
-    }
 
     //"start"
     if (this.inputState === INPUT_STATE.IDLE) {
@@ -68,7 +75,7 @@ class ActionSM {
     }
 
     //action:
-    if (this.inputState === INPUT_STATE.PENDING && this.action === null) {
+    if (this.inputState === INPUT_STATE.PENDING && this.action !== null) {
       if ([GestureAction.Cancel, GestureAction.Market].includes(action)) {
         this.action = action;
         this.resetTimer();

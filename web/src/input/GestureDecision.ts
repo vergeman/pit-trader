@@ -113,17 +113,16 @@ export default class GestureDecision {
     //conditionals based on gesture and prior
     console.log(gesture);
 
-    if (
-      gesture.type === GestureType.Action ||
-      (gesture.type === GestureType.Price &&
-        gesture.action === GestureAction.Market)
-    ) {
-      this.actionSM.update(gesture);
-    }
+    this.actionSM.update(gesture);
+    this.qtySM.update(gesture);
+    this.priceSM.update(gesture);
 
-    if ([GestureType.Qty, GestureType.Price].includes(gesture.type)) {
-      this.qtySM.update(gesture);
-      this.priceSM.update(gesture);
+    //post successful order submit we lock the SMs since tend to have "lingering" gesture
+    //if we then get garbage, assume a "reset" and unlock for new gestures
+    if (gesture.action === GestureAction.Garbage) {
+      this.actionSM.unlock();
+      this.qtySM.unlock();
+      this.priceSM.unlock();
     }
   }
 }
