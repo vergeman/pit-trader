@@ -68,10 +68,6 @@ export default class Classifier {
 
       const gesture = this.gestureBuilder.build(argMax);
 
-      //STATE - should have value now
-      this.gestureDecision.calc(gesture);
-
-
       return {
         probs,
         argMax,
