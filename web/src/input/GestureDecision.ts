@@ -61,11 +61,13 @@ export default class GestureDecision {
   triggerValidOrder() {
     let order: Order | boolean = false;
 
-    console.log(
-      `[GestureDecision] Check:`,
-      `ACTION: ${this._action}, QTY: ${this._qty}, PRICE: ${this._price}`
-    );
 
+    // console.log(
+    //   `[GestureDecision] Check:`,
+    //   `ACTION: ${this._action}, QTY: ${this._qty}, PRICE: ${this._price}`
+    // );
+
+    // CANCEL
     if (this._action === GestureAction.Cancel) {
       console.log("[GestureDecision] triggerValidOrder: Cancel");
       //TODO: send order cancel
@@ -74,22 +76,42 @@ export default class GestureDecision {
       order = true;
     }
 
+    // MARKET ORDER
     if (this._action === GestureAction.Market && this.qty !== null) {
       order = new Order("id-1", OrderType.Market, this.qty, NaN);
-      this.me.process(order);
-      console.log("[GestureDecision] triggerValidOrder: Market", this.qty);
+      try  {
+        this.me.process(order);
+        console.log("[GestureDecision] triggerValidOrder: Market order submitted", this.qty);
+      } catch(e: any) {
+        //TODO: notify user mechanic with message
+        //1. store in matchingEngine, have it detect change in MtachingView
+        //2. pass a function / setState
+        console.error(e.message)
+        this.reset();
+      }
+    } else if (this._action === GestureAction.Market && this.qty === null) {
+      console.error("[GestureDecision] Market order submitted but missing qty", this.qty);
+      this.reset();
     }
 
+    // LIMIT ORDER
     if (this.price !== null && this.qty !== null) {
       order = new Order("id-1", OrderType.Limit, this.qty, this.price);
-      this.me.process(order);
-      console.log("[GestureDecision] triggerValidOrder order submitted", {
-        qty: this.qty,
-        price: this.price,
-      });
+      try {
+        this.me.process(order);
+        console.log("[GestureDecision] triggerValidOrder Limit order submitted", {
+          qty: this.qty,
+          price: this.price,
+        });
+      } catch(e: any) {
+        console.error(e.message)
+        this.reset();
+      }
     }
 
     if (order) {
+      //TODO: add to some kind of player profile
+      //or do we augment MatchingEngine - getOrders(player_id)
       this.reset();
     }
   }
@@ -111,7 +133,7 @@ export default class GestureDecision {
     if (!gesture) return;
 
     //conditionals based on gesture and prior
-    console.log(gesture);
+    //console.log(gesture);
 
     this.actionSM.update(gesture);
     this.qtySM.update(gesture);
