@@ -1,5 +1,4 @@
-import { useEffect, useRef, useState } from "react";
-import React from "react";
+import { useRef } from "react";
 import useFaceDetection from "./useFaceDetection.js";
 import useHandsDetection from "./useHandsDetection.js";
 import useCamera from "./useCamera.js";

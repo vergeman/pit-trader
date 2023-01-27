@@ -4,7 +4,7 @@ import GestureBuilder from "./input/GestureBuilder.ts";
 import GestureDecision from "./input/GestureDecision.ts";
 
 export default class Classifier {
-  constructor(landmarks, inputBufferState) {
+  constructor(landmarks) {
     this.session = null;
     this.landmarks = landmarks;
 
