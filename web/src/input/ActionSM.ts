@@ -1,23 +1,26 @@
 import { Gesture, GestureAction, GestureType } from "./Gesture";
 import INPUT_STATE from "./Input_State";
 
-const TIMEOUT = 750;
 class ActionSM {
   //arg, probs
   public onFinalTimeout: (action: GestureAction) => void;
   public gestureType: GestureType;
+  private timeout: number;
   private inputState: INPUT_STATE;
   private timer: NodeJS.Timeout | undefined;
   private action: GestureAction;
 
   constructor(
     gestureType: GestureType,
-    onFinalTimeout: (action: GestureAction) => void
+    onFinalTimeout: (action: GestureAction) => void,
+    timeout: number
   ) {
     this.onFinalTimeout = onFinalTimeout; //cb function when 'final' value is determined
     this.gestureType = gestureType;
+    this.timeout = timeout;
     this.inputState = INPUT_STATE.IDLE; // or class
     this.action = GestureAction.None;
+
   }
 
   //TODO: replace implementation with requestAnimationFrame
@@ -28,7 +31,7 @@ class ActionSM {
       this.onFinalTimeout(this.action);
       this.resetValues();
       this.inputState = INPUT_STATE.LOCKED;
-    }, TIMEOUT);
+    }, this.timeout);
   }
 
   resetAll() {

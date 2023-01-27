@@ -12,21 +12,23 @@ export default class GestureDecision {
   private actionSM: ActionSM;
   private _qty: number | null;
   private _price: number | null;
-
   private _action: GestureAction;
+  private timeout: number;
 
-  constructor(me: MatchingEngine) {
+  constructor(me: MatchingEngine, timeout: number = 750) {
     this.me = me;
-    this.qtySM = new NumberSM(GestureType.Qty, this.setQtyFn.bind(this));
-    this.priceSM = new NumberSM(GestureType.Price, this.setPriceFn.bind(this));
+    this.qtySM = new NumberSM(GestureType.Qty, this.setQtyFn.bind(this), timeout);
+    this.priceSM = new NumberSM(GestureType.Price, this.setPriceFn.bind(this), timeout);
     this.actionSM = new ActionSM(
       GestureType.Action,
-      this.setActionFn.bind(this)
+      this.setActionFn.bind(this),
+      timeout
     );
 
     this._qty = null;
     this._price = null;
     this._action = GestureAction.None;
+    this.timeout = timeout;
   }
 
   get qty(): number | null {

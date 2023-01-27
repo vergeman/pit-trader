@@ -1,12 +1,12 @@
 import { Gesture, GestureType } from "./Gesture";
 import INPUT_STATE from "./Input_State";
 
-const TIMEOUT = 750;
 class NumberSM {
   //arg, probs
 
   public onFinalTimeout: (value: number) => void;
   public gestureType: GestureType;
+  private timeout: number;
   private inputState: INPUT_STATE;
   private timer: NodeJS.Timeout | undefined;
   private digit_length: number;
@@ -15,10 +15,12 @@ class NumberSM {
 
   constructor(
     gestureType: GestureType,
-    onFinalTimeout: (value: number) => void
+    onFinalTimeout: (value: number) => void,
+    timeout: number
   ) {
     this.onFinalTimeout = onFinalTimeout; //cb function when 'final' value is determined
     this.gestureType = gestureType;
+    this.timeout = timeout;
 
     this.inputState = INPUT_STATE.IDLE; // or class
     this.timer = undefined;
@@ -35,7 +37,7 @@ class NumberSM {
       this.onFinalTimeout(this.value);
       this.resetValues();
       this.inputState = INPUT_STATE.LOCKED;
-    }, TIMEOUT);
+    }, this.timeout);
   }
 
   resetAll() {
