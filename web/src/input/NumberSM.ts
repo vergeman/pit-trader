@@ -7,11 +7,11 @@ class NumberSM {
   public onFinalTimeout: (value: number) => void;
   public gestureType: GestureType;
   private timeout: number;
-  private inputState: INPUT_STATE;
+  public inputState: INPUT_STATE;
   private timer: NodeJS.Timeout | undefined;
-  private digit_length: number;
+  public digit_length: number;
   private _gestureValue: number; //previous gestureValue
-  private value: number;
+  public value: number;
 
   constructor(
     gestureType: GestureType,
@@ -33,7 +33,7 @@ class NumberSM {
   setTimer() {
     //"FINAL"
     this.timer = setTimeout(() => {
-      console.log("[NumberSM] FINAL", this);
+      //console.log("[NumberSM] FINAL", this);
       this.onFinalTimeout(this.value);
       this.resetValues();
       this.inputState = INPUT_STATE.LOCKED;
@@ -70,12 +70,12 @@ class NumberSM {
     const gestureValue = gesture.value;
     const digit_length = gesture.digit_length();
 
-    console.log(
-      `[NumberSM] ${this.gestureType} update():`,
-      this.inputState,
-      gestureValue,
-      digit_length
-    );
+    // console.log(
+    //   `[NumberSM] ${this.gestureType} update():`,
+    //   this.inputState,
+    //   gestureValue,
+    //   digit_length
+    // );
 
     //"start"
     if (this.inputState === INPUT_STATE.IDLE) {

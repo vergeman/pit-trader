@@ -6,9 +6,9 @@ class ActionSM {
   public onFinalTimeout: (action: GestureAction) => void;
   public gestureType: GestureType;
   private timeout: number;
-  private inputState: INPUT_STATE;
+  public inputState: INPUT_STATE;
   private timer: NodeJS.Timeout | undefined;
-  private action: GestureAction;
+  public action: GestureAction;
 
   constructor(
     gestureType: GestureType,
@@ -27,7 +27,7 @@ class ActionSM {
   setTimer() {
     //"FINAL"
     this.timer = setTimeout(() => {
-      console.log("[ActionSM] FINAL", this);
+      //console.log("[ActionSM] FINAL", this);
       this.onFinalTimeout(this.action);
       this.resetValues();
       this.inputState = INPUT_STATE.LOCKED;
@@ -63,8 +63,10 @@ class ActionSM {
       gesture.action === GestureAction.Market;
 
     if (!(isMarket || gesture.type === GestureType.Action)) {
-      return null; //(includes garbage)
+      return null;
     }
+
+    if (action === GestureAction.Garbage) return null;
 
     //Cancel: type: Action, Action: Cancel, value = null
     //Market: type: Price, Action: Market, value = null
@@ -78,7 +80,9 @@ class ActionSM {
     }
 
     //action:
-    if (this.inputState === INPUT_STATE.PENDING && this.action !== null) {
+    if (this.inputState === INPUT_STATE.PENDING &&
+      this.action !== null) {
+
       if ([GestureAction.Cancel, GestureAction.Market].includes(action)) {
         this.action = action;
         this.resetTimer();
