@@ -117,7 +117,9 @@ export default class MatchingEngine {
     }
 
     //LIMIT
+
     if (order.orderType === OrderType.Limit) {
+
       while (order.qty && oppOrder && order.canTransact(oppOrder)) {
         order.execute(oppOrder);
 

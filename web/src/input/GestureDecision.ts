@@ -17,8 +17,16 @@ export default class GestureDecision {
 
   constructor(me: MatchingEngine, timeout: number = 750) {
     this.me = me;
-    this.qtySM = new NumberSM(GestureType.Qty, this.setQtyFn.bind(this), timeout);
-    this.priceSM = new NumberSM(GestureType.Price, this.setPriceFn.bind(this), timeout);
+    this.qtySM = new NumberSM(
+      GestureType.Qty,
+      this.setQtyFn.bind(this),
+      timeout
+    );
+    this.priceSM = new NumberSM(
+      GestureType.Price,
+      this.setPriceFn.bind(this),
+      timeout
+    );
     this.actionSM = new ActionSM(
       GestureType.Action,
       this.setActionFn.bind(this),
@@ -63,7 +71,6 @@ export default class GestureDecision {
   triggerValidOrder() {
     let order: Order | boolean = false;
 
-
     // console.log(
     //   `[GestureDecision] Check:`,
     //   `ACTION: ${this._action}, QTY: ${this._qty}, PRICE: ${this._price}`
@@ -81,32 +88,40 @@ export default class GestureDecision {
     // MARKET ORDER
     if (this._action === GestureAction.Market && this.qty !== null) {
       order = new Order("id-1", OrderType.Market, this.qty, NaN);
-      try  {
+      console.log("MARKET", order);
+      try {
         this.me.process(order);
-        console.log("[GestureDecision] triggerValidOrder: Market order submitted", this.qty);
-      } catch(e: any) {
+        console.log(
+          "[GestureDecision] triggerValidOrder: Market order submitted",
+          this.qty
+        );
+      } catch (e: any) {
         //TODO: notify user mechanic with message
-        //1. store in matchingEngine, have it detect change in MtachingView
+        //1. store in matchingEngine, have it detect change in MatchingView
         //2. pass a function / setState
-        console.error(e.message)
+        console.error(e.message);
         this.reset();
       }
     } else if (this._action === GestureAction.Market && this.qty === null) {
-      console.error("[GestureDecision] Market order submitted but missing qty", this.qty);
+      console.log(
+        "[GestureDecision] Market order submitted but missing qty",
+        this.qty
+      );
       this.reset();
     }
 
     // LIMIT ORDER
     if (this.price !== null && this.qty !== null) {
       order = new Order("id-1", OrderType.Limit, this.qty, this.price);
+      console.log("LIMIT", order);
       try {
         this.me.process(order);
-        console.log("[GestureDecision] triggerValidOrder Limit order submitted", {
-          qty: this.qty,
-          price: this.price,
-        });
-      } catch(e: any) {
-        console.error(e.message)
+        console.log(
+          "[GestureDecision] triggerValidOrder Limit order submitted",
+          order
+        );
+      } catch (e: any) {
+        console.error(e.message);
         this.reset();
       }
     }
