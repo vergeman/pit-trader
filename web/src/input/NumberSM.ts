@@ -1,21 +1,26 @@
 import { Gesture, GestureType } from "./Gesture";
 import INPUT_STATE from "./Input_State";
 
-const TIMEOUT = 750;
 class NumberSM {
   //arg, probs
 
   public onFinalTimeout: (value: number) => void;
   public gestureType: GestureType;
-  private inputState: INPUT_STATE;
+  private timeout: number;
+  public inputState: INPUT_STATE;
   private timer: NodeJS.Timeout | undefined;
-  private digit_length: number;
-  private _gestureValue: number;  //previous gestureValue
-  private value: number;
+  public digit_length: number;
+  private _gestureValue: number; //previous gestureValue
+  public value: number;
 
-  constructor(gestureType: GestureType, onFinalTimeout: (value: number) => void) {
+  constructor(
+    gestureType: GestureType,
+    onFinalTimeout: (value: number) => void,
+    timeout: number
+  ) {
     this.onFinalTimeout = onFinalTimeout; //cb function when 'final' value is determined
     this.gestureType = gestureType;
+    this.timeout = timeout;
 
     this.inputState = INPUT_STATE.IDLE; // or class
     this.timer = undefined;
@@ -28,11 +33,11 @@ class NumberSM {
   setTimer() {
     //"FINAL"
     this.timer = setTimeout(() => {
-      console.log("[NumberSM] FINAL", this);
+      //console.log("[NumberSM] FINAL", this);
       this.onFinalTimeout(this.value);
       this.resetValues();
       this.inputState = INPUT_STATE.LOCKED;
-    }, TIMEOUT);
+    }, this.timeout);
   }
 
   resetAll() {
@@ -50,31 +55,27 @@ class NumberSM {
     clearTimeout(this.timer);
   }
 
+  unlock() {
+    if (this.inputState === INPUT_STATE.LOCKED) {
+      this.inputState = INPUT_STATE.IDLE;
+    }
+  }
+
   //keep simple - work for just compound number (not qty or price)
   //ex: 72
   update(gesture: Gesture) {
     if (gesture === null) return null;
+    if (this.gestureType !== gesture.type) return null;
 
     const gestureValue = gesture.value;
     const digit_length = gesture.digit_length();
 
-    if (this.gestureType !== gesture.type) return null;
-
-    console.log(
-      `[NumberSM] ${this.gestureType} update():`,
-      this.inputState,
-      gestureValue,
-      digit_length
-    );
-
-    //post submit
-    //locked until detect null gesture
-    //right now only gestureValue === null
-    if (this.inputState === INPUT_STATE.LOCKED) {
-      if (gestureValue === null) {
-        this.inputState = INPUT_STATE.IDLE;
-      }
-    }
+    // console.log(
+    //   `[NumberSM] ${this.gestureType} update():`,
+    //   this.inputState,
+    //   gestureValue,
+    //   digit_length
+    // );
 
     //"start"
     if (this.inputState === INPUT_STATE.IDLE) {

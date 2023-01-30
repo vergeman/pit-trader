@@ -1,31 +1,37 @@
 import { Gesture, GestureAction, GestureType } from "./Gesture";
 import INPUT_STATE from "./Input_State";
 
-const TIMEOUT = 750;
 class ActionSM {
   //arg, probs
   public onFinalTimeout: (action: GestureAction) => void;
   public gestureType: GestureType;
-  private inputState: INPUT_STATE;
+  private timeout: number;
+  public inputState: INPUT_STATE;
   private timer: NodeJS.Timeout | undefined;
-  private action: GestureAction;
+  public action: GestureAction;
 
-  constructor(gestureType: GestureType, onFinalTimeout: (action: GestureAction) => void) {
+  constructor(
+    gestureType: GestureType,
+    onFinalTimeout: (action: GestureAction) => void,
+    timeout: number
+  ) {
     this.onFinalTimeout = onFinalTimeout; //cb function when 'final' value is determined
     this.gestureType = gestureType;
+    this.timeout = timeout;
     this.inputState = INPUT_STATE.IDLE; // or class
     this.action = GestureAction.None;
+
   }
 
   //TODO: replace implementation with requestAnimationFrame
   setTimer() {
     //"FINAL"
     this.timer = setTimeout(() => {
-      console.log("[ActionSM] FINAL", this);
+      //console.log("[ActionSM] FINAL", this);
       this.onFinalTimeout(this.action);
       this.resetValues();
       this.inputState = INPUT_STATE.LOCKED;
-    }, TIMEOUT);
+    }, this.timeout);
   }
 
   resetAll() {
@@ -41,24 +47,30 @@ class ActionSM {
     clearTimeout(this.timer);
   }
 
+  unlock() {
+    if (this.inputState === INPUT_STATE.LOCKED) {
+      this.inputState = INPUT_STATE.IDLE;
+    }
+  }
+
   update(gesture: Gesture) {
     if (gesture === null) return null;
+    const action = gesture.action;
+
+    //allow actions and isMarket
+    const isMarket =
+      gesture.type === GestureType.Price &&
+      gesture.action === GestureAction.Market;
+
+    if (!(isMarket || gesture.type === GestureType.Action)) {
+      return null;
+    }
+
+    if (action === GestureAction.Garbage) return null;
 
     //Cancel: type: Action, Action: Cancel, value = null
     //Market: type: Price, Action: Market, value = null
     //Garbage: type: Action, Action: Garbage, value = null
-    const action = gesture.action;
-    if (action === GestureAction.Garbage) return null;
-    //console.log(`[ActionSM] ${this.gestureType} update():`, this.action);
-
-    //post submit
-    //locked until detect null gesture
-    //TODO: might not work once paired with either qty + price + action
-    if (this.inputState === INPUT_STATE.LOCKED) {
-      if (action === null) {
-        this.inputState = INPUT_STATE.IDLE;
-      }
-    }
 
     //"start"
     if (this.inputState === INPUT_STATE.IDLE) {
@@ -68,7 +80,9 @@ class ActionSM {
     }
 
     //action:
-    if (this.inputState === INPUT_STATE.PENDING && this.action === null) {
+    if (this.inputState === INPUT_STATE.PENDING &&
+      this.action !== null) {
+
       if ([GestureAction.Cancel, GestureAction.Market].includes(action)) {
         this.action = action;
         this.resetTimer();

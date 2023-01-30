@@ -79,7 +79,7 @@ export default class MatchingEngine {
 
   process(order: Order) {
     //choose opposing queue to execute against
-    if (order.qty === 0) throw new Error("bad quantity");
+    if (order.qty === 0) throw new Error(`Order rejected: bad quantity - ${order.qty}`);
     let queue = this.offers;
     let oppQueue = this.bids;
     if (order.qty > 0) {
@@ -96,7 +96,7 @@ export default class MatchingEngine {
       //no opposite orders exist
       if (oppOrder === undefined) {
         order.reject();
-        throw new Error("rejected");
+        throw new Error(`Order rejected: no orders available to fill - queue size: ${oppQueue.size()}`);
       }
 
       //sweep orders until filled
@@ -117,7 +117,9 @@ export default class MatchingEngine {
     }
 
     //LIMIT
+
     if (order.orderType === OrderType.Limit) {
+
       while (order.qty && oppOrder && order.canTransact(oppOrder)) {
         order.execute(oppOrder);
 
