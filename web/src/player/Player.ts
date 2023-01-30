@@ -25,3 +25,5 @@ export class Player {
     return this._orders;
   }
 }
+
+export default Player;
