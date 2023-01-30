@@ -4,12 +4,13 @@ import Order from "../engine/Order";
 export class Player {
   private _id: string;
   private _name: string;
+  private _isLive: boolean;
   private _orders: Order[];
 
-  constructor(name: string) {
+  constructor(name: string, isLive: boolean) {
     this._id = uuidv4();
     this._name = name;
-
+    this._isLive = isLive;
     this._orders = [];
   }
 
@@ -19,6 +20,10 @@ export class Player {
 
   get name(): string {
     return this._name;
+  }
+
+  get isLive(): boolean {
+    return this._isLive;
   }
 
   get orders(): Order[] {
