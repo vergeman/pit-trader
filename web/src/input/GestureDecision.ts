@@ -2,10 +2,12 @@ import { Gesture, GestureType, GestureAction } from "./Gesture";
 import { NumberSM } from "./NumberSM";
 import { ActionSM } from "./ActionSM";
 import MatchingEngine from "../engine/MatchingEngine";
+import Player from "../player/Player";
 import { OrderType, Order } from "../engine/Order";
 
 export default class GestureDecision {
   public me: MatchingEngine;
+  public player: Player;
 
   private qtySM: NumberSM;
   private priceSM: NumberSM;
@@ -13,10 +15,11 @@ export default class GestureDecision {
   private _qty: number | null;
   private _price: number | null;
   private _action: GestureAction;
-  private timeout: number;
 
-  constructor(me: MatchingEngine, timeout: number = 750) {
+  constructor(me: MatchingEngine, player: Player, timeout: number = 750) {
     this.me = me;
+    this.player = player;
+
     this.qtySM = new NumberSM(
       GestureType.Qty,
       this.setQtyFn.bind(this),
@@ -36,7 +39,6 @@ export default class GestureDecision {
     this._qty = null;
     this._price = null;
     this._action = GestureAction.None;
-    this.timeout = timeout;
   }
 
   get qty(): number | null {
@@ -79,10 +81,14 @@ export default class GestureDecision {
     // CANCEL
     if (this._action === GestureAction.Cancel) {
       console.log("[GestureDecision] triggerValidOrder: Cancel");
-      //TODO: send order cancel
-      //how identify? player has order list
+
+      if (this.player.orders.length) {
+        order = this.player.orders.at(-1) as Order;
+        ; //removes from ME queues, but keep in player orders list w/ status cancelled
+        this.me.cancel(order)
+      }
+
       this.reset();
-      order = true;
     }
 
     // MARKET ORDER
@@ -90,7 +96,10 @@ export default class GestureDecision {
       order = new Order("id-1", OrderType.Market, this.qty, NaN);
       console.log("MARKET", order);
       try {
+
         this.me.process(order);
+        this.player.addOrder(order);
+
         console.log(
           "[GestureDecision] triggerValidOrder: Market order submitted",
           this.qty
@@ -115,7 +124,10 @@ export default class GestureDecision {
       order = new Order("id-1", OrderType.Limit, this.qty, this.price);
       console.log("LIMIT", order);
       try {
+
         this.me.process(order);
+        this.player.addOrder(order);
+
         console.log(
           "[GestureDecision] triggerValidOrder Limit order submitted",
           order
@@ -126,7 +138,8 @@ export default class GestureDecision {
       }
     }
 
-    if (order) {
+    if (order instanceof Order) {
+
       //TODO: add to some kind of player profile
       //or do we augment MatchingEngine - getOrders(player_id)
       this.reset();

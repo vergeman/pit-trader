@@ -6,7 +6,7 @@ import Camera from "./Camera.jsx";
 import GesturesPanel from './GesturesPanel.jsx';
 import MatchingEngine from "./engine/MatchingEngine";
 import MatchingEngineView from "./MatchingEngineView.jsx";
-
+import Player from "./player/Player";
 
 export default function Demo() {
 
@@ -14,16 +14,19 @@ export default function Demo() {
   const [landmarks, setLandmarks] = useState(null);
   const [classifier, setClassifier] = useState(null);
   const [me, setMe] = useState(null);
+  const [player, setPlayer] = useState(null);
 
   useEffect(() => {
     console.log("[Demo.jsx]: useEffect init");
     const landmarks = new Landmarks();
     const classifier = new Classifier(landmarks);
     const me = new MatchingEngine();
+    const player = new Player("test", true);
 
     setLandmarks(landmarks);
     setClassifier(classifier);
     setMe(me);
+    setPlayer(player);
 
     classifier.load();
   }, []);
@@ -36,7 +39,7 @@ export default function Demo() {
               classifier={classifier}
               setGestureData={setGestureData} />
       <GesturesPanel results={gestureData} />
-      <MatchingEngineView me={me} gestureData={gestureData}/>
+      <MatchingEngineView me={me} player={player} gestureData={gestureData}/>
     </div>
   );
 }

@@ -7,7 +7,7 @@ export class Player {
   private _isLive: boolean;
   private _orders: Order[];
 
-  constructor(name: string, isLive: boolean) {
+  constructor(name: string, isLive: boolean = false) {
     this._id = uuidv4();
     this._name = name;
     this._isLive = isLive;
@@ -28,6 +28,10 @@ export class Player {
 
   get orders(): Order[] {
     return this._orders;
+  }
+
+  addOrder(order: Order) {
+    this.orders.push(order);
   }
 }
 

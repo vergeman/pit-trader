@@ -7,9 +7,9 @@ export default function MatchingEngineView(props) {
 
   useEffect(() => {
     console.log("[MatchingEngineView.jsx]: useEffect init");
-    const gestureDecision = new GestureDecision(props.me);
+    const gestureDecision = new GestureDecision(props.me, props.player);
     setGestureDecision(gestureDecision);
-  }, [props.me]);
+  }, [props.me, props.player]);
 
   useEffect(() => {
     //console.log("[MatchingEngineView.jsx]: useEffect gesture");
