@@ -1,7 +1,6 @@
 import MatchingEngine from "./MatchingEngine";
 import { OrderStatus, OrderType, Order } from "./Order";
 
-// TODO: cancel() operation
 // TODO: effect on player - what happens post execute? what do we need
 
 describe("process() basic operations", () => {
@@ -23,6 +22,8 @@ describe("process() basic operations", () => {
     me.process(o2);
     expect(me.bids.size()).toEqual(0);
     expect(me.offers.size()).toEqual(0);
+    expect(me.transactionReports[0].qty).toBe(50);
+    expect(me.transactionReports[0].price).toBe(100);
   });
 
   it("heap behavior for queues - self orders so Orders execute at best price", () => {
@@ -30,13 +31,15 @@ describe("process() basic operations", () => {
     const o1 = new Order("Player 1", OrderType.Limit, -50, 103);
     const o2 = new Order("Player 2", OrderType.Limit, -50, 102);
     //pay 103 will lift the 102 offer
-    const o3 = new Order("Player 2", OrderType.Limit, 50, 103);
+    const o3 = new Order("Player 2", OrderType.Limit, 50, 102);
     me.process(o1);
     me.process(o2);
     me.process(o3);
     expect(me.bids.size()).toEqual(0);
     expect(me.offers.size()).toEqual(1);
     expect(me.offers.peek()).toBe(o1);
+    expect(me.transactionReports[0].qty).toBe(50);
+    expect(me.transactionReports[0].price).toBe(102);
   });
 
   it("market order submitted to empty queues are rejected", () => {
@@ -54,6 +57,8 @@ describe("process() basic operations", () => {
     me.process(o2);
     expect(me.bids.size()).toEqual(1);
     expect(me.offers.size()).toEqual(0);
+    expect(me.transactionReports[0].qty).toBe(50);
+    expect(me.transactionReports[0].price).toBe(100);
 
     //remainder
     const bid = me.bids.peek();
@@ -68,6 +73,8 @@ describe("process() basic operations", () => {
     me.process(o2);
     expect(me.bids.size()).toEqual(1);
     expect(me.offers.size()).toEqual(0);
+    expect(me.transactionReports[0].qty).toBe(50);
+    expect(me.transactionReports[0].price).toBe(100);
 
     //remainder
     const bid = me.bids.peek();
@@ -87,6 +94,12 @@ describe("process() orders fill on multiple orders", () => {
     expect(me.bids.size()).toEqual(1);
     expect(me.offers.size()).toEqual(0);
     expect(o1.status).toBe(OrderStatus.Complete);
+
+    //note order of transactions
+    expect(me.transactionReports[1].qty).toBe(50);
+    expect(me.transactionReports[1].price).toBe(100);
+    expect(me.transactionReports[0].qty).toBe(25);
+    expect(me.transactionReports[0].price).toBe(99);
 
     //remainder
     const bid = me.bids.peek();
@@ -110,6 +123,11 @@ describe("process() orders fill on multiple orders", () => {
     expect(o2.qtyFilled).toEqual(50);
     expect(o1.status).toBe(OrderStatus.Complete);
     expect(o2.status).toBe(OrderStatus.Complete);
+
+    expect(me.transactionReports[1].qty).toBe(50);
+    expect(me.transactionReports[1].price).toBe(100);
+    expect(me.transactionReports[0].qty).toBe(50);
+    expect(me.transactionReports[0].price).toBe(99);
 
     //remainder
     expect(me.offers.size()).toEqual(1);
@@ -175,6 +193,9 @@ describe("cancel() mechanics", () => {
     me.process(o1);
     me.process(o2);
     me.process(o3);
+
+    expect(me.transactionReports[0].qty).toBe(25);
+    expect(me.transactionReports[0].price).toBe(100);
 
     expect(me.bids.size()).toEqual(2);
     expect(o3.status).toBe(OrderStatus.Complete);
