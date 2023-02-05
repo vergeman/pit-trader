@@ -1,6 +1,6 @@
 import Player from "./Player";
 import MatchingEngine from "../engine/MatchingEngine";
-import Order, { OrderType } from "../engine/Order";
+import Order, { OrderType, TransactionReport } from "../engine/Order";
 
 export class PlayerManager {
   private _me: MatchingEngine;
@@ -57,7 +57,6 @@ export class PlayerManager {
       this._me.process(bidOrder);
       this._me.process(offerOrder);
     }
-
   }
 
   getRandomizedPlayerList(): Player[] {
@@ -86,6 +85,11 @@ export class PlayerManager {
     return randomizedPlayers;
   }
 
+  setNewDeltas() {
+    for (let player of Object.values(this._players)) {
+      player.delta = this.generateRandomDelta();
+    }
+  }
   //random digit .1-.5
   generateRandomDelta(max: number = 4): number {
     return (Math.floor(Math.random() * max) + 1) / 10;

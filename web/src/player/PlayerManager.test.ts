@@ -106,4 +106,19 @@ describe("PlayerManager", () => {
       i--;
     }
   });
+
+  it("setNewDeltas(): sets random deltas per player", () => {
+    const me = new MatchingEngine();
+    const player_a = new Player("a");
+    const player_b = new Player("b");
+    let players = [player_a, player_b];
+    const pm = new PlayerManager(me, players);
+
+    //verify initial deltas 0
+    expect(players.every(player => player.delta === 0)).toBeTruthy();
+    pm.setNewDeltas();
+    //deltas different after time
+    expect(players.every(player => player.delta !== 0)).toBeTruthy();
+  })
+
 });
