@@ -142,6 +142,9 @@ export class Order {
   get price(): number {
     return this._price;
   }
+  set price(num: number) {
+    this._price = num;
+  }
   get qty(): number {
     return this._qty;
   }

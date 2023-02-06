@@ -213,8 +213,8 @@ describe("cancel() mechanics", () => {
     const o3 = new Order("1", OrderType.Limit, 50, 100);
     const o4 = new Order("1", OrderType.Limit, 50, 100);
     const o5 = new Order("1", OrderType.Limit, 50, 100);
-    const o6 = new Order("1", OrderType.Limit, -50, 101)
-    const o7 = new Order("1", OrderType.Limit, -50, 101)
+    const o6 = new Order("1", OrderType.Limit, -50, 101);
+    const o7 = new Order("1", OrderType.Limit, -50, 101);
     me.process(o1);
     me.process(o2);
     me.process(o3);
@@ -226,7 +226,7 @@ describe("cancel() mechanics", () => {
     me.cancel(o3);
     expect(me.bids.contains(o3)).not.toBeTruthy();
     expect(o3.status).toBe(OrderStatus.Cancelled);
-  })
+  });
 });
 
 describe("maxComparator / minComparator", () => {
@@ -289,5 +289,30 @@ describe("maxComparator / minComparator", () => {
     expect(me.offers.contains(o1)).toBeTruthy();
     expect(me.offers.contains(o2)).toBeFalsy();
     expect(me.offers.contains(o3)).toBeTruthy();
+  });
+
+  describe("heap behaviors", () => {
+    it("updateOrder() will remove/add order and maintain heap property", () => {
+      const me = new MatchingEngine();
+      const o1 = new Order("123", OrderType.Limit, -50, 100);
+      const o2 = new Order("123", OrderType.Limit, -50, 101);
+      const o3 = new Order("123", OrderType.Limit, -50, 102);
+
+      me.addOffer(o1);
+      me.addOffer(o2);
+      me.addOffer(o3);
+
+      let bestOffer = me.offers.peek();
+      let updated = false;
+      expect(bestOffer).toBe(o1);
+
+      if (bestOffer) {
+        updated = me.updateOrderPrice(bestOffer, 103);
+      }
+
+      expect(updated).toBeTruthy();
+      bestOffer = me.offers.peek();
+      expect(bestOffer).toBe(o2);
+    });
   });
 });

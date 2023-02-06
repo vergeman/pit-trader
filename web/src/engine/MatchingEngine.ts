@@ -83,9 +83,25 @@ export default class MatchingEngine {
     order.cancelled();
   }
 
+  updateOrderPrice(order: Order, newPrice: number): boolean {
+    let queue = order.qty > 0 ? this.bids : this.offers;
+    const oldPrice = order.price;
+
+    if (oldPrice === newPrice) return false;
+
+    const removed = queue.remove(order);
+    if (removed) {
+      order.price = newPrice;
+      queue.add(order);
+    }
+
+    return removed;
+  }
+
   process(order: Order) {
     //choose opposing queue to execute against
-    if (order.qty === 0) throw new Error(`Order rejected: bad quantity - ${order.qty}`);
+    if (order.qty === 0)
+      throw new Error(`Order rejected: bad quantity - ${order.qty}`);
     let queue = this.offers;
     let oppQueue = this.bids;
     if (order.qty > 0) {
@@ -104,7 +120,9 @@ export default class MatchingEngine {
       //no opposite orders exist
       if (oppOrder === undefined) {
         order.reject();
-        throw new Error(`Order rejected: no orders available to fill - queue size: ${oppQueue.size()}`);
+        throw new Error(
+          `Order rejected: no orders available to fill - queue size: ${oppQueue.size()}`
+        );
       }
 
       //sweep orders until filled
@@ -129,7 +147,6 @@ export default class MatchingEngine {
     //LIMIT
 
     if (order.orderType === OrderType.Limit) {
-
       while (order.qty && oppOrder && order.canTransact(oppOrder)) {
         transactionReport = order.execute(oppOrder);
 
