@@ -40,9 +40,6 @@ export class Player {
     this._delta = d;
   }
 
-  //bid/ offer? ideally refactor from playerManager.init()
-  replenish(priceSeed: number) {}
-
   addOrder(order: Order) {
     this.orders.push(order);
   }

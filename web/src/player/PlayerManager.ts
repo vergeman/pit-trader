@@ -30,18 +30,19 @@ export class PlayerManager {
     return this._me;
   }
 
-  init(priceSeed: number = 100, qtySeed: number = 4) {
+  init(price: number, qty: number) {
+
     const randomizedPlayers = this.getRandomizedPlayerList();
 
     for (let player of randomizedPlayers) {
       const delta = this.generateRandomDelta();
-      const bidPrice = priceSeed - delta;
-      const offerPrice = priceSeed + delta;
+      const bidPrice = price - delta;
+      const offerPrice = price + delta;
 
       //NB: qtySeed + 1 since 0 is valid number in random range, but invalid
       //quantity
-      const bidQty = Math.floor(Math.random() * qtySeed + 1);
-      const offerQty = -Math.floor(Math.random() * qtySeed + 1);
+      const bidQty = Math.floor(Math.random() * qty + 1);
+      const offerQty = -Math.floor(Math.random() * qty + 1);
 
       const bidOrder = new Order(player.id, OrderType.Limit, bidQty, bidPrice);
       const offerOrder = new Order(

@@ -28,7 +28,7 @@ describe("PlayerManager", () => {
     const me = new MatchingEngine();
     const ordered = [new Player("a"), new Player("b"), new Player("c")];
     const pm = new PlayerManager(me, ordered);
-    pm.init(50);
+    pm.init(50, 4);
 
     //ensure player has orders
     expect(ordered.every((player) => player.orders.length === 2)).toBeTruthy();
@@ -47,13 +47,14 @@ describe("PlayerManager", () => {
     const me = new MatchingEngine();
     const ordered = [new Player("a"), new Player("b"), new Player("c")];
     const pm = new PlayerManager(me, ordered);
-    pm.init();
+    const qtySeed = 4
+    pm.init(100, qtySeed);
 
     const midpoints = [];
     for (let player of ordered) {
       expect(
         player.orders.every(
-          (order) => Math.abs(order.qty) <= 5 && Math.abs(order.qty) >= 1
+          (order) => Math.abs(order.qty) <= qtySeed + 1 && Math.abs(order.qty) >= 1
         )
       ).toBeTruthy();
       expect(player.orders.length).toBe(2);
@@ -121,4 +122,5 @@ describe("PlayerManager", () => {
     expect(players.every(player => player.delta !== 0)).toBeTruthy();
   })
 
+  it.todo("replenishAll(): npcs generate new orders if any were hit / lifted")
 });
