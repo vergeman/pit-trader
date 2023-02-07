@@ -1,6 +1,5 @@
 import Player from "./Player";
 import MatchingEngine from "../engine/MatchingEngine";
-import Order, { OrderType, TransactionReport } from "../engine/Order";
 
 export class PlayerManager {
   private _me: MatchingEngine;
@@ -30,33 +29,29 @@ export class PlayerManager {
     return this._me;
   }
 
-  init(price: number, qty: number) {
-
+  init(price: number, qtyMax: number) {
     const randomizedPlayers = this.getRandomizedPlayerList();
 
     for (let player of randomizedPlayers) {
       const delta = this.generateRandomDelta();
-      const bidPrice = price - delta;
-      const offerPrice = price + delta;
 
-      //NB: qtySeed + 1 since 0 is valid number in random range, but invalid
-      //quantity
-      const bidQty = Math.floor(Math.random() * qty + 1);
-      const offerQty = -Math.floor(Math.random() * qty + 1);
-
-      const bidOrder = new Order(player.id, OrderType.Limit, bidQty, bidPrice);
-      const offerOrder = new Order(
-        player.id,
-        OrderType.Limit,
-        offerQty,
-        offerPrice
+      //bid
+      const bidOrder = player.buildOrder(
+        this.generateRandom(qtyMax),
+        price - delta
       );
 
-      player.addOrder(bidOrder);
-      player.addOrder(offerOrder);
+      //offer
+      const offerOrder = player.buildOrder(
+        -this.generateRandom(qtyMax),
+        price + delta
+      );
 
-      this._me.process(bidOrder);
-      this._me.process(offerOrder);
+      //add to player, ME
+      for (const order of [bidOrder, offerOrder]) {
+        player.addOrder(order);
+        this.me.process(order);
+      }
     }
   }
 
@@ -90,6 +85,9 @@ export class PlayerManager {
     for (let player of Object.values(this._players)) {
       player.delta = this.generateRandomDelta();
     }
+  }
+  generateRandom(qtyMax: number): number {
+    return Math.floor(Math.random() * qtyMax + 1);
   }
   //random digit .1-.5
   generateRandomDelta(max: number = 4): number {

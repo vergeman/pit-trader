@@ -95,7 +95,7 @@ describe("PlayerManager", () => {
     expect(notExact).toBeTruthy();
   });
 
-  it("_generateRandomDelta() generates a number from .1 to .5", () => {
+  it("generateRandomDelta() generates a number from .1 to .5", () => {
     const me = new MatchingEngine();
     const pm = new PlayerManager(me, []);
     let i = 10;
