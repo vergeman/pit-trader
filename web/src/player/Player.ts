@@ -85,7 +85,7 @@ export class Player {
   }
 
   calcSkipTurn(skipTurnThresh: number = 0.33): boolean {
-    return Math.random() >= skipTurnThresh;
+    return Math.random() <= skipTurnThresh;
   }
 
   addOrder(order: Order) {

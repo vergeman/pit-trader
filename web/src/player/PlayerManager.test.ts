@@ -95,15 +95,15 @@ describe("PlayerManager", () => {
     expect(notExact).toBeTruthy();
   });
 
-  it("generateRandomDelta() generates a number from .1 to .5", () => {
+  it("generateRandomMax() default generates a number from 1 to 5", () => {
     const me = new MatchingEngine();
     const pm = new PlayerManager(me, []);
     let i = 10;
 
     while (i) {
-      const d = pm.generateRandomDelta();
-      expect(d).toBeGreaterThanOrEqual(0.1);
-      expect(d).toBeLessThanOrEqual(0.5);
+      const d = pm.generateRandomMax();
+      expect(d).toBeGreaterThanOrEqual(1);
+      expect(d).toBeLessThanOrEqual(5);
       i--;
     }
   });

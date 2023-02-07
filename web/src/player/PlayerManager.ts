@@ -33,17 +33,17 @@ export class PlayerManager {
     const randomizedPlayers = this.getRandomizedPlayerList();
 
     for (let player of randomizedPlayers) {
-      const delta = this.generateRandomDelta();
+      const delta = this.generateRandomMax() / 10;
 
       //bid
       const bidOrder = player.buildOrder(
-        this.generateRandom(qtyMax),
+        this.generateRandomMax(qtyMax),
         price - delta
       );
 
       //offer
       const offerOrder = player.buildOrder(
-        -this.generateRandom(qtyMax),
+        -this.generateRandomMax(qtyMax),
         price + delta
       );
 
@@ -83,16 +83,13 @@ export class PlayerManager {
 
   setNewDeltas() {
     for (let player of Object.values(this._players)) {
-      player.delta = this.generateRandomDelta();
+      player.delta = this.generateRandomMax() / 10;
     }
   }
-  generateRandom(qtyMax: number): number {
+  generateRandomMax(qtyMax: number = 5): number {
     return Math.floor(Math.random() * qtyMax + 1);
   }
-  //random digit .1-.5
-  generateRandomDelta(max: number = 4): number {
-    return (Math.floor(Math.random() * max) + 1) / 10;
-  }
+
 }
 
 export default PlayerManager;
