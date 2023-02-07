@@ -92,9 +92,10 @@ export default class MatchingEngine {
     const removed = queue.remove(order);
     if (removed) {
       order.price = newPrice;
-      queue.add(order);
+      this.process(order);
     }
 
+    //console.log("updateOrderPrice", order.qty, oldPrice, "->", newPrice);
     return removed;
   }
 

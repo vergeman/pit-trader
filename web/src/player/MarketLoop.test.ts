@@ -5,7 +5,6 @@ import { PlayerManager } from "./PlayerManager";
 import { MarketLoop } from "./MarketLoop";
 
 describe("MarketLoop", () => {
-
   it("startLoop() calls run() at a specified setInterval and stop() clears it", async () => {
     const me = new MatchingEngine();
     const pm = new PlayerManager(me, []);
@@ -42,9 +41,29 @@ describe("MarketLoop", () => {
     //expect(typeof p.id).toBeTruthy();
   });
 
-  //WORKING HERE
   describe("turn()", () => {
-    //it
+    it("players update order each turn and eventually execute", () => {
+      const me = new MatchingEngine();
+      const players = [
+        new Player("test1"),
+        new Player("test2"),
+        new Player("test3"),
+      ];
+      const pm = new PlayerManager(me, players);
+      const ml = new MarketLoop(pm, 100, 4);
+      ml.init();
+
+      for (const player of players) {
+        const oldPrices = player.orders.map((order) => order.price);
+        ml.turn(player, 0);
+        //change in price or execution
+        const hasPriceChange = !player.orders.every((order) =>
+          oldPrices.includes(order.price)
+        );
+        const hasFill = player.orders.some((order) => order.orderFills.length);
+        expect(hasPriceChange || hasFill).toBeTruthy();
+      }
+    });
   });
 
   describe("getPrice()", () => {

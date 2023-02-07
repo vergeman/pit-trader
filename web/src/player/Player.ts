@@ -66,16 +66,17 @@ export class Player {
   }
 
   //ensure delta doesn't exceed own bid / offer
+  //e is to prevent immediate self-execution
   //TODO: possible check range too large (e.g. generate gesture reachable orders
   //- range of 1) might not be a problem
-  calcMaxDelta(_default: number = 0.5): number {
+  calcMaxBidOfferDelta(_default: number = 0.5): number {
     const e = 0.1; //TODO: set price granularity
     const liveBids = this.getLiveBids().map((order) => order.price);
     const liveOffers = this.getLiveOffers().map((order) => order.price);
 
     const minOffer = Math.min(...liveOffers);
     const maxBid = Math.max(...liveBids);
-    const range = (minOffer - maxBid);
+    const range = minOffer - maxBid;
 
     if (Number.isFinite(range)) {
       return parseFloat((range - e).toPrecision(4));
@@ -91,7 +92,6 @@ export class Player {
   addOrder(order: Order) {
     this.orders.push(order);
   }
-
 }
 
 export default Player;

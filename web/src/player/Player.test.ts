@@ -31,11 +31,11 @@ describe("Player", () => {
 
   it("calcSkipTurn() returns boolean if player should skip turn", () => {
     const p = new Player("test");
-    expect(p.calcSkipTurn(1.01)).toBeFalsy();
-    expect(p.calcSkipTurn(-0.01)).toBeTruthy();
+    expect(p.calcSkipTurn(1.01)).toBeTruthy();
+    expect(p.calcSkipTurn(-0.01)).toBeFalsy();
   });
 
-  it("calcMaxDelta() ensures own bids/offers are not exceeded", () => {
+  it("calcMaxBidOfferDelta() ensures own bids/offers are not exceeded", () => {
     const p = new Player("test");
     const order1 = new Order(p.id, OrderType.Limit, 1, 100.4);
     const order2 = new Order(p.id, OrderType.Limit, -1, 101.3);
@@ -45,17 +45,17 @@ describe("Player", () => {
     order3.status = OrderStatus.Live;
     p.addOrder(order1);
     p.addOrder(order2);
-    expect(p.calcMaxDelta()).toBe(.8);
+    expect(p.calcMaxBidOfferDelta()).toBe(.8);
 
     p.addOrder(order3);
-    expect(p.calcMaxDelta()).toBe(.2);
+    expect(p.calcMaxBidOfferDelta()).toBe(.2);
   });
 
-  it("calcMaxDelta() works with no bids/offers", () => {
+  it("calcMaxBidOfferDelta() works with no bids/offers", () => {
     const p = new Player("test");
     const _default = .4
-    expect(p.calcMaxDelta(_default)).toBe(_default);
-    expect(p.calcMaxDelta()).toBe(.5);
+    expect(p.calcMaxBidOfferDelta(_default)).toBe(_default);
+    expect(p.calcMaxBidOfferDelta()).toBe(.5);
   });
 
   it.todo("replenish(): generate new orders");

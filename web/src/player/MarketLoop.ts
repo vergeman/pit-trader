@@ -11,7 +11,11 @@ class MarketLoop {
   private _loopInterval: number;
   private _isActive: boolean;
 
-  constructor(playerManager: PlayerManager, priceSeed: number, qtySeed: number) {
+  constructor(
+    playerManager: PlayerManager,
+    priceSeed: number,
+    qtySeed: number
+  ) {
     this._playerManager = playerManager;
     this._me = playerManager.me;
     this._priceSeed = priceSeed;
@@ -80,38 +84,52 @@ class MarketLoop {
     return this.priceSeed;
   }
 
-
   //represents a single turn
   //where each player undergoes a series of actions
   async run(delay: number) {
-
-    //TODO: generate next deltas all players
-    this._playerManager.setNewDeltas();
+    //TODO: deprecated methinks
+    //this._playerManager.setNewDeltas();
 
     const players = this._playerManager.getRandomizedPlayerList();
 
-    let _delay = delay || (Math.floor(Math.random() * 750) + 250)
+    let _delay = delay || Math.floor(Math.random() * 750) + 250;
 
     for (const player of players) {
-
       //setTimeout - want some delay b/w
-      await new Promise(res => setTimeout(res, _delay));
+      await new Promise((res) => setTimeout(res, _delay));
 
       this.turn(player);
-
     }
 
-    //TODO: replenish bids / offers
-    //TODO: or is this update bids offers with new deltas
+    //TODO: replenish bids / offers from any executions
+
     //this._playerManager.replenishAll();
   }
 
-  turn(player: Player) {
-    console.log(player.name);
+  turn(player: Player, probSkip: number = 0.33) {
+    //console.log(player.name);
 
-    //player step trelo
+    //if execution initiated by another player (this player missing either a bid
+    //or offer) -> skip turn to replenish
+    if (!player.hasLiveBids() || !player.hasLiveOffers()) return;
 
+    //calc prob: do nothing
+    if (player.calcSkipTurn(probSkip)) return;
 
+    //
+    // at this point player has bid and offer - now attempt to induce action
+    //
+
+    const bidOfferToggle = Math.random() > 0.5;
+    const maxDelta = bidOfferToggle
+      ? player.calcMaxBidOfferDelta()
+      : -player.calcMaxBidOfferDelta();
+    const queue = bidOfferToggle
+      ? player.getLiveBids()
+      : player.getLiveOffers();
+    queue.forEach((order) =>
+      this.me.updateOrderPrice(order, order.price + maxDelta)
+    );
   }
 
   //executes run() on a setInterval
@@ -124,8 +142,7 @@ class MarketLoop {
   }
 
   //replenish()
-
 }
 
-export {MarketLoop}
-export default MarketLoop
+export { MarketLoop };
+export default MarketLoop;
