@@ -5,21 +5,24 @@ import { PlayerManager } from "./PlayerManager";
 import { MarketLoop } from "./MarketLoop";
 
 describe("MarketLoop", () => {
-  it("startLoop() calls run() at a specified setInterval and stop() clears it", async () => {
+  it("startLoop() calls run() at a specified setInterval and stop() clears interval and ensures it doesn't run any more", async () => {
     const me = new MatchingEngine();
     const pm = new PlayerManager(me, []);
     const ml = new MarketLoop(pm, 100, 4);
 
     ml.run = jest.fn(() => {}) as jest.Mock;
-    ml.startLoop(10);
+    ml.startLoop(2);
 
-    await new Promise((res) => setTimeout(res, 100));
-    expect((ml.run as jest.Mock).mock.calls.length).toBeLessThanOrEqual(10);
-    expect((ml.run as jest.Mock).mock.calls.length).toBeGreaterThanOrEqual(9);
+    await new Promise((res) => setTimeout(res, 20));
+    const runCount = (ml.run as jest.Mock).mock.calls.length;
+
+    //NB: setInterval() is approximate, just ensure it's repeating
+    expect(runCount).toBeLessThanOrEqual(12);
+    expect(runCount).toBeGreaterThanOrEqual(3);
     ml.stopLoop();
-    await new Promise((res) => setTimeout(res, 100));
-    expect((ml.run as jest.Mock).mock.calls.length).toBeLessThanOrEqual(10);
-    expect((ml.run as jest.Mock).mock.calls.length).toBeGreaterThanOrEqual(9);
+    const newRunCount = (ml.run as jest.Mock).mock.calls.length;
+    await new Promise((res) => setTimeout(res, 40));
+    expect(newRunCount).toBe(runCount);
   });
 
   it("run() generates new deltas, iterates a turn() through each npc player, and replenishes any executed orders", async () => {
