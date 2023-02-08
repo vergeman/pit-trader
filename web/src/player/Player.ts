@@ -40,11 +40,6 @@ export class Player {
     this._delta = d;
   }
 
-  buildOrder(qty: number, price: number): Order {
-    const order = new Order(this.id, OrderType.Limit, qty, price);
-    return order;
-  }
-
   hasLiveBids(): boolean {
     return !!this.getLiveBids().length;
   }
@@ -97,28 +92,45 @@ export class Player {
     return Math.floor(Math.random() * qtyMax + 1);
   }
 
+  buildOrder(qty: number, price: number): Order {
+    const order = new Order(this.id, OrderType.Limit, qty, price);
+    return order;
+  }
+
+  buildReplenishOrder(
+    bidOfferToggle: -1 | 1,
+    price: number,
+    qtyMax?: number,
+    delta?: number
+  ): Order {
+    const _delta = this.generateRandomMax() / 10;
+    const randomMax = bidOfferToggle * this.generateRandomMax(qtyMax);
+
+    //NB: when replenishing, new orders built "around" an iniital price
+    //bids: price - delta
+    //offers: price + delta
+    const order = this.buildOrder(
+      randomMax,
+      price - bidOfferToggle * (delta || _delta)
+    );
+    return order;
+  }
+
   replenish(price: number, qtyMax?: number, delta?: number): Order[] {
     const orders = [];
 
     if (!this.hasLiveBids()) {
-      //generate own random delta if not passed as param
-      const _delta = this.generateRandomMax() / 10;
-      const randomMax = this.generateRandomMax(qtyMax);
-      const bidOrder = this.buildOrder(randomMax, price - (delta || _delta));
-      orders.push(bidOrder);
-      this.addOrder(bidOrder);
+      const order = this.buildReplenishOrder(1, price, qtyMax, delta);
+      orders.push(order);
+      this.addOrder(order);
     }
 
     if (!this.hasLiveOffers()) {
-      const _delta = this.generateRandomMax() / 10;
-      const randomMax = this.generateRandomMax(qtyMax);
-      const offerOrder = this.buildOrder(
-        -this.generateRandomMax(randomMax),
-        price + (delta || _delta)
-      );
-      orders.push(offerOrder);
-      this.addOrder(offerOrder);
+      const order = this.buildReplenishOrder(-1, price, qtyMax, delta);
+      orders.push(order);
+      this.addOrder(order);
     }
+
     return orders;
   }
 }
