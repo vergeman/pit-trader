@@ -77,6 +77,26 @@ export class Player {
     );
   }
 
+  addOrder(order: Order) {
+    this.orders.push(order);
+  }
+
+  buildOrder(qty: number, price: number): Order {
+    const order = new Order(this.id, OrderType.Limit, qty, price);
+    return order;
+  }
+
+  //TODO: augment order.execute to have player carry a netPosition equivalent
+  //variable vs this calcuation function
+  openPosition(): number {
+    return this.orders.reduce( (acc: number, order: Order) => {
+      return acc + order.qtyFilled
+    }, 0)
+  }
+  /*
+   * 'NPC' behaviors
+   */
+
   //ensure delta doesn't exceed own bid / offer
   //e is to prevent immediate self-execution
   //TODO: possible check range too large (e.g. generate gesture reachable orders
@@ -101,22 +121,9 @@ export class Player {
     return Math.random() <= skipTurnThresh;
   }
 
-  addOrder(order: Order) {
-    this.orders.push(order);
-  }
-
   generateRandomMax(qtyMax: number = 5): number {
     return Math.floor(Math.random() * qtyMax + 1);
   }
-
-  buildOrder(qty: number, price: number): Order {
-    const order = new Order(this.id, OrderType.Limit, qty, price);
-    return order;
-  }
-
-  /*
-   * 'NPC' behaviors
-   */
 
   buildReplenishOrder(
     bidOfferToggle: -1 | 1,

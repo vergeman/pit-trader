@@ -30,6 +30,32 @@ describe("Player", () => {
     expect(p.hasLiveBids()).toBeFalsy();
   });
 
+  describe("position calculations", () => {
+    it("openPosition() returns net position of executed orders", () => {
+      const p = new Player("test");
+      const me = new MatchingEngine();
+      const o1 = new Order(p.id, OrderType.Limit, 10, 100);
+      const o2 = new Order("123", OrderType.Limit, -3, 100);
+
+      expect(p.openPosition()).toBe(0);
+      p.addOrder(o1);
+      //submit order: nothing filled
+      me.process(o1);
+      expect(p.openPosition()).toBe(0);
+      //bought 3
+      me.process(o2);
+      expect(p.openPosition()).toBe(3);
+      //offer 3
+      const o3 = new Order(p.id, OrderType.Limit, -3, 102);
+      p.addOrder(o3);
+      const o4 = new Order("abc", OrderType.Limit, 3, 102);
+      me.process(o3);
+      //transact offer, player position net 0
+      me.process(o4);
+      expect(p.openPosition()).toBe(0);
+    });
+  });
+
   it("generateRandomMax() default generates a number from 1 to 5", () => {
     const p = new Player("test");
     let i = 10;
