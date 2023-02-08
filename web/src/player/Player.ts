@@ -2,7 +2,6 @@ import { v4 as uuidv4 } from "uuid";
 import { Order, OrderStatus, OrderType } from "../engine/Order";
 
 interface PlayerConfig {
-  readonly limitPosition: number;
   readonly tick: number;
   readonly limitPL: number;
 }
@@ -19,9 +18,8 @@ export class Player {
     name: string,
     isLive: boolean = false,
     config: PlayerConfig = {
-      limitPosition: 100,
       tick: 1000,
-      limitPL: -10000,
+      limitPL: -1000000,
     }
   ) {
     this._id = uuidv4();
