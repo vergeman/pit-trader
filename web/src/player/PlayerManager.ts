@@ -29,32 +29,6 @@ export class PlayerManager {
     return this._me;
   }
 
-  init(price: number, qtyMax: number) {
-    const randomizedPlayers = this.getRandomizedPlayerList();
-
-    for (let player of randomizedPlayers) {
-      const delta = this.generateRandomMax() / 10;
-
-      //bid
-      const bidOrder = player.buildOrder(
-        this.generateRandomMax(qtyMax),
-        price - delta
-      );
-
-      //offer
-      const offerOrder = player.buildOrder(
-        -this.generateRandomMax(qtyMax),
-        price + delta
-      );
-
-      //add to player, ME
-      for (const order of [bidOrder, offerOrder]) {
-        player.addOrder(order);
-        this.me.process(order);
-      }
-    }
-  }
-
   getRandomizedPlayerList(): Player[] {
     const players = Object.values(this._players);
     let num = players.length;
@@ -80,16 +54,6 @@ export class PlayerManager {
 
     return randomizedPlayers;
   }
-
-  setNewDeltas() {
-    for (let player of Object.values(this._players)) {
-      player.delta = this.generateRandomMax() / 10;
-    }
-  }
-  generateRandomMax(qtyMax: number = 5): number {
-    return Math.floor(Math.random() * qtyMax + 1);
-  }
-
 }
 
 export default PlayerManager;

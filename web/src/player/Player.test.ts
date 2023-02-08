@@ -18,6 +18,7 @@ describe("Player", () => {
     expect(p.hasLiveOffers()).toBeFalsy();
     expect(p.hasLiveBids()).toBeTruthy();
   });
+
   it("hasLiveOffers() filters for live offers", () => {
     const p = new Player("test");
     const me = new MatchingEngine();
@@ -27,6 +28,18 @@ describe("Player", () => {
 
     expect(p.hasLiveOffers()).toBeTruthy();
     expect(p.hasLiveBids()).toBeFalsy();
+  });
+
+  it("generateRandomMax() default generates a number from 1 to 5", () => {
+    const p = new Player("test");
+    let i = 10;
+
+    while (i) {
+      const d = p.generateRandomMax();
+      expect(d).toBeGreaterThanOrEqual(1);
+      expect(d).toBeLessThanOrEqual(5);
+      i--;
+    }
   });
 
   it("calcSkipTurn() returns boolean if player should skip turn", () => {
@@ -45,20 +58,26 @@ describe("Player", () => {
     order3.status = OrderStatus.Live;
     p.addOrder(order1);
     p.addOrder(order2);
-    expect(p.calcMaxBidOfferDelta()).toBe(.8);
+    expect(p.calcMaxBidOfferDelta()).toBe(0.8);
 
     p.addOrder(order3);
-    expect(p.calcMaxBidOfferDelta()).toBe(.2);
+    expect(p.calcMaxBidOfferDelta()).toBe(0.2);
   });
 
   it("calcMaxBidOfferDelta() works with no bids/offers", () => {
     const p = new Player("test");
-    const _default = .4
+    const _default = 0.4;
     expect(p.calcMaxBidOfferDelta(_default)).toBe(_default);
-    expect(p.calcMaxBidOfferDelta()).toBe(.5);
+    expect(p.calcMaxBidOfferDelta()).toBe(0.5);
   });
 
-  it.todo("replenish(): generate new orders");
+  it("replenish(): generates new Live orders and adds to players own queue", () => {
+    const p = new Player("test");
+    const me = new MatchingEngine();
+    expect(p.orders.length).toBe(0);
+    p.replenish(100, 4);
+    expect(p.orders.length).toBe(2);
+  });
 
   //pending:
   //needs last traded or best price; market info

@@ -92,6 +92,35 @@ export class Player {
   addOrder(order: Order) {
     this.orders.push(order);
   }
+
+  generateRandomMax(qtyMax: number = 5): number {
+    return Math.floor(Math.random() * qtyMax + 1);
+  }
+
+  replenish(price: number, qtyMax?: number, delta?: number): Order[] {
+    const orders = [];
+
+    if (!this.hasLiveBids()) {
+      //generate own random delta if not passed as param
+      const _delta = this.generateRandomMax() / 10;
+      const randomMax = this.generateRandomMax(qtyMax);
+      const bidOrder = this.buildOrder(randomMax, price - (delta || _delta));
+      orders.push(bidOrder);
+      this.addOrder(bidOrder);
+    }
+
+    if (!this.hasLiveOffers()) {
+      const _delta = this.generateRandomMax() / 10;
+      const randomMax = this.generateRandomMax(qtyMax);
+      const offerOrder = this.buildOrder(
+        -this.generateRandomMax(randomMax),
+        price + (delta || _delta)
+      );
+      orders.push(offerOrder);
+      this.addOrder(offerOrder);
+    }
+    return orders;
+  }
 }
 
 export default Player;

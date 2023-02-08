@@ -1,6 +1,7 @@
 import PlayerManager from "./PlayerManager";
 import Player from "./Player";
 import MatchingEngine from "../engine/MatchingEngine";
+import { Order } from "../engine/Order";
 import { TransactionReport } from "../engine/Order";
 
 class MarketLoop {
@@ -25,7 +26,17 @@ class MarketLoop {
   }
 
   init() {
-    this._playerManager.init(this.priceSeed, this.qtySeed);
+    const randomizedPlayers = this.playerManager.getRandomizedPlayerList();
+
+    for (let player of randomizedPlayers) {
+      const delta = player.generateRandomMax() / 10;
+      const orders = player.replenish(this.priceSeed, this.qtySeed, delta);
+
+      //add to ME
+      for (const order of orders) {
+        this.me.process(order);
+      }
+    }
   }
 
   get playerManager(): PlayerManager {
@@ -101,9 +112,7 @@ class MarketLoop {
       this.turn(player);
     }
 
-    //TODO: replenish bids / offers from any executions
-
-    //this._playerManager.replenishAll();
+    this.replenishAll();
   }
 
   turn(player: Player, probSkip: number = 0.33) {
@@ -141,7 +150,22 @@ class MarketLoop {
     clearInterval(this._loopInterval);
   }
 
-  //replenish()
+  replenishAll(): number {
+    const players = Object.values(this.playerManager.players);
+    const newPrice = this.getPrice();
+    let orders: Order[] = [];
+
+    for (const player of players) {
+      const playerOrders = player.replenish(newPrice);
+      orders = orders.concat(playerOrders);
+    }
+
+    for (let order of orders) {
+      this.me.process(order);
+    }
+
+    return orders.length;
+  }
 }
 
 export { MarketLoop };
