@@ -1,19 +1,36 @@
 import { v4 as uuidv4 } from "uuid";
 import { Order, OrderStatus, OrderType } from "../engine/Order";
 
+interface PlayerConfig {
+  readonly limitPosition: number;
+  readonly tick: number;
+  readonly limitPL: number;
+}
+
 export class Player {
   private _id: string;
   private _name: string;
   private _isLive: boolean;
   private _delta: number;
   private _orders: Order[];
+  private readonly _config: PlayerConfig;
 
-  constructor(name: string, isLive: boolean = false) {
+  constructor(
+    name: string,
+    isLive: boolean = false,
+    config: PlayerConfig = {
+      limitPosition: 100,
+      tick: 1000,
+      limitPL: -10000,
+    }
+  ) {
     this._id = uuidv4();
     this._name = name;
     this._isLive = isLive;
     this._delta = 0;
     this._orders = [];
+
+    this._config = config;
   }
 
   get id(): string {
@@ -96,6 +113,10 @@ export class Player {
     const order = new Order(this.id, OrderType.Limit, qty, price);
     return order;
   }
+
+  /*
+   * 'NPC' behaviors
+   */
 
   buildReplenishOrder(
     bidOfferToggle: -1 | 1,

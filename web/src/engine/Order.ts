@@ -71,7 +71,7 @@ export class Order {
     //otherwise limit v limit:
     //
     //if we're a buyer we pay the least (lowest offer), if seller we ask the
-    //most (highest bid). thi shapens when submit a limit order price set
+    //most (highest bid). this happens when submit a limit order price set
     //"through" the market, make sure to report the proper price
     let price = this.orderType === OrderType.Market ? oppOrder.price :
       this.qty > 0 ? Math.min(this.price, oppOrder.price) : Math.max(this.price, oppOrder.price);
