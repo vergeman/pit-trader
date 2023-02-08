@@ -38,6 +38,10 @@ export default class MatchingEngine {
     return this._transactionReports;
   }
 
+  lastTraded(): TransactionReport | undefined {
+    return this.transactionReports.at(0);
+  }
+
   //sort descending price, FIFO
   maxComparator(a: Order, b: Order): number {
     //highest price

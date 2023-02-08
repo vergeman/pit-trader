@@ -161,6 +161,29 @@ describe("process() orders fill on multiple orders", () => {
   });
 });
 
+describe("TransactionReports", () => {
+  it("lastTraded() reflect last trade", () => {
+    const me = new MatchingEngine();
+    const o1 = new Order("Player 1", OrderType.Limit, 100, 100);
+    const o2 = new Order("Player 2", OrderType.Limit, -150, 99);
+    const o3 = new Order("Player 3", OrderType.Limit, 50, 99);
+
+    me.process(o1);
+    expect(me.transactionReports.length).toBe(0);
+    me.process(o2);
+    expect(me.transactionReports.length).toBe(1);
+    let last = me.lastTraded();
+    expect(last && last.price).toBe(100);
+    expect(last && last.qty).toBe(100);
+
+    me.process(o3);
+    expect(me.transactionReports.length).toBe(2);
+    last = me.lastTraded();
+    expect(last && last.price).toBe(99);
+    expect(last && last.qty).toBe(50);
+  });
+});
+
 describe("cancel() mechanics", () => {
   it("limit order is removed from queue, promotion of next best bid/offer", () => {
     const me = new MatchingEngine();
