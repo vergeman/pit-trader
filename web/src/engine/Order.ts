@@ -13,6 +13,12 @@ export enum OrderStatus {
   Rejected,
 }
 
+export interface TransactionReport {
+  qty: number;
+  price: number;
+  timestamp: number;
+}
+
 export class Order {
   private _id: string;
   private _player_id: string;
@@ -44,7 +50,7 @@ export class Order {
     this._timestamp = Date.now();
   }
 
-  execute(oppOrder: Order) {
+  execute(oppOrder: Order): TransactionReport {
     //determine which qty to use Min
     const abs_qty = Math.min(Math.abs(this.qty), Math.abs(oppOrder.qty));
 
@@ -60,6 +66,21 @@ export class Order {
     //but oppOrder will be a limit (market order never joins the queue)
     this._orderFills.push(oppOrder);
     oppOrder._orderFills.push(this);
+
+    //if it's a market order, we use whatever opposing price
+    //otherwise limit v limit:
+    //
+    //if we're a buyer we pay the least (lowest offer), if seller we ask the
+    //most (highest bid). thi shapens when submit a limit order price set
+    //"through" the market, make sure to report the proper price
+    let price = this.orderType === OrderType.Market ? oppOrder.price :
+      this.qty > 0 ? Math.min(this.price, oppOrder.price) : Math.max(this.price, oppOrder.price);
+
+    return {
+      qty: abs_qty,
+      price,
+      timestamp: Date.now(),
+    };
   }
 
   //TODO: update when decide price "decimals"
@@ -70,11 +91,11 @@ export class Order {
       let totalQty = 0;
 
       for (let order of this._orderFills) {
-        qtyPrice += order.qtyFilled * order.price
+        qtyPrice += order.qtyFilled * order.price;
         totalQty += order.qtyFilled;
       }
 
-      return (qtyPrice / totalQty);
+      return qtyPrice / totalQty;
     }
 
     return this.price;
@@ -115,11 +136,14 @@ export class Order {
   get id(): string {
     return this._id;
   }
-  get player_id(): string{
+  get player_id(): string {
     return this._player_id;
   }
   get price(): number {
     return this._price;
+  }
+  set price(num: number) {
+    this._price = num;
   }
   get qty(): number {
     return this._qty;

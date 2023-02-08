@@ -1,13 +1,17 @@
 import { Gesture, GestureType, GestureAction } from "./Gesture";
+import { OrderStatus } from "../engine/Order";
 import GestureDecision from "./GestureDecision";
 import MatchingEngine from "../engine/MatchingEngine";
+import Player from "../player/Player";
 
 describe("GestureDecision", () => {
   const TIMEOUT = 50; //speed this up for tests. Typically 750 seems human-like.
 
   it("calc() gesture updates GestureType.Qty after Timeout via NumberSM", async () => {
     const me = new MatchingEngine();
-    const gestureDecision = new GestureDecision(me, TIMEOUT);
+    const p = new Player("test");
+
+    const gestureDecision = new GestureDecision(me, p, TIMEOUT);
     const gesture = new Gesture(GestureType.Qty, GestureAction.Buy, 3);
     gestureDecision.triggerValidOrder = jest.fn();
     gestureDecision.calc(gesture);
@@ -22,7 +26,9 @@ describe("GestureDecision", () => {
 
   it("calc() gesture updates GestureType.Price after Timeout via NumberSM", async () => {
     const me = new MatchingEngine();
-    const gestureDecision = new GestureDecision(me, TIMEOUT);
+    const p = new Player("test");
+
+    const gestureDecision = new GestureDecision(me, p, TIMEOUT);
     const gesture = new Gesture(GestureType.Price, GestureAction.Sell, 2);
     gestureDecision.triggerValidOrder = jest.fn();
     gestureDecision.calc(gesture);
@@ -37,7 +43,9 @@ describe("GestureDecision", () => {
 
   it("calc() prepares a limit order", async () => {
     const me = new MatchingEngine();
-    const gestureDecision = new GestureDecision(me, TIMEOUT);
+    const p = new Player("test");
+
+    const gestureDecision = new GestureDecision(me, p, TIMEOUT);
     const gestureQty = new Gesture(GestureType.Qty, GestureAction.Sell, -2);
     const gesturePrice = new Gesture(GestureType.Price, GestureAction.Sell, 8);
 
@@ -53,12 +61,13 @@ describe("GestureDecision", () => {
     const offer = me.offers.peek();
     expect(offer && offer.qty).toBe(-2);
     expect(offer && offer.price).toBe(8);
-
   });
 
   it("calc() prepares a market order and transacts", async () => {
     const me = new MatchingEngine();
-    const gestureDecision = new GestureDecision(me, TIMEOUT);
+    const p = new Player("test");
+
+    const gestureDecision = new GestureDecision(me, p, TIMEOUT);
     const gestureQtyL = new Gesture(GestureType.Qty, GestureAction.Buy, 2);
     const gesturePriceL = new Gesture(GestureType.Price, GestureAction.Buy, 2);
     const gestureQtyM = new Gesture(GestureType.Qty, GestureAction.Sell, -1);
@@ -96,7 +105,9 @@ describe("GestureDecision", () => {
   //market with no quantity
   it("calc(): market order missing quantity is rejected - no change", async () => {
     const me = new MatchingEngine();
-    const gestureDecision = new GestureDecision(me, TIMEOUT);
+    const p = new Player("test");
+
+    const gestureDecision = new GestureDecision(me, p, TIMEOUT);
     const gestureQtyL = new Gesture(GestureType.Qty, GestureAction.Buy, 2);
     const gesturePriceL = new Gesture(GestureType.Price, GestureAction.Buy, 2);
     const gesturePriceM = new Gesture(
@@ -127,7 +138,9 @@ describe("GestureDecision", () => {
   //test cancel order
   it("calc() cancel order resets gestureDecision", async () => {
     const me = new MatchingEngine();
-    const gestureDecision = new GestureDecision(me, TIMEOUT);
+    const p = new Player("test");
+
+    const gestureDecision = new GestureDecision(me, p, TIMEOUT);
     const gestureQtyL = new Gesture(GestureType.Qty, GestureAction.Buy, 2);
     const gestureCancel = new Gesture(
       GestureType.Action,
@@ -147,5 +160,37 @@ describe("GestureDecision", () => {
     expect(gestureDecision.price).toBe(null);
   });
 
-  it.todo("cancel removes working order from me");
+  it("cancel removes working order from me, set order status to cancelled", async () => {
+    const me = new MatchingEngine();
+    const p = new Player("test");
+
+    const gestureDecision = new GestureDecision(me, p, TIMEOUT);
+    const gestureQtyL = new Gesture(GestureType.Qty, GestureAction.Buy, 2);
+    const gesturePriceL = new Gesture(GestureType.Price, GestureAction.Buy, 2);
+    const gestureCancel = new Gesture(
+      GestureType.Action,
+      GestureAction.Cancel,
+      NaN
+    );
+
+    //build limit
+    gestureDecision.calc(gestureQtyL);
+    await new Promise((res) => setTimeout(res, TIMEOUT));
+    expect(gestureDecision.qty).toBe(2);
+
+    gestureDecision.calc(gesturePriceL);
+    await new Promise((res) => setTimeout(res, TIMEOUT));
+
+    //order submit
+    const order = me.bids.peek();
+    expect(me.bids.length).toBe(1);
+    expect(p.orders.length).toBe(1);
+    expect(order && order.status).toBe(OrderStatus.Live);
+
+    gestureDecision.calc(gestureCancel);
+    await new Promise((res) => setTimeout(res, TIMEOUT));
+    expect(me.bids.length).toBe(0); //removed from queue
+    expect(p.orders.length).toBe(1); //maintained in player queue
+    expect(order && order.status).toBe(OrderStatus.Cancelled);
+  });
 });
