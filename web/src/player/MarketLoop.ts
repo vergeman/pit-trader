@@ -110,6 +110,12 @@ class MarketLoop {
       await new Promise((res) => setTimeout(res, _delay));
 
       this.turn(player);
+
+      // end scenario?
+      const marketPrice = this.getPrice();
+      if (player.isLive && player.hasLost(marketPrice)) {
+        //TODO: trigger lose event / screen
+      }
     }
 
     this.replenishAll();

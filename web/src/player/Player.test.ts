@@ -30,7 +30,7 @@ describe("Player", () => {
     expect(p.hasLiveBids()).toBeFalsy();
   });
 
-  describe("position calculations", () => {
+  describe("position & pl calculations", () => {
     it("openPosition() returns net position of executed orders", () => {
       const p = new Player("test");
       const me = new MatchingEngine();
@@ -53,6 +53,83 @@ describe("Player", () => {
       //transact offer, player position net 0
       me.process(o4);
       expect(p.openPosition()).toBe(0);
+    });
+
+    it("calcMTM() returns MTM value of player's transactions", () => {
+      //working orders has no mtm effect
+      const p = new Player("test", true, { tick: 1000, limitPL: -1000000 });
+      const me = new MatchingEngine();
+      const o1b = new Order(p.id, OrderType.Limit, 10, 100);
+      const o1s = new Order(p.id, OrderType.Limit, -10, 101);
+      p.addOrder(o1b);
+      p.addOrder(o1s);
+      me.process(o1b);
+      me.process(o1s);
+      //expect(p.calcMTM(1000)).toBe(0);
+
+      //has a limit fill (floating MTM on price)
+      const o2 = new Order('123"', OrderType.Limit, -10, 100);
+      me.process(o2);
+      expect(p.calcMTM(103)).toBe(30000);
+
+      //flat position - buy 100, sold 101, so MTM locked
+      const o3 = new Order("123", OrderType.Limit, 10, 101);
+      me.process(o3);
+      expect(p.calcMTM(1000)).toBe(10000);
+
+      //has a market fill (floating) and cumulative p&l
+      const o4 = new Order("123", OrderType.Limit, -5, 100);
+      const o5 = new Order("123", OrderType.Limit, -5, 101);
+      me.process(o4);
+      me.process(o5);
+
+      const o6 = new Order(p.id, OrderType.Market, 10, NaN);
+      p.addOrder(o6);
+      me.process(o6);
+
+      //carry 10000 from previous, long 10 avg fill of 100.5
+      expect(p.calcMTM(100.5)).toBe(10000 + 0);
+      expect(p.calcMTM(101.5)).toBe(10000 + 10000);
+
+      //order is cancelled, same as before
+      const o7 = new Order(p.id, OrderType.Limit, -10, 100);
+      p.addOrder(o7);
+      me.process(o7);
+      me.cancel(o7);
+      expect(p.calcMTM(101.5)).toBe(10000 + 10000);
+
+      //still long 10
+      //partial fill 5 @ 100.5, then order cancelled
+      const o8 = new Order(p.id, OrderType.Limit, -10, 101.5);
+      p.addOrder(o8);
+      me.process(o8);
+      const o9 = new Order("123", OrderType.Market, 5, NaN);
+      me.process(o9);
+
+      //MTM no change from previous
+      expect(p.calcMTM(101.5)).toBe(10000 + 10000 + 0);
+
+      //MTM net:previous 10k, 10 lots imroved and 5 lots "loss"
+      expect(p.calcMTM(102.5)).toBe(10000 + 20000 - 5000);
+
+      me.cancel(o8);
+      //still long 5
+      expect(p.calcMTM(103.5)).toBe(10000 + 30000 - 10000);
+    });
+
+    it("hasLost() returns true if player exceeds limitPL", () => {
+      const p = new Player("test", true, { tick: 1000, limitPL: -1000000 });
+      const me = new MatchingEngine();
+      const o1 = new Order(p.id, OrderType.Limit, 100, 100);
+      const o2 = new Order(p.id, OrderType.Limit, -100, 100);
+
+      p.addOrder(o1);
+      me.process(o1);
+      me.process(o2);
+
+      expect(p.hasLost(10000)).toBeFalsy();
+      expect(p.hasLost(100)).toBeFalsy();
+      expect(p.hasLost(1)).toBeTruthy();
     });
   });
 

@@ -84,12 +84,33 @@ export class Player {
     return order;
   }
 
+  calcMTM(price: number): number {
+    let mtm = 0;
+    //get all fills
+    for (const order of this.orders) {
+      //we loop orderFills due to market orders whose price can vary
+      for (let orderFill of order.orderFills) {
+        //opposing order qtyFilled * mtm * tick
+        //for opposite market orders, NaN so use order price
+        const fillPrice = orderFill.price || order.price;
+        mtm += -orderFill.qtyFilled * (price - fillPrice) * this._config.tick;
+        //console.log("MTM", price, orderFill.qtyFilled, orderFill.price)
+      }
+    }
+
+    return mtm;
+  }
+
+  hasLost(price: number): boolean {
+    return this.calcMTM(price) < this._config.limitPL;
+  }
+
   //TODO: augment order.execute to have player carry a netPosition equivalent
   //variable vs this calcuation function
   openPosition(): number {
-    return this.orders.reduce( (acc: number, order: Order) => {
-      return acc + order.qtyFilled
-    }, 0)
+    return this.orders.reduce((acc: number, order: Order) => {
+      return acc + order.qtyFilled;
+    }, 0);
   }
   /*
    * 'NPC' behaviors
