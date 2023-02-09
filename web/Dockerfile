@@ -8,4 +8,6 @@ WORKDIR /web
 RUN npm install
 RUN npm install -g wrangler
 
+RUN chown -R node /web
+USER node
 CMD ["npm", "start"]
