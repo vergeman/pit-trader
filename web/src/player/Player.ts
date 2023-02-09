@@ -88,12 +88,12 @@ export class Player {
     let mtm = 0;
     //get all fills
     for (const order of this.orders) {
-      //we loop orderFills due to market orders whose price can vary
-      for (let orderFill of order.orderFills) {
+      //we loop transactions due to market orders whose price can vary
+      for (let transaction of order.transactions) {
         //opposing order qtyFilled * mtm * tick
         //for opposite market orders, NaN so use order price
-        const fillPrice = orderFill.price || order.price;
-        mtm += -orderFill.qtyFilled * (price - fillPrice) * this._config.tick;
+        const fillPrice = transaction.price || order.price;
+        mtm += -transaction.qty * (price - fillPrice) * this._config.tick;
         //console.log("MTM", price, orderFill.qtyFilled, orderFill.price)
       }
     }
