@@ -1,19 +1,34 @@
 import { v4 as uuidv4 } from "uuid";
 import { Order, OrderStatus, OrderType } from "../engine/Order";
 
+interface PlayerConfig {
+  readonly tick: number;
+  readonly limitPL: number;
+}
+
 export class Player {
   private _id: string;
   private _name: string;
   private _isLive: boolean;
   private _delta: number;
   private _orders: Order[];
+  private readonly _config: PlayerConfig;
 
-  constructor(name: string, isLive: boolean = false) {
+  constructor(
+    name: string,
+    isLive: boolean = false,
+    config: PlayerConfig = {
+      tick: 1000,
+      limitPL: -1000000,
+    }
+  ) {
     this._id = uuidv4();
     this._name = name;
     this._isLive = isLive;
     this._delta = 0;
     this._orders = [];
+
+    this._config = config;
   }
 
   get id(): string {
@@ -60,6 +75,47 @@ export class Player {
     );
   }
 
+  addOrder(order: Order) {
+    this.orders.push(order);
+  }
+
+  buildOrder(qty: number, price: number): Order {
+    const order = new Order(this.id, OrderType.Limit, qty, price);
+    return order;
+  }
+
+  calcMTM(price: number): number {
+    let mtm = 0;
+    //get all fills
+    for (const order of this.orders) {
+      //we loop transactions due to market orders whose price can vary
+      for (let transaction of order.transactions) {
+        //opposing order qtyFilled * mtm * tick
+        //for opposite market orders, NaN so use order price
+        const fillPrice = transaction.price || order.price;
+        mtm += -transaction.qty * (price - fillPrice) * this._config.tick;
+        //console.log("MTM", price, orderFill.qtyFilled, orderFill.price)
+      }
+    }
+
+    return mtm;
+  }
+
+  hasLost(price: number): boolean {
+    return this.calcMTM(price) < this._config.limitPL;
+  }
+
+  //TODO: augment order.execute to have player carry a netPosition equivalent
+  //variable vs this calcuation function
+  openPosition(): number {
+    return this.orders.reduce((acc: number, order: Order) => {
+      return acc + order.qtyFilled;
+    }, 0);
+  }
+  /*
+   * 'NPC' behaviors
+   */
+
   //ensure delta doesn't exceed own bid / offer
   //e is to prevent immediate self-execution
   //TODO: possible check range too large (e.g. generate gesture reachable orders
@@ -84,17 +140,8 @@ export class Player {
     return Math.random() <= skipTurnThresh;
   }
 
-  addOrder(order: Order) {
-    this.orders.push(order);
-  }
-
   generateRandomMax(qtyMax: number = 5): number {
     return Math.floor(Math.random() * qtyMax + 1);
-  }
-
-  buildOrder(qty: number, price: number): Order {
-    const order = new Order(this.id, OrderType.Limit, qty, price);
-    return order;
   }
 
   buildReplenishOrder(

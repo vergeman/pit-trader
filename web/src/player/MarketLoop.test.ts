@@ -117,7 +117,7 @@ describe("MarketLoop", () => {
         const hasPriceChange = !player.orders.every((order) =>
           oldPrices.includes(order.price)
         );
-        const hasFill = player.orders.some((order) => order.orderFills.length);
+        const hasFill = player.orders.some((order) => order.transactions.length);
         expect(hasPriceChange || hasFill).toBeTruthy();
       }
     });

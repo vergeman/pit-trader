@@ -19,13 +19,21 @@ export interface TransactionReport {
   timestamp: number;
 }
 
+export interface Transaction {
+  id: string;
+  player_id: string;
+  qty: number;
+  price: number;
+  timestamp: number;
+}
+
 export class Order {
   private _id: string;
   private _player_id: string;
   private _orderType: OrderType;
   private _qty: number; // initial quantity
   private _qtyFilled: number; // filled quantity
-  private _orderFills: Order[];
+  private _transactions: Transaction[];
   private _price: number;
   private _status: OrderStatus;
   private _timestamp: number;
@@ -45,7 +53,7 @@ export class Order {
 
     this._id = uuidv4();
     this._qtyFilled = 0;
-    this._orderFills = [];
+    this._transactions = [];
     this._status = OrderStatus.New;
     this._timestamp = Date.now();
   }
@@ -55,8 +63,9 @@ export class Order {
     const abs_qty = Math.min(Math.abs(this.qty), Math.abs(oppOrder.qty));
 
     //deduct & apply qtys
-    this._fill(abs_qty);
-    oppOrder._fill(abs_qty);
+    const timestamp = Date.now();
+    const qtyFilled = this._fill(abs_qty);
+    const oppQtyFilled = oppOrder._fill(abs_qty);
 
     //update both status
     this._checkSetComplete();
@@ -64,22 +73,40 @@ export class Order {
 
     //NB: "this" can be market or limit order
     //but oppOrder will be a limit (market order never joins the queue)
-    this._orderFills.push(oppOrder);
-    oppOrder._orderFills.push(this);
+    //transactions reflect counterparty order
+    this._transactions.push({
+      id: uuidv4(),
+      player_id: oppOrder.player_id,
+      qty: qtyFilled,
+      price: oppOrder.price,
+      timestamp,
+    });
+
+    oppOrder._transactions.push({
+      id: uuidv4(),
+      player_id: this.player_id,
+      qty: oppQtyFilled,
+      price: this.price,
+      timestamp,
+    });
 
     //if it's a market order, we use whatever opposing price
     //otherwise limit v limit:
     //
     //if we're a buyer we pay the least (lowest offer), if seller we ask the
-    //most (highest bid). thi shapens when submit a limit order price set
+    //most (highest bid). this happens when submit a limit order price set
     //"through" the market, make sure to report the proper price
-    let price = this.orderType === OrderType.Market ? oppOrder.price :
-      this.qty > 0 ? Math.min(this.price, oppOrder.price) : Math.max(this.price, oppOrder.price);
+    let price =
+      this.orderType === OrderType.Market
+        ? oppOrder.price
+        : this.qty > 0
+        ? Math.min(this.price, oppOrder.price)
+        : Math.max(this.price, oppOrder.price);
 
     return {
       qty: abs_qty,
       price,
-      timestamp: Date.now(),
+      timestamp,
     };
   }
 
@@ -90,9 +117,9 @@ export class Order {
       let qtyPrice = 0;
       let totalQty = 0;
 
-      for (let order of this._orderFills) {
-        qtyPrice += order.qtyFilled * order.price;
-        totalQty += order.qtyFilled;
+      for (let transaction of this.transactions) {
+        qtyPrice += transaction.qty * transaction.price;
+        totalQty += transaction.qty;
       }
 
       return qtyPrice / totalQty;
@@ -108,15 +135,18 @@ export class Order {
   }
 
   //deduct from qty
-  _fill(num: number): void {
+  _fill(num: number): number {
     if (this.qty > 0) {
       this.qty -= num;
       this._qtyFilled += num;
+      return -num;
     }
     if (this.qty < 0) {
       this.qty += num;
       this._qtyFilled -= num;
+      return num;
     }
+    return 0;
   }
 
   cancelled() {
@@ -163,8 +193,8 @@ export class Order {
   get timestamp(): number {
     return this._timestamp;
   }
-  get orderFills(): Order[] {
-    return this._orderFills;
+  get transactions(): Transaction[] {
+    return this._transactions;
   }
   get status(): OrderStatus {
     return this._status;

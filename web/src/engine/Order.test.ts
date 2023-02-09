@@ -41,8 +41,8 @@ describe("Order", () => {
   it("fill operates as an array of Order types", () => {
     const o1 = new Order("123", OrderType.Market, 50, 100);
     const o2 = new Order("123", OrderType.Market, -50, 100);
-    o1.orderFills.push(o2);
-    expect(o1.orderFills.length).toEqual(1);
+    o1.transactions.push(o2);
+    expect(o1.transactions.length).toEqual(1);
   });
 
   it("creates an internal _id", () => {
