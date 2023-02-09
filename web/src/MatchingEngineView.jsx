@@ -12,11 +12,16 @@ export default function MatchingEngineView(props) {
   }, [props.me, props.player]);
 
   useEffect(() => {
-    //console.log("[MatchingEngineView.jsx]: useEffect gesture");
     gestureDecision && gestureDecision.calc(gesture);
   }, [gestureDecision, gesture]);
 
   if (!gestureDecision) return null;
+
+  const meStyle = {
+    display: "flex",
+    justifyContent: "center",
+    textAlign: "left",
+  };
 
   return (
     <div>
@@ -26,10 +31,9 @@ export default function MatchingEngineView(props) {
         <span>Price: {gestureDecision.price}</span>
         <span>Action: {gestureDecision.action}</span>
       </div>
-      <div>
-        <p>Me</p>
-        <span>Bids: {JSON.stringify(props.me.bids)}</span>
-        <span>Offers: {JSON.stringify(props.me.offers)}</span>
+      <div style={meStyle}>
+        <pre>Bids: {JSON.stringify(props.me.bids, null, 4)}</pre>
+        <pre>Offers: {JSON.stringify(props.me.offers, null, 4)}</pre>
       </div>
     </div>
   );
