@@ -15,6 +15,14 @@
 
 ## Docker Related Setup
 
+#### Docker Setup
+
+* Ensure `docker-compose.yml`: webcam mapped at `/dev/video0` for training in
+  `pytorch-minimal-notebook` container.
+* Assumes [docker group with
+privileges](https://docs.docker.com/engine/install/linux-postinstall/) - need
+`/dev/video0`*
+
 #### X windows + Camera Setup
 
 * see `docker-compose.yml` and `docker_run.sh`

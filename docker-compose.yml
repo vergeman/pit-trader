@@ -10,6 +10,8 @@ services:
       - type: bind
         source: ./web
         target: /web
+      # exclude node_modules mount overwrite
+      - /web/node_modules/
   pytorch-minimal-notebook:
     build: './model/'
     #
@@ -23,7 +25,7 @@ services:
     ports:
       - "8888:8888"
     devices:
-      - "dev/video0:/dev/video0"
+      - "/dev/video0:/dev/video0"
     #
     # directories accessible within jupyter env
     #
