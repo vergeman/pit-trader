@@ -2,8 +2,11 @@
 # then build concatenates those
 # we can test what seems to be better for a classifier
 # e.g. each type of data -- doesn't it all get ocncatenated anyway?
+from types import NoneType
+import numpy as np
 import mediapipe as mp
 mp_face_detection = mp.solutions.face_detection
+HandLandmark = mp.solutions.holistic.HandLandmark
 
 class Landmark:
 
@@ -11,6 +14,8 @@ class Landmark:
         self.left_hand_landmarks = []
         self.right_hand_landmarks = []
         self.face_landmarks = []
+
+        self.palm_orientation = None
 
         # relative points
         self.base_x = 0
@@ -65,7 +70,89 @@ class Landmark:
                 _hand_landmarks[k+1] = landmark.y - self.base_y
                 _hand_landmarks[k+2] = landmark.z
 
-        #print(self.hand_landmarks)
+    def get_tuple(self, arr, index):
+      return (arr[index].x, arr[index].y, arr[index].z)
+
+    def setPalmOrientation(self, resultsHands):
+
+        if resultsHands.multi_hand_landmarks is None:
+            return
+
+        for i, hand_landmarks in enumerate(resultsHands.multi_hand_landmarks):
+
+          pt0 = self.get_tuple(hand_landmarks.landmark, 0)
+          pt5 = self.get_tuple(hand_landmarks.landmark, 5)
+          pt17 = self.get_tuple(hand_landmarks.landmark, 17)
+          u = np.subtract(pt17, pt0)
+          v = np.subtract(pt17, pt5)
+          direction = np.cross(u, v)
+          direction /= np.linalg.norm(direction)
+
+          #z-value invert for left hand
+          handedness = resultsHands.multi_handedness[i].classification[0].label #Left, Right
+          c = -1 if handedness == "Left" else 1
+          print("PALM" if c * direction[-1] > 0 else "NO PALM")
+          self.palmOrientation = c * direction[-1] > 0
+          return c * direction[-1] > 0
+
+    def openFingers(self, resultsHands):
+
+        if resultsHands.multi_hand_landmarks is None:
+            return
+
+        for i, hand_landmarks in enumerate(resultsHands.multi_hand_landmarks):
+
+          handedness = resultsHands.multi_handedness[i].classification[0].label #Left, Right
+
+          # THUMB
+          # why cross product intuition
+          # https://upload.wikimedia.org/wikipedia/commons/a/aa/Cross_product_animation.gif
+          #
+          # when thumb is open vs thumb closed, the relative placement of
+          # vector: point 4, point 3 at each state is akin to red being on
+          # either side of the blue (closed is to "left", open to the "right" of
+          # the other vector.)
+          #
+          # Shown in animation resulting cross product z-value (green vector)
+          # toggle from negative to positive (open to closed)
+          #
+          # NB: also have to accommodate buy/sell and left/right reversals as
+          # well (hence the 'c')
+          p1 = self.get_tuple(hand_landmarks.landmark, HandLandmark.THUMB_CMC)
+          p3 = self.get_tuple(hand_landmarks.landmark, HandLandmark.THUMB_IP)
+          p4 = self.get_tuple(hand_landmarks.landmark, HandLandmark.THUMB_TIP)
+          u = np.subtract(p4, p1)
+          v = np.subtract(p4, p3)
+
+          direction = np.cross(u, v)
+          direction /= np.linalg.norm(direction)
+
+          c = -1 if handedness == "Left" else 1
+          c = c if self.palmOrientation else -c
+          print("T UV", u, v, np.subtract(u, v))
+          print("T", "OPEN" if c * direction[-1] < 0 else "CLOSED", c * direction[-1])
+
+          # if self.palmOrientation:
+          #   print(c* direction[-1], "OPEN" if c * direction[-1] < 0 else "CLOSED")
+          # else:
+          #   print(c* direction[-1], "OPEN" if c * direction[-1] > 0 else "CLOSED")
+
+          # FINGERS
+          FINGER_ANGLE = .3
+
+          for finger in range(0, 4):
+            pt1 = self.get_tuple(hand_landmarks.landmark, HandLandmark.INDEX_FINGER_MCP + (finger * 4))
+            pt3 = self.get_tuple(hand_landmarks.landmark, HandLandmark.INDEX_FINGER_DIP + (finger * 4))
+            pt4 = self.get_tuple(hand_landmarks.landmark, HandLandmark.INDEX_FINGER_TIP + (finger * 4))
+
+            u = np.subtract(pt4, pt1)
+            v = np.subtract(pt4, pt3)
+            uv = np.dot(u,v) / np.linalg.norm(u) / np.linalg.norm(v)
+            angle = np.arccos(np.clip(uv, -1, 1))
+            print(finger, "OPEN"  if angle < FINGER_ANGLE else "CLOSED", angle)
+
+
+
 
     def setFaceDetections(self, detections):
 

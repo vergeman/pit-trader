@@ -35,7 +35,7 @@ def output_csv_all(data_path, keyMapVal, landmark):
     # human label is indicated by filename (see KeyClassMapping.py)
     # (label no longer part of internal csv data)
     row = landmark.to_row()
-    writer.writerow(row)
+    #writer.writerow(row)
   _file.close()
 
 
@@ -111,6 +111,9 @@ mp_face_detection.FaceDetection(
                                mp_face_detection.FaceKeyPoint.NOSE_TIP)
 
     landmark.setHandLandmarks(resultsHands)
+
+    landmark.setPalmOrientation(resultsHands)
+    landmark.openFingers(resultsHands)
 
     landmark.setFaceDetections(resultsFace.detections)
 
