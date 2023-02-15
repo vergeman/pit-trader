@@ -14,8 +14,9 @@ class Landmark:
         self.left_hand_landmarks = []
         self.right_hand_landmarks = []
         self.face_landmarks = []
-
-        self.palm_orientation = None
+        self.palm_orientation = []
+        self.left_fingers_opens = []
+        self.right_fingers_opens = []
 
         # relative points
         self.base_x = 0
@@ -91,11 +92,11 @@ class Landmark:
           #z-value invert for left hand
           handedness = resultsHands.multi_handedness[i].classification[0].label #Left, Right
           c = -1 if handedness == "Left" else 1
-          print("PALM" if c * direction[-1] > 0 else "NO PALM")
-          self.palmOrientation = c * direction[-1] > 0
+          #print("PALM" if c * direction[-1] > 0 else "NO PALM")
+          self.palm_orientation = c * direction[-1] > 0
           return c * direction[-1] > 0
 
-    def openFingers(self, resultsHands):
+    def setFingersOpen(self, resultsHands):
 
         if resultsHands.multi_hand_landmarks is None:
             return
@@ -103,6 +104,7 @@ class Landmark:
         for i, hand_landmarks in enumerate(resultsHands.multi_hand_landmarks):
 
           handedness = resultsHands.multi_handedness[i].classification[0].label #Left, Right
+          fingers_opens = self.left_fingers_opens if handedness == "Left" else self.right_fingers_opens
 
           # THUMB
           # why cross product intuition
@@ -128,11 +130,13 @@ class Landmark:
           direction /= np.linalg.norm(direction)
 
           c = -1 if handedness == "Left" else 1
-          c = c if self.palmOrientation else -c
-          print("T UV", u, v, np.subtract(u, v))
+          c = c if self.palm_orientation else -c
+          fingers_opens[0] = c * direction[-1] < 0
+          #print("T UV", u, v, np.subtract(u, v))
           print("T", "OPEN" if c * direction[-1] < 0 else "CLOSED", c * direction[-1])
 
-          # if self.palmOrientation:
+
+          # if self.palm_orientation:
           #   print(c* direction[-1], "OPEN" if c * direction[-1] < 0 else "CLOSED")
           # else:
           #   print(c* direction[-1], "OPEN" if c * direction[-1] > 0 else "CLOSED")
@@ -141,16 +145,19 @@ class Landmark:
           FINGER_ANGLE = .3
 
           for finger in range(0, 4):
-            pt1 = self.get_tuple(hand_landmarks.landmark, HandLandmark.INDEX_FINGER_MCP + (finger * 4))
-            pt3 = self.get_tuple(hand_landmarks.landmark, HandLandmark.INDEX_FINGER_DIP + (finger * 4))
-            pt4 = self.get_tuple(hand_landmarks.landmark, HandLandmark.INDEX_FINGER_TIP + (finger * 4))
+            pt1 = self.get_tuple(hand_landmarks.landmark,
+                                 HandLandmark.INDEX_FINGER_MCP + (finger * 4))
+            pt3 = self.get_tuple(hand_landmarks.landmark,
+                                 HandLandmark.INDEX_FINGER_DIP + (finger * 4))
+            pt4 = self.get_tuple(hand_landmarks.landmark,
+                                 HandLandmark.INDEX_FINGER_TIP + (finger * 4))
 
             u = np.subtract(pt4, pt1)
             v = np.subtract(pt4, pt3)
             uv = np.dot(u,v) / np.linalg.norm(u) / np.linalg.norm(v)
             angle = np.arccos(np.clip(uv, -1, 1))
             print(finger, "OPEN"  if angle < FINGER_ANGLE else "CLOSED", angle)
-
+            fingers_opens[ finger + 1] = angle < FINGER_ANGLE
 
 
 
@@ -187,13 +194,19 @@ class Landmark:
 
         val = self.left_hand_landmarks + \
             self.right_hand_landmarks + \
-            self.face_landmarks
+            self.face_landmarks + \
+            self.palm_orientation + \
+            self.left_fingers_opens + \
+            self.right_fingers_opens
 
         #print("Landmark", val)
         print("Base", self.base_x, self.base_y)
         print("Face", self.face_landmarks)
         print("L", self.left_hand_landmarks)
         print("R", self.right_hand_landmarks)
+        print("Palm", self.palm_orientation) #1
+        print("L Open", self.left_fingers_opens) #5
+        print("R Open", self.right_fingers_opens) #5
         return val
 
 

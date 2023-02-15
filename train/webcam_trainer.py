@@ -27,8 +27,13 @@ def output_csv_all(data_path, keyMapVal, landmark):
     # Hand: 21 points, each with 3 (x,y,z) coordinates
     # Face: 6 points, each with 2 (x,y) coordinates
     # Left -> 63, Right -> 63, face -> 12
-    # label + 2*hands + face
-    # 1 + 2*63 + 12 = 1 + 126 + 12 = 139
+    # Palm -> 1
+    # Left Fingers: 5 (thumb + 4 fingers)
+    # Right Fingers: 5 (thumb + 4 fingers)
+    #
+    # label + 2*hands + face + palm + 2*fingers
+    # 1 + 2*63 + 12 + 1 + 10 =
+    # 1 + 126 + 12 + 1 + 10 = 150
     print(keyMapVal)
 
     # NB: class index will be mapped and generated at DataLoader.
@@ -113,7 +118,8 @@ mp_face_detection.FaceDetection(
     landmark.setHandLandmarks(resultsHands)
 
     landmark.setPalmOrientation(resultsHands)
-    landmark.openFingers(resultsHands)
+
+    landmark.setFingersOpen(resultsHands)
 
     landmark.setFaceDetections(resultsFace.detections)
 
