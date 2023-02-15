@@ -5,3 +5,4 @@ __pycache__/
 *.bkup
 model_*.onnx
 label_map.csv
+.gittoken
