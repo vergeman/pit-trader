@@ -115,6 +115,9 @@ with mp_hands.Hands(
         landmark.setBasePoints(resultsFace.detections,
                                mp_face_detection.FaceKeyPoint.NOSE_TIP)
 
+        if resultsHands.multi_hand_landmarks:
+            print("OFFER TOGGLE:", keyClassMapping.offer_toggle)
+
         landmark.setHandLandmarks(resultsHands)
 
         landmark.setPalmOrientation(resultsHands)
