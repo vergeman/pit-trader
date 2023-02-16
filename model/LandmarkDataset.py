@@ -4,6 +4,7 @@ import glob
 import torch
 import pandas as pd
 import numpy as np
+import random
 from torch.utils.data import Dataset, DataLoader
 from torchvision.transforms import Lambda, Compose
 from torch.utils.data.sampler import SubsetRandomSampler
@@ -28,7 +29,6 @@ class LandmarkDataset(Dataset):
       self.landmark_frames = pd.DataFrame()
       self.class_map = {}
       self.num_class = 0
-      self.input_size = 0
 
       self.meta = Meta(f"{data_dir}/meta.json")
       self.meta.load()
@@ -40,7 +40,6 @@ class LandmarkDataset(Dataset):
         self.class_map[class_idx] = class_name
 
         landmark_frame = pd.read_csv(filename, header=None)
-        self.input_size = len(landmark_frame.columns)
 
         # add class label to dataframe and meta.json
         landmark_frame.insert(0, "class_idx", class_idx)
@@ -59,6 +58,12 @@ class LandmarkDataset(Dataset):
 
     def __len__(self):
         return len(self.landmark_frames)
+
+    # len of landmark points
+    def input_size(self):
+      r = random.randint(0, len(self) )
+      _, landmarks = self[r]
+      return len(landmarks)
 
 
     def __getitem__(self, idx):
