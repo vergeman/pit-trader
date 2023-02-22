@@ -285,4 +285,33 @@ describe("Derived landmark methods", () => {
     expect(l.palmOrientations[0]).toBe(1);
     expect(l.palmOrientations[1]).toBe(-1);
   });
+
+  it("setFingersOpen(): 3 bid has last 3 elements toggled on", () => {
+    const landmarks = build(landmarks_3_bid);
+    const l = new Landmarks();
+    expect(l.fingersOpens.slice(0, 5)).toStrictEqual(new Array(5).fill(-1));
+    l.setHandLandmarks("Left", landmarks.slice(0, 21));
+    l.setHandLandmarks("Right", landmarks.slice(21, 42));
+    l.setFaceLandmarks(landmarks.slice(42, 48));
+    l.setPalmOrientations("Left", landmarks.slice(0, 21));
+
+    l.setFingersOpen("Left", l.palmOrientations, landmarks.slice(0, 21));
+    expect(l.fingersOpens.slice(0, 5)).toStrictEqual([0, 0, 1, 1, 1]);
+  });
+
+  it("setFingersOpen(): offer 3 also has last 3 elements toggled on", () => {
+    const landmarks = build(landmarks_3_offer);
+    const l = new Landmarks();
+    expect(l.fingersOpens.slice(0, 5)).toStrictEqual(new Array(5).fill(-1));
+    l.setHandLandmarks("Left", landmarks.slice(0, 21));
+    l.setHandLandmarks("Right", landmarks.slice(21, 42));
+    l.setFaceLandmarks(landmarks.slice(42, 48));
+    l.setPalmOrientations("Left", landmarks.slice(0, 21));
+
+    l.setFingersOpen("Left", l.palmOrientations, landmarks.slice(0, 21));
+    expect(l.fingersOpens.slice(0, 5)).toStrictEqual([0, 0, 1, 1, 1]);
+    l.resetFingersOpen();
+    expect(l.fingersOpens.slice(0, 5)).toStrictEqual(new Array(5).fill(-1));
+  });
+
 });
