@@ -114,7 +114,8 @@ export default class Landmarks {
     //
     // FINGERS
     //
-    const FINGER_ANGLE = .3;
+    const FINGER_ANGLE = 15;
+    const FINGER_RADIANS = FINGER_ANGLE * Math.pi / 180;
     const norm_u = glMatrix.vec3.create();
     const norm_v = glMatrix.vec3.create();
     const out_u = glMatrix.vec3.create();
@@ -138,7 +139,7 @@ export default class Landmarks {
       const radian = Math.acos(this.clip(uv, -1, 1));
 
       //console.log("RADIAN", 5 * idx + i + 1, uv, radian);
-      this.fingersOpens[5 * idx + (i + 1)] = Number(radian < FINGER_ANGLE);
+      this.fingersOpens[5 * idx + (i + 1)] = Number(radian < FINGER_RADIANS);
     }
   }
 

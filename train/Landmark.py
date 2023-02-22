@@ -5,7 +5,7 @@
 from types import NoneType
 import numpy as np
 import mediapipe as mp
-
+import math
 mp_face_detection = mp.solutions.face_detection
 HandLandmark = mp.solutions.holistic.HandLandmark
 
@@ -151,7 +151,8 @@ class Landmark:
                   c * direction[-1])
 
             # FINGERS
-            FINGER_ANGLE = .3
+            FINGER_ANGLE = 15
+            FINGER_RADIANS = FINGER_ANGLE * math.pi / 180
 
             for finger in range(0, 4):
                 pt1 = self.get_tuple(
@@ -167,10 +168,11 @@ class Landmark:
                 u = np.subtract(pt4, pt1)
                 v = np.subtract(pt4, pt3)
                 uv = np.dot(u, v) / np.linalg.norm(u) / np.linalg.norm(v)
-                angle = np.arccos(np.clip(uv, -1, 1))
-                print(finger, "OPEN" if angle < FINGER_ANGLE else "CLOSED",
-                      angle)
-                fingers_opens[finger + 1] = int(angle < FINGER_ANGLE)
+                radians = np.arccos(np.clip(uv, -1, 1))
+
+                print(finger, "OPEN" if radians < FINGER_RADIANS else "CLOSED",
+                      radians)
+                fingers_opens[finger + 1] = int(radians < FINGER_RADIANS)
 
     def setFaceDetections(self, detections):
 
