@@ -162,7 +162,10 @@ export default class Landmarks {
   }
 
   get() {
-    return [].concat(this.handLandmarks, this.faceLandmarks);
+    return [].concat(this.handLandmarks,
+                     this.faceLandmarks,
+                     this.palmOrientations,
+                     this.fingersOpens);
   }
 
   print() {

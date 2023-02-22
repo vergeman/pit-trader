@@ -314,4 +314,10 @@ describe("Derived landmark methods", () => {
     expect(l.fingersOpens.slice(0, 5)).toStrictEqual(new Array(5).fill(-1));
   });
 
+  it ("get() returns combined landmark components", () => {
+    const landmarks = build(landmarks_3_offer);
+    const l = new Landmarks();
+    const get = l.get();
+    expect(get && get.length).toBe(126 + 12 + 2 + 10);
+  })
 });
