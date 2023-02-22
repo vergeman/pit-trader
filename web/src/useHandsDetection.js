@@ -7,6 +7,7 @@ export default function useHandsDetection(canvasRef, landmarks) {
 
     landmarks.resetHandLandmarks();
     landmarks.resetPalmOrientations();
+    landmarks.resetFingersOpen();
 
     if (results.multiHandLandmarks) {
       const canvasCtx = canvasRef.current.getContext("2d");
