@@ -1,6 +1,6 @@
 import Landmarks from "./Landmarks";
 import * as glMatrix from "gl-matrix";
-glMatrix.glMatrix.ARRAY_TYPE = Float64Array;
+glMatrix.glMatrix.setMatrixArrayType(Float64Array);
 
 describe("Walthrough to ensure same conventions between Numpy and Gl-Matrix vector ops", () => {
   const landmark_3_bid = [

@@ -1,5 +1,5 @@
 import * as glMatrix from "gl-matrix";
-glMatrix.glMatrix.ARRAY_TYPE = Float64Array;
+glMatrix.glMatrix.setMatrixArrayType(Float64Array);
 
 export default class Landmarks {
   constructor() {
