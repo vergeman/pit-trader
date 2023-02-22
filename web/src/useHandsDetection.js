@@ -6,6 +6,7 @@ export default function useHandsDetection(canvasRef, landmarks) {
   const onHandResults = function (results) {
 
     landmarks.resetHandLandmarks();
+    landmarks.resetPalmOrientations();
 
     if (results.multiHandLandmarks) {
       const canvasCtx = canvasRef.current.getContext("2d");
@@ -28,6 +29,10 @@ export default function useHandsDetection(canvasRef, landmarks) {
         const hand = results.multiHandedness[hand_idx];
 
         landmarks.setHandLandmarks(hand.label, _landmarks);
+
+        const palmOrientations = landmarks.setPalmOrientations(hand.label, _landmarks);
+
+        landmarks.setFingersOpen(hand.label, palmOrientations, _landmarks);
       }
     }
     //canvasCtx.restore();

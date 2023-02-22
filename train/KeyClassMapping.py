@@ -51,10 +51,9 @@ class KeyClassMapping():
   #
   # QUANTITY
   #
+  # Offers concatenated with OFFER_TOGGLE
   QTY_BID_ONES = ["a", "s", "d", "f", "g", "h", "j", "k", "l", ";"]
-  QTY_OFFER_ONES = [i.upper() for i in QTY_BID_ONES[:9] ] + [":"]
   QTY_BID_TENS = ["z", "x", "c", "v", "b", "n", "m", ",", ".", "/"]
-  QTY_OFFER_TENS = [i.upper() for i in QTY_BID_ONES[:7] ] + ["<", ">", "?"]
 
   def __init__(self, OFFER_TOGGLE_NAME = "ALT", OFFER_TOGGLE_KEYCODE=233):
 
