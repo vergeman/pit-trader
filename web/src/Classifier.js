@@ -47,9 +47,10 @@ export default class Classifier {
 
   async classify() {
     try {
-      const data = Float32Array.from(this.landmarks.get());
 
-      const live = new window.ort.Tensor("float32", data, [data.length]);
+      const data = Float64Array.from(this.landmarks.get());
+
+      const live = new window.ort.Tensor("float64", data, [data.length]);
 
       const results = await this.session.run({ landmarks: live });
       const output = results.class.data;
