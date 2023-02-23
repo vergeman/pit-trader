@@ -1,6 +1,5 @@
 export default function GesturesPanel(props) {
-
-  if( !props.results || !props.results.probs) return null;
+  if (!props.results || !props.results.probs) return null;
 
   const results = props.results;
   const gestureBuilder = props.gestureBuilder;
@@ -11,35 +10,35 @@ export default function GesturesPanel(props) {
   };
 
   const buildSortMetaByProb = (probs) => {
-
-    const metas = results.probs.map( (prob, i) => {
-      const meta = getMeta(i)
+    const metas = results.probs.map((prob, i) => {
+      const meta = getMeta(i);
+      if (!meta) return null;
       meta.prob = prob;
       return meta;
     });
 
-    return metas.sort( (a, b) => a.prob < b.prob);
+    return metas.sort((a, b) => a.prob < b.prob);
   };
 
-  const metas = buildSortMetaByProb( results.probs)
-    .filter( result => result.prob >= .01)
+  const metas = buildSortMetaByProb(results.probs).filter(
+    (result) => result.prob >= 0.01
+  );
 
   const wrapStyle = {
-    height: "300px"
+    height: "300px",
   };
 
   const tableStyle = {
     margin: "0 auto",
-    textAlign: "left"
-  }
+    textAlign: "left",
+  };
 
   const tableHeaderStyle = {
-    width: "75px"
-  }
+    width: "75px",
+  };
 
   return (
     <div style={wrapStyle} className="gestures-live gestures-prob">
-
       {/* Current Gesture (probs below might not exceed threshold) */}
       <table style={tableStyle}>
         <caption>Gesture Current</caption>
@@ -59,6 +58,26 @@ export default function GesturesPanel(props) {
         </tbody>
       </table>
 
+      {/* GestureDecision State: Partial state, waiting for all gestures to
+      build action */}
+      <table style={tableStyle}>
+        <caption>Gesture Decision</caption>
+        <thead>
+          <tr>
+            <th style={tableHeaderStyle}>Action</th>
+            <th style={tableHeaderStyle}>Qty&nbsp;&nbsp;&nbsp;</th>
+            <th style={tableHeaderStyle}>Price&nbsp;</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{props.gestureDecision.action}</td>
+            <td>{props.gestureDecision.qty}</td>
+            <td>{props.gestureDecision.price}</td>
+          </tr>
+        </tbody>
+      </table>
+
       {/* Live Gesture */}
       <table style={tableStyle}>
         <caption>Gesture Probabilities</caption>
@@ -73,23 +92,19 @@ export default function GesturesPanel(props) {
         </thead>
 
         <tbody>
-          {
-            metas.map( (element, i) => {
-              return(
-                <tr key={`gesture-${i}`}>
-                  <td key={`gesture-index-${i}`}>{element.index}</td>
-                  <td key={`gesture-type-${i}`}>{element.gestureType}</td>
-                  <td key={`gesture-action-${i}`}>{element.action}</td>
-                  <td key={`gesture-value-${i}`}>{element.value}</td>
-                  <td key={`gesture-prob-${i}`}>{element.prob}</td>
-                </tr>
-              )
-            })
-          }
+          {metas.map((element, i) => {
+            return (
+              <tr key={`gesture-${i}`}>
+                <td key={`gesture-index-${i}`}>{element.index}</td>
+                <td key={`gesture-type-${i}`}>{element.gestureType}</td>
+                <td key={`gesture-action-${i}`}>{element.action}</td>
+                <td key={`gesture-value-${i}`}>{element.value}</td>
+                <td key={`gesture-prob-${i}`}>{element.prob}</td>
+              </tr>
+            );
+          })}
         </tbody>
-
       </table>
     </div>
   );
-
-};
+}

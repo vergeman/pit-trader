@@ -9,6 +9,7 @@ import MatchingEngineView from "./MatchingEngineView.jsx";
 import PlayerManager from "./player/PlayerManager";
 import Player from "./player/Player";
 import MarketLoop from "./player/MarketLoop";
+import GestureDecision from "./input/GestureDecision";
 
 export default function Demo() {
   const [gestureData, setGestureData] = useState(null);
@@ -18,9 +19,9 @@ export default function Demo() {
   const [playerManager, setPlayerManager] = useState(null);
   const [player, setPlayer] = useState(null);
   const [marketLoop, setMarketLoop] = useState(null);
+  const [gestureDecision, setGestureDecision] = useState(null);
 
   useEffect(() => {
-
     const config = {
       tick: 1000,
       limitPL: -1000000,
@@ -38,6 +39,7 @@ export default function Demo() {
     const playerManager = new PlayerManager(me, npcs);
     const player = new Player("test", true, config);
     const marketLoop = new MarketLoop(playerManager, 100);
+    const gestureDecision = new GestureDecision(me, player);
 
     setLandmarks(landmarks);
     setClassifier(classifier);
@@ -45,11 +47,17 @@ export default function Demo() {
     setPlayerManager(playerManager);
     setPlayer(player);
     setMarketLoop(marketLoop);
+    setGestureDecision(gestureDecision);
 
     classifier.load();
     marketLoop.init();
     marketLoop.run();
   }, []);
+
+  useEffect(() => {
+    const gesture = gestureData && gestureData.gesture;
+    gestureDecision && gestureDecision.calc(gesture);
+  }, [me, player, gestureDecision, gestureData]);
 
   return (
     <div className="container">
@@ -60,8 +68,12 @@ export default function Demo() {
         classifier={classifier}
         setGestureData={setGestureData}
       />
-      <GesturesPanel results={gestureData} gestureBuilder={classifier && classifier.gestureBuilder} />
-      <MatchingEngineView me={me} player={player} gestureData={gestureData} />
+      <GesturesPanel
+        results={gestureData}
+        gestureBuilder={classifier && classifier.gestureBuilder}
+        gestureDecision={gestureDecision}
+      />
+      <MatchingEngineView me={me} player={player} />
     </div>
   );
 }
