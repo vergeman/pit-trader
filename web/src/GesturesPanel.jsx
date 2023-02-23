@@ -3,56 +3,93 @@ export default function GesturesPanel(props) {
   if( !props.results || !props.results.probs) return null;
 
   const results = props.results;
-  const inputBufferState = results.inputBufferState;
-  const probBuffer = results.probBuffer;
+  const gestureBuilder = props.gestureBuilder;
 
-  if (!results.inputBufferState) return null;
+  const getMeta = (idx) => {
+    if (!gestureBuilder) return null;
+    return gestureBuilder.meta[idx];
+  };
+
+  const buildSortMetaByProb = (probs) => {
+
+    const metas = results.probs.map( (prob, i) => {
+      const meta = getMeta(i)
+      meta.prob = prob;
+      return meta;
+    });
+
+    return metas.sort( (a, b) => a.prob < b.prob);
+  };
+
+  const metas = buildSortMetaByProb( results.probs)
+    .filter( result => result.prob >= .01)
+
+  const wrapStyle = {
+    height: "300px"
+  };
+
+  const tableStyle = {
+    margin: "0 auto",
+    textAlign: "left"
+  }
+
+  const tableHeaderStyle = {
+    width: "75px"
+  }
 
   return (
+    <div style={wrapStyle} className="gestures-live gestures-prob">
 
-    <table style={{ margin: "0 auto" }}>
-      <thead>
-        <tr>
-          {results.probs.map((prob, i) => {
-            const bg = (i === results.argMax ?
-                        (inputBufferState.inputState === 2 ? "yellow" : "blue") :
-                        "white");
-            return (
-              <th
-                key={`head-${i}`}
-                style={{background: bg}}
-              >
-                {i}
-              </th>
-            );
-          })}
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          {results.probs.map((prob, i) => (
-            <td key={`prob-${i}`}>{prob}</td>
-          ))}
-        </tr>
-      </tbody>
-
-
-      {inputBufferState &&
-        <tfoot>
+      {/* Current Gesture (probs below might not exceed threshold) */}
+      <table style={tableStyle}>
+        <caption>Gesture Current</caption>
+        <thead>
           <tr>
-            <td>State: {inputBufferState.inputState}</td>
-            <td>Type: {results && results.gesture.type}</td>
-            <td>Action: {results && results.gesture.action}</td>
-            <td>Val: {inputBufferState.value}</td>
-            <td>Window: {JSON.stringify(probBuffer)} </td>
-            <td>Finals: {JSON.stringify(inputBufferState.gestureFinals)} </td>
+            <th style={tableHeaderStyle}>Type&nbsp;&nbsp;</th>
+            <th style={tableHeaderStyle}>Action</th>
+            <th style={tableHeaderStyle}>Value&nbsp;</th>
           </tr>
-        </tfoot>
-      }
+        </thead>
+        <tbody>
+          <tr>
+            <td>{results && results.gesture.type}</td>
+            <td>{results && results.gesture.action}</td>
+            <td>{results && results.gesture.value}</td>
+          </tr>
+        </tbody>
+      </table>
 
+      {/* Live Gesture */}
+      <table style={tableStyle}>
+        <caption>Gesture Probabilities</caption>
+        <thead>
+          <tr>
+            <th style={tableHeaderStyle}>Index&nbsp;</th>
+            <th style={tableHeaderStyle}>Type&nbsp;&nbsp;</th>
+            <th style={tableHeaderStyle}>Action</th>
+            <th style={tableHeaderStyle}>Value&nbsp;</th>
+            <th style={tableHeaderStyle}>Prob&nbsp;&nbsp;</th>
+          </tr>
+        </thead>
 
-    </table>
+        <tbody>
+          {
+            metas.map( (element, i) => {
+              return(
+                <tr key={`gesture-${i}`}>
+                  <td key={`gesture-index-${i}`}>{element.index}</td>
+                  <td key={`gesture-type-${i}`}>{element.gestureType}</td>
+                  <td key={`gesture-action-${i}`}>{element.action}</td>
+                  <td key={`gesture-value-${i}`}>{element.value}</td>
+                  <td key={`gesture-prob-${i}`}>{element.prob}</td>
+                </tr>
+              )
+            })
+          }
+        </tbody>
 
+      </table>
+    </div>
   );
 
 };

@@ -60,7 +60,7 @@ export default function Demo() {
         classifier={classifier}
         setGestureData={setGestureData}
       />
-      <GesturesPanel results={gestureData} />
+      <GesturesPanel results={gestureData} gestureBuilder={classifier && classifier.gestureBuilder} />
       <MatchingEngineView me={me} player={player} gestureData={gestureData} />
     </div>
   );

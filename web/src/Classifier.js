@@ -72,8 +72,7 @@ export default class Classifier {
       return {
         probs,
         argMax,
-        gesture,
-        inputBufferState: {}, //TODO: replace
+        gesture
       };
 
     } catch (e) {
