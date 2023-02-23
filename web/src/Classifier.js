@@ -1,17 +1,12 @@
-
 import EMABuffer from "./input/EMABuffer.js";
 import GestureBuilder from "./input/GestureBuilder.ts";
-import GestureDecision from "./input/GestureDecision.ts";
 
 export default class Classifier {
   constructor(landmarks) {
     this.session = null;
     this.landmarks = landmarks;
-
     this.emaBuffer = new EMABuffer();
-
     this.gestureBuilder = new GestureBuilder();
-    this.gestureDecision = new GestureDecision();
     console.log("CLASSIFIER");
   }
 
@@ -47,7 +42,6 @@ export default class Classifier {
 
   async classify() {
     try {
-
       const data = Float64Array.from(this.landmarks.get());
 
       const live = new window.ort.Tensor("float64", data, [data.length]);
@@ -72,9 +66,8 @@ export default class Classifier {
       return {
         probs,
         argMax,
-        gesture
+        gesture,
       };
-
     } catch (e) {
       //err
       console.log("ERR", e);
