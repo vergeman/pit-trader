@@ -3,6 +3,9 @@ export default function GesturesPanel(props) {
 
   const results = props.results;
   const gestureBuilder = props.gestureBuilder;
+  const records = props.gestureDecision.records.sort(
+    (a, b) => a.timestamp < b.timestamp
+  );
 
   const getMeta = (idx) => {
     if (!gestureBuilder) return null;
@@ -109,7 +112,7 @@ export default function GesturesPanel(props) {
       {/* sort by timestamp */}
       {/* Past Orders */}
       <table style={tableStyle}>
-        <caption>Past Orders</caption>
+        <caption>Past Gestures</caption>
         <thead>
           <tr>
             <th style={tableHeaderStyle}>Type&nbsp;&nbsp;</th>
@@ -118,18 +121,17 @@ export default function GesturesPanel(props) {
           </tr>
         </thead>
         <tbody>
-          {props.orders.map((order, i) => {
+          {records.map((record, i) => {
             return (
-              <tr key={`order-${i}`}>
-                <td key={`order-type-${i}`}>{order.orderType}</td>
-                <td key={`order-qty-${i}`}>{order.qty}</td>
-                <td key={`order-price-${i}`}>{order.price}</td>
+              <tr key={`record-${i}`}>
+                <td key={`record-action-${i}`}>{record.action}</td>
+                <td key={`record-qty-${i}`}>{record.qty}</td>
+                <td key={`record-price-${i}`}>{record.price}</td>
               </tr>
-            )
+            );
           })}
         </tbody>
       </table>
-
     </div>
   );
 }

@@ -5,6 +5,14 @@ import MatchingEngine from "../engine/MatchingEngine";
 import Player from "../player/Player";
 import { OrderType, Order } from "../engine/Order";
 
+export interface GestureDecisionRecord {
+  related_id: string,
+  timestamp: number,
+  action: GestureAction,
+  qty: number | null,
+  price: number | null
+}
+
 export default class GestureDecision {
   public me: MatchingEngine;
   public player: Player;
@@ -15,6 +23,7 @@ export default class GestureDecision {
   private _qty: number | null;
   private _price: number | null;
   private _action: GestureAction;
+  private _records: GestureDecisionRecord[];
 
   constructor(me: MatchingEngine, player: Player, timeout: number = 750) {
     this.me = me;
@@ -39,6 +48,7 @@ export default class GestureDecision {
     this._qty = null;
     this._price = null;
     this._action = GestureAction.None;
+    this._records = [];
   }
 
   get qty(): number | null {
@@ -49,6 +59,9 @@ export default class GestureDecision {
   }
   get action(): GestureAction {
     return this._action;
+  }
+  get records(): GestureDecisionRecord[] {
+    return this._records;
   }
 
   setQtyFn(value: number) {
@@ -86,7 +99,18 @@ export default class GestureDecision {
         order = this.player.orders.at(-1) as Order;
         //removes from ME queues, but keep in player orders list w/ status cancelled
         this.me.cancel(order)
+
+        const record: GestureDecisionRecord = {
+          related_id: order.id,
+          timestamp: Date.now(),
+          action: GestureAction.Cancel,
+          qty: null,
+          price: null
+        };
+
+        this._records.unshift(record)
       }
+
 
       this.reset();
     }
@@ -99,6 +123,16 @@ export default class GestureDecision {
 
         this.me.process(order);
         this.player.addOrder(order);
+
+        const record: GestureDecisionRecord = {
+          related_id: order.id,
+          timestamp: Date.now(),
+          action: GestureAction.Market,
+          qty: this.qty,
+          price: null
+        };
+
+        this._records.unshift(record)
 
         console.log(
           "[GestureDecision] triggerValidOrder: Market order submitted",
@@ -127,6 +161,16 @@ export default class GestureDecision {
 
         this.me.process(order);
         this.player.addOrder(order);
+
+        const record: GestureDecisionRecord = {
+          related_id: order.id,
+          timestamp: Date.now(),
+          action: this.qty > 0 ? GestureAction.Buy : GestureAction.Sell,
+          qty: this.qty,
+          price: this.price
+        };
+
+        this._records.unshift(record)
 
         console.log(
           "[GestureDecision] triggerValidOrder Limit order submitted",
