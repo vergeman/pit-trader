@@ -84,7 +84,7 @@ export default class GestureDecision {
 
       if (this.player.orders.length) {
         order = this.player.orders.at(-1) as Order;
-        ; //removes from ME queues, but keep in player orders list w/ status cancelled
+        //removes from ME queues, but keep in player orders list w/ status cancelled
         this.me.cancel(order)
       }
 

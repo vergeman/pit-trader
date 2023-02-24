@@ -72,6 +72,7 @@ export default function Demo() {
         results={gestureData}
         gestureBuilder={classifier && classifier.gestureBuilder}
         gestureDecision={gestureDecision}
+        orders={player && player.orders}
       />
       <MatchingEngineView me={me} player={player} />
     </div>

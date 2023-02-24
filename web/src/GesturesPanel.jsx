@@ -59,7 +59,7 @@ export default function GesturesPanel(props) {
       </table>
 
       {/* GestureDecision State: Partial state, waiting for all gestures to
-      build action */}
+          build action */}
       <table style={tableStyle}>
         <caption>Gesture Decision</caption>
         <thead>
@@ -90,7 +90,6 @@ export default function GesturesPanel(props) {
             <th style={tableHeaderStyle}>Prob&nbsp;&nbsp;</th>
           </tr>
         </thead>
-
         <tbody>
           {metas.map((element, i) => {
             return (
@@ -105,6 +104,32 @@ export default function GesturesPanel(props) {
           })}
         </tbody>
       </table>
+
+      {/* ok can't use orders - orders for cancel, will modify the order but action will be out of sequence */}
+      {/* sort by timestamp */}
+      {/* Past Orders */}
+      <table style={tableStyle}>
+        <caption>Past Orders</caption>
+        <thead>
+          <tr>
+            <th style={tableHeaderStyle}>Type&nbsp;&nbsp;</th>
+            <th style={tableHeaderStyle}>Qty</th>
+            <th style={tableHeaderStyle}>Value&nbsp;</th>
+          </tr>
+        </thead>
+        <tbody>
+          {props.orders.map((order, i) => {
+            return (
+              <tr key={`order-${i}`}>
+                <td key={`order-type-${i}`}>{order.orderType}</td>
+                <td key={`order-qty-${i}`}>{order.qty}</td>
+                <td key={`order-price-${i}`}>{order.price}</td>
+              </tr>
+            )
+          })}
+        </tbody>
+      </table>
+
     </div>
   );
 }
