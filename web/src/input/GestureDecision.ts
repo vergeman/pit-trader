@@ -117,7 +117,7 @@ export default class GestureDecision {
 
     // MARKET ORDER
     if (this._action === GestureAction.Market && this.qty !== null) {
-      order = new Order("id-1", OrderType.Market, this.qty, NaN);
+      order = new Order(this.player.id, OrderType.Market, this.qty, NaN);
       console.log("MARKET", order);
       try {
 
@@ -155,7 +155,7 @@ export default class GestureDecision {
 
     // LIMIT ORDER
     if (this.price !== null && this.qty !== null) {
-      order = new Order("id-1", OrderType.Limit, this.qty, this.price);
+      order = new Order(this.player.id, OrderType.Limit, this.qty, this.price);
       console.log("LIMIT", order);
       try {
 
