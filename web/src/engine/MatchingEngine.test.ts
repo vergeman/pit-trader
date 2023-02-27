@@ -161,6 +161,36 @@ describe("process() orders fill on multiple orders", () => {
   });
 });
 
+describe("getSums() display qty summarized bid offers", () => {
+  it("getSumBids() / getSumOffers() returns summarized orders from specified collection", () => {
+    const me = new MatchingEngine();
+    const o1 = new Order("Player 1", OrderType.Limit, 50, 100);
+    const o2 = new Order("Player 2", OrderType.Limit, 25, 100);
+    const o3 = new Order("Player 3", OrderType.Limit, 10, 100);
+    const o4 = new Order("Player 4", OrderType.Limit, 10, 101);
+    const o5 = new Order("Player 5", OrderType.Limit, 10, 101);
+    const o6 = new Order("Player 6", OrderType.Limit, -10, 102);
+
+    for (let order of [o1, o2, o3, o4, o5, o6]) {
+      me.process(order);
+    }
+
+    const { bidMap, bidPriceLabel }: any = me.getSumBids("Player 1");
+    expect(bidMap.get(100)).toBe(85);
+    expect(bidMap.get(101)).toBe(20);
+
+    const { offerMap, offerPriceLabel } = me.getSumOffers("Player 6");
+    expect(offerMap.get(102)).toBe(-10);
+
+    //labels
+    expect(Object.keys(bidPriceLabel)).toEqual(["100"]);
+    expect(bidPriceLabel["100"]).toBeTruthy();
+
+    expect(Object.keys(offerPriceLabel)).toEqual(["102"]);
+    expect(offerPriceLabel["102"]).toBeTruthy();
+  });
+});
+
 describe("TransactionReports", () => {
   it("lastTraded() reflect last trade", () => {
     const me = new MatchingEngine();

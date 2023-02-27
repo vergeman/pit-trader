@@ -26,6 +26,45 @@ export default class MatchingEngine {
     return this._offers;
   }
 
+  //we defer the ordering to css
+  getSumOffers(player_id: string) {
+    const offerPriceLabel: { [index: string]: boolean } = {};
+    const offerMap = this.getSums(
+      this.offers.toArray(),
+      player_id,
+      offerPriceLabel
+    );
+    return { offerMap, offerPriceLabel };
+  }
+
+  getSumBids(player_id: string) {
+    const bidPriceLabel: { [index: string]: boolean } = {};
+    const bidMap = this.getSums(this.bids.toArray(), player_id, bidPriceLabel);
+    return { bidMap, bidPriceLabel };
+  }
+
+  getSums(
+    collection: Order[],
+    player_id: string,
+    priceLabel: any
+  ): Map<number, number> {
+    const map = new Map();
+
+    collection
+      .sort((a: Order, b: Order) => {
+        if (a.price - b.price === 0) return Number(a.timestamp > b.timestamp);
+        return Number(a.price < b.price);
+      })
+      .forEach((offer: Order) => {
+        const qty = (map.get(offer.price) || 0) + offer.qty;
+        map.set(offer.price, qty);
+
+        if (offer.player_id === player_id) priceLabel[offer.price] = true;
+      });
+
+    return map;
+  }
+
   addBid(order: Order) {
     this._bids.add(order);
   }

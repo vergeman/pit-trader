@@ -48,8 +48,8 @@ export class Order {
   ) {
     this._player_id = player_id;
     this._orderType = orderType;
-    this._qty = qty;
-    this._price = orderType === OrderType.Limit ? price : Number.NaN;
+    this._qty = this._toFixedNum(qty);
+    this._price = this._toFixedNum(orderType === OrderType.Limit ? price : Number.NaN);
 
     this._id = uuidv4();
     this._qtyFilled = 0;
@@ -169,17 +169,20 @@ export class Order {
   get player_id(): string {
     return this._player_id;
   }
+  _toFixedNum(num: number): number {
+    return Number(num.toFixed(1));
+  }
   get price(): number {
-    return this._price;
+    return this._toFixedNum(this._price);
   }
   set price(num: number) {
-    this._price = num;
+    this._price = this._toFixedNum(num);
   }
   get qty(): number {
-    return this._qty;
+    return this._toFixedNum(this._qty);
   }
   set qty(num: number) {
-    this._qty = num;
+    this._qty = this._toFixedNum(num);
   }
   get qtyFilled(): number {
     return this._qtyFilled;

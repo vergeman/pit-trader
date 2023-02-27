@@ -51,6 +51,15 @@ describe("Order", () => {
     expect(o1.id.length).toEqual(36);
   });
 
+  it('ensures prices and qty are not endless floats', () => {
+    const o1 = new Order("123", OrderType.Limit, 50, 100.1 + 100.3);
+    expect(o1.qty).toBe(50);
+    expect(o1.price).toBe(200.4);
+    const o2 = new Order("123", OrderType.Limit, 50.1 + 50.2, 100);
+    expect(o2.qty).toBe(100.3);
+    expect(o2.price).toBe(100);
+  });
+
   it("cancelled() sets status to Cancelled", () => {
     const o1 = new Order("123", OrderType.Limit, 50, 100);
     o1.cancelled();

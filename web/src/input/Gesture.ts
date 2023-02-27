@@ -1,8 +1,3 @@
-/*
- * gesture gets used in inputBufferState - which takes the type or action; uses
- * timers to adds/subtracts sequential gestures to determine ultimate value and action
- */
-
 export enum GestureType {
   Qty = "Qty", //+/- number
   Price = "Price", //number
