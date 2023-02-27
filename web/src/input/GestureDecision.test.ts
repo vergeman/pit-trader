@@ -70,7 +70,7 @@ describe("GestureDecision", () => {
     expect(me.offers.size()).toBe(1);
     const offer = me.offers.peek();
     expect(offer && offer.qty).toBe(-2);
-    expect(offer && offer.price).toBe(8);
+    expect(offer && offer.price).toBe(99.8);
   });
 
   it("calc() prepares a market order and transacts", async () => {
@@ -214,38 +214,46 @@ describe("GestureDecision", () => {
 });
 
 describe("GestureDecision calcOrderPrice scenarios", () => {
+  it("minDistancePrice", () => {
+    const me = new MatchingEngine();
+    const pm = new PlayerManager(me, []);
+    const marketLoop = new MarketLoop(pm, 100, 10);
+    const p = new Player("test");
+    const gd = new GestureDecision(me, marketLoop, p, TIMEOUT);
+    expect(gd.minDistancePrice([99, 100, 101], 1, 100)).toBe(100);
+    expect(gd.minDistancePrice([], 1, 10)).toBe(NaN);
+    expect(gd.minDistancePrice([0, 1, 2, -1], 1, 3)).toBe(2);
+  });
+
   it("calcOrderPrice attaches an implied base price with the gesture value when creating an Order", async () => {
     const me = new MatchingEngine();
     const pm = new PlayerManager(me, []);
-    const marketLoop = new MarketLoop(pm, 10, 100);
+    const marketLoop = new MarketLoop(pm, 100, 10);
     const p = new Player("test");
-
     const gestureDecision = new GestureDecision(me, marketLoop, p, TIMEOUT);
-    const gestureQtyL = new Gesture(GestureType.Qty, GestureAction.Buy, 2);
-    const gesturePriceL = new Gesture(GestureType.Price, GestureAction.Buy, 4);
+    marketLoop.getPrice = jest.fn(() => 100.8); //distance 100.8
 
-    //build limit
-    gestureDecision.calc(gestureQtyL);
-    gestureDecision.calc(gesturePriceL);
+    expect(gestureDecision.calcOrderPrice(1, 0)).toBe(101); //.8 | .2
+    expect(gestureDecision.calcOrderPrice(-1, 0)).toBe(101);
+    expect(gestureDecision.calcOrderPrice(1, 1)).toBe(101.1); //.7 | .3
+    expect(gestureDecision.calcOrderPrice(-1, 1)).toBe(101.1);
+    expect(gestureDecision.calcOrderPrice(1, 2)).toBe(101.2); //.6 | .4
+    expect(gestureDecision.calcOrderPrice(-1, 2)).toBe(101.2);
+    //NB: price depends on qty
+    expect(gestureDecision.calcOrderPrice(1, 3)).toBe(100.3); //.5 | .5
+    expect(gestureDecision.calcOrderPrice(-1, 3)).toBe(101.3);
 
-    console.log("GESTURE", gestureDecision);
-    //WORKING HERE:
-    //loops through SM's, eventually triggerValidOrder()
-
-    //GestureDecision.calcOrderPrice(base_price):
-    //need access to best bid/offer / last - some kind of base price
-    //not sure
-    //can we just add marketLoop to gestureDesion?
-    //akin to MarketLoop.getPrice()
-
-    await new Promise((res) => setTimeout(res, TIMEOUT));
-
-    let bid = me.bids.peek();
-    expect(me.bids.size()).toBe(1);
-    expect(bid && bid.qty).toBe(2);
-    expect(bid && bid.price).toBe(4);
-
-    //expect(gestureDecision.qty).toBe(2);
-    //expect(gestureDecision.price).toBe(4);
+    expect(gestureDecision.calcOrderPrice(1, 4)).toBe(100.4); //.4 | .6
+    expect(gestureDecision.calcOrderPrice(-1, 4)).toBe(100.4);
+    expect(gestureDecision.calcOrderPrice(1, 5)).toBe(100.5); //.3 | .7
+    expect(gestureDecision.calcOrderPrice(-1, 5)).toBe(100.5);
+    expect(gestureDecision.calcOrderPrice(1, 6)).toBe(100.6); //.2 | .8
+    expect(gestureDecision.calcOrderPrice(-1, 6)).toBe(100.6);
+    expect(gestureDecision.calcOrderPrice(1, 7)).toBe(100.7); //.1 | .9
+    expect(gestureDecision.calcOrderPrice(-1, 7)).toBe(100.7);
+    expect(gestureDecision.calcOrderPrice(1, 8)).toBe(100.8); //.0 | .0
+    expect(gestureDecision.calcOrderPrice(-1, 8)).toBe(100.8);
+    expect(gestureDecision.calcOrderPrice(1, 9)).toBe(100.9); //.1 | .1
+    expect(gestureDecision.calcOrderPrice(-1, 9)).toBe(100.9);
   });
 });

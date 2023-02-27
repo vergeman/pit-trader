@@ -12,6 +12,7 @@ export interface GestureDecisionRecord {
   action: GestureAction;
   qty: number | null;
   price: number | null;
+  gesturePrice: number | null;
 }
 
 export default class GestureDecision {
@@ -91,6 +92,8 @@ export default class GestureDecision {
     this.triggerValidOrder();
   }
 
+  //NB: distinction between gesturePrice (this.price) and orderPrice (base price + gesturePrice / 10)
+  //used with order values
   triggerValidOrder() {
     let order: Order | boolean = false;
 
@@ -114,6 +117,7 @@ export default class GestureDecision {
           action: GestureAction.Cancel,
           qty: null,
           price: null,
+          gesturePrice: null,
         };
 
         this._records.unshift(record);
@@ -136,6 +140,7 @@ export default class GestureDecision {
           action: GestureAction.Market,
           qty: this.qty,
           price: null,
+          gesturePrice: null,
         };
 
         this._records.unshift(record);
@@ -174,6 +179,7 @@ export default class GestureDecision {
           action: this.qty > 0 ? GestureAction.Buy : GestureAction.Sell,
           qty: this.qty,
           price: orderPrice,
+          gesturePrice: this.price,
         };
 
         this._records.unshift(record);
@@ -196,18 +202,45 @@ export default class GestureDecision {
   }
 
   //attaches implied base price from gesture
-  calcOrderPrice(qty: number, price: number): number {
-    const bidOrder: Order = this.me.bids.peek();
-    const offerOrder: Order = this.me.offers.peek();
-
+  calcOrderPrice(qty: number, gesturePrice: number): number {
     //if no bid or offer, returns priceSeed
     const marketPrice = this.marketLoop.getPrice();
-
     //base price
-    const base = Number(marketPrice.toFixed(1).split("."));
+    const base = Number(marketPrice.toFixed(1).split(".").at(0));
 
-    console.log("MP", marketPrice);
+    //decide price using handles b-1, b, b+1
+    const distances = [
+      base + gesturePrice / 10 - 1,
+      base + gesturePrice / 10,
+      base + gesturePrice / 10 + 1,
+    ];
+
+    const price = this.minDistancePrice(distances, qty, marketPrice);
+    //console.log(marketPrice, base, distances, price);
+
     return price;
+  }
+
+  minDistancePrice(nums: number[], qty: number, marketPrice: number): number {
+    if (nums.length <= 0) return NaN;
+
+    let min = Math.abs(nums[0] - marketPrice);
+    let minPos = 0;
+
+    for (let i = 0; i < nums.length; i++) {
+      const distance = Math.abs(nums[i] - marketPrice);
+      if (distance < min) {
+        min = Math.abs(nums[i] - marketPrice);
+        minPos = i;
+      }
+
+      //since we're looping low to high (b-1,b,b+1)
+      //if equidistant and it's an offer - select the higher base
+      if (distance === min) {
+        if (qty < 0) minPos = i;
+      }
+    }
+    return nums[minPos];
   }
 
   reset() {
