@@ -115,7 +115,8 @@ export class Player {
       for (let transaction of order.transactions) {
         const record: OrderRecord = {
           id: transaction.id,
-          qty: transaction.qty,
+          //NB: flipped perspective
+          qty: -transaction.qty,
           price: transaction.price,
         };
 
