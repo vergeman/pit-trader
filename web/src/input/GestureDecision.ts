@@ -4,7 +4,7 @@ import { ActionSM } from "./ActionSM";
 import MatchingEngine from "../engine/MatchingEngine";
 import MarketLoop from "../player/MarketLoop";
 import Player from "../player/Player";
-import { OrderType, Order } from "../engine/Order";
+import { OrderType, OrderStatus, Order } from "../engine/Order";
 
 export interface GestureDecisionRecord {
   related_id: string;
@@ -106,8 +106,12 @@ export default class GestureDecision {
     if (this._action === GestureAction.Cancel) {
       console.log("[GestureDecision] triggerValidOrder: Cancel");
 
-      if (this.player.orders.length) {
-        order = this.player.orders.at(-1) as Order;
+      const liveOrders = this.player.orders.filter(
+        (order) => order.status === OrderStatus.Live
+      );
+
+      if (liveOrders.length) {
+        order = liveOrders.at(-1) as Order;
         //removes from ME queues, but keep in player orders list w/ status cancelled
         this.me.cancel(order);
 
@@ -156,6 +160,8 @@ export default class GestureDecision {
         console.error(e.message);
         this.reset();
       }
+
+      this.reset();
     } else if (this._action === GestureAction.Market && this.qty === null) {
       console.log(
         "[GestureDecision] Market order submitted but missing qty",
