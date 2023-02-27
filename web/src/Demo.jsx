@@ -39,7 +39,7 @@ export default function Demo() {
     const playerManager = new PlayerManager(me, npcs);
     const player = new Player("test", true, config);
     const marketLoop = new MarketLoop(playerManager, 100);
-    const gestureDecision = new GestureDecision(me, player);
+    const gestureDecision = new GestureDecision(me, marketLoop, player);
 
     setLandmarks(landmarks);
     setClassifier(classifier);

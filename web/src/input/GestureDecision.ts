@@ -2,19 +2,21 @@ import { Gesture, GestureType, GestureAction } from "./Gesture";
 import { NumberSM } from "./NumberSM";
 import { ActionSM } from "./ActionSM";
 import MatchingEngine from "../engine/MatchingEngine";
+import MarketLoop from "../player/MarketLoop";
 import Player from "../player/Player";
 import { OrderType, Order } from "../engine/Order";
 
 export interface GestureDecisionRecord {
-  related_id: string,
-  timestamp: number,
-  action: GestureAction,
-  qty: number | null,
-  price: number | null
+  related_id: string;
+  timestamp: number;
+  action: GestureAction;
+  qty: number | null;
+  price: number | null;
 }
 
 export default class GestureDecision {
   public me: MatchingEngine;
+  public marketLoop: MarketLoop;
   public player: Player;
 
   private qtySM: NumberSM;
@@ -25,8 +27,14 @@ export default class GestureDecision {
   private _action: GestureAction;
   private _records: GestureDecisionRecord[];
 
-  constructor(me: MatchingEngine, player: Player, timeout: number = 750) {
+  constructor(
+    me: MatchingEngine,
+    marketLoop: MarketLoop,
+    player: Player,
+    timeout: number = 750
+  ) {
     this.me = me;
+    this.marketLoop = marketLoop;
     this.player = player;
 
     this.qtySM = new NumberSM(
@@ -98,19 +106,18 @@ export default class GestureDecision {
       if (this.player.orders.length) {
         order = this.player.orders.at(-1) as Order;
         //removes from ME queues, but keep in player orders list w/ status cancelled
-        this.me.cancel(order)
+        this.me.cancel(order);
 
         const record: GestureDecisionRecord = {
           related_id: order.id,
           timestamp: Date.now(),
           action: GestureAction.Cancel,
           qty: null,
-          price: null
+          price: null,
         };
 
-        this._records.unshift(record)
+        this._records.unshift(record);
       }
-
 
       this.reset();
     }
@@ -120,7 +127,6 @@ export default class GestureDecision {
       order = new Order(this.player.id, OrderType.Market, this.qty, NaN);
       console.log("MARKET", order);
       try {
-
         this.me.process(order);
         this.player.addOrder(order);
 
@@ -129,10 +135,10 @@ export default class GestureDecision {
           timestamp: Date.now(),
           action: GestureAction.Market,
           qty: this.qty,
-          price: null
+          price: null,
         };
 
-        this._records.unshift(record)
+        this._records.unshift(record);
 
         console.log(
           "[GestureDecision] triggerValidOrder: Market order submitted",
@@ -155,10 +161,10 @@ export default class GestureDecision {
 
     // LIMIT ORDER
     if (this.price !== null && this.qty !== null) {
-      order = new Order(this.player.id, OrderType.Limit, this.qty, this.price);
+      const orderPrice = this.calcOrderPrice(this.qty, this.price);
+      order = new Order(this.player.id, OrderType.Limit, this.qty, orderPrice);
       console.log("LIMIT", order);
       try {
-
         this.me.process(order);
         this.player.addOrder(order);
 
@@ -167,10 +173,10 @@ export default class GestureDecision {
           timestamp: Date.now(),
           action: this.qty > 0 ? GestureAction.Buy : GestureAction.Sell,
           qty: this.qty,
-          price: this.price
+          price: orderPrice,
         };
 
-        this._records.unshift(record)
+        this._records.unshift(record);
 
         console.log(
           "[GestureDecision] triggerValidOrder Limit order submitted",
@@ -183,11 +189,25 @@ export default class GestureDecision {
     }
 
     if (order instanceof Order) {
-
       //TODO: add to some kind of player profile
       //or do we augment MatchingEngine - getOrders(player_id)
       this.reset();
     }
+  }
+
+  //attaches implied base price from gesture
+  calcOrderPrice(qty: number, price: number): number {
+    const bidOrder: Order = this.me.bids.peek();
+    const offerOrder: Order = this.me.offers.peek();
+
+    //if no bid or offer, returns priceSeed
+    const marketPrice = this.marketLoop.getPrice();
+
+    //base price
+    const base = Number(marketPrice.toFixed(1).split("."));
+
+    console.log("MP", marketPrice);
+    return price;
   }
 
   reset() {
