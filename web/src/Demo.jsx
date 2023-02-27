@@ -10,6 +10,7 @@ import PlayerManager from "./player/PlayerManager";
 import Player from "./player/Player";
 import MarketLoop from "./player/MarketLoop";
 import GestureDecision from "./input/GestureDecision";
+import PlayerView from "./PlayerView.jsx";
 
 export default function Demo() {
   const [gestureData, setGestureData] = useState(null);
@@ -80,6 +81,7 @@ export default function Demo() {
           gestureBuilder={classifier && classifier.gestureBuilder}
           gestureDecision={gestureDecision}
         />
+        <PlayerView player={player} marketLoop={marketLoop}/>
         <MatchingEngineView me={me} player={player} />
       </div>
     </div>

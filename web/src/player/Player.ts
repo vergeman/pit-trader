@@ -1,6 +1,11 @@
 import { v4 as uuidv4 } from "uuid";
 import { Order, OrderStatus, OrderType } from "../engine/Order";
 
+interface OrderRecord {
+  qty: number;
+  price: number;
+}
+
 interface PlayerConfig {
   readonly tick: number;
   readonly limitPL: number;
@@ -93,12 +98,29 @@ export class Player {
         //opposing order qtyFilled * mtm * tick
         //for opposite market orders, NaN so use order price
         const fillPrice = transaction.price || order.price;
+
         mtm += -transaction.qty * (price - fillPrice) * this._config.tick;
-        //console.log("MTM", price, orderFill.qtyFilled, orderFill.price)
+        //console.log("MTM", mtm, price, fillPrice, transaction)
       }
     }
 
     return mtm;
+  }
+
+  orderHistories(): OrderRecord[] {
+    const histories: OrderRecord[] = [];
+
+    for (const order of this.orders) {
+      for (let transaction of order.transactions) {
+        const record: OrderRecord = {
+          qty: transaction.qty,
+          price: transaction.price,
+        };
+
+        histories.push(record);
+      }
+    }
+    return histories;
   }
 
   hasLost(price: number): boolean {
@@ -112,6 +134,7 @@ export class Player {
       return acc + order.qtyFilled;
     }, 0);
   }
+
   /*
    * 'NPC' behaviors
    */
@@ -121,7 +144,9 @@ export class Player {
   //TODO: possible check range too large (e.g. generate gesture reachable orders
   //- range of 1) might not be a problem
   calcMaxBidOfferDelta(_default: number = 0.5): number {
-    const e = 0.1; //TODO: set price granularity
+    //TODO: set price granularity
+    //also assumed in gestureDecision.calcOrderPrice (div by 10)
+    const e = 0.1;
     const liveBids = this.getLiveBids().map((order) => order.price);
     const liveOffers = this.getLiveOffers().map((order) => order.price);
 
