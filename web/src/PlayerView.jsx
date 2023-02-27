@@ -1,7 +1,7 @@
 export default function PlayerView(props) {
   if (!props.player || !props.marketLoop) return null;
 
-  const price = props.marketLoop.getPrice();
+  const price = Number(props.marketLoop.getPrice()).toFixed(1);
   const mtm = Number(props.player.calcMTM(price)).toFixed(2);
   const orderHistories = props.player.orderHistories();
   const liveOrders = [].concat(
