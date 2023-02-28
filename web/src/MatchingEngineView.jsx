@@ -44,14 +44,18 @@ export default function MatchingEngineView(props) {
         <div className="grid" style={gridStyle}>
           <div></div>
           <div className="grid-offers" style={gridOffersStyle}>
-            {Array.from(offerMap).map(([price, qty]) => {
+            {Array.from(offerMap).map(([price, qty], i) => {
               let gridElementStyle = {};
               if (offerPriceLabel[price]) {
                 gridElementStyle = { background: "yellow" };
               }
 
               return (
-                <div className="grid-offers-offer" style={gridElementStyle}>
+                <div
+                  key={`grid-offers-${i}-${qty}-${price}`}
+                  className="grid-offers-offer"
+                  style={gridElementStyle}
+                >
                   <span>{price}</span>
                   <span> | </span>
                   <span>{qty}</span>
@@ -70,14 +74,18 @@ export default function MatchingEngineView(props) {
           </div>
 
           <div className="grid-bids" style={gridBidsStyle}>
-            {Array.from(bidMap).map(([price, qty]) => {
+            {Array.from(bidMap).map(([price, qty], i) => {
               let gridElementStyle = {};
               if (bidPriceLabel[price]) {
                 gridElementStyle = { background: "yellow" };
               }
 
               return (
-                <div className="grid-bids-bid" style={gridElementStyle}>
+                <div
+                  key={`grid-bids-${i}-${qty}-${price}`}
+                  className="grid-bids-bid"
+                  style={gridElementStyle}
+                >
                   <span>{qty}</span>
                   <span> | </span>
                   <span>{price}</span>
