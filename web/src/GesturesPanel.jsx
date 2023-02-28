@@ -1,7 +1,8 @@
 export default function GesturesPanel(props) {
-  if (!props.results || !props.results.probs) return null;
+  if (!props.results) return null;
 
   const results = props.results;
+  const probs = results.probs || [];
   const gestureBuilder = props.gestureBuilder;
   const records = props.gestureDecision.records.sort(
     (a, b) => a.timestamp < b.timestamp
@@ -13,9 +14,9 @@ export default function GesturesPanel(props) {
   };
 
   const buildSortMetaByProb = (probs) => {
-    const metas = results.probs.map((prob, i) => {
+    const metas = probs.map((prob, i) => {
       const meta = getMeta(i);
-      if (!meta) return null;
+      if (!meta) return {prob: 0};
       meta.prob = prob;
       return meta;
     });
@@ -23,7 +24,7 @@ export default function GesturesPanel(props) {
     return metas.sort((a, b) => a.prob < b.prob);
   };
 
-  const metas = buildSortMetaByProb(results.probs).filter(
+  const metas = buildSortMetaByProb(probs).filter(
     (result) => result.prob >= 0.01
   );
 
