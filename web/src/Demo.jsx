@@ -60,28 +60,31 @@ export default function Demo() {
     gestureDecision && gestureDecision.calc(gesture);
   }, [me, player, gestureDecision, gestureData]);
 
-
   const consoleStyle = {
-    display: 'flex',
-    justifyContent: 'space-evenly'
-  }
+    display: "flex",
+    justifyContent: "space-evenly",
+  };
 
   return (
     <div className="container">
-      <Link to="/">Home</Link>
-      <h1>Hello World</h1>
+      <div className="header">
+        <Link to="/">Home</Link>
+        <h1>Hello World</h1>
+      </div>
+
       <Camera
         landmarks={landmarks}
         classifier={classifier}
         setGestureData={setGestureData}
       />
+
       <div className="console" style={consoleStyle}>
         <GesturesPanel
           results={gestureData}
           gestureBuilder={classifier && classifier.gestureBuilder}
           gestureDecision={gestureDecision}
         />
-        <PlayerView player={player} marketLoop={marketLoop}/>
+        <PlayerView player={player} marketLoop={marketLoop} />
         <MatchingEngineView me={me} player={player} />
       </div>
     </div>

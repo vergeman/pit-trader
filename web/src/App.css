@@ -1,7 +1,3 @@
-.App {
-  text-align: center;
-}
-
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -35,4 +31,25 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+
+/* overlay */
+.video-canvas {
+  height: 480px;
+  padding:12px;
+}
+.input_video, .output_canvas {
+  position: absolute;
+}
+.control-panel {
+  position: static;
+  width: 100px;
+  background: black;
+  opacity: 0.65;
+  color: white;
+}
+.input_video {
+  /*selfie style*/
+  transform: scale(-1, 1);
 }

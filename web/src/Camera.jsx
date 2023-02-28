@@ -20,19 +20,18 @@ function Camera(props) {
   );
 
   return (
-    <div>
-      <video ref={videoRef} className="input_video"></video>
-      <canvas
-        ref={canvasRef}
-        className="output_canvas"
-        width="1280px"
-        height="720px"
-      ></canvas>
-      <div
-        ref={controlRef}
-        className="control-panel"
-        style={{ position: "fixed", top: "0" }}
-      ></div>
+    <div className="video-canvas">
+      <div className="input-output">
+        <video ref={videoRef} className="input_video"></video>
+        <canvas
+          ref={canvasRef}
+          className="output_canvas"
+          width="640px"
+          height="480px"
+        ></canvas>
+      </div>
+
+      <div ref={controlRef} className="control-panel"></div>
     </div>
   );
 }
