@@ -140,7 +140,7 @@ class KeyClassMapping():
     # qty sell ones
     for i, keyPress in enumerate(self.QTY_BID_ONES, 1):
       key = f"{self.OFFER_TOGGLE_NAME}+{keyPress}"
-      value = i % 10
+      value = -(i % 10)
       filename = f"QTY_OFFER_{value:03d}.csv"
       self._generateMapping(self.mapping, key, key, gestureType, "Sell", value, f"{value} at", filename)
 
@@ -154,7 +154,7 @@ class KeyClassMapping():
     # qty offer tens
     for i, keyPress in enumerate(self.QTY_BID_TENS, 1):
       key = f"{self.OFFER_TOGGLE_NAME}+{keyPress}"
-      value = i * 10
+      value = -(i * 10)
       filename = f"QTY_OFFER_{value:03d}.csv"
       self._generateMapping(self.mapping, key, key, gestureType, "Sell", value, f"{value} at", filename)
 

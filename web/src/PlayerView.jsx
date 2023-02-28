@@ -1,7 +1,7 @@
 export default function PlayerView(props) {
   if (!props.player || !props.marketLoop) return null;
 
-  const price = props.marketLoop.getPrice();
+  const price = Number(props.marketLoop.getPrice()).toFixed(1);
   const mtm = Number(props.player.calcMTM(price)).toFixed(2);
   const orderHistories = props.player.orderHistories();
   const liveOrders = [].concat(
@@ -29,16 +29,24 @@ export default function PlayerView(props) {
         <caption>P&L and Position</caption>
         <tbody>
           <tr>
-            <td>{props.player.name}</td>
+            <td>
+              Name: <strong>{props.player.name}</strong>
+            </td>
           </tr>
           <tr>
-            <td>{price}</td>
+            <td>
+              Price: <strong>{price}</strong>
+            </td>
           </tr>
           <tr>
-            <td>{mtm}</td>
+            <td>
+              MTM: <strong>{mtm}</strong>
+            </td>
           </tr>
           <tr>
-            <td>{props.player.openPosition()}</td>
+            <td>
+              Position: <strong>{props.player.openPosition()}</strong>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -55,7 +63,7 @@ export default function PlayerView(props) {
         <tbody>
           {liveOrders.map((order) => {
             return (
-              <tr>
+              <tr key={`live-${order.id}`}>
                 <td>{order.qty}</td>
                 <td>{order.price}</td>
               </tr>
@@ -76,7 +84,7 @@ export default function PlayerView(props) {
         <tbody>
           {orderHistories.map((orderRecord) => {
             return (
-              <tr>
+              <tr key={`orderRecord-${orderRecord.id}`}>
                 <td>{orderRecord.qty}</td>
                 <td>{orderRecord.price}</td>
               </tr>

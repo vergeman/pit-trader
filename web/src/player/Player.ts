@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Order, OrderStatus, OrderType } from "../engine/Order";
 
 interface OrderRecord {
+  id: string,
   qty: number;
   price: number;
 }
@@ -113,7 +114,9 @@ export class Player {
     for (const order of this.orders) {
       for (let transaction of order.transactions) {
         const record: OrderRecord = {
-          qty: transaction.qty,
+          id: transaction.id,
+          //NB: flipped perspective
+          qty: -transaction.qty,
           price: transaction.price,
         };
 
