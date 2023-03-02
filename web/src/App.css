@@ -51,5 +51,13 @@
 }
 .input_video {
   /*selfie style*/
-  transform: scale(-1, 1);
+  /*transform: scale(-1, 1);*/
+  display:none;
+
+}
+
+.output_canvas {
+  /*transform: scale(-1, 1);*/
+  background: url('https://www.washingtonpost.com/wp-apps/imrs.php?src=https://arc-anglerfish-washpost-prod-washpost.s3.amazonaws.com/public/4YWTZITUPII6VLM3EVHMTGMTXQ.jpg&w=916');
+  background-size: cover;
 }

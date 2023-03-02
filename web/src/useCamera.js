@@ -6,6 +6,7 @@ export default function useCamera(
   controlRef,
   faceDetection,
   hands,
+  selfieDetection,
   classifier,
   setGestureData
 ) {
@@ -43,6 +44,10 @@ export default function useCamera(
       await hands.send({ image: videoRef.current });
     }
 
+    if (selfieDetection) {
+      await selfieDetection.send({ image: videoRef.current });
+    }
+
     if (classifier) {
       const res = await classifier.classify();
 
@@ -69,6 +74,7 @@ export default function useCamera(
       !!(faceDetection && hands && classifier),
       faceDetection,
       hands,
+      selfieDetection,
       classifier
     );
 
@@ -89,7 +95,7 @@ export default function useCamera(
         }
       };
     }
-  }, [faceDetection, hands, classifier]);
+  }, [faceDetection, hands, selfieDetection, classifier]);
 
   return camera;
 }

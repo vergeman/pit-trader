@@ -16,6 +16,9 @@ export default function useHandsDetection(canvasRef, landmarks) {
         hand_idx,
         _landmarks,
       ] of results.multiHandLandmarks.entries()) {
+
+        //canvasCtx.save();
+
         window.drawConnectors(canvasCtx, _landmarks, window.HAND_CONNECTIONS, {
           color: "#00FF00",
           lineWidth: 5,
@@ -24,6 +27,8 @@ export default function useHandsDetection(canvasRef, landmarks) {
           color: "#FF0000",
           lineWidth: 2,
         });
+
+        //canvasCtx.restore();
 
         //multiHandedness[0,1].label "Left / Right"
         //multiHandLandmarks[ {x,y,z..}] //30 * 21 * 2 hands -> 126
