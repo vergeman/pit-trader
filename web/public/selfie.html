@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <script
+      src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/selfie_segmentation.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+
+  <body>
+    <div class="container">
+      <video class="input_video"></video>
+      <canvas
+        class="output_canvas"
+        style="
+          background: url('https://www.washingtonpost.com/wp-apps/imrs.php?src=https://arc-anglerfish-washpost-prod-washpost.s3.amazonaws.com/public/4YWTZITUPII6VLM3EVHMTGMTXQ.jpg&w=916');
+          background-size: cover;
+        "
+        width="1280px"
+        height="720px"
+      ></canvas>
+    </div>
+  </body>
+</html>
+
+<script type="module">
+  const videoElement = document.getElementsByClassName("input_video")[0];
+  const canvasElement = document.getElementsByClassName("output_canvas")[0];
+  const canvasCtx = canvasElement.getContext("2d");
+
+  function onResults(results) {
+    //canvasCtx.save();
+
+    canvasCtx.save();
+    /*
+     *     canvasCtx.globalCompositeOperation = 'source-over'; //source-in //in: selfie, out: backgruond
+     *
+     *  */
+    //segmentMask
+    //canvasCtx.globalCompositeOperation = 'source-over';
+    //canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+
+    canvasCtx.drawImage(
+      results.image,
+      0,
+      0,
+      canvasElement.width,
+      canvasElement.height
+    );
+
+    //canvasCtx.globalCompositeOperation = 'destination-atop';
+    //canvasCtx.globalCompositeOperation = 'destination-out'; //wrong: webcam replaces background, mask area is background image
+    canvasCtx.globalCompositeOperation = "destination-in"; //correct - canvas as transparency
+    canvasCtx.globalCompositeOperation = "destination-atop"; //correct - cropped canvas
+    /*
+     *     canvasCtx.globalCompositeOperation = 'source-in';  //red mask - only overlap
+     *     canvasCtx.globalCompositeOperation = 'source-out';  //nothing - no overlap (just background)
+     *     canvasCtx.globalCompositeOperation = 'source-atop';  //red mask, background is webcam
+     *     canvasCtx.globalCompositeOperation = 'destination-over';  //webcam replace all */
+
+    canvasCtx.drawImage(
+      results.segmentationMask,
+      0,
+      0,
+      canvasElement.width,
+      canvasElement.height
+    );
+
+    /*
+     * canvasCtx.drawImage(background, 0, 0, canvasElement.width, canvasElement.height); */
+
+    //Use the segmentation mask as a clipping path for the canvas
+    //canvasCtx.globalCompositeOperation = 'destination-atop';
+
+    /* canvasCtx.globalCompositeOperation = 'destination-in'; */
+
+    //Restore the canvas context state
+    canvasCtx.restore();
+
+    // Only overwrite existing pixels.
+    //canvasCtx.globalCompositeOperation = 'source-out'; //source-in //in: selfie, out: backgruond
+    //canvasCtx.fillStyle = '#00FF00'; //overwrites pixels with green color
+    //canvasCtx.fillStyle = "rgba(255, 255, 255, .99)";
+
+    //canvasCtx.fillRect(0, 0, canvasElement.width, canvasElement.height);
+
+    // Only overwrite missing pixels.
+    // results image is the webcam image
+    //canvasCtx.globalCompositeOperation = 'destination-atop';
+    /* canvasCtx.globalCompositeOperation = 'source-out';
+     * canvasCtx.drawImage(
+     *   results.image, 0, 0, canvasElement.width, canvasElement.height); */
+
+    //canvasCtx.restore();
+  }
+
+  const selfieSegmentation = new SelfieSegmentation({
+    locateFile: (file) => {
+      return `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`;
+    },
+  });
+  selfieSegmentation.setOptions({
+    modelSelection: 0,
+  });
+  selfieSegmentation.onResults(onResults);
+
+  const camera = new Camera(videoElement, {
+    onFrame: async () => {
+      await selfieSegmentation.send({ image: videoElement });
+    },
+    width: 1280,
+    height: 720,
+  });
+  camera.start();
+</script>
