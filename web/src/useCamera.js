@@ -36,16 +36,17 @@ export default function useCamera(
       }
     }
 
+    //NB: draw order matters - differs between browsers
+    if (selfieDetection) {
+      await selfieDetection.send({ image: videoRef.current });
+    }
+
     if (faceDetection) {
       await faceDetection.send({ image: videoRef.current });
     }
 
     if (hands) {
       await hands.send({ image: videoRef.current });
-    }
-
-    if (selfieDetection) {
-      await selfieDetection.send({ image: videoRef.current });
     }
 
     if (classifier) {
