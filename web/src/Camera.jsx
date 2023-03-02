@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import useFaceDetection from "./useFaceDetection.js";
 import useHandsDetection from "./useHandsDetection.js";
+import useSelfieDetection from "./useSelfieDetection.js";
 import useCamera from "./useCamera.js";
 
 function Camera(props) {
@@ -10,11 +11,14 @@ function Camera(props) {
 
   const faceDetection = useFaceDetection(canvasRef, props.landmarks);
   const hands = useHandsDetection(canvasRef, props.landmarks);
+  const selfieDetection = useSelfieDetection(canvasRef, props.landmarks);
+
   const camera = useCamera(
     videoRef,
     controlRef,
     faceDetection,
     hands,
+    selfieDetection,
     props.classifier,
     props.setGestureData
   );

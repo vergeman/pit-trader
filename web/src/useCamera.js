@@ -5,7 +5,8 @@ export default function useCamera(
   videoRef,
   controlRef,
   faceDetection,
-  hands,
+  handsDetection,
+  selfieDetection,
   classifier,
   setGestureData
 ) {
@@ -35,12 +36,13 @@ export default function useCamera(
       }
     }
 
-    if (faceDetection) {
-      await faceDetection.send({ image: videoRef.current });
-    }
-
-    if (hands) {
-      await hands.send({ image: videoRef.current });
+    //NB: this draw order matters, and can yield different results between
+    //browsers. Also seems like can't concurrently send promises with these
+    //calls
+    for (let detection of [selfieDetection, faceDetection, handsDetection]) {
+      if (detection) {
+        await detection.send({ image: videoRef.current });
+      }
     }
 
     if (classifier) {
@@ -65,14 +67,8 @@ export default function useCamera(
    */
   useEffect(() => {
     console.log("[Camera] useEffect start");
-    console.log(
-      !!(faceDetection && hands && classifier),
-      faceDetection,
-      hands,
-      classifier
-    );
 
-    if (faceDetection && hands && classifier) {
+    if (selfieDetection && faceDetection && handsDetection && classifier) {
       const _camera = new window.Camera(videoRef.current, {
         onFrame,
         width: 640,
@@ -89,7 +85,7 @@ export default function useCamera(
         }
       };
     }
-  }, [faceDetection, hands, classifier]);
+  }, [selfieDetection, faceDetection, handsDetection, classifier]);
 
   return camera;
 }
