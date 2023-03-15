@@ -10,14 +10,18 @@ function Camera(props) {
   const canvasRef = useRef(null);
 
   const faceDetection = useFaceDetection(canvasRef, props.landmarks);
-  const hands = useHandsDetection(canvasRef, props.landmarks);
+  const handsDetection = useHandsDetection(canvasRef, props.landmarks);
   const selfieDetection = useSelfieDetection(canvasRef, props.landmarks);
+
+  //TODO: handle onResize
+  const width = "640px";
+  const height = "480px";
 
   const camera = useCamera(
     videoRef,
     controlRef,
     faceDetection,
-    hands,
+    handsDetection,
     selfieDetection,
     props.classifier,
     props.setGestureData
@@ -30,8 +34,8 @@ function Camera(props) {
         <canvas
           ref={canvasRef}
           className="output_canvas"
-          width="640px"
-          height="480px"
+          width={width}
+          height={height}
         ></canvas>
       </div>
 

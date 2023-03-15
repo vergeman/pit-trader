@@ -8,10 +8,6 @@ export default function useFaceDetection(canvasRef, landmarks) {
     const canvasElement = canvasRef.current;
     const canvasCtx = canvasRef.current.getContext("2d");
 
-    //clears previous render - and additional hook renders
-    //seems needed for chrome, but interferes with selfie segmentation
-    //canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-
     //RESET
     landmarks.resetFaceLandmarks();
 

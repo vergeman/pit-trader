@@ -70,9 +70,7 @@ export default function useCamera(
 
     if (selfieDetection && faceDetection && handsDetection && classifier) {
       const _camera = new window.Camera(videoRef.current, {
-        onFrame,
-        width: 640,
-        height: 480,
+        onFrame
       });
 
       setCamera(_camera);

@@ -35,13 +35,15 @@
 
 
 /* overlay */
-.video-canvas {
-  height: 480px;
-  padding:12px;
-}
+
+.pt-6 { padding-top: 4rem; }
+
 .input_video, .output_canvas {
+  /* required for fps overlay */
   position: absolute;
 }
+
+
 .control-panel {
   position: static;
   width: 100px;

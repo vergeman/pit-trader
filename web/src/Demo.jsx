@@ -61,25 +61,40 @@ export default function Demo() {
   }, [me, player, gestureDecision, gestureData]);
 
   return (
-    <Container style={{ background: "yellow" }}>
+    <Container className="pt-6" style={{ background: "azure" }}>
       <Row>
-        <Camera
-          landmarks={landmarks}
-          classifier={classifier}
-          setGestureData={setGestureData}
-        />
-      </Row>
-      <Row>
-        <div>
-          {/* export out components */}
+        <Col lg={6}>
+
+          <Camera
+            landmarks={landmarks}
+            classifier={classifier}
+            setGestureData={setGestureData}
+          />
+
           <GesturesPanel
             results={gestureData}
             gestureBuilder={classifier && classifier.gestureBuilder}
             gestureDecision={gestureDecision}
           />
+
+        </Col>
+
+        <Col lg={6}>
+          {/*
+           PlayerView: P&L, Position, Order Tables
+           MatchingEngineView: Market
+          */}
           <PlayerView player={player} marketLoop={marketLoop} />
           <MatchingEngineView me={me} player={player} />
-        </div>
+        </Col>
+      </Row>
+
+      <Row>
+        <Col>
+          <div className="d-flex justify-content-center">
+            News / Alert/ Challenge / Message Component
+          </div>
+        </Col>
       </Row>
     </Container>
   );
