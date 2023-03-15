@@ -1,5 +1,5 @@
+import { Container, Row, Col } from "react-bootstrap";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import Landmarks from "./Landmarks.js";
 import Classifier from "./Classifier.js";
 import Camera from "./Camera.jsx";
@@ -60,33 +60,27 @@ export default function Demo() {
     gestureDecision && gestureDecision.calc(gesture);
   }, [me, player, gestureDecision, gestureData]);
 
-  const consoleStyle = {
-    display: "flex",
-    justifyContent: "space-evenly",
-  };
-
   return (
-    <div className="container">
-      <div className="header">
-        <Link to="/">Home</Link>
-        <h1>Hello World</h1>
-      </div>
-
-      <Camera
-        landmarks={landmarks}
-        classifier={classifier}
-        setGestureData={setGestureData}
-      />
-
-      <div className="console" style={consoleStyle}>
-        <GesturesPanel
-          results={gestureData}
-          gestureBuilder={classifier && classifier.gestureBuilder}
-          gestureDecision={gestureDecision}
+    <Container style={{ background: "yellow" }}>
+      <Row>
+        <Camera
+          landmarks={landmarks}
+          classifier={classifier}
+          setGestureData={setGestureData}
         />
-        <PlayerView player={player} marketLoop={marketLoop} />
-        <MatchingEngineView me={me} player={player} />
-      </div>
-    </div>
+      </Row>
+      <Row>
+        <div>
+          {/* export out components */}
+          <GesturesPanel
+            results={gestureData}
+            gestureBuilder={classifier && classifier.gestureBuilder}
+            gestureDecision={gestureDecision}
+          />
+          <PlayerView player={player} marketLoop={marketLoop} />
+          <MatchingEngineView me={me} player={player} />
+        </div>
+      </Row>
+    </Container>
   );
 }
