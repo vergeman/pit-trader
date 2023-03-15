@@ -11,14 +11,6 @@ export default function MatchingEngineView(props) {
   const { offerMap, offerPriceLabel } = props.me.getSumOffers(props.player.id);
 
   /* Styles */
-  const gridWrapperStyle = {
-    display: "flex",
-    justifyContent: "center",
-    width: "400px",
-  };
-  const gridWrapStyle = {
-    width: "700px",
-  };
   const gridStyle = {
     display: "grid",
     gridTemplateColumns: "50% 50%",
@@ -38,8 +30,8 @@ export default function MatchingEngineView(props) {
   };
 
   return (
-    <div className="grid-wrapper" style={gridWrapperStyle}>
-      <div className="grid-wrap" style={gridWrapStyle}>
+    <div className="grid-wrapper d-flex justify-content-center">
+      <div className="grid-wrap w-100">
         <p>Market View</p>
         <div className="grid" style={gridStyle}>
           <div></div>
