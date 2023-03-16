@@ -29,7 +29,7 @@ export default function GesturesPanel(props) {
   );
 
   return (
-    <div className="d-flex justify-content-center">
+    <div className="d-xl-flex justify-content-center">
       <div className="gestures-current gestures-decision gestures-prob w-100">
         {/* GestureDecision State: Partial state, waiting for all gestures to
           build action */}

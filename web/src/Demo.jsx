@@ -13,6 +13,9 @@ import GestureDecision from "./input/GestureDecision";
 import PlayerView from "./PlayerView.jsx";
 
 export default function Demo() {
+  /* default bootstrap size */
+  const defaultCameraDims = { width: 636, height: 477 };
+
   const [gestureData, setGestureData] = useState(null);
   const [landmarks, setLandmarks] = useState(null);
   const [classifier, setClassifier] = useState(null);
@@ -64,8 +67,9 @@ export default function Demo() {
     <Container className="pt-6" style={{ background: "azure" }}>
       <Row>
         <Col lg={6}>
-
           <Camera
+            width={defaultCameraDims.width}
+            height={defaultCameraDims.height}
             landmarks={landmarks}
             classifier={classifier}
             setGestureData={setGestureData}
@@ -76,7 +80,6 @@ export default function Demo() {
             gestureBuilder={classifier && classifier.gestureBuilder}
             gestureDecision={gestureDecision}
           />
-
         </Col>
 
         <Col lg={6}>

@@ -5,9 +5,10 @@ import useSelfieDetection from "./useSelfieDetection.js";
 import useCamera from "./useCamera.js";
 
 function Camera(props) {
-  const [width, setWidth] = useState("640px");
-  const [height, setHeight] = useState("480px");
+  const [width, setWidth] = useState(props.width);
+  const [height, setHeight] = useState(props.height);
 
+  const videoCanvasRef = useRef(null);
   const controlRef = useRef(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -27,36 +28,30 @@ function Camera(props) {
   );
 
   const handleResize = (e) => {
-    console.log("resize", e);
-    console.log(window.innerWidth, window.innerHeight);
-    /*
-     * TODO: calc 640 / 480 or device dependent aspect ratio
-     * possible debounce on resize
-     * take min of default dim vs innerWidth/innerHeight aspect ratio
-     * setWidth(), setHeight()
-     */
+    //TODO: debounce
+    const aspect_ratio = props.width / props.height;
+    const w = videoCanvasRef.current.clientWidth;
+    const h = w / aspect_ratio;
+    setWidth(w);
+    setHeight(h);
   };
 
-  useEffect( () => {
-    window.addEventListener('resize', handleResize);
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
-  const canvasStyle = {
-    width, height
-  };
-
   return (
-    <div className="video-canvas" style={canvasStyle} onResize={handleResize}>
+    <div className="video-canvas" ref={videoCanvasRef} onResize={handleResize}>
       <div className="input-output">
         <video ref={videoRef} className="input_video"></video>
         <canvas
           ref={canvasRef}
           className="output_canvas"
-          width={width}
-          height={height}
+          width={`${width}px`}
+          height={`${height}px`}
         ></canvas>
       </div>
 

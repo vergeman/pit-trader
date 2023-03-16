@@ -39,27 +39,19 @@
   padding-top: 4rem;
 }
 
-.input_video,
-.output_canvas {
-  /* required for fps overlay */
-  position: absolute;
-}
-
 .control-panel {
-  position: static;
+  position: absolute;
+  top: 2rem;
   width: 100px;
   background: black;
   opacity: 0.65;
   color: white;
 }
 .input_video {
-  /*selfie style*/
-  /*transform: scale(-1, 1);*/
   display: none;
 }
 
 .output_canvas {
-  /*transform: scale(-1, 1);*/
   background: url("https://www.washingtonpost.com/wp-apps/imrs.php?src=https://arc-anglerfish-washpost-prod-washpost.s3.amazonaws.com/public/4YWTZITUPII6VLM3EVHMTGMTXQ.jpg&w=916");
   background-size: cover;
 }
