@@ -1,6 +1,12 @@
 import { OrderStatus, OrderType, Order, TransactionReport } from "./Order";
 import Heap from "heap-js";
 
+export interface Grid {
+  gridNumMinLen: Number;
+  gridNumMaxLen: Number;
+  prices: String[];
+}
+
 export default class MatchingEngine {
   //Possible classes:
   //* Order, Transaction (composed of multiple order(s) on each side)
@@ -63,6 +69,29 @@ export default class MatchingEngine {
       });
 
     return map;
+  }
+
+  calcGrid(price: Number, numGridPoints: Number = 21): Grid {
+    //numGridPoints: 20 points e.g. range of 99 - 101
+    const midPoint = Number(price.toFixed(1));
+    const start = midPoint - 1;
+    let strLen = String(midPoint).length;
+    let gridNumMinLen = strLen;
+    let gridNumMaxLen = strLen;
+
+    const prices = [];
+    for (let i = 0; i < numGridPoints; i++) {
+      //generate price values
+      const val = (start + i / 10).toFixed(1);
+      prices.push(val);
+
+      //catch string lengths for aligned render
+      strLen = String(val).length;
+      gridNumMaxLen = Math.max(strLen, gridNumMaxLen);
+      gridNumMinLen = Math.min(strLen, gridNumMinLen);
+    }
+
+    return { gridNumMinLen, gridNumMaxLen, prices };
   }
 
   addBid(order: Order) {

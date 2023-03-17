@@ -92,7 +92,7 @@ export default function Demo() {
            MatchingEngineView: Market
           */}
           <PlayerView player={player} marketLoop={marketLoop} />
-          <MatchingEngineView me={me} player={player} />
+          <MatchingEngineView price={marketLoop && marketLoop.getPrice()} me={me} player={player} />
         </div>
       </div>
 

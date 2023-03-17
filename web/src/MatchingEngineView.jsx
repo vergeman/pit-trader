@@ -1,103 +1,51 @@
 import { useEffect } from "react";
+import { Table } from "react-bootstrap";
 
 export default function MatchingEngineView(props) {
   useEffect(() => {
     console.log("[MatchingEngineView.jsx]: useEffect init");
   }, []);
 
-  if (!props.me) return null;
+  if (!props.me || !props.price) return null;
 
   const { bidMap, bidPriceLabel } = props.me.getSumBids(props.player.id);
   const { offerMap, offerPriceLabel } = props.me.getSumOffers(props.player.id);
+  const { gridNumMinLen, gridNumMaxLen, prices } = props.me.calcGrid(
+    props.price
+  );
 
-  /* Styles */
-  const gridStyle = {
-    display: "grid",
-    gridTemplateColumns: "50% 50%",
-    gridAutoRows: "100px 100px",
-  };
-  const gridOffersStyle = {
-    display: "flex",
-    flexDirection: "column",
-    alignSelf: "flex-end",
-    textAlign: "left",
-  };
-  const gridBidsStyle = {
-    display: "flex",
-    flexDirection: "column",
-    alignSelf: "flex-start",
-    textAlign: "right",
+  const renderPrice = (price, maxLen) => {
+    const priceArr = [price];
+    if (price.length < maxLen) {
+      for (let i = 0; i < maxLen - price.length; i++) {
+        const spacer = <span className="invisible">0</span>;
+        priceArr.unshift(spacer);
+      }
+    }
+
+    return priceArr;
   };
 
   return (
-    <div className="grid-wrapper d-flex justify-content-center">
-      <div className="grid-wrap w-100">
-        <p>Market View</p>
-        <div className="grid" style={gridStyle}>
-          <div></div>
-          <div className="grid-offers" style={gridOffersStyle}>
-            {Array.from(offerMap).map(([price, qty], i) => {
-              let gridElementStyle = {};
-              if (offerPriceLabel[price]) {
-                gridElementStyle = { background: "yellow" };
-              }
-
-              return (
-                <div
-                  key={`grid-offers-${i}-${qty}-${price}`}
-                  className="grid-offers-offer"
-                  style={gridElementStyle}
-                >
-                  <span>{price}</span>
-                  <span> | </span>
-                  <span>{qty}</span>
-                  <span> | </span>
-
-                  {/*
-                <span>{offer.price}</span>
-                <span> | </span>
-                <span>{offer.qty}</span>
-                <span> | </span>
-                <span>{(new Date(offer.timestamp)).toLocaleTimeString()}</span>
-              */}
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="grid-bids" style={gridBidsStyle}>
-            {Array.from(bidMap).map(([price, qty], i) => {
-              let gridElementStyle = {};
-              if (bidPriceLabel[price]) {
-                gridElementStyle = { background: "yellow" };
-              }
-
-              return (
-                <div
-                  key={`grid-bids-${i}-${qty}-${price}`}
-                  className="grid-bids-bid"
-                  style={gridElementStyle}
-                >
-                  <span>{qty}</span>
-                  <span> | </span>
-                  <span>{price}</span>
-                  <span> | </span>
-
-                  {/*
-                <span>{(new Date(bid.timestamp)).toLocaleTimeString()}</span>
-                <span> | </span>
-                <span>{bid.qty}</span>
-                <span> | </span>
-                <span>{bid.price}</span>
-              */}
-                </div>
-              );
-            })}
-          </div>
-
-          <div></div>
-        </div>
-      </div>
-    </div>
+    <Table size="sm" className="text-center caption-top">
+      <thead>
+        <tr>
+          <th>Bid Qty</th>
+          <th>Price</th>
+          <th>Ask Qty</th>
+        </tr>
+      </thead>
+      <tbody>
+        {prices.map((price) => {
+          return (
+            <tr key={price}>
+              <td>{bidMap.get(Number(price))}</td>
+              <td>{renderPrice(price, gridNumMaxLen)}</td>
+              <td>{offerMap.get(Number(price))}</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </Table>
   );
 }
