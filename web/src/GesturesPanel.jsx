@@ -16,7 +16,7 @@ export default function GesturesPanel(props) {
   const buildSortMetaByProb = (probs) => {
     const metas = probs.map((prob, i) => {
       const meta = getMeta(i);
-      if (!meta) return {prob: 0};
+      if (!meta) return { prob: 0 };
       meta.prob = prob;
       return meta;
     });
@@ -28,33 +28,18 @@ export default function GesturesPanel(props) {
     (result) => result.prob >= 0.01
   );
 
-  const wrapStyle = {
-    height: "300px",
-    display: "flex",
-    justifyContent: "center",
-  };
-
-  const tableStyle = {
-    margin: "0 auto",
-    textAlign: "left",
-  };
-
-  const tableHeaderStyle = {
-    width: "75px",
-  };
-
   return (
-    <div style={wrapStyle}>
-      <div className="gestures-current gestures-decision gestures-prob">
+    <div className="d-xl-flex justify-content-center">
+      <div className="gestures-current gestures-decision gestures-prob w-100">
         {/* GestureDecision State: Partial state, waiting for all gestures to
           build action */}
-        <table style={tableStyle}>
+        <table className="table caption-top table-borderless w-100">
           <caption>Gesture Decision</caption>
           <thead>
             <tr>
-              <th style={tableHeaderStyle}>Action</th>
-              <th style={tableHeaderStyle}>Qty&nbsp;&nbsp;&nbsp;</th>
-              <th style={tableHeaderStyle}>Price&nbsp;</th>
+              <th>Action</th>
+              <th>Qty&nbsp;&nbsp;&nbsp;</th>
+              <th>Price&nbsp;</th>
             </tr>
           </thead>
           <tbody>
@@ -67,13 +52,13 @@ export default function GesturesPanel(props) {
         </table>
 
         {/* Current Gesture (probs below might not exceed threshold) */}
-        <table style={tableStyle}>
+        <table className="table caption-top table-borderless w-100">
           <caption>Gesture Current</caption>
           <thead>
             <tr>
-              <th style={tableHeaderStyle}>Type&nbsp;&nbsp;</th>
-              <th style={tableHeaderStyle}>Action</th>
-              <th style={tableHeaderStyle}>Value&nbsp;</th>
+              <th>Type&nbsp;&nbsp;</th>
+              <th>Action</th>
+              <th>Value&nbsp;</th>
             </tr>
           </thead>
           <tbody>
@@ -86,15 +71,15 @@ export default function GesturesPanel(props) {
         </table>
 
         {/* Live Gesture */}
-        <table style={tableStyle}>
+        <table className="table caption-top table-borderless w-100">
           <caption>Gesture Probabilities</caption>
           <thead>
             <tr>
-              <th style={tableHeaderStyle}>Index&nbsp;</th>
-              <th style={tableHeaderStyle}>Type&nbsp;&nbsp;</th>
-              <th style={tableHeaderStyle}>Action</th>
-              <th style={tableHeaderStyle}>Value&nbsp;</th>
-              <th style={tableHeaderStyle}>Prob&nbsp;&nbsp;</th>
+              <th>Index&nbsp;</th>
+              <th>Type&nbsp;&nbsp;</th>
+              <th>Action</th>
+              <th>Value&nbsp;</th>
+              <th>Prob&nbsp;&nbsp;</th>
             </tr>
           </thead>
           <tbody>
@@ -115,14 +100,14 @@ export default function GesturesPanel(props) {
 
       {/* Past Orders */}
       <div className="gestures-records">
-        <table style={tableStyle}>
+        <table className="table caption-top table-borderless w-100">
           <caption>Past Gestures</caption>
           <thead>
             <tr>
-              <th style={tableHeaderStyle}>Time&nbsp;&nbsp;</th>
-              <th style={tableHeaderStyle}>Type&nbsp;&nbsp;</th>
-              <th style={tableHeaderStyle}>Qty</th>
-              <th style={tableHeaderStyle}>Value&nbsp;</th>
+              <th>Time&nbsp;&nbsp;</th>
+              <th>Type&nbsp;&nbsp;</th>
+              <th>Qty</th>
+              <th>Value&nbsp;</th>
             </tr>
           </thead>
           <tbody>
@@ -130,7 +115,10 @@ export default function GesturesPanel(props) {
               const d = new Date(record.timestamp);
               return (
                 <tr key={`record-${i}`}>
-                  <td key={`record-timestamp-${i}`} style={{minWidth: '100px'}}>
+                  <td
+                    key={`record-timestamp-${i}`}
+                    style={{ minWidth: "100px" }}
+                  >
                     {d.toLocaleTimeString()}
                   </td>
                   <td key={`record-action-${i}`}>{record.action}</td>

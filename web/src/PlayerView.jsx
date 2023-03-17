@@ -8,24 +8,10 @@ export default function PlayerView(props) {
     props.player.getLiveBids(),
     props.player.getLiveOffers()
   );
-  const tableWrapStyle = {
-    width: "400px",
-    textAlign: "left",
-  };
-
-  const tableStyle = {
-    width: "100%",
-    margin: "0 auto",
-    textAlign: "left",
-  };
-
-  const tableHeaderStyle = {
-    width: "75px",
-  };
 
   return (
-    <div style={tableWrapStyle}>
-      <table style={tableStyle}>
+    <div>
+      <table className="table caption-top table-borderless w-100">
         <caption>P&L and Position</caption>
         <tbody>
           <tr>
@@ -52,12 +38,12 @@ export default function PlayerView(props) {
       </table>
 
       {/* Live Orders */}
-      <table style={tableStyle}>
+      <table className="table caption-top table-borderless w-100">
         <caption>Working</caption>
         <thead>
           <tr>
-            <th style={tableHeaderStyle}>Qty&nbsp;&nbsp;</th>
-            <th style={tableHeaderStyle}>Price</th>
+            <th>Qty&nbsp;&nbsp;</th>
+            <th>Price</th>
           </tr>
         </thead>
         <tbody>
@@ -73,12 +59,12 @@ export default function PlayerView(props) {
       </table>
 
       {/* Order History */}
-      <table style={tableStyle}>
+      <table className="table caption-top table-borderless w-100">
         <caption>Order History</caption>
         <thead>
           <tr>
-            <th style={tableHeaderStyle}>Qty&nbsp;&nbsp;</th>
-            <th style={tableHeaderStyle}>Price</th>
+            <th>Qty&nbsp;&nbsp;</th>
+            <th>Price</th>
           </tr>
         </thead>
         <tbody>

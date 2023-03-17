@@ -1,5 +1,5 @@
+import { Container, Row, Col } from "react-bootstrap";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import Landmarks from "./Landmarks.js";
 import Classifier from "./Classifier.js";
 import Camera from "./Camera.jsx";
@@ -13,6 +13,9 @@ import GestureDecision from "./input/GestureDecision";
 import PlayerView from "./PlayerView.jsx";
 
 export default function Demo() {
+  /* default bootstrap size */
+  const defaultCameraDims = { width: 636, height: 477 };
+
   const [gestureData, setGestureData] = useState(null);
   const [landmarks, setLandmarks] = useState(null);
   const [classifier, setClassifier] = useState(null);
@@ -60,30 +63,46 @@ export default function Demo() {
     gestureDecision && gestureDecision.calc(gesture);
   }, [me, player, gestureDecision, gestureData]);
 
-
-  const consoleStyle = {
-    display: 'flex',
-    justifyContent: 'space-evenly'
-  }
-
   return (
-    <div className="container">
-      <Link to="/">Home</Link>
-      <h1>Hello World</h1>
-      <Camera
-        landmarks={landmarks}
-        classifier={classifier}
-        setGestureData={setGestureData}
-      />
-      <div className="console" style={consoleStyle}>
-        <GesturesPanel
-          results={gestureData}
-          gestureBuilder={classifier && classifier.gestureBuilder}
-          gestureDecision={gestureDecision}
-        />
-        <PlayerView player={player} marketLoop={marketLoop}/>
-        <MatchingEngineView me={me} player={player} />
+    <Container className="pt-6" style={{ background: "azure" }}>
+      <div className="d-grid main-wrapper">
+        <div className="camera">
+          <Camera
+            isActive={false}
+            width={defaultCameraDims.width}
+            height={defaultCameraDims.height}
+            landmarks={landmarks}
+            classifier={classifier}
+            setGestureData={setGestureData}
+          />
+        </div>
+
+        <div className="gestures">
+          Gestures
+          <GesturesPanel
+            results={gestureData}
+            gestureBuilder={classifier && classifier.gestureBuilder}
+            gestureDecision={gestureDecision}
+          />
+        </div>
+
+        <div className="me">
+          {/*
+           PlayerView: P&L, Position, Order Tables
+           MatchingEngineView: Market
+          */}
+          <PlayerView player={player} marketLoop={marketLoop} />
+          <MatchingEngineView me={me} player={player} />
+        </div>
       </div>
-    </div>
+
+      <Row>
+        <Col>
+          <div className="d-flex justify-content-center">
+            News / Alert/ Challenge / Message Component
+          </div>
+        </Col>
+      </Row>
+    </Container>
   );
 }
