@@ -18,6 +18,7 @@ function Camera(props) {
   const selfieDetection = useSelfieDetection(canvasRef, props.landmarks);
 
   const camera = useCamera(
+    props.isActive,
     videoRef,
     controlRef,
     faceDetection,

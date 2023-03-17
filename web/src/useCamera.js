@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import useControl from "./useControl.js";
 
 export default function useCamera(
+  isActive,
   videoRef,
   controlRef,
   faceDetection,
@@ -74,7 +75,10 @@ export default function useCamera(
       });
 
       setCamera(_camera);
-      _camera.start();
+
+      if (isActive){
+        _camera.start();
+      }
 
       return () => {
         console.log("[Camera] useEffect cleanup");

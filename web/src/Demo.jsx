@@ -68,13 +68,13 @@ export default function Demo() {
       <Row>
         <Col lg={6}>
           <Camera
+            isActive={false}
             width={defaultCameraDims.width}
             height={defaultCameraDims.height}
             landmarks={landmarks}
             classifier={classifier}
             setGestureData={setGestureData}
           />
-
           <GesturesPanel
             results={gestureData}
             gestureBuilder={classifier && classifier.gestureBuilder}
