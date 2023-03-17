@@ -65,8 +65,8 @@ export default function Demo() {
 
   return (
     <Container className="pt-6" style={{ background: "azure" }}>
-      <Row>
-        <Col lg={6}>
+      <div className="d-grid main-wrapper">
+        <div className="camera">
           <Camera
             isActive={false}
             width={defaultCameraDims.width}
@@ -75,22 +75,26 @@ export default function Demo() {
             classifier={classifier}
             setGestureData={setGestureData}
           />
+        </div>
+
+        <div className="gestures">
+          Gestures
           <GesturesPanel
             results={gestureData}
             gestureBuilder={classifier && classifier.gestureBuilder}
             gestureDecision={gestureDecision}
           />
-        </Col>
+        </div>
 
-        <Col lg={6}>
+        <div className="me">
           {/*
            PlayerView: P&L, Position, Order Tables
            MatchingEngineView: Market
           */}
           <PlayerView player={player} marketLoop={marketLoop} />
           <MatchingEngineView me={me} player={player} />
-        </Col>
-      </Row>
+        </div>
+      </div>
 
       <Row>
         <Col>
