@@ -27,25 +27,29 @@ export default function MatchingEngineView(props) {
   };
 
   return (
-    <Table size="sm" className="text-center caption-top">
-      <thead>
-        <tr>
-          <th>Bid Qty</th>
-          <th>Price</th>
-          <th>Ask Qty</th>
-        </tr>
-      </thead>
-      <tbody>
-        {prices.map((price) => {
-          return (
-            <tr key={price}>
-              <td>{bidMap.get(Number(price))}</td>
-              <td>{renderPrice(price, gridNumMaxLen)}</td>
-              <td>{offerMap.get(Number(price))}</td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </Table>
-  );
+        <Table size="sm" className="text-center caption-top">
+            <thead>
+                <tr>
+                    <th>Your Bids</th>
+                    <th>Bid Qty</th>
+                    <th>Price</th>
+                    <th>Ask Qty</th>
+                    <th>Your Offers</th>
+                </tr>
+            </thead>
+            <tbody>
+                {prices.map((price) => {
+                    return (
+                        <tr key={price}>
+                            <td></td>
+                            <td>{bidMap.get(Number(price))}</td>
+                            <td>{renderPrice(price, gridNumMaxLen)}</td>
+                            <td>{offerMap.get(Number(price))}</td>
+                            <td></td>
+                        </tr>
+                    );
+                })}
+            </tbody>
+        </Table>
+    );
 }

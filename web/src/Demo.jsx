@@ -11,6 +11,7 @@ import Player from "./player/Player";
 import MarketLoop from "./player/MarketLoop";
 import GestureDecision from "./input/GestureDecision";
 import PlayerView from "./PlayerView.jsx";
+import PlayerOrders from "./PlayerOrders.jsx";
 
 export default function Demo() {
   /* default bootstrap size */
@@ -87,12 +88,9 @@ export default function Demo() {
         </div>
 
         <div className="me">
-          {/*
-           PlayerView: P&L, Position, Order Tables
-           MatchingEngineView: Market
-          */}
           <PlayerView player={player} marketLoop={marketLoop} />
           <MatchingEngineView price={marketLoop && marketLoop.getPrice()} me={me} player={player} />
+          <PlayerOrders player={player}/>
         </div>
       </div>
 
