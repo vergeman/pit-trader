@@ -8,8 +8,8 @@ export default function MatchingEngineView(props) {
 
   if (!props.me || !props.price) return null;
 
-  const { bidMap, bidPriceLabel } = props.me.getSumBids(props.player.id);
-  const { offerMap, offerPriceLabel } = props.me.getSumOffers(props.player.id);
+  const bidMaps = props.me.getBidMaps(props.player.id);
+  const offerMaps = props.me.getOfferMaps(props.player.id);
   const { gridNumMinLen, gridNumMaxLen, prices } = props.me.calcGrid(
     props.price
   );
@@ -27,29 +27,29 @@ export default function MatchingEngineView(props) {
   };
 
   return (
-        <Table size="sm" className="text-center caption-top">
-            <thead>
-                <tr>
-                    <th>Your Bids</th>
-                    <th>Bid Qty</th>
-                    <th>Price</th>
-                    <th>Ask Qty</th>
-                    <th>Your Offers</th>
-                </tr>
-            </thead>
-            <tbody>
-                {prices.map((price) => {
-                    return (
-                        <tr key={price}>
-                            <td></td>
-                            <td>{bidMap.get(Number(price))}</td>
-                            <td>{renderPrice(price, gridNumMaxLen)}</td>
-                            <td>{offerMap.get(Number(price))}</td>
-                            <td></td>
-                        </tr>
-                    );
-                })}
-            </tbody>
-        </Table>
-    );
+    <Table size="sm" className="text-center caption-top">
+      <thead>
+        <tr>
+          <th>Buy Qty</th>
+          <th>Bid Size</th>
+          <th>Price</th>
+          <th>Offer Size</th>
+          <th>Sell Qty</th>
+        </tr>
+      </thead>
+      <tbody>
+        {prices.map((price) => {
+          return (
+            <tr key={price}>
+              <td>{bidMaps.playerOrdersPriceQtyMap.get(Number(price))}</td>
+              <td>{bidMaps.allOrdersPriceQtyMap.get(Number(price))}</td>
+              <td>{renderPrice(price, gridNumMaxLen)}</td>
+              <td>{offerMaps.allOrdersPriceQtyMap.get(Number(price))}</td>
+              <td>{offerMaps.playerOrdersPriceQtyMap.get(Number(price))}</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </Table>
+  );
 }
