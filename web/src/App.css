@@ -78,11 +78,15 @@
 }
 
 
-
-
+.break {
+  flex-basis:100%;
+  height:0;
+}
 
 /* overlay */
-
+.fs-7 {
+  font-size: .875rem;
+}
 .pt-6 {
   padding-top: 4rem;
 }

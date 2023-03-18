@@ -10,7 +10,7 @@ import PlayerManager from "./player/PlayerManager";
 import Player from "./player/Player";
 import MarketLoop from "./player/MarketLoop";
 import GestureDecision from "./input/GestureDecision";
-import PlayerView from "./PlayerView.jsx";
+import PlayerStatus from "./PlayerStatus.jsx";
 import PlayerOrders from "./PlayerOrders.jsx";
 
 export default function Demo() {
@@ -88,7 +88,7 @@ export default function Demo() {
         </div>
 
         <div className="me">
-          <PlayerView player={player} marketLoop={marketLoop} />
+          <PlayerStatus player={player} marketLoop={marketLoop} />
           <MatchingEngineView price={marketLoop && marketLoop.getPrice()} me={me} player={player} />
           <PlayerOrders player={player}/>
         </div>
