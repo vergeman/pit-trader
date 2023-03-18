@@ -39,39 +39,40 @@
 
 .d-grid.main-wrapper {
   grid-template-columns: 50% 50%;
-  grid-template-rows: 1fr;
-
+  grid-template-rows: auto 1fr;
 }
 
 /* mobile first */
 .main-wrapper .camera {
   grid-column: 1/3;
   grid-row: 1/2;
-  height:fit-content;
 }
 
 .main-wrapper .gestures {
   grid-column: 1/2;
   grid-row: 2/3;
-
-  /* TODO: depends on me column */
-  min-height: 200px;
 }
+
 .main-wrapper .me {
-  grid-column: 2/3;
+  grid-column: 2/4;
   grid-row: 2/3;
 }
 
 
 /* desktop */
 @media (min-width: 992px) {
+
+  .d-grid.main-wrapper {
+    grid-template-columns: calc(50% - 1.5rem * .5) 1.5rem calc(50% - 1.5rem * .5);
+  }
+
   .main-wrapper .camera {
     grid-column: 1/2;
     grid-row: 1/2;
   }
 
   .main-wrapper .me {
-    grid-column: 2/3;
+    grid-column: 3/4;
     grid-row: 1/3;
   }
 }
