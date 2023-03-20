@@ -69,7 +69,7 @@ export default function Demo() {
       <div className="d-grid main-wrapper">
         <div className="camera">
           <Camera
-            isActive={false}
+            isActive={true}
             width={defaultCameraDims.width}
             height={defaultCameraDims.height}
             landmarks={landmarks}
@@ -89,7 +89,7 @@ export default function Demo() {
 
         <div className="me">
           <PlayerStatus player={player} marketLoop={marketLoop} />
-          <MatchingEngineView price={marketLoop && marketLoop.getPrice()} me={me} player={player} />
+          <MatchingEngineView me={me} marketLoop={marketLoop} player={player} />
           <PlayerOrders player={player}/>
         </div>
       </div>

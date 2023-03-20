@@ -6,13 +6,14 @@ export default function MatchingEngineView(props) {
     console.log("[MatchingEngineView.jsx]: useEffect init");
   }, []);
 
-  if (!props.me || !props.price) return null;
+  if (!props.me || !props.marketLoop) return null;
+
+  const price = props.marketLoop && props.marketLoop.getPrice();
+  const lastPrice = props.marketLoop && props.marketLoop.getLastPrice();
 
   const bidMaps = props.me.getBidMaps(props.player.id);
   const offerMaps = props.me.getOfferMaps(props.player.id);
-  const { gridNumMinLen, gridNumMaxLen, prices } = props.me.calcGrid(
-    props.price
-  );
+  const { gridNumMinLen, gridNumMaxLen, prices } = props.me.calcGrid(price);
 
   const renderPrice = (price, maxLen) => {
     const priceArr = [price];
@@ -40,7 +41,7 @@ export default function MatchingEngineView(props) {
       <tbody>
         {prices.map((price) => {
           return (
-            <tr key={price}>
+            <tr key={price} className={price == lastPrice ? "me-isLast": ""}>
               <td>{bidMaps.playerOrdersPriceQtyMap.get(Number(price))}</td>
               <td>{bidMaps.allOrdersPriceQtyMap.get(Number(price))}</td>
               <td>{renderPrice(price, gridNumMaxLen)}</td>

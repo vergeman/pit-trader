@@ -78,12 +78,8 @@
 }
 
 
-.break {
-  flex-basis:100%;
-  height:0;
-}
+/* Extended Helpers */
 
-/* overlay */
 .fs-7 {
   font-size: .875rem;
 }
@@ -91,6 +87,9 @@
   padding-top: 4rem;
 }
 
+.me-isLast {
+  background: forestgreen;
+}
 .control-panel {
   position: absolute;
   top: 2rem;
