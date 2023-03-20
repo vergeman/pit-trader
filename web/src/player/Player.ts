@@ -1,11 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { Order, OrderStatus, OrderType } from "../engine/Order";
-
-interface OrderRecord {
-  id: string;
-  qty: number;
-  price: number;
-}
+import { Order, Transaction, OrderStatus, OrderType } from "../engine/Order";
 
 interface PlayerConfig {
   readonly tick: number;
@@ -131,19 +125,14 @@ export class Player {
     return Number(avgPrice.toFixed(3));
   }
 
-  orderHistories(): OrderRecord[] {
-    const histories: OrderRecord[] = [];
+  orderHistories(): Transaction[] {
+    const histories: Transaction[] = [];
 
     for (const order of this.orders) {
       for (let transaction of order.transactions) {
-        const record: OrderRecord = {
-          id: transaction.id,
-          //NB: flipped perspective
-          qty: -transaction.qty,
-          price: transaction.price,
-        };
-
-        histories.push(record);
+        //NB: flip qty as qty is compliment to order
+        const t = {...transaction, qty: -transaction.qty};
+        histories.push(t);
       }
     }
     return histories;
