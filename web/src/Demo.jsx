@@ -10,8 +10,8 @@ import PlayerManager from "./player/PlayerManager";
 import Player from "./player/Player";
 import MarketLoop from "./player/MarketLoop";
 import GestureDecision from "./input/GestureDecision";
-import PlayerStatus from "./PlayerStatus.jsx";
-import PlayerOrders from "./PlayerOrders.jsx";
+import PlayerStatus from "./playerView/PlayerStatus.jsx";
+import PlayerOrders from "./playerView/PlayerOrders.jsx";
 
 export default function Demo() {
   /* default bootstrap size */
