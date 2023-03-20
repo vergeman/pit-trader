@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Order, OrderStatus, OrderType } from "../engine/Order";
 
 interface OrderRecord {
-  id: string,
+  id: string;
   qty: number;
   price: number;
 }
@@ -90,8 +90,8 @@ export class Player {
     return order;
   }
 
-  calcMTM(price: number): number {
-    let mtm = 0;
+  calcPnL(price: number): number {
+    let pnl = 0;
     //get all fills
     for (const order of this.orders) {
       //we loop transactions due to market orders whose price can vary
@@ -100,12 +100,34 @@ export class Player {
         //for opposite market orders, NaN so use order price
         const fillPrice = transaction.price || order.price;
 
-        mtm += -transaction.qty * (price - fillPrice) * this._config.tick;
+        pnl += -transaction.qty * (price - fillPrice) * this._config.tick;
         //console.log("MTM", mtm, price, fillPrice, transaction)
       }
     }
 
-    return mtm;
+    return pnl;
+  }
+
+  //avgPrice of executed trades
+  calcAvgPrice(): number | null {
+    let pnl = 0;
+    let fillQty = 0;
+
+    //get all fills
+    for (const order of this.orders) {
+      //we loop transactions due to market orders whose price can vary
+      for (let transaction of order.transactions) {
+        //opposing order qtyFilled * mtm * tick
+        //for opposite market orders, NaN so use order price
+        const fillPrice = transaction.price || order.price;
+        fillQty += transaction.qty;
+        pnl += -transaction.qty * fillPrice;
+      }
+    }
+
+    if (fillQty == 0) return null;
+
+    return Math.abs(pnl / fillQty);
   }
 
   orderHistories(): OrderRecord[] {
@@ -127,7 +149,7 @@ export class Player {
   }
 
   hasLost(price: number): boolean {
-    return this.calcMTM(price) < this._config.limitPL;
+    return this.calcPnL(price) < this._config.limitPL;
   }
 
   //TODO: augment order.execute to have player carry a netPosition equivalent
