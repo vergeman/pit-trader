@@ -67,6 +67,13 @@ export class Order {
     const qtyFilled = this._fill(abs_qty);
     const oppQtyFilled = oppOrder._fill(abs_qty);
 
+    //decide price
+    //use price of "opposing" order that's in ME
+    //gesture can be anything, but want to execute at best price
+    //e.g. can't trust new orders, but can trust prices in matching engine (ME
+    //can be better)
+    let price = oppOrder.price
+
     //update both status
     this._checkSetComplete();
     oppOrder._checkSetComplete();
@@ -78,7 +85,7 @@ export class Order {
       id: uuidv4(),
       player_id: oppOrder.player_id,
       qty: qtyFilled,
-      price: oppOrder.price,
+      price,
       timestamp,
     });
 
@@ -86,22 +93,9 @@ export class Order {
       id: uuidv4(),
       player_id: this.player_id,
       qty: oppQtyFilled,
-      price: this.price,
+      price,
       timestamp,
     });
-
-    //if it's a market order, we use whatever opposing price
-    //otherwise limit v limit:
-    //
-    //if we're a buyer we pay the least (lowest offer), if seller we ask the
-    //most (highest bid). this happens when submit a limit order price set
-    //"through" the market, make sure to report the proper price
-    let price =
-      this.orderType === OrderType.Market
-        ? oppOrder.price
-        : this.qty > 0
-        ? Math.min(this.price, oppOrder.price)
-        : Math.max(this.price, oppOrder.price);
 
     return {
       qty: abs_qty,

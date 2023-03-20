@@ -1,4 +1,4 @@
-import MatchingEngine from "./MatchingEngine";
+import { MatchingEngine, OrderMap } from "./MatchingEngine";
 import { OrderStatus, OrderType, Order } from "./Order";
 
 // TODO: effect on player - what happens post execute? what do we need
@@ -162,7 +162,7 @@ describe("process() orders fill on multiple orders", () => {
 });
 
 describe("getSums() display qty summarized bid offers", () => {
-  it("getSumBids() / getSumOffers() returns summarized orders from specified collection", () => {
+  it("getBidMaps() / getOfferMaps() returns summed orders from specified collection", () => {
     const me = new MatchingEngine();
     const o1 = new Order("Player 1", OrderType.Limit, 50, 100);
     const o2 = new Order("Player 2", OrderType.Limit, 25, 100);
@@ -175,19 +175,25 @@ describe("getSums() display qty summarized bid offers", () => {
       me.process(order);
     }
 
-    const { bidMap, bidPriceLabel }: any = me.getSumBids("Player 1");
-    expect(bidMap.get(100)).toBe(85);
-    expect(bidMap.get(101)).toBe(20);
+    const bidMap: OrderMap = me.getBidMaps("Player 1");
+    const bidPriceQtyMap = bidMap.allOrdersPriceQtyMap;
+    expect(bidPriceQtyMap.get(100)).toBe(85);
+    expect(bidPriceQtyMap.get(101)).toBe(20);
 
-    const { offerMap, offerPriceLabel } = me.getSumOffers("Player 6");
-    expect(offerMap.get(102)).toBe(-10);
+    const offerMap: OrderMap = me.getOfferMaps("Player 6");
+    const offerPriceQtyMap = offerMap.allOrdersPriceQtyMap;
+    expect(offerPriceQtyMap.get(102)).toBe(-10);
 
-    //labels
-    expect(Object.keys(bidPriceLabel)).toEqual(["100"]);
-    expect(bidPriceLabel["100"]).toBeTruthy();
+    //player specific values
+    //player 1
+    expect(bidMap.playerOrdersPriceQtyMap.has(102)).toBeFalsy();
+    expect(bidMap.playerOrdersPriceQtyMap.has(100)).toBeTruthy();
+    expect(bidMap.playerOrdersPriceQtyMap.get(100)).toBe(50);
 
-    expect(Object.keys(offerPriceLabel)).toEqual(["102"]);
-    expect(offerPriceLabel["102"]).toBeTruthy();
+    //player 6
+    expect(offerMap.playerOrdersPriceQtyMap.has(100)).toBeFalsy();
+    expect(offerMap.playerOrdersPriceQtyMap.has(102)).toBeTruthy();
+    expect(offerMap.playerOrdersPriceQtyMap.get(102)).toBe(-10);
   });
 });
 

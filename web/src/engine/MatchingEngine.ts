@@ -1,7 +1,18 @@
 import { OrderStatus, OrderType, Order, TransactionReport } from "./Order";
 import Heap from "heap-js";
 
-export default class MatchingEngine {
+export interface Grid {
+  gridNumMinLen: Number;
+  gridNumMaxLen: Number;
+  prices: String[];
+}
+
+export interface OrderMap {
+  allOrdersPriceQtyMap: Map<Number, Number>;
+  playerOrdersPriceQtyMap: Map<Number, Number>;
+}
+
+export class MatchingEngine {
   //Possible classes:
   //* Order, Transaction (composed of multiple order(s) on each side)
   //*  Trader/Player class
@@ -26,43 +37,60 @@ export default class MatchingEngine {
     return this._offers;
   }
 
-  //we defer the ordering to css
-  getSumOffers(player_id: string) {
-    const offerPriceLabel: { [index: string]: boolean } = {};
-    const offerMap = this.getSums(
-      this.offers.toArray(),
-      player_id,
-      offerPriceLabel
-    );
-    return { offerMap, offerPriceLabel };
+  getOfferMaps(player_id: string): OrderMap {
+    return this.getSums(this.offers.toArray(), player_id);
   }
 
-  getSumBids(player_id: string) {
-    const bidPriceLabel: { [index: string]: boolean } = {};
-    const bidMap = this.getSums(this.bids.toArray(), player_id, bidPriceLabel);
-    return { bidMap, bidPriceLabel };
+  getBidMaps(player_id: string): OrderMap {
+    return this.getSums(this.bids.toArray(), player_id);
   }
 
-  getSums(
-    collection: Order[],
-    player_id: string,
-    priceLabel: any
-  ): Map<number, number> {
-    const map = new Map();
+  getSums(collection: Order[], player_id: string): OrderMap {
+    const orderMap = new Map();
+    const playerOrderMap = new Map();
 
     collection
       .sort((a: Order, b: Order) => {
         if (a.price - b.price === 0) return Number(a.timestamp > b.timestamp);
         return Number(a.price < b.price);
       })
-      .forEach((offer: Order) => {
-        const qty = (map.get(offer.price) || 0) + offer.qty;
-        map.set(offer.price, qty);
+      .forEach((order: Order) => {
+        const qty = (orderMap.get(order.price) || 0) + order.qty;
+        orderMap.set(order.price, qty);
 
-        if (offer.player_id === player_id) priceLabel[offer.price] = true;
+        if (order.player_id === player_id) {
+          const player_qty = (playerOrderMap.get(order.price) || 0) + order.qty;
+          playerOrderMap.set(order.price, player_qty);
+        }
       });
 
-    return map;
+    return {
+      allOrdersPriceQtyMap: orderMap,
+      playerOrdersPriceQtyMap: playerOrderMap,
+    };
+  }
+
+  calcGrid(price: Number, numGridPoints: Number = 21): Grid {
+    //numGridPoints: 20 points e.g. range of 99 - 101
+    const midPoint = Number(price.toFixed(1));
+    const start = midPoint + 1;
+    let strLen = String(midPoint).length; //NB: length of digits
+    let gridNumMinLen = strLen;
+    let gridNumMaxLen = strLen;
+
+    const prices = [];
+    for (let i = 0; i < numGridPoints; i++) {
+      //generate price values high to low
+      const val = (start - i / 10).toFixed(1);
+      prices.push(val);
+
+      //catch string lengths for aligned render
+      strLen = String(val).length;
+      gridNumMaxLen = Math.max(strLen, gridNumMaxLen);
+      gridNumMinLen = Math.min(strLen, gridNumMinLen);
+    }
+
+    return { gridNumMinLen, gridNumMaxLen, prices };
   }
 
   addBid(order: Order) {
@@ -213,3 +241,5 @@ export default class MatchingEngine {
 
   //Reporter
 }
+
+export default MatchingEngine;

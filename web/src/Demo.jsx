@@ -10,7 +10,8 @@ import PlayerManager from "./player/PlayerManager";
 import Player from "./player/Player";
 import MarketLoop from "./player/MarketLoop";
 import GestureDecision from "./input/GestureDecision";
-import PlayerView from "./PlayerView.jsx";
+import PlayerStatus from "./PlayerStatus.jsx";
+import PlayerOrders from "./PlayerOrders.jsx";
 
 export default function Demo() {
   /* default bootstrap size */
@@ -68,7 +69,7 @@ export default function Demo() {
       <div className="d-grid main-wrapper">
         <div className="camera">
           <Camera
-            isActive={false}
+            isActive={true}
             width={defaultCameraDims.width}
             height={defaultCameraDims.height}
             landmarks={landmarks}
@@ -87,12 +88,9 @@ export default function Demo() {
         </div>
 
         <div className="me">
-          {/*
-           PlayerView: P&L, Position, Order Tables
-           MatchingEngineView: Market
-          */}
-          <PlayerView player={player} marketLoop={marketLoop} />
-          <MatchingEngineView me={me} player={player} />
+          <PlayerStatus player={player} marketLoop={marketLoop} />
+          <MatchingEngineView me={me} marketLoop={marketLoop} player={player} />
+          <PlayerOrders player={player}/>
         </div>
       </div>
 

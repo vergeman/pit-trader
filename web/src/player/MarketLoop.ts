@@ -56,10 +56,28 @@ class MarketLoop {
     this._isActive = false;
   }
 
+  getDisplayLastPrice(): number | null {
+    const lastQtyPrice: TransactionReport = this.me.transactionReports[0];
+    if (lastQtyPrice && lastQtyPrice.price) {
+      const lastPrice = lastQtyPrice.price;
+      return Number(lastPrice.toFixed(1));
+    }
+
+    return null;
+  }
+
   getPrice(): number {
-    //why not use only last or midpoint?
-    //markets can drift and move, exceeding last (aka not traded in a while)
-    //bid/offer can be wide - last is a better reflection of "value"
+    /*
+     * returns price used to orient gestureDecision input (digit selection),
+     * price seeding, npc generated bid/offers, win/lose condition
+     *
+     * hierarchy to describe "active", relevant price:
+     *
+     * 1. current bid/offer? midpoint of current bid/offer
+     * 2. no markets? use last
+     * 3. no markets, no last? default price seed (no market, nothing traded)
+     *
+     */
 
     //last price
     const lastQtyPrice: TransactionReport = this.me.transactionReports[0];
