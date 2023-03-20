@@ -141,7 +141,7 @@ describe("Player", () => {
     });
   });
 
-  it("calcAvgPrice() returns weighted average price of fills", () => {
+  it("calcDisplayAvgPrice() returns weighted average price of fills formatted for display", () => {
     //working orders has no mtm effect
     const p = new Player("test", true, { tick: 1000, limitPL: -1000000 });
     const me = new MatchingEngine();
@@ -152,14 +152,14 @@ describe("Player", () => {
     me.process(o1b);
     me.process(o1b2);
     //just markets, no executed trades yet
-    expect(p.calcAvgPrice()).toBe(null);
+    expect(p.calcDisplayAvgPrice()).toBe(null);
 
     const o2 = new Order('123"', OrderType.Limit, -10, 100);
     const o3 = new Order('123"', OrderType.Limit, -1000, 80);
     me.process(o2);
     me.process(o3);
-    const wAvgPrice = (10 * 100 + 1000 * 80) / 1010;
-    expect(p.calcAvgPrice()).toBe(wAvgPrice);
+    const wAvgPrice = Number(((10 * 100 + 1000 * 80) / 1010).toFixed(3));
+    expect(p.calcDisplayAvgPrice()).toBe(wAvgPrice);
   });
 
   it("generateRandomMax() default generates a number from 1 to 5", () => {

@@ -9,10 +9,10 @@ export default function PlayerStatus(props) {
   //avgPrice: price on only executed trades
   //lastPrice: last traded
   const openPosition = props.player.openPosition();
-  const price = Number(props.marketLoop.getPrice()).toFixed(1);
+  const price = props.marketLoop.getPrice();
   const pnl = Number(props.player.calcPnL(price)).toFixed(2);
-  const avgPrice = props.player.calcAvgPrice();
-  const lastPrice = props.marketLoop.getLastPrice();
+  const avgPrice = props.player.calcDisplayAvgPrice();
+  const lastPrice = props.marketLoop.getDisplayLastPrice();
   //open, avgPrice -> pnl, price, last
   return (
     <div>

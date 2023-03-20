@@ -9,7 +9,7 @@ export default function MatchingEngineView(props) {
   if (!props.me || !props.marketLoop) return null;
 
   const price = props.marketLoop && props.marketLoop.getPrice();
-  const lastPrice = props.marketLoop && props.marketLoop.getLastPrice();
+  const lastPrice = props.marketLoop && props.marketLoop.getDisplayLastPrice();
 
   const bidMaps = props.me.getBidMaps(props.player.id);
   const offerMaps = props.me.getOfferMaps(props.player.id);

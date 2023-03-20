@@ -56,9 +56,13 @@ class MarketLoop {
     this._isActive = false;
   }
 
-  getLastPrice(): number | null {
+  getDisplayLastPrice(): number | null {
     const lastQtyPrice: TransactionReport = this.me.transactionReports[0];
-    if (lastQtyPrice && lastQtyPrice.price) return lastQtyPrice.price;
+    if (lastQtyPrice && lastQtyPrice.price) {
+      const lastPrice = lastQtyPrice.price;
+      return Number(lastPrice.toFixed(1));
+    }
+
     return null;
   }
 

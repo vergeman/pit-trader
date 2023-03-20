@@ -109,7 +109,7 @@ export class Player {
   }
 
   //avgPrice of executed trades
-  calcAvgPrice(): number | null {
+  calcDisplayAvgPrice(): number | null {
     let pnl = 0;
     let fillQty = 0;
 
@@ -127,7 +127,8 @@ export class Player {
 
     if (fillQty == 0) return null;
 
-    return Math.abs(pnl / fillQty);
+    const avgPrice = Math.abs(pnl / fillQty);
+    return Number(avgPrice.toFixed(3));
   }
 
   orderHistories(): OrderRecord[] {
