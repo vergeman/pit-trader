@@ -73,15 +73,15 @@ export class MatchingEngine {
   calcGrid(price: Number, numGridPoints: Number = 21): Grid {
     //numGridPoints: 20 points e.g. range of 99 - 101
     const midPoint = Number(price.toFixed(1));
-    const start = midPoint - 1;
-    let strLen = String(midPoint).length;
+    const start = midPoint + 1;
+    let strLen = String(midPoint).length; //NB: length of digits
     let gridNumMinLen = strLen;
     let gridNumMaxLen = strLen;
 
     const prices = [];
     for (let i = 0; i < numGridPoints; i++) {
-      //generate price values
-      const val = (start + i / 10).toFixed(1);
+      //generate price values high to low
+      const val = (start - i / 10).toFixed(1);
       prices.push(val);
 
       //catch string lengths for aligned render
