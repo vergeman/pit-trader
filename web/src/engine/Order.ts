@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 
 export enum OrderType {
   Market,
-  Limit,
+  Limit
 }
 
 export enum OrderStatus {
@@ -21,6 +21,7 @@ export interface TransactionReport {
 
 export interface Transaction {
   id: string;
+  orderType: OrderType,
   player_id: string;
   qty: number;
   price: number;
@@ -83,6 +84,7 @@ export class Order {
     //transactions reflect counterparty order
     this._transactions.push({
       id: uuidv4(),
+      orderType: this.orderType,
       player_id: oppOrder.player_id,
       qty: qtyFilled,
       price,
@@ -91,6 +93,7 @@ export class Order {
 
     oppOrder._transactions.push({
       id: uuidv4(),
+      orderType: oppOrder.orderType,
       player_id: this.player_id,
       qty: oppQtyFilled,
       price,
