@@ -25,6 +25,10 @@ export class PlayerManager {
     return this._players;
   }
 
+  get numPlayers(): number {
+    return Object.keys(this.players).length;
+  }
+
   get me(): MatchingEngine {
     return this._me;
   }

@@ -56,13 +56,28 @@ export default function Demo() {
 
     classifier.load();
     marketLoop.init();
-    marketLoop.run();
   }, []);
 
   useEffect(() => {
     const gesture = gestureData && gestureData.gesture;
     gestureDecision && gestureDecision.calc(gesture);
   }, [me, player, gestureDecision, gestureData]);
+
+  /*
+   * run loop
+   * repeats a run of all turns every numPlayers * maxTurnDelay
+   */
+  useEffect( () => {
+    let runLoop;
+    if (playerManager && marketLoop && marketLoop.isInit) {
+      const numPlayers = playerManager.numPlayers;
+      const maxTurnDelay = 1000;
+
+      runLoop = setInterval(() => marketLoop.run(maxTurnDelay),
+                            numPlayers * maxTurnDelay);
+    }
+    return () => clearInterval(runLoop);
+  }, [marketLoop]);
 
   return (
     <Container className="pt-6" style={{ background: "azure" }}>
@@ -90,7 +105,7 @@ export default function Demo() {
         <div className="me">
           <PlayerStatus player={player} marketLoop={marketLoop} />
           <MatchingEngineView me={me} marketLoop={marketLoop} player={player} />
-          <PlayerOrders player={player}/>
+          <PlayerOrders player={player} />
         </div>
       </div>
 
