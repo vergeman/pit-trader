@@ -12,6 +12,9 @@ import MarketLoop from "./player/MarketLoop";
 import GestureDecision from "./input/GestureDecision";
 import PlayerStatus from "./playerView/PlayerStatus.jsx";
 import PlayerOrders from "./playerView/PlayerOrders.jsx";
+import useMarketLoopRunner from "./player/useMarketLoopRunner.jsx";
+import usePlayerLoseState from "./player/usePlayerLoseState.jsx";
+import LoseModal from "./LoseModal";
 
 export default function Demo() {
   /* default bootstrap size */
@@ -29,7 +32,7 @@ export default function Demo() {
   useEffect(() => {
     const config = {
       tick: 1000,
-      limitPL: -1000000,
+      limitPL: -1000,
     };
 
     console.log("[Demo.jsx]: useEffect init");
@@ -58,29 +61,26 @@ export default function Demo() {
     marketLoop.init();
   }, []);
 
+
   useEffect(() => {
     const gesture = gestureData && gestureData.gesture;
     gestureDecision && gestureDecision.calc(gesture);
   }, [me, player, gestureDecision, gestureData]);
 
-  /*
-   * run loop
-   * repeats a run of all turns every numPlayers * maxTurnDelay
-   */
-  useEffect( () => {
-    let runLoop;
-    if (playerManager && marketLoop && marketLoop.isInit) {
-      const numPlayers = playerManager.numPlayers;
-      const maxTurnDelay = 1000;
+  //TODO: group isLose, runLoopInterval into own hook returns isLose state
+  const isLose = usePlayerLoseState(player, marketLoop && marketLoop.getPrice());
+  const runLoopInterval = useMarketLoopRunner(marketLoop, 1000);
 
-      runLoop = setInterval(() => marketLoop.run(maxTurnDelay),
-                            numPlayers * maxTurnDelay);
-    }
-    return () => clearInterval(runLoop);
-  }, [marketLoop]);
+  if (isLose) {
+    clearInterval(runLoopInterval);
+  }
 
   return (
+
     <Container className="pt-6" style={{ background: "azure" }}>
+
+      <LoseModal isLose={isLose} />
+
       <div className="d-grid main-wrapper">
         <div className="camera">
           <Camera

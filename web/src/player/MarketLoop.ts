@@ -139,12 +139,6 @@ class MarketLoop {
 
       this.turn(player);
 
-      // end scenario?
-      const marketPrice = this.getPrice();
-      if (player.isLive && player.hasLost(marketPrice)) {
-        //TODO: trigger lose event / screen
-      }
-
       //finish balance of maxTurnDelay
       await new Promise((res) => setTimeout(res, maxTurnDelay - delay));
     }
