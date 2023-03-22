@@ -7,11 +7,16 @@ export default function LoseModal(props) {
   const [show, setShow] = useState(props.isLose);
   const handleClose = () => setShow(false);
 
-  const reset = () => props.reset();
+  const reset = () => {
+    props.resetGame();
+    setShow(false);
+  };
 
   useEffect( () => {
     setShow(props.isLose);
   }, [props.isLose]);
+
+  console.log("[LoseModal] render");
 
   return (
     <div

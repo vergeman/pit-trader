@@ -8,7 +8,6 @@ import MarketLoop from "./player/MarketLoop";
 
 import LoseModal from "./LoseModal";
 import useMarketLoopRunner from "./player/useMarketLoopRunner.jsx";
-import usePlayerLoseState from "./player/usePlayerLoseState.jsx";
 
 export default function Main(props) {
   const config = {
@@ -17,6 +16,8 @@ export default function Main(props) {
   };
 
   const [isLose, setIsLose] = useState(false);
+  const [isLoop, setIsLoop] = useState(true);
+
   const [me, setMe] = useState(null);
   const [playerManager, setPlayerManager] = useState(null);
   const [player, setPlayer] = useState(null);
@@ -41,41 +42,45 @@ export default function Main(props) {
     marketLoop.init();
   }, []);
 
-  const reset = () => {
-    //player.reset();
+  useMarketLoopRunner(marketLoop, isLoop, 1000);
+
+  const resetGame = () => {
+
     console.log("reset");
     if (player) {
+      //player.reset();
       player.orders = [];
-      //TODO: need to remove gesture history, orderHistories, etc.
+      //me.reset()
+      //past gestures reset
+      //playerManager.resetAll()
+      //marketLoop.reset()?
+      setIsLose(false);
+      setIsLoop(true);
     }
   };
 
-  //TODO: decide this hook usePlayerLoseState - move hook to <CamerGesture>
-  //and then trigger setState change - pass accessor?
-  //const isLose = usePlayerLoseState(player, marketLoop && marketLoop.getPrice());
-  const checkGameState = () => {
-    console.log("[Main.jsx] checkGameState");
+  const triggerGameState = () => {
+    console.log("[Main.jsx] triggerGameState");
     const price = marketLoop && marketLoop.getPrice();
-    console.log(price, player);
+
     if (player && player.hasLost(price)) {
       setIsLose(true);
+      setIsLoop(false);
     }
   };
 
-  //TODO: set to isActive  - separate from win loss, but decided by win loss state
-  useMarketLoopRunner(marketLoop, isLose, 1000);
 
-  console.log("[Main.jsx] isLose", isLose);
+  console.log("[Main.jsx] render");
   return (
     <Container className="pt-6" style={{ background: "azure" }}>
-      <LoseModal isLose={isLose} reset={reset} />
+
+      <LoseModal isLose={isLose} resetGame={resetGame} />
 
       <CameraGesture
         me={me}
         player={player}
         marketLoop={marketLoop}
-        checkGameState={checkGameState}
-        isLose={isLose}
+        triggerGameState={triggerGameState}
       />
 
       {/* TODO: make component */}

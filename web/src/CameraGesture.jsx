@@ -1,4 +1,3 @@
-import { Container, Row, Col } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import Landmarks from "./Landmarks.js";
 import Classifier from "./Classifier.js";
@@ -39,23 +38,9 @@ export default function CameraGesture(props) {
     const gesture = gestureData && gestureData.gesture;
     gestureDecision && gestureDecision.calc(gesture);
 
-    props.checkGameState();
+    props.triggerGameState();
   }, [gestureDecision, gestureData]);
 
-  //TODO: group isLose, runLoopInterval into own hook returns isLose state
-  //rename something to usePlayerGameState
-  //gameState = run, stop, pause?
-  //  should gameState be pushed up to parent??
-  //  player + (config), marketLoop + playerManager(me, npcs)
-  //  actually might be likely
-
-  //usePlayerLoseState - calculates isLose - since its a hook, only will setLoss if useEffect dependecy changes
-  // change this to somethign more robust
-  //LostModal - button calls reset(), which will change isLose props
-  //useMarketLoopRUnner: toggle loop on / off given isLose - TODO: change to gameState
-  //
-
-  console.log("[CameraGesture] props.isLose", props.isLose);
   return (
     <>
       <div className="d-grid main-wrapper">
