@@ -8,7 +8,6 @@ import MatchingEngineView from "./MatchingEngineView.jsx";
 import GestureDecision from "./input/GestureDecision";
 import PlayerStatus from "./playerView/PlayerStatus.jsx";
 import PlayerOrders from "./playerView/PlayerOrders.jsx";
-import LoseModal from "./LoseModal";
 
 export default function CameraGesture(props) {
   /* default bootstrap size */
@@ -55,20 +54,10 @@ export default function CameraGesture(props) {
   //LostModal - button calls reset(), which will change isLose props
   //useMarketLoopRUnner: toggle loop on / off given isLose - TODO: change to gameState
   //
-  const reset = () => {
-    //player.reset();
-    console.log("reset");
-    if (props.player) {
-      props.player.orders = [];
-      //TODO: need to remove gesture history, orderHistories, etc.
-    }
-  };
 
   console.log("[CameraGesture] props.isLose", props.isLose);
   return (
-    <Container className="pt-6" style={{ background: "azure" }}>
-      <LoseModal isLose={props.isLose} reset={reset} />
-
+    <>
       <div className="d-grid main-wrapper">
         <div className="camera">
           <Camera
@@ -90,6 +79,7 @@ export default function CameraGesture(props) {
           />
         </div>
 
+        {/*NB: views needs to be updated per iteration */}
         <div className="me">
           <PlayerStatus player={props.player} marketLoop={props.marketLoop} />
           <MatchingEngineView
@@ -100,14 +90,6 @@ export default function CameraGesture(props) {
           <PlayerOrders player={props.player} />
         </div>
       </div>
-
-      <Row>
-        <Col>
-          <div className="d-flex justify-content-center">
-            News / Alert/ Challenge / Message Component
-          </div>
-        </Col>
-      </Row>
-    </Container>
+    </>
   );
 }

@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
+import { Container, Row, Col } from "react-bootstrap";
 import CameraGesture from "./CameraGesture.jsx";
 import MatchingEngine from "./engine/MatchingEngine";
 import PlayerManager from "./player/PlayerManager";
 import Player from "./player/Player";
 import MarketLoop from "./player/MarketLoop";
 
+import LoseModal from "./LoseModal";
 import useMarketLoopRunner from "./player/useMarketLoopRunner.jsx";
 import usePlayerLoseState from "./player/usePlayerLoseState.jsx";
 
@@ -14,7 +16,6 @@ export default function Main(props) {
     limitPL: -1000,
   };
 
-  //const [price, setPrice] = useState(null);
   const [isLose, setIsLose] = useState(false);
   const [me, setMe] = useState(null);
   const [playerManager, setPlayerManager] = useState(null);
@@ -36,10 +37,18 @@ export default function Main(props) {
     setPlayerManager(playerManager);
     setPlayer(player);
     setMarketLoop(marketLoop);
-    //setPrice(marketLoop.getPrice());
 
     marketLoop.init();
   }, []);
+
+  const reset = () => {
+    //player.reset();
+    console.log("reset");
+    if (player) {
+      player.orders = [];
+      //TODO: need to remove gesture history, orderHistories, etc.
+    }
+  };
 
   //TODO: decide this hook usePlayerLoseState - move hook to <CamerGesture>
   //and then trigger setState change - pass accessor?
@@ -58,12 +67,25 @@ export default function Main(props) {
 
   console.log("[Main.jsx] isLose", isLose);
   return (
-    <CameraGesture
-      me={me}
-      player={player}
-      marketLoop={marketLoop}
-      checkGameState={checkGameState}
-      isLose={isLose}
-    />
+    <Container className="pt-6" style={{ background: "azure" }}>
+      <LoseModal isLose={isLose} reset={reset} />
+
+      <CameraGesture
+        me={me}
+        player={player}
+        marketLoop={marketLoop}
+        checkGameState={checkGameState}
+        isLose={isLose}
+      />
+
+      {/* TODO: make component */}
+      <Row>
+        <Col>
+          <div className="d-flex justify-content-center">
+            News / Alert/ Challenge / Message Component
+          </div>
+        </Col>
+      </Row>
+    </Container>
   );
 }
