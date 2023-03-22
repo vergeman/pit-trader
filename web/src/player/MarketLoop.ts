@@ -1,32 +1,34 @@
-import PlayerManager from "./PlayerManager";
+import NPCPlayerManager from "./NPCPlayerManager";
 import Player from "./Player";
 import MatchingEngine from "../engine/MatchingEngine";
 import { Order } from "../engine/Order";
 import { TransactionReport } from "../engine/Order";
 
 class MarketLoop {
-  private _playerManager: PlayerManager;
+  private _npcPlayerManager: NPCPlayerManager;
   private _me: MatchingEngine;
   private _priceSeed: number;
   private _qtySeed: number;
   private _loopInterval: number;
   private _isActive: boolean;
+  private _isInit: boolean;
 
   constructor(
-    playerManager: PlayerManager,
+    npcPlayerManager: NPCPlayerManager,
     priceSeed: number,
     qtySeed: number
   ) {
-    this._playerManager = playerManager;
-    this._me = playerManager.me;
+    this._npcPlayerManager = npcPlayerManager;
+    this._me = npcPlayerManager.me;
     this._priceSeed = priceSeed;
     this._qtySeed = qtySeed;
     this._loopInterval = -1;
-    this._isActive = false;
+    this._isActive = false; //flag for Camera (speed up dev load)
+    this._isInit = false;   //flag indicating ready for run()
   }
 
   init() {
-    const randomizedPlayers = this.playerManager.getRandomizedPlayerList();
+    const randomizedPlayers = this.npcPlayerManager.getRandomizedPlayerList();
 
     for (let player of randomizedPlayers) {
       const delta = player.generateRandomMax() / 10;
@@ -37,10 +39,12 @@ class MarketLoop {
         this.me.process(order);
       }
     }
+
+    this._isInit = true;
   }
 
-  get playerManager(): PlayerManager {
-    return this._playerManager;
+  get npcPlayerManager(): NPCPlayerManager {
+    return this._npcPlayerManager;
   }
   get me(): MatchingEngine {
     return this._me;
@@ -50,6 +54,9 @@ class MarketLoop {
   }
   get qtySeed(): number {
     return this._qtySeed;
+  }
+  get isInit(): boolean {
+    return this._isInit;
   }
 
   stop() {
@@ -113,35 +120,33 @@ class MarketLoop {
     return this.priceSeed;
   }
 
-  //represents a single turn
-  //where each player undergoes a series of actions
-  async run(delay: number) {
-    //TODO: deprecated methinks
-    //this._playerManager.setNewDeltas();
+  //run()
+  //each player takes a turn() - undergoes a series of actions
+  //each player's turn takes maxTurnDelay
+  //within each player's turn - the actual action (turn() call) is randomized
+  async run(maxTurnDelay: number, baseDelay: number = 250) {
+    //console.log("[MarketLoop] RUN", Date.now(), maxTurnDelay);
 
-    const players = this._playerManager.getRandomizedPlayerList();
-
-    let _delay = delay || Math.floor(Math.random() * 750) + 250;
+    const players = this.npcPlayerManager.getRandomizedPlayerList();
 
     for (const player of players) {
-      //setTimeout - want some delay b/w
-      await new Promise((res) => setTimeout(res, _delay));
+      console.log("TURN:", player.name);
+
+      //delay = [baseDelay, maxTurnDelay - baseDelay] e.g [250, 750]
+      const delay =
+        Math.floor(Math.random() * (maxTurnDelay - baseDelay)) + baseDelay;
+      await new Promise((res) => setTimeout(res, delay));
 
       this.turn(player);
 
-      // end scenario?
-      const marketPrice = this.getPrice();
-      if (player.isLive && player.hasLost(marketPrice)) {
-        //TODO: trigger lose event / screen
-      }
+      //finish balance of maxTurnDelay
+      await new Promise((res) => setTimeout(res, maxTurnDelay - delay));
     }
 
     this.replenishAll();
   }
 
   turn(player: Player, probSkip: number = 0.33) {
-    //console.log(player.name);
-
     //if execution initiated by another player (this player missing either a bid
     //or offer) -> skip turn to replenish
     if (!player.hasLiveBids() || !player.hasLiveOffers()) return;
@@ -160,22 +165,21 @@ class MarketLoop {
     const queue = bidOfferToggle
       ? player.getLiveBids()
       : player.getLiveOffers();
-    queue.forEach((order) =>
-      this.me.updateOrderPrice(order, order.price + maxDelta)
-    );
-  }
-
-  //executes run() on a setInterval
-  startLoop(interval: number) {
-    this._loopInterval = setInterval(this.run, interval);
-  }
-
-  stopLoop() {
-    clearInterval(this._loopInterval);
+    queue.forEach((order) => {
+      console.log(
+        player.name,
+        "price:",
+        order.price,
+        maxDelta,
+        "->",
+        order.price + maxDelta
+      );
+      this.me.updateOrderPrice(order, order.price + maxDelta);
+    });
   }
 
   replenishAll(): number {
-    const players = Object.values(this.playerManager.players);
+    const players = Object.values(this.npcPlayerManager.players);
     const newPrice = this.getPrice();
     let orders: Order[] = [];
 
