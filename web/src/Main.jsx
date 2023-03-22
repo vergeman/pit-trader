@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import CameraGesture from "./CameraGesture.jsx";
 import MatchingEngine from "./engine/MatchingEngine";
-import PlayerManager from "./player/PlayerManager";
+import NPCPlayerManager from "./player/NPCPlayerManager";
 import Player from "./player/Player";
 import MarketLoop from "./player/MarketLoop";
 
@@ -19,7 +19,7 @@ export default function Main(props) {
   const [isLoop, setIsLoop] = useState(true);
 
   const [me, setMe] = useState(null);
-  const [playerManager, setPlayerManager] = useState(null);
+  const [npcPlayerManager, setNPCPlayerManager] = useState(null);
   const [player, setPlayer] = useState(null);
   const [marketLoop, setMarketLoop] = useState(null);
 
@@ -32,12 +32,12 @@ export default function Main(props) {
       new Player("npc-C"),
     ];
     const me = new MatchingEngine();
-    const playerManager = new PlayerManager(me, npcs);
+    const npcPlayerManager = new NPCPlayerManager(me, npcs);
     const player = new Player("test", true, config);
-    const marketLoop = new MarketLoop(playerManager, 100);
+    const marketLoop = new MarketLoop(npcPlayerManager, 100);
 
     setMe(me);
-    setPlayerManager(playerManager);
+    setNPCPlayerManager(npcPlayerManager);
     setPlayer(player);
     setMarketLoop(marketLoop);
 
@@ -51,7 +51,7 @@ export default function Main(props) {
     if (player) {
       gestureDecision.resetRecords();
       player.reset();
-      playerManager.resetAll();
+      npcPlayerManager.resetAll();
       me.reset();
       marketLoop.init();
 

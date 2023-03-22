@@ -1,7 +1,7 @@
 import MatchingEngine from "../engine/MatchingEngine";
 import { Order, OrderType, OrderStatus } from "../engine/Order";
 import { Player } from "./Player";
-import { PlayerManager } from "./PlayerManager";
+import NPCPlayerManager from "./NPCPlayerManager";
 import { MarketLoop } from "./MarketLoop";
 
 describe("MarketLoop", () => {
@@ -12,7 +12,7 @@ describe("MarketLoop", () => {
       new Player("test2"),
       new Player("test3"),
     ];
-    const pm = new PlayerManager(me, initPlayers);
+    const pm = new NPCPlayerManager(me, initPlayers);
     const ml = new MarketLoop(pm, 100, 4);
 
     const maxTurnDelay = 20;
@@ -37,7 +37,7 @@ describe("MarketLoop", () => {
       new Player("test2"),
       new Player("test3"),
     ];
-    const pm = new PlayerManager(me, initPlayers);
+    const pm = new NPCPlayerManager(me, initPlayers);
     const ml = new MarketLoop(pm, 100, 4);
     ml.init();
 
@@ -53,7 +53,7 @@ describe("MarketLoop", () => {
     it("init() populates respective players orders in player's and matching engine queues", () => {
       const me = new MatchingEngine();
       const ordered = [new Player("a"), new Player("b"), new Player("c")];
-      const pm = new PlayerManager(me, ordered);
+      const pm = new NPCPlayerManager(me, ordered);
       const ml = new MarketLoop(pm, 50, 4);
       ml.init();
 
@@ -76,7 +76,7 @@ describe("MarketLoop", () => {
       const me = new MatchingEngine();
       const ordered = [new Player("a"), new Player("b"), new Player("c")];
       const qtySeed = 4;
-      const pm = new PlayerManager(me, ordered);
+      const pm = new NPCPlayerManager(me, ordered);
       const ml = new MarketLoop(pm, 100, 4);
       ml.init();
 
@@ -111,7 +111,7 @@ describe("MarketLoop", () => {
         new Player("test2"),
         new Player("test3"),
       ];
-      const pm = new PlayerManager(me, players);
+      const pm = new NPCPlayerManager(me, players);
       const ml = new MarketLoop(pm, 100, 4);
       ml.init();
 
@@ -141,7 +141,7 @@ describe("MarketLoop", () => {
         new Player("test5"),
       ];
 
-      const pm = new PlayerManager(me, players);
+      const pm = new NPCPlayerManager(me, players);
       const ml = new MarketLoop(pm, 100, 4);
 
       ml.init();
@@ -187,7 +187,7 @@ describe("MarketLoop", () => {
       const priceSeed = 100;
       const me = new MatchingEngine();
       const players = [new Player("a"), new Player("b"), new Player("c")];
-      const pm = new PlayerManager(me, players);
+      const pm = new NPCPlayerManager(me, players);
       const marketLoop = new MarketLoop(pm, priceSeed, 4);
       marketLoop.init();
       const price = marketLoop.getPrice();
@@ -199,7 +199,7 @@ describe("MarketLoop", () => {
       const priceSeed = 100;
       const me = new MatchingEngine();
       const players = [new Player("a")];
-      const pm = new PlayerManager(me, players);
+      const pm = new NPCPlayerManager(me, players);
       const marketLoop = new MarketLoop(pm, priceSeed, 4);
 
       const order1 = new Order(players[0].id, OrderType.Limit, 1, 100);
@@ -214,7 +214,7 @@ describe("MarketLoop", () => {
       const priceSeed = 100;
       const me = new MatchingEngine();
       const players = [new Player("a"), new Player("b"), new Player("c")];
-      const pm = new PlayerManager(me, players);
+      const pm = new NPCPlayerManager(me, players);
       const marketLoop = new MarketLoop(pm, priceSeed, 4);
       marketLoop.init();
 

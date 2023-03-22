@@ -1,11 +1,11 @@
-import PlayerManager from "./PlayerManager";
+import NPCPlayerManager from "./NPCPlayerManager";
 import Player from "./Player";
 import MatchingEngine from "../engine/MatchingEngine";
 import { Order } from "../engine/Order";
 import { TransactionReport } from "../engine/Order";
 
 class MarketLoop {
-  private _playerManager: PlayerManager;
+  private _npcPlayerManager: NPCPlayerManager;
   private _me: MatchingEngine;
   private _priceSeed: number;
   private _qtySeed: number;
@@ -14,12 +14,12 @@ class MarketLoop {
   private _isInit: boolean;
 
   constructor(
-    playerManager: PlayerManager,
+    npcPlayerManager: NPCPlayerManager,
     priceSeed: number,
     qtySeed: number
   ) {
-    this._playerManager = playerManager;
-    this._me = playerManager.me;
+    this._npcPlayerManager = npcPlayerManager;
+    this._me = npcPlayerManager.me;
     this._priceSeed = priceSeed;
     this._qtySeed = qtySeed;
     this._loopInterval = -1;
@@ -28,7 +28,7 @@ class MarketLoop {
   }
 
   init() {
-    const randomizedPlayers = this.playerManager.getRandomizedPlayerList();
+    const randomizedPlayers = this.npcPlayerManager.getRandomizedPlayerList();
 
     for (let player of randomizedPlayers) {
       const delta = player.generateRandomMax() / 10;
@@ -43,8 +43,8 @@ class MarketLoop {
     this._isInit = true;
   }
 
-  get playerManager(): PlayerManager {
-    return this._playerManager;
+  get npcPlayerManager(): NPCPlayerManager {
+    return this._npcPlayerManager;
   }
   get me(): MatchingEngine {
     return this._me;
@@ -127,7 +127,7 @@ class MarketLoop {
   async run(maxTurnDelay: number, baseDelay: number = 250) {
     //console.log("[MarketLoop] RUN", Date.now(), maxTurnDelay);
 
-    const players = this.playerManager.getRandomizedPlayerList();
+    const players = this.npcPlayerManager.getRandomizedPlayerList();
 
     for (const player of players) {
       console.log("TURN:", player.name);
@@ -179,7 +179,7 @@ class MarketLoop {
   }
 
   replenishAll(): number {
-    const players = Object.values(this.playerManager.players);
+    const players = Object.values(this.npcPlayerManager.players);
     const newPrice = this.getPrice();
     let orders: Order[] = [];
 

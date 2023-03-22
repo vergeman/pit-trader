@@ -7,7 +7,7 @@ export default function useMarketLoopRunner(marketLoop, isActive, maxTurnDelay =
     let _runLoop = null;
 
     if (marketLoop && isActive) {
-      const numPlayers = marketLoop.playerManager.numPlayers;
+      const numPlayers = marketLoop.npcPlayerManager.numPlayers;
       _runLoop = setInterval(() => marketLoop.run(maxTurnDelay), numPlayers * maxTurnDelay);
       console.log("[useMarketLoop] runLoop", _runLoop);
     }

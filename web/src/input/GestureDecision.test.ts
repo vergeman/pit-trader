@@ -3,7 +3,7 @@ import { OrderStatus } from "../engine/Order";
 import GestureDecision from "./GestureDecision";
 import MatchingEngine from "../engine/MatchingEngine";
 import Player from "../player/Player";
-import PlayerManager from "../player/PlayerManager";
+import NPCPlayerManager from "../player/NPCPlayerManager";
 import MarketLoop from "../player/MarketLoop";
 
 const TIMEOUT = 50; //speed this up for tests. Typically 750 seems human-like.
@@ -11,7 +11,7 @@ const TIMEOUT = 50; //speed this up for tests. Typically 750 seems human-like.
 describe("GestureDecision", () => {
   it("calc() gesture updates GestureType.Qty after Timeout via NumberSM", async () => {
     const me = new MatchingEngine();
-    const pm = new PlayerManager(me, []);
+    const pm = new NPCPlayerManager(me, []);
     const marketLoop = new MarketLoop(pm, 10, 100);
     const p = new Player("test");
 
@@ -30,7 +30,7 @@ describe("GestureDecision", () => {
 
   it("calc() gesture updates GestureType.Price after Timeout via NumberSM", async () => {
     const me = new MatchingEngine();
-    const pm = new PlayerManager(me, []);
+    const pm = new NPCPlayerManager(me, []);
     const marketLoop = new MarketLoop(pm, 10, 100);
     const p = new Player("test");
 
@@ -50,7 +50,7 @@ describe("GestureDecision", () => {
   // noinspection JSUnusedLocalSymbols
   it("calc() prepares a limit order", async () => {
     const me = new MatchingEngine();
-    const pm = new PlayerManager(me, []);
+    const pm = new NPCPlayerManager(me, []);
     const marketLoop = new MarketLoop(pm, 10, 100);
     marketLoop.getPrice = jest.fn(() => 100);
     const p = new Player("test");
@@ -75,7 +75,7 @@ describe("GestureDecision", () => {
 
   it("calc() prepares a market order and transacts", async () => {
     const me = new MatchingEngine();
-    const pm = new PlayerManager(me, []);
+    const pm = new NPCPlayerManager(me, []);
     const marketLoop = new MarketLoop(pm, 10, 100);
     const p = new Player("test");
 
@@ -117,7 +117,7 @@ describe("GestureDecision", () => {
   //market with no quantity
   it("calc(): market order missing quantity is rejected - no change", async () => {
     const me = new MatchingEngine();
-    const pm = new PlayerManager(me, []);
+    const pm = new NPCPlayerManager(me, []);
     const marketLoop = new MarketLoop(pm, 10, 100);
     const p = new Player("test");
 
@@ -152,7 +152,7 @@ describe("GestureDecision", () => {
   //test cancel order
   it("calc() cancel order resets gestureDecision", async () => {
     const me = new MatchingEngine();
-    const pm = new PlayerManager(me, []);
+    const pm = new NPCPlayerManager(me, []);
     const marketLoop = new MarketLoop(pm, 10, 100);
     const p = new Player("test");
 
@@ -178,7 +178,7 @@ describe("GestureDecision", () => {
 
   it("cancel removes working order from me, set order status to cancelled", async () => {
     const me = new MatchingEngine();
-    const pm = new PlayerManager(me, []);
+    const pm = new NPCPlayerManager(me, []);
     const marketLoop = new MarketLoop(pm, 10, 100);
     const p = new Player("test");
 
@@ -216,7 +216,7 @@ describe("GestureDecision", () => {
 describe("GestureDecision calcOrderPrice scenarios", () => {
   it("minDistancePrice", () => {
     const me = new MatchingEngine();
-    const pm = new PlayerManager(me, []);
+    const pm = new NPCPlayerManager(me, []);
     const marketLoop = new MarketLoop(pm, 100, 10);
     const p = new Player("test");
     const gd = new GestureDecision(me, marketLoop, p, TIMEOUT);
@@ -227,7 +227,7 @@ describe("GestureDecision calcOrderPrice scenarios", () => {
 
   it("calcOrderPrice attaches an implied base price with the gesture value when creating an Order", async () => {
     const me = new MatchingEngine();
-    const pm = new PlayerManager(me, []);
+    const pm = new NPCPlayerManager(me, []);
     const marketLoop = new MarketLoop(pm, 100, 10);
     const p = new Player("test");
     const gestureDecision = new GestureDecision(me, marketLoop, p, TIMEOUT);

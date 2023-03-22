@@ -1,7 +1,7 @@
 import Player from "./Player";
 import MatchingEngine from "../engine/MatchingEngine";
 
-export class PlayerManager {
+export default class NPCPlayerManager {
   private _me: MatchingEngine;
   private _players: { [key: string]: Player };
 
@@ -64,5 +64,3 @@ export class PlayerManager {
     return randomizedPlayers;
   }
 }
-
-export default PlayerManager;
