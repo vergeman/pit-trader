@@ -47,12 +47,20 @@ export class Player {
     return this._orders;
   }
 
+  set orders(orders: Order[]) {
+    this._orders = orders;
+  }
+
   get delta(): number {
     return this._delta;
   }
 
   set delta(d: number) {
     this._delta = d;
+  }
+
+  reset(): void {
+    this.orders = [];
   }
 
   hasLiveBids(): boolean {

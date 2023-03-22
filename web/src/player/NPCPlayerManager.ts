@@ -1,7 +1,7 @@
 import Player from "./Player";
 import MatchingEngine from "../engine/MatchingEngine";
 
-export class PlayerManager {
+export default class NPCPlayerManager {
   private _me: MatchingEngine;
   private _players: { [key: string]: Player };
 
@@ -33,6 +33,11 @@ export class PlayerManager {
     return this._me;
   }
 
+  resetAll() {
+    const players = Object.values(this._players);
+    players.forEach( player => player.reset() );
+  }
+
   getRandomizedPlayerList(): Player[] {
     const players = Object.values(this._players);
     let num = players.length;
@@ -59,5 +64,3 @@ export class PlayerManager {
     return randomizedPlayers;
   }
 }
-
-export default PlayerManager;
