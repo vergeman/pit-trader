@@ -51,6 +51,7 @@ export default function CameraGesture(props) {
             height={defaultCameraDims.height}
             landmarks={landmarks}
             classifier={classifier}
+            npcPlayerManager={props.npcPlayerManager}
             setGestureData={setGestureData}
           />
         </div>

@@ -10,6 +10,7 @@ export class Player {
   private _id: string;
   private _name: string;
   private _isLive: boolean;
+  private _img: string;
   private _delta: number;
   private _orders: Order[];
   private readonly _config: PlayerConfig;
@@ -20,11 +21,13 @@ export class Player {
     config: PlayerConfig = {
       tick: 1000,
       limitPL: -1000000,
-    }
+    },
+    img: string = ''
   ) {
     this._id = uuidv4();
     this._name = name;
     this._isLive = isLive;
+    this._img = img;
     this._delta = 0;
     this._orders = [];
 
@@ -42,7 +45,9 @@ export class Player {
   get isLive(): boolean {
     return this._isLive;
   }
-
+  get img(): string {
+    return this._img;
+  }
   get orders(): Order[] {
     return this._orders;
   }

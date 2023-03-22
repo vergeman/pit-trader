@@ -27,9 +27,9 @@ export default function Main(props) {
 
   useEffect(() => {
     const npcs = [
-      new Player("npc-A"),
-      new Player("npc-B"),
-      new Player("npc-C"),
+      new Player("npc-A", false, config, "19_FullFront.png"),
+      new Player("npc-B", false, config, "336_FullFront.png"),
+      new Player("npc-C", false, config, "432_FullFront.png"),
     ];
     const me = new MatchingEngine();
     const npcPlayerManager = new NPCPlayerManager(me, npcs);
@@ -82,6 +82,7 @@ export default function Main(props) {
       <CameraGesture
         me={me}
         player={player}
+        npcPlayerManager={npcPlayerManager}
         marketLoop={marketLoop}
         triggerGameState={triggerGameState}
       />
