@@ -101,6 +101,12 @@ export class MatchingEngine {
     this._offers.add(order);
   }
 
+  reset() {
+    this._bids = new Heap<Order>(this.maxComparator);
+    this._offers = new Heap<Order>(this.minComparator);
+    this._transactionReports = [];
+  }
+
   get transactionReports(): TransactionReport[] {
     return this._transactionReports;
   }

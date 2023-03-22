@@ -23,6 +23,8 @@ export default function Main(props) {
   const [player, setPlayer] = useState(null);
   const [marketLoop, setMarketLoop] = useState(null);
 
+  const [gestureDecision, setGestureDecision] = useState(null);
+
   useEffect(() => {
     const npcs = [
       new Player("npc-A"),
@@ -45,27 +47,28 @@ export default function Main(props) {
   useMarketLoopRunner(marketLoop, isLoop, 1000);
 
   const resetGame = () => {
-
     console.log("reset");
     if (player) {
-      //player.reset();
-      player.orders = [];
-      //me.reset()
-      //past gestures reset
-      //playerManager.resetAll()
-      //marketLoop.reset()?
+      gestureDecision.resetRecords();
+      player.reset();
+      playerManager.resetAll();
+      me.reset();
+      marketLoop.init();
+
       setIsLose(false);
       setIsLoop(true);
     }
   };
 
-  const triggerGameState = () => {
-    console.log("[Main.jsx] triggerGameState");
+
+  const triggerGameState = (gestureDecision) => {
+    //console.log("[Main.jsx] triggerGameState");
     const price = marketLoop && marketLoop.getPrice();
 
     if (player && player.hasLost(price)) {
       setIsLose(true);
       setIsLoop(false);
+      setGestureDecision(gestureDecision);
     }
   };
 

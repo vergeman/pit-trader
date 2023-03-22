@@ -72,6 +72,9 @@ export default class GestureDecision {
   get records(): GestureDecisionRecord[] {
     return this._records;
   }
+  set records(records: GestureDecisionRecord[]) {
+    this._records = records;
+  }
 
   setQtyFn(value: number) {
     console.log("[setQtyFn] FINAL", value);
@@ -259,6 +262,10 @@ export default class GestureDecision {
     this.actionSM.resetAll();
   }
 
+  resetRecords() {
+    this.reset();
+    this.records = [];
+  }
   /*
    * Runner
    */

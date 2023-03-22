@@ -38,7 +38,7 @@ export default function CameraGesture(props) {
     const gesture = gestureData && gestureData.gesture;
     gestureDecision && gestureDecision.calc(gesture);
 
-    props.triggerGameState();
+    props.triggerGameState(gestureDecision);
   }, [gestureDecision, gestureData]);
 
   return (

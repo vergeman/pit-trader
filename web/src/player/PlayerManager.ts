@@ -33,6 +33,11 @@ export class PlayerManager {
     return this._me;
   }
 
+  resetAll() {
+    const players = Object.values(this._players);
+    players.forEach( player => player.reset() );
+  }
+
   getRandomizedPlayerList(): Player[] {
     const players = Object.values(this._players);
     let num = players.length;

@@ -59,6 +59,10 @@ export class Player {
     this._delta = d;
   }
 
+  reset(): void {
+    this.orders = [];
+  }
+
   hasLiveBids(): boolean {
     return !!this.getLiveBids().length;
   }
