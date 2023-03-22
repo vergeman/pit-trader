@@ -1,6 +1,6 @@
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
-import Demo from "./Demo.jsx";
+import Main from "./Main.jsx";
 import Home from "./Home.jsx";
 import Navbar from "./Navbar.jsx";
 
@@ -11,7 +11,7 @@ function App() {
       {
         <Routes>
           <Route exact path="/" element={<Home />} />
-          <Route path="/demo" element={<Demo />} />
+          <Route path="/demo" element={<Main />} />
         </Routes>
       }
     </div>
