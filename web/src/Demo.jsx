@@ -68,18 +68,36 @@ export default function Demo() {
   }, [me, player, gestureDecision, gestureData]);
 
   //TODO: group isLose, runLoopInterval into own hook returns isLose state
-  const isLose = usePlayerLoseState(player, marketLoop && marketLoop.getPrice());
-  const runLoopInterval = useMarketLoopRunner(marketLoop, 1000);
+  //rename something to usePlayerGameState
+  //gameState = run, stop, pause?
+  //  should gameState be pushed up to parent??
+  //  player + (config), marketLoop + playerManager(me, npcs)
+  //  actually might be likely
 
-  if (isLose) {
-    clearInterval(runLoopInterval);
-  }
+  //usePlayerLoseState - calculates isLose - since its a hook, only will setLoss if useEffect dependecy changes
+  // change this to somethign more robust
+  //LostModal - button calls reset(), which will change isLose props
+  //useMarketLoopRUnner: toggle loop on / off given isLose - TODO: change to gameState
+  //
+  const reset = () => {
+    //player.reset();
+    console.log("reset");
+    if (player) {
+      player.orders = [];
+      //TODO: need to remove gesture history, orderHistories, etc.
+    }
+
+  };
+
+
+  const isLose = usePlayerLoseState(player, marketLoop && marketLoop.getPrice());
+  useMarketLoopRunner(marketLoop, isLose, 1000);
 
   return (
 
     <Container className="pt-6" style={{ background: "azure" }}>
 
-      <LoseModal isLose={isLose} />
+      <LoseModal isLose={isLose} reset={reset}/>
 
       <div className="d-grid main-wrapper">
         <div className="camera">

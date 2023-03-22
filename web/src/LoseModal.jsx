@@ -7,6 +7,8 @@ export default function LoseModal(props) {
   const [show, setShow] = useState(props.isLose);
   const handleClose = () => setShow(false);
 
+  const reset = () => props.reset();
+
   useEffect( () => {
     setShow(props.isLose);
   }, [props.isLose]);
@@ -28,7 +30,9 @@ export default function LoseModal(props) {
           <Button variant="secondary">
             Close
           </Button>
-          <Button variant="primary">Save changes</Button>
+          <Button variant="primary" onClick={() => reset()}>
+            Restart
+          </Button>
         </Modal.Footer>
       </Modal>
     </div>
