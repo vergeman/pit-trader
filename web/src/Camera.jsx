@@ -57,6 +57,8 @@ function Camera(props) {
           width={`${width}px`}
           height={`${height}px`}
         ></canvas>
+        <img src="/19_FullFront.png" />
+        <img src="/432_FullFront.png" />
       </div>
 
       <div ref={controlRef} className="control-panel"></div>
