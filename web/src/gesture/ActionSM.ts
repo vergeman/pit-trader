@@ -86,7 +86,7 @@ class ActionSM {
       if ([GestureAction.Cancel, GestureAction.Market].includes(action)) {
         this.action = action;
         this.resetTimer();
-        this.setTimer();
+        this.setTimer(); //timer for Cancel action, onFinalTimeout cb
       }
     }
   }

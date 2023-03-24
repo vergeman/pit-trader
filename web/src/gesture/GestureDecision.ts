@@ -83,7 +83,6 @@ export default class GestureDecision {
   }
 
   setPriceFn(value: number) {
-    //TODO: what is market value
     console.log("[setPriceFn] FINAL", value);
     this._price = value;
     this.triggerValidOrder();
@@ -100,10 +99,10 @@ export default class GestureDecision {
   triggerValidOrder() {
     let order: Order | boolean = false;
 
-    // console.log(
-    //   `[GestureDecision] Check:`,
-    //   `ACTION: ${this._action}, QTY: ${this._qty}, PRICE: ${this._price}`
-    // );
+    console.log(
+      `[GestureDecision] Check:`,
+      `ACTION: ${this._action}, QTY: ${this._qty}, PRICE: ${this._price}`
+    );
 
     // CANCEL
     if (this._action === GestureAction.Cancel) {

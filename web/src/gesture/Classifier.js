@@ -1,5 +1,5 @@
-import EMABuffer from "./input/EMABuffer.js";
-import GestureBuilder from "./input/GestureBuilder.ts";
+import EMABuffer from "./EMABuffer.js";
+import GestureBuilder from "./GestureBuilder.ts";
 
 export default class Classifier {
   constructor(landmarks) {
