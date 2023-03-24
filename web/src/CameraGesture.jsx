@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import Landmarks from "./Landmarks.js";
-import Classifier from "./Classifier.js";
-import Camera from "./Camera.jsx";
+import Classifier from "./gesture/Classifier.js";
+import Camera from "./input/Camera.jsx";
 import GesturesPanel from "./GesturesPanel.jsx";
 import MatchingEngineView from "./MatchingEngineView.jsx";
-import GestureDecision from "./input/GestureDecision";
+import GestureDecision from "./gesture/GestureDecision";
 import PlayerStatus from "./playerView/PlayerStatus.jsx";
 import PlayerOrders from "./playerView/PlayerOrders.jsx";
 
