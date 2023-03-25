@@ -12,7 +12,6 @@ export default function useFaceDetection(canvasRef, landmarks) {
     landmarks.resetFaceLandmarks();
 
     if (results.detections.length > 0) {
-
       //canvasCtx.save();
 
       window.drawRectangle(canvasCtx, results.detections[0].boundingBox, {
@@ -49,15 +48,8 @@ export default function useFaceDetection(canvasRef, landmarks) {
       model: "short",
       minDetectionConfidence: 0.5,
     });
-
+    _faceDetection.onResults(onFaceResults);
     setFaceDetection(_faceDetection);
-  }, []);
-
-  useEffect( () => {
-    console.log("[FaceDetection] useEffect landmarks", faceDetection);
-    if (faceDetection) {
-      faceDetection.onResults(onFaceResults);
-    }
   }, [landmarks]);
 
   return faceDetection;

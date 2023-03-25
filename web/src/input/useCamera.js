@@ -1,18 +1,25 @@
 import { useState, useEffect } from "react";
 import useControl from "./useControl.js";
+import useFaceDetection from "./useFaceDetection.js";
+import useHandsDetection from "./useHandsDetection.js";
+import useSelfieDetection from "./useSelfieDetection.js";
+import Landmarks from "./Landmarks.js";
 
 export default function useCamera(
   isActive,
   videoRef,
   controlRef,
-  faceDetection,
-  handsDetection,
-  selfieDetection,
+  canvasRef,
   classifier,
   setGestureData
 ) {
   const { control, fpsControl } = useControl(controlRef);
   const [camera, setCamera] = useState(null);
+  const [landmarks, setLandmarks] = useState(new Landmarks());
+
+  const faceDetection = useFaceDetection(canvasRef, landmarks);
+  const handsDetection = useHandsDetection(canvasRef, landmarks);
+  const selfieDetection = useSelfieDetection(canvasRef, landmarks);
 
   const onFrame = async () => {
     if (!(videoRef && videoRef.current)) return;
@@ -47,7 +54,7 @@ export default function useCamera(
     }
 
     if (classifier) {
-      const res = await classifier.classify();
+      const res = await classifier.classify(landmarks);
 
       //NOTE: minimize renders? - wait for change
       //if (res && res.arg !==_arg) {
@@ -71,12 +78,11 @@ export default function useCamera(
 
     if (selfieDetection && faceDetection && handsDetection && classifier) {
       const _camera = new window.Camera(videoRef.current, {
-        onFrame
+        onFrame,
       });
-
       setCamera(_camera);
 
-      if (isActive){
+      if (isActive) {
         _camera.start();
       }
 
@@ -88,6 +94,4 @@ export default function useCamera(
       };
     }
   }, [selfieDetection, faceDetection, handsDetection, classifier]);
-
-  return camera;
 }
