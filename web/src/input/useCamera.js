@@ -21,7 +21,14 @@ export default function useCamera(
   const handsDetection = useHandsDetection(canvasRef, landmarks);
   const selfieDetection = useSelfieDetection(canvasRef, landmarks);
 
+  useEffect(() => {
+    //onframe as closure needed to rebind landmarks
+    const _landmarks = new Landmarks();
+    setLandmarks(_landmarks);
+  }, []);
+
   const onFrame = async () => {
+
     if (!(videoRef && videoRef.current)) return;
 
     if (fpsControl) {
@@ -67,11 +74,6 @@ export default function useCamera(
       //}
     }
   };
-
-  useEffect(() => {
-    const _landmarks = new Landmarks();
-    setLandmarks(_landmarks);
-  }, []);
 
   /*
    * In dev, index.js has <StrictMode> enabled which can "double render" and
