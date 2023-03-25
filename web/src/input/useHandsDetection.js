@@ -4,7 +4,6 @@ export default function useHandsDetection(canvasRef, landmarks) {
   const [hands, setHands] = useState(null);
 
   const onHandResults = function (results) {
-
     landmarks.resetHandLandmarks();
     landmarks.resetPalmOrientations();
     landmarks.resetFingersOpen();
@@ -16,7 +15,6 @@ export default function useHandsDetection(canvasRef, landmarks) {
         hand_idx,
         _landmarks,
       ] of results.multiHandLandmarks.entries()) {
-
         //canvasCtx.save();
 
         window.drawConnectors(canvasCtx, _landmarks, window.HAND_CONNECTIONS, {
@@ -36,7 +34,10 @@ export default function useHandsDetection(canvasRef, landmarks) {
 
         landmarks.setHandLandmarks(hand.label, _landmarks);
 
-        const palmOrientations = landmarks.setPalmOrientations(hand.label, _landmarks);
+        const palmOrientations = landmarks.setPalmOrientations(
+          hand.label,
+          _landmarks
+        );
 
         landmarks.setFingersOpen(hand.label, palmOrientations, _landmarks);
       }
@@ -60,15 +61,8 @@ export default function useHandsDetection(canvasRef, landmarks) {
       minDetectionConfidence: 0.5,
       minTrackingConfidence: 0.5,
     });
-
+    _hands.onResults(onHandResults);
     setHands(_hands);
-  }, []);
-
-  useEffect(() => {
-    console.log("[HandsDetection] useEffect landmarks", hands);
-    if(hands) {
-      hands.onResults(onHandResults);
-    }
   }, [landmarks]);
 
   return hands;

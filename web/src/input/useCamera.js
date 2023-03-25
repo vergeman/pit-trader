@@ -15,20 +15,13 @@ export default function useCamera(
 ) {
   const { control, fpsControl } = useControl(controlRef);
   const [camera, setCamera] = useState(null);
-  const [landmarks, setLandmarks] = useState(null);
+  const [landmarks, setLandmarks] = useState(new Landmarks());
 
   const faceDetection = useFaceDetection(canvasRef, landmarks);
   const handsDetection = useHandsDetection(canvasRef, landmarks);
   const selfieDetection = useSelfieDetection(canvasRef, landmarks);
 
-  useEffect(() => {
-    //onframe as closure needed to rebind landmarks
-    const _landmarks = new Landmarks();
-    setLandmarks(_landmarks);
-  }, []);
-
   const onFrame = async () => {
-
     if (!(videoRef && videoRef.current)) return;
 
     if (fpsControl) {
@@ -61,7 +54,6 @@ export default function useCamera(
     }
 
     if (classifier) {
-
       const res = await classifier.classify(landmarks);
 
       //NOTE: minimize renders? - wait for change
@@ -86,11 +78,11 @@ export default function useCamera(
 
     if (selfieDetection && faceDetection && handsDetection && classifier) {
       const _camera = new window.Camera(videoRef.current, {
-        onFrame
+        onFrame,
       });
       setCamera(_camera);
 
-      if (isActive){
+      if (isActive) {
         _camera.start();
       }
 
