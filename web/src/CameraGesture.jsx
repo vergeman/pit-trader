@@ -40,6 +40,9 @@ export default function CameraGesture(props) {
   const calcGesture = useCallback( async (landmarks) => {
     //NB: useCallback ensures React.memo works (execute signature will regen on this
     //comonent render)
+
+    if (!classifier) return null;
+
     const probsArgMax = await classifier.classify(landmarks);
     const gesture = gestureBuilder.build(probsArgMax.argMax);
     gestureDecision.calc(gesture);
@@ -59,7 +62,6 @@ export default function CameraGesture(props) {
             isActive={true}
             width={defaultCameraDims.width}
             height={defaultCameraDims.height}
-            classifier={classifier}
             calcGesture={calcGesture}
           />
         </div>

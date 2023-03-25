@@ -10,7 +10,6 @@ export default function useCamera(
   videoRef,
   controlRef,
   canvasRef,
-  classifier,
   calcGesture
 ) {
   const { control, fpsControl } = useControl(controlRef);
@@ -53,10 +52,9 @@ export default function useCamera(
       }
     }
 
-    if (classifier) {
-      console.log("Data");
-      await calcGesture(landmarks);
-    }
+    // this is the calculation bit; operations set and passed in from
+    // <CameraGesture>
+    await calcGesture(landmarks);
   };
 
   /*
@@ -68,7 +66,7 @@ export default function useCamera(
   useEffect(() => {
     console.log("[Camera] useEffect start");
 
-    if (selfieDetection && faceDetection && handsDetection && classifier) {
+    if (selfieDetection && faceDetection && handsDetection) {
       const _camera = new window.Camera(videoRef.current, {
         onFrame,
       });
@@ -85,5 +83,5 @@ export default function useCamera(
         }
       };
     }
-  }, [selfieDetection, faceDetection, handsDetection, classifier]);
+  }, [selfieDetection, faceDetection, handsDetection]);
 }

@@ -15,7 +15,6 @@ function Camera(props) {
     videoRef,
     controlRef,
     canvasRef,
-    props.classifier,
     props.calcGesture
   );
 
