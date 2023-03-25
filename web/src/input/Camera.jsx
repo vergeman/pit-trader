@@ -16,7 +16,7 @@ function Camera(props) {
     controlRef,
     canvasRef,
     props.classifier,
-    props.setGestureData
+    props.calcGesture
   );
 
   const handleResize = (e) => {

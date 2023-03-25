@@ -47,22 +47,6 @@ export default class GestureBuilder {
     return this._garbage_idx;
   }
 
-  //THRESHOLD super sensitive to reduce noise
-  //if too high, can get jumpy on edge and trigger false "finals"
-  //e.g. 95/94/95/94 -> triggers final, clear, then another final clear
-  //2 executions
-
-  checkGarbageThreshold(
-    probs: string[],
-    arg: number,
-    threshold: number
-  ): number {
-    if (probs.every((prob: string) => parseFloat(prob) < threshold)) {
-      return this.garbage_idx;
-    }
-    return arg;
-  }
-
   //expand
   //{"0": {"description": "execute market", "filename": "EXECUTE.csv", "index": 0, "keypress": " "},
   // "10": {"description": "offer 4", "filename": "PRICE_OFFER_4.csv", "index": 10, "keypress": "ALT+4"},

@@ -11,7 +11,7 @@ export default function useCamera(
   controlRef,
   canvasRef,
   classifier,
-  setGestureData
+  calcGesture
 ) {
   const { control, fpsControl } = useControl(controlRef);
   const [camera, setCamera] = useState(null);
@@ -54,16 +54,8 @@ export default function useCamera(
     }
 
     if (classifier) {
-      const res = await classifier.classify(landmarks);
-
-      //NOTE: minimize renders? - wait for change
-      //if (res && res.arg !==_arg) {
-      //_arg = res.arg;
-      //fpsControl -i secs
-      //console.log("RES", res);
-      //at this point only want "valid", filtered results to trigger render
-      setGestureData(res);
-      //}
+      console.log("Data");
+      await calcGesture(landmarks);
     }
   };
 

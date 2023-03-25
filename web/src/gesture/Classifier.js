@@ -1,16 +1,15 @@
 import EMABuffer from "./EMABuffer.js";
-import GestureBuilder from "../gesture/GestureBuilder.ts";
 
 export default class Classifier {
   constructor() {
     this.session = null;
     this.emaBuffer = new EMABuffer();
-    this.gestureBuilder = new GestureBuilder();
+    this.garbage_idx = null;
     console.log("CLASSIFIER");
   }
 
-  async load(model_filename = "./onnx_model.onnx") {
-    await this.gestureBuilder.load();
+  async load(garbage_idx, model_filename = "./onnx_model.onnx") {
+    this.garbage_idx = garbage_idx;
 
     try {
       this.session = await window.ort.InferenceSession.create(model_filename);
@@ -39,6 +38,13 @@ export default class Classifier {
     });
   }
 
+  checkGarbageThreshold(probs, arg, threshold) {
+    if (probs.every((prob) => parseFloat(prob) < threshold)) {
+      return this.garbage_idx;
+    }
+    return arg;
+  }
+
   async classify(landmarks) {
     try {
       const data = Float64Array.from(landmarks.get());
@@ -58,14 +64,11 @@ export default class Classifier {
 
       probs = Array.from(probs).map((p) => p.toFixed(4));
 
-      argMax = this.gestureBuilder.checkGarbageThreshold(probs, argMax, 0.95);
-
-      const gesture = this.gestureBuilder.build(argMax);
+      argMax = this.checkGarbageThreshold(probs, argMax, 0.95);
 
       return {
         probs,
         argMax,
-        gesture,
       };
     } catch (e) {
       //err
