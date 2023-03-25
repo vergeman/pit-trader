@@ -10,7 +10,7 @@ function Camera(props) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
 
-  const camera = useCamera(
+  useCamera(
     props.isActive,
     videoRef,
     controlRef,

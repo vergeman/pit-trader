@@ -100,6 +100,4 @@ export default function useCamera(
       };
     }
   }, [selfieDetection, faceDetection, handsDetection, classifier]);
-
-  return camera;
 }
