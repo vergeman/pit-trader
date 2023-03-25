@@ -19,7 +19,7 @@ export default function MatchingEngineView(props) {
     const priceArr = [price];
     if (price.length < maxLen) {
       for (let i = 0; i < maxLen - price.length; i++) {
-        const spacer = <span className="invisible">0</span>;
+        const spacer = <span key={`spacer-{$i}`}className="invisible">0</span>;
         priceArr.unshift(spacer);
       }
     }
@@ -39,7 +39,7 @@ export default function MatchingEngineView(props) {
         </tr>
       </thead>
       <tbody>
-        {prices.map((price) => {
+        {prices.map((price, i) => {
           return (
             <tr key={price} className={price == lastPrice ? "me-isLast": ""}>
               <td>{bidMaps.playerOrdersPriceQtyMap.get(Number(price))}</td>
