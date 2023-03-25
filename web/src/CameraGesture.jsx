@@ -31,26 +31,28 @@ export default function CameraGesture(props) {
     setClassifier(classifier);
     setGestureDecision(gestureDecision);
 
-    gestureBuilder.load().then( () => {
+    gestureBuilder.load().then(() => {
       classifier.load(gestureBuilder.garbage_idx);
     });
-
   }, [props.me, props.player, props.marketLoop]);
 
-  const calcGesture = useCallback( async (landmarks) => {
-    //NB: useCallback ensures React.memo works (execute signature will regen on this
-    //comonent render)
+  const calcGesture = useCallback(
+    async (landmarks) => {
+      //NB: useCallback ensures React.memo works (execute signature will regen on this
+      //comonent render)
 
-    if (!classifier) return null;
+      if (!classifier) return null;
 
-    const probsArgMax = await classifier.classify(landmarks);
-    const gesture = gestureBuilder.build(probsArgMax.argMax);
-    gestureDecision.calc(gesture);
-    props.triggerGameState(gestureDecision);
+      const probsArgMax = await classifier.classify(landmarks);
+      const gesture = gestureBuilder.build(probsArgMax.argMax);
+      gestureDecision.calc(gesture);
+      props.triggerGameState(gestureDecision);
 
-    setGestureData( {...probsArgMax, gesture });
-    setGesture(gesture);
-  }, [classifier, gestureDecision, gestureBuilder]);
+      setGestureData({ ...probsArgMax, gesture });
+      setGesture(gesture);
+    },
+    [classifier, gestureDecision, gestureBuilder]
+  );
 
   console.log("[CameraGesture] render", gestureData);
 

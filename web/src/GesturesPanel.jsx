@@ -4,10 +4,9 @@ import GesturesLive from "./GesturesLive.jsx";
 import GesturesRecords from "./GesturesRecords.jsx";
 
 export default function GesturesPanel(props) {
-  if (!props.results) return null;
+  if (!props.gestureData) return null;
 
-  const results = props.results;
-  const probs = results.probs || [];
+  const probs = props.gestureData.probs || [];
 
   const records = props.gestureDecision.records.sort(
     (a, b) => a.timestamp < b.timestamp
@@ -17,8 +16,8 @@ export default function GesturesPanel(props) {
     <div className="d-xl-flex justify-content-center">
       <div className="gestures-current gestures-decision gestures-prob w-100">
         <GesturesDecision gestureDecision={props.gestureDecision} />
-        <GesturesCurrent results={results} />
-        <GesturesLive probs={probs} gestureBuilder={props.gestureBuilder}/>
+        <GesturesCurrent gesture={props.gesture} />
+        <GesturesLive probs={probs} gestureBuilder={props.gestureBuilder} />
       </div>
 
       {/* Past Gestures */}

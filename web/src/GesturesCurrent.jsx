@@ -1,6 +1,6 @@
 /* Current Gesture (probs below might not exceed threshold) */
 export default function GesturesCurrent(props) {
-  const results = props.results;
+
   return (
     <table className="table caption-top table-borderless w-100">
       <caption>Gesture Current</caption>
@@ -13,9 +13,9 @@ export default function GesturesCurrent(props) {
       </thead>
       <tbody>
         <tr>
-          <td>{results && results.gesture.type}</td>
-          <td>{results && results.gesture.action}</td>
-          <td>{results && results.gesture.value}</td>
+          <td>{props.gesture.type}</td>
+          <td>{props.gesture.action}</td>
+          <td>{props.gesture.value}</td>
         </tr>
       </tbody>
     </table>
