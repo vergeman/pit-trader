@@ -172,9 +172,38 @@ class MarketLoop {
         order.price,
         maxDelta,
         "->",
-        order.price + maxDelta
+        Math.round( (order.price + maxDelta) * 10) / 10
       );
       this.me.updateOrderPrice(order, order.price + maxDelta);
+
+
+      //for bid/offers .1 apart, maxDelta will be 0 to prevent executing at
+      //own prices. In this case we add likelihood to remove bids /offers
+      //to prevent 'steady' state
+      if (maxDelta == 0) {
+        const prob = Math.random();
+
+        let orderQueue:Order[] = [];
+        //do nothing < .33
+        //remove bids
+        if (prob >= .33 && prob < .66) {
+          console.log(player.name, "maxDelta 0, canceling bids");
+          orderQueue = player.getLiveBids()
+        }
+
+        //remove offers
+        if (prob >= .66) {
+          console.log(player.name, "maxDelta 0, canceling offers");
+          orderQueue = player.getLiveOffers()
+        }
+
+        orderQueue.forEach(order => {
+          order.cancelled()
+          this.me.cancel(order);
+        });
+
+      }
+
     });
   }
 

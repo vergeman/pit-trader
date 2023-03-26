@@ -139,7 +139,7 @@ export class Player {
     for (const order of this.orders) {
       for (let transaction of order.transactions) {
         //NB: flip qty as qty is compliment to order
-        const t = {...transaction, qty: -transaction.qty};
+        const t = { ...transaction, qty: -transaction.qty };
         histories.push(t);
       }
     }
@@ -178,7 +178,9 @@ export class Player {
     const range = minOffer - maxBid;
 
     if (Number.isFinite(range)) {
-      return parseFloat((range - e).toPrecision(4));
+      const val = range - e;
+      const delta = Math.round(val * 10) / 10;
+      return delta;
     }
 
     return _default;
