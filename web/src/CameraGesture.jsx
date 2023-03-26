@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import Camera from "./input/Camera.jsx";
 import GesturesPanel from "./GesturesPanel.jsx";
 import MatchingEngineView from "./MatchingEngineView.jsx";
@@ -12,10 +12,10 @@ export default function CameraGesture(props) {
   /* default bootstrap size */
   const defaultCameraDims = { width: 636, height: 477 };
   const [gestureData, setGestureData] = useState(null);
-  const [gestureDecision, setGestureDecision] = useState(null);
   const [classifier, setClassifier] = useState(null);
   const [gestureBuilder, setGestureBuilder] = useState(null);
   const [gesture, setGesture] = useState(null);
+  const gestureDecisionRef = useRef(null); //fix for stale closure
 
   useEffect(() => {
     console.log("[CameraGesture.jsx]: useEffect init");
@@ -29,7 +29,7 @@ export default function CameraGesture(props) {
 
     setGestureBuilder(gestureBuilder);
     setClassifier(classifier);
-    setGestureDecision(gestureDecision);
+    gestureDecisionRef.current = gestureDecision;
 
     gestureBuilder.load().then(() => {
       classifier.load(gestureBuilder.garbage_idx);
@@ -45,13 +45,16 @@ export default function CameraGesture(props) {
 
       const probsArgMax = await classifier.classify(landmarks);
       const gesture = gestureBuilder.build(probsArgMax.argMax);
-      gestureDecision.calc(gesture);
-      props.triggerGameState(gestureDecision);
+
+      //stale closure
+      gestureDecisionRef.current.calc(gesture);
+
+      props.triggerGameState(gestureDecisionRef.current);
 
       setGestureData({ ...probsArgMax, gesture });
       setGesture(gesture);
     },
-    [classifier, gestureDecision, gestureBuilder]
+    [classifier, gestureDecisionRef, gestureBuilder]
   );
 
   console.log("[CameraGesture] render", gestureData);
@@ -74,7 +77,7 @@ export default function CameraGesture(props) {
             gestureData={gestureData}
             gesture={gesture}
             gestureBuilder={gestureBuilder}
-            gestureDecision={gestureDecision}
+            gestureDecision={gestureDecisionRef.current}
           />
         </div>
 

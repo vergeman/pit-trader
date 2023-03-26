@@ -54,6 +54,7 @@ export default function useCamera(
 
     // this is the calculation bit; operations set and passed in from
     // <CameraGesture>
+
     await calcGesture(landmarks);
   };
 
