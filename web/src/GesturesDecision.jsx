@@ -1,7 +1,10 @@
+/* GestureDecision State
+ * Partial state, waiting for all gestures to build action
+ */
+
 export default function GesturesDecision(props) {
-  /* GestureDecision State
-   * Partial state, waiting for all gestures to build action
-   */
+  if (!props.isDebug) return null;
+
   return (
     <table className="table caption-top table-borderless w-100">
       <caption>Gesture Decision</caption>

@@ -1,5 +1,6 @@
 /* Live Gesture */
 export default function GesturesLive(props) {
+  if (!props.isDebug) return null;
 
   const gestureBuilder = props.gestureBuilder;
 
@@ -22,7 +23,6 @@ export default function GesturesLive(props) {
   const metas = buildSortMetaByProb(props.probs).filter(
     (result) => result.prob >= 0.01
   );
-
 
   return (
     <table className="table caption-top table-borderless w-100">

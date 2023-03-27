@@ -15,9 +15,9 @@ export default function GesturesPanel(props) {
   return (
     <div className="d-xl-flex justify-content-center">
       <div className="gestures-current gestures-decision gestures-prob w-100">
-        <GesturesDecision gestureDecision={props.gestureDecision} />
-        <GesturesCurrent gesture={props.gesture} />
-        <GesturesLive probs={probs} gestureBuilder={props.gestureBuilder} />
+        <GesturesDecision isDebug={true} gestureDecision={props.gestureDecision} />
+        <GesturesCurrent isDebug={true} gesture={props.gesture} />
+        <GesturesLive isDebug={true} probs={probs} gestureBuilder={props.gestureBuilder} />
       </div>
 
       {/* Past Gestures */}
