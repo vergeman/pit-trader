@@ -57,7 +57,7 @@ export default function CameraGesture(props) {
     [classifier, gestureDecisionRef, gestureBuilder]
   );
 
-  console.log("[CameraGesture] render", gestureData);
+  //console.log("[CameraGesture] render", gestureData);
 
   return (
     <>

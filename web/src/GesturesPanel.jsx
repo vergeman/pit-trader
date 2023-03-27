@@ -1,3 +1,4 @@
+import GesturesDecisionRecordFlash from "./GesturesDecisionRecordFlash.jsx";
 import GesturesDecision from "./GesturesDecision.jsx";
 import GesturesCurrent from "./GesturesCurrent.jsx";
 import GesturesLive from "./GesturesLive.jsx";
@@ -12,16 +13,30 @@ export default function GesturesPanel(props) {
     (a, b) => a.timestamp < b.timestamp
   );
 
+  const gestureDecisionRecord = props.gestureDecision.records[0] || {};
+
   return (
     <div className="d-xl-flex justify-content-center">
       <div className="gestures-current gestures-decision gestures-prob w-100">
-        <GesturesDecision isDebug={true} gestureDecision={props.gestureDecision} />
+        <GesturesDecision
+          isDebug={true}
+          gestureDecision={props.gestureDecision}
+          gesture={props.gesture}
+        />
         <GesturesCurrent isDebug={true} gesture={props.gesture} />
-        <GesturesLive isDebug={true} probs={probs} gestureBuilder={props.gestureBuilder} />
+        <GesturesLive
+          isDebug={true}
+          probs={probs}
+          gestureBuilder={props.gestureBuilder}
+        />
       </div>
 
       {/* Past Gestures */}
       <div className="gestures-records">
+        <GesturesDecisionRecordFlash
+          isVisible={props.gestureDecision.isGestureDecisionRecordVisible}
+          gestureDecisionRecord={gestureDecisionRecord}
+        />
         <GesturesRecords records={records} />
       </div>
     </div>

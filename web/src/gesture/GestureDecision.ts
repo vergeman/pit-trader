@@ -27,6 +27,7 @@ export default class GestureDecision {
   private _price: number | null;
   private _action: GestureAction;
   private _records: GestureDecisionRecord[];
+  private _isGestureDecisionRecordVisible: boolean;
 
   constructor(
     me: MatchingEngine,
@@ -58,6 +59,7 @@ export default class GestureDecision {
     this._price = null;
     this._action = GestureAction.None;
     this._records = [];
+    this._isGestureDecisionRecordVisible = false;
   }
 
   get qty(): number | null {
@@ -75,7 +77,9 @@ export default class GestureDecision {
   set records(records: GestureDecisionRecord[]) {
     this._records = records;
   }
-
+  get isGestureDecisionRecordVisible(): boolean {
+    return this._isGestureDecisionRecordVisible;
+  }
   setQtyFn(value: number) {
     console.log("[setQtyFn] FINAL", value);
     this._qty = value;
@@ -129,6 +133,8 @@ export default class GestureDecision {
         this._records.unshift(record);
       }
 
+      //if no orders just reset gesture
+      //TODO: want some indicator of gesture reset
       this.reset();
     }
 
@@ -202,11 +208,20 @@ export default class GestureDecision {
       }
     }
 
+    // successful order was created
     if (order instanceof Order) {
-      //TODO: add to some kind of player profile
-      //or do we augment MatchingEngine - getOrders(player_id)
+      //reset GestureDecision, but set flag for display purposes
+      //need to indicate to user
+      this.triggerGestureDecisionRecordTimer(1000);
       this.reset();
     }
+  }
+
+  triggerGestureDecisionRecordTimer(time: number): void {
+    this._isGestureDecisionRecordVisible = true;
+    setTimeout(() => {
+      this._isGestureDecisionRecordVisible = false;
+    }, time);
   }
 
   //attaches implied base price from gesture
