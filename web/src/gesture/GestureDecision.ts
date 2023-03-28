@@ -6,6 +6,12 @@ import MarketLoop from "../player/MarketLoop";
 import Player from "../player/Player";
 import { OrderType, OrderStatus, Order } from "../engine/Order";
 
+export enum RenderState {
+  GESTURE_DECISION, //vanilla gesture decision (partial order build)
+  GESTURE_DECISION_RECORD, //submitted order - delay
+  GESTURE_CANCEL, //cancel as gesture - delay
+}
+
 export interface GestureDecisionRecord {
   related_id: string;
   timestamp: number;
@@ -15,7 +21,7 @@ export interface GestureDecisionRecord {
   gesturePrice: number | null;
 }
 
-export default class GestureDecision {
+export class GestureDecision {
   public me: MatchingEngine;
   public marketLoop: MarketLoop;
   public player: Player;
@@ -27,12 +33,14 @@ export default class GestureDecision {
   private _price: number | null;
   private _action: GestureAction;
   private _records: GestureDecisionRecord[];
-
+  private _renderState: RenderState;
+  private _renderStateTimeout: number
   constructor(
     me: MatchingEngine,
     marketLoop: MarketLoop,
     player: Player,
-    timeout: number = 750
+    timeout: number = 750,
+    renderStateTimeout: number = 1000
   ) {
     this.me = me;
     this.marketLoop = marketLoop;
@@ -58,6 +66,8 @@ export default class GestureDecision {
     this._price = null;
     this._action = GestureAction.None;
     this._records = [];
+    this._renderState = RenderState.GESTURE_DECISION;
+    this._renderStateTimeout = renderStateTimeout;
   }
 
   get qty(): number | null {
@@ -75,7 +85,12 @@ export default class GestureDecision {
   set records(records: GestureDecisionRecord[]) {
     this._records = records;
   }
-
+  get renderState(): RenderState {
+    return this._renderState;
+  }
+  get renderStateTimeout(): number {
+    return this._renderStateTimeout;
+  }
   setQtyFn(value: number) {
     console.log("[setQtyFn] FINAL", value);
     this._qty = value;
@@ -83,7 +98,6 @@ export default class GestureDecision {
   }
 
   setPriceFn(value: number) {
-    //TODO: what is market value
     console.log("[setPriceFn] FINAL", value);
     this._price = value;
     this.triggerValidOrder();
@@ -100,10 +114,10 @@ export default class GestureDecision {
   triggerValidOrder() {
     let order: Order | boolean = false;
 
-    // console.log(
-    //   `[GestureDecision] Check:`,
-    //   `ACTION: ${this._action}, QTY: ${this._qty}, PRICE: ${this._price}`
-    // );
+    console.log(
+      `[GestureDecision] Check:`,
+      `ACTION: ${this._action}, QTY: ${this._qty}, PRICE: ${this._price}`
+    );
 
     // CANCEL
     if (this._action === GestureAction.Cancel) {
@@ -130,6 +144,8 @@ export default class GestureDecision {
         this._records.unshift(record);
       }
 
+      //if no orders just reset gesture
+      this.triggerRenderStateTimer(RenderState.GESTURE_CANCEL, this.renderStateTimeout);
       this.reset();
     }
 
@@ -203,11 +219,20 @@ export default class GestureDecision {
       }
     }
 
+    // successful order was created
     if (order instanceof Order) {
-      //TODO: add to some kind of player profile
-      //or do we augment MatchingEngine - getOrders(player_id)
+      //reset GestureDecision, but set flag for display purposes
+      //need to indicate to user
+      this.triggerRenderStateTimer(RenderState.GESTURE_DECISION_RECORD, this.renderStateTimeout);
       this.reset();
     }
+  }
+
+  triggerRenderStateTimer(renderState: RenderState, time: number): void {
+    this._renderState = renderState;
+    setTimeout(() => {
+      this._renderState = RenderState.GESTURE_DECISION;
+    }, time);
   }
 
   //attaches implied base price from gesture
@@ -288,3 +313,5 @@ export default class GestureDecision {
     }
   }
 }
+
+export default GestureDecision;

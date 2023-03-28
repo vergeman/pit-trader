@@ -166,6 +166,8 @@ export class MatchingEngine {
 
     if (oldPrice === newPrice) return false;
 
+    //need to maintain queue order
+    //in retrospect queue was probably not a good datastructure
     const removed = queue.remove(order);
     if (removed) {
       order.price = newPrice;

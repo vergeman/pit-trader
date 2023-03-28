@@ -1,45 +1,65 @@
-import { useEffect, useState } from "react";
-import Landmarks from "./Landmarks.js";
-import Classifier from "./Classifier.js";
-import Camera from "./Camera.jsx";
+import { useCallback, useEffect, useState, useRef } from "react";
+import Camera from "./input/Camera.jsx";
 import GesturesPanel from "./GesturesPanel.jsx";
 import MatchingEngineView from "./MatchingEngineView.jsx";
-import GestureDecision from "./input/GestureDecision";
+import GestureDecision from "./gesture/GestureDecision";
 import PlayerStatus from "./playerView/PlayerStatus.jsx";
 import PlayerOrders from "./playerView/PlayerOrders.jsx";
+import Classifier from "./gesture/Classifier.js";
+import GestureBuilder from "./gesture/GestureBuilder.ts";
 
 export default function CameraGesture(props) {
   /* default bootstrap size */
   const defaultCameraDims = { width: 636, height: 477 };
   const [gestureData, setGestureData] = useState(null);
-  const [landmarks, setLandmarks] = useState(null);
   const [classifier, setClassifier] = useState(null);
-  const [gestureDecision, setGestureDecision] = useState(null);
+  const [gestureBuilder, setGestureBuilder] = useState(null);
+  const [gesture, setGesture] = useState(null);
+  const gestureDecisionRef = useRef(null); //fix for stale closure
 
   useEffect(() => {
     console.log("[CameraGesture.jsx]: useEffect init");
-    const landmarks = new Landmarks();
-    const classifier = new Classifier(landmarks);
+    const gestureBuilder = new GestureBuilder();
+    const classifier = new Classifier();
     const gestureDecision = new GestureDecision(
       props.me,
       props.marketLoop,
-      props.player
+      props.player,
+      750,   //gesture Timeout
+      1000   //gestureDecision view timeout
     );
 
-    setLandmarks(landmarks);
+    setGestureBuilder(gestureBuilder);
     setClassifier(classifier);
-    setGestureDecision(gestureDecision);
+    gestureDecisionRef.current = gestureDecision;
 
-    classifier.load();
+    gestureBuilder.load().then(() => {
+      classifier.load(gestureBuilder.garbage_idx);
+    });
   }, [props.me, props.player, props.marketLoop]);
 
-  //"iteration" loop triggered by gestureData
-  useEffect(() => {
-    const gesture = gestureData && gestureData.gesture;
-    gestureDecision && gestureDecision.calc(gesture);
+  const calcGesture = useCallback(
+    async (landmarks) => {
+      //NB: useCallback ensures React.memo works (execute signature will regen on this
+      //comonent render)
 
-    props.triggerGameState(gestureDecision);
-  }, [gestureDecision, gestureData]);
+      if (!classifier) return null;
+
+      const probsArgMax = await classifier.classify(landmarks);
+      const gesture = gestureBuilder.build(probsArgMax.argMax);
+
+      //stale closure
+      gestureDecisionRef.current.calc(gesture);
+
+      props.triggerGameState(gestureDecisionRef.current);
+
+      setGestureData({ ...probsArgMax, gesture });
+      setGesture(gesture);
+    },
+    [classifier, gestureDecisionRef, gestureBuilder]
+  );
+
+  //console.log("[CameraGesture] render", gestureData);
 
   return (
     <>
@@ -49,18 +69,17 @@ export default function CameraGesture(props) {
             isActive={true}
             width={defaultCameraDims.width}
             height={defaultCameraDims.height}
-            landmarks={landmarks}
-            classifier={classifier}
-            setGestureData={setGestureData}
+            calcGesture={calcGesture}
           />
         </div>
 
         <div className="gestures">
           Gestures
           <GesturesPanel
-            results={gestureData}
-            gestureBuilder={classifier && classifier.gestureBuilder}
-            gestureDecision={gestureDecision}
+            gestureData={gestureData}
+            gesture={gesture}
+            gestureBuilder={gestureBuilder}
+            gestureDecision={gestureDecisionRef.current}
           />
         </div>
 

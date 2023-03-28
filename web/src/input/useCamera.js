@@ -1,18 +1,24 @@
 import { useState, useEffect } from "react";
 import useControl from "./useControl.js";
+import useFaceDetection from "./useFaceDetection.js";
+import useHandsDetection from "./useHandsDetection.js";
+import useSelfieDetection from "./useSelfieDetection.js";
+import Landmarks from "./Landmarks.js";
 
 export default function useCamera(
   isActive,
   videoRef,
   controlRef,
-  faceDetection,
-  handsDetection,
-  selfieDetection,
-  classifier,
-  setGestureData
+  canvasRef,
+  calcGesture
 ) {
   const { control, fpsControl } = useControl(controlRef);
   const [camera, setCamera] = useState(null);
+  const [landmarks, setLandmarks] = useState(new Landmarks());
+
+  const faceDetection = useFaceDetection(canvasRef, landmarks);
+  const handsDetection = useHandsDetection(canvasRef, landmarks);
+  const selfieDetection = useSelfieDetection(canvasRef, landmarks);
 
   const onFrame = async () => {
     if (!(videoRef && videoRef.current)) return;
@@ -46,18 +52,10 @@ export default function useCamera(
       }
     }
 
-    if (classifier) {
-      const res = await classifier.classify();
+    // this is the calculation bit; operations set and passed in from
+    // <CameraGesture>
 
-      //NOTE: minimize renders? - wait for change
-      //if (res && res.arg !==_arg) {
-      //_arg = res.arg;
-      //fpsControl -i secs
-      //console.log("RES", res);
-      //at this point only want "valid", filtered results to trigger render
-      setGestureData(res);
-      //}
-    }
+    await calcGesture(landmarks);
   };
 
   /*
@@ -69,14 +67,13 @@ export default function useCamera(
   useEffect(() => {
     console.log("[Camera] useEffect start");
 
-    if (selfieDetection && faceDetection && handsDetection && classifier) {
+    if (selfieDetection && faceDetection && handsDetection) {
       const _camera = new window.Camera(videoRef.current, {
-        onFrame
+        onFrame,
       });
-
       setCamera(_camera);
 
-      if (isActive){
+      if (isActive) {
         _camera.start();
       }
 
@@ -87,7 +84,5 @@ export default function useCamera(
         }
       };
     }
-  }, [selfieDetection, faceDetection, handsDetection, classifier]);
-
-  return camera;
+  }, [selfieDetection, faceDetection, handsDetection]);
 }

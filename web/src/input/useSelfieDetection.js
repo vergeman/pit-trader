@@ -43,16 +43,9 @@ export default function useSelfieDetection(canvasRef, landmarks) {
       selfieMode: true,
       modelSelection: 0,
     });
-
+    selfieSegmentation.onResults(onSelfieResults);
     setSelfieSegmentation(selfieSegmentation);
   }, []);
-
-  useEffect(() => {
-    console.log("[SelfieDetection] useEffect");
-    if (selfieSegmentation) {
-      selfieSegmentation.onResults(onSelfieResults);
-    }
-  }, [landmarks]);
 
   return selfieSegmentation;
 }

@@ -1,7 +1,4 @@
-import { useRef, useEffect, useState } from "react";
-import useFaceDetection from "./useFaceDetection.js";
-import useHandsDetection from "./useHandsDetection.js";
-import useSelfieDetection from "./useSelfieDetection.js";
+import { memo, useRef, useEffect, useState } from "react";
 import useCamera from "./useCamera.js";
 
 function Camera(props) {
@@ -13,19 +10,12 @@ function Camera(props) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
 
-  const faceDetection = useFaceDetection(canvasRef, props.landmarks);
-  const handsDetection = useHandsDetection(canvasRef, props.landmarks);
-  const selfieDetection = useSelfieDetection(canvasRef, props.landmarks);
-
-  const camera = useCamera(
+  useCamera(
     props.isActive,
     videoRef,
     controlRef,
-    faceDetection,
-    handsDetection,
-    selfieDetection,
-    props.classifier,
-    props.setGestureData
+    canvasRef,
+    props.calcGesture
   );
 
   const handleResize = (e) => {
@@ -44,6 +34,8 @@ function Camera(props) {
     };
   }, []);
 
+  console.log("[Camera] render");
+
   return (
     <div className="video-canvas" ref={videoCanvasRef} onResize={handleResize}>
       <div className="input-output">
@@ -61,4 +53,4 @@ function Camera(props) {
   );
 }
 
-export default Camera;
+export default memo(Camera);
