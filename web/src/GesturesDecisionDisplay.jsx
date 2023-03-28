@@ -17,6 +17,7 @@ export default function GesturesDecisionDisplay(props) {
     switch (gestureDecision.action) {
       case GestureAction.Buy:
       case GestureAction.Sell:
+      case GestureAction.Cancel:
         return gestureDecision.action;
 
       case GestureAction.None:
@@ -46,17 +47,18 @@ export default function GesturesDecisionDisplay(props) {
     <>
       {props.gestureDecision.renderState == RenderState.GESTURE_DECISION && (
         <GesturesDecision
-          isVisible={!props.gestureDecision.isGestureDecisionRecordVisible}
+          renderState={props.gestureDecision.renderState}
           caption="Gesture Decision"
           action={getAction(props.gestureDecision)}
           qty={props.gestureDecision.qty}
-          price={getPrice(props.gestureDecision.price)}
+          price={getPrice(props.gestureDecision)}
         />
       )}
 
       {props.gestureDecision.renderState ==
         RenderState.GESTURE_DECISION_RECORD && (
         <GesturesDecision
+          renderState={props.gestureDecision.renderState}
           caption="Gesture Decision Flash"
           action={getAction(gestureDecisionRecord)}
           qty={gestureDecisionRecord.qty}
@@ -66,6 +68,7 @@ export default function GesturesDecisionDisplay(props) {
 
       {props.gestureDecision.renderState == RenderState.GESTURE_CANCEL && (
         <GesturesDecision
+          renderState={props.gestureDecision.renderState}
           caption="Gesture Decision Flash"
           action={GestureAction.Cancel}
         />

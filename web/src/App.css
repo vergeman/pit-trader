@@ -77,6 +77,22 @@
   }
 }
 
+/* GestureDecision */
+.is-cancel-gesture {
+  color: pink;
+}
+.is-cancel-order {
+  color: red;
+}
+.is-submitted {
+  color: green;
+}
+.is-locked {
+  color: grey;
+}
+.is-needed {
+  color: orange;
+}
 
 /* Extended Helpers */
 
