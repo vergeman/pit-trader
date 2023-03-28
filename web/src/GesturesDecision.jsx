@@ -4,6 +4,20 @@
 
 export default function GesturesDecision(props) {
 
+  //STYLE
+  //GestureDecision Styles based on missing/complete values
+  //VALUE (vanilla)
+  //gestureDeciion.qtyt empty, use gesture
+
+  //LOCKED
+  //gestureDecision.qty is locked
+
+  //NEEDED
+  //isLocked but no gestureDecision
+
+  //GestureDecisionRecord
+  //SUBMITTED style
+  //vanilla but..highlighted? fading?
   return (
     <table className="table caption-top table-borderless w-100">
       <caption>{props.caption}</caption>
@@ -16,9 +30,9 @@ export default function GesturesDecision(props) {
       </thead>
       <tbody>
         <tr className={props.isVisible ? "visible" : "invisible"}>
-          <td>{props.gestureDecision.action}</td>
-          <td>{props.gestureDecision.qty}</td>
-          <td>{props.gestureDecision.price}</td>
+          <td>{props.action}</td>
+          <td>{props.qty}</td>
+          <td>{props.price}</td>
         </tr>
       </tbody>
     </table>
