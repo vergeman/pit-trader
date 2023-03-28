@@ -6,6 +6,12 @@ import MarketLoop from "../player/MarketLoop";
 import Player from "../player/Player";
 import { OrderType, OrderStatus, Order } from "../engine/Order";
 
+export enum RenderState {
+  GESTURE_DECISION, //vanilla gesture decision (partial order build)
+  GESTURE_DECISION_RECORD, //submitted order - delay
+  GESTURE_CANCEL, //cancel as gesture - delay
+}
+
 export interface GestureDecisionRecord {
   related_id: string;
   timestamp: number;
@@ -15,7 +21,7 @@ export interface GestureDecisionRecord {
   gesturePrice: number | null;
 }
 
-export default class GestureDecision {
+export class GestureDecision {
   public me: MatchingEngine;
   public marketLoop: MarketLoop;
   public player: Player;
@@ -27,13 +33,14 @@ export default class GestureDecision {
   private _price: number | null;
   private _action: GestureAction;
   private _records: GestureDecisionRecord[];
-  private _isGestureDecisionRecordVisible: boolean;
-
+  private _renderState: RenderState;
+  private _renderStateTimeout: number
   constructor(
     me: MatchingEngine,
     marketLoop: MarketLoop,
     player: Player,
-    timeout: number = 750
+    timeout: number = 750,
+    renderStateTimeout: number = 1000
   ) {
     this.me = me;
     this.marketLoop = marketLoop;
@@ -59,7 +66,8 @@ export default class GestureDecision {
     this._price = null;
     this._action = GestureAction.None;
     this._records = [];
-    this._isGestureDecisionRecordVisible = false;
+    this._renderState = RenderState.GESTURE_DECISION;
+    this._renderStateTimeout = renderStateTimeout;
   }
 
   get qty(): number | null {
@@ -77,8 +85,11 @@ export default class GestureDecision {
   set records(records: GestureDecisionRecord[]) {
     this._records = records;
   }
-  get isGestureDecisionRecordVisible(): boolean {
-    return this._isGestureDecisionRecordVisible;
+  get renderState(): RenderState {
+    return this._renderState;
+  }
+  get renderStateTimeout(): number {
+    return this._renderStateTimeout;
   }
   setQtyFn(value: number) {
     console.log("[setQtyFn] FINAL", value);
@@ -134,7 +145,7 @@ export default class GestureDecision {
       }
 
       //if no orders just reset gesture
-      //TODO: want some indicator of gesture reset
+      this.triggerRenderStateTimer(RenderState.GESTURE_CANCEL, this.renderStateTimeout);
       this.reset();
     }
 
@@ -212,15 +223,15 @@ export default class GestureDecision {
     if (order instanceof Order) {
       //reset GestureDecision, but set flag for display purposes
       //need to indicate to user
-      this.triggerGestureDecisionRecordTimer(1000);
+      this.triggerRenderStateTimer(RenderState.GESTURE_DECISION_RECORD, this.renderStateTimeout);
       this.reset();
     }
   }
 
-  triggerGestureDecisionRecordTimer(time: number): void {
-    this._isGestureDecisionRecordVisible = true;
+  triggerRenderStateTimer(renderState: RenderState, time: number): void {
+    this._renderState = renderState;
     setTimeout(() => {
-      this._isGestureDecisionRecordVisible = false;
+      this._renderState = RenderState.GESTURE_DECISION;
     }, time);
   }
 
@@ -302,3 +313,5 @@ export default class GestureDecision {
     }
   }
 }
+
+export default GestureDecision;

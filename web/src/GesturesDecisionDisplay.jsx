@@ -1,32 +1,20 @@
 import GesturesDecision from "./GesturesDecision.jsx";
-import {GestureAction} from "./gesture/Gesture";
+import { RenderState } from "./gesture/GestureDecision";
+import { GestureAction } from "./gesture/Gesture";
 
 export default function GesturesDecisionDisplay(props) {
   const gestureDecisionRecord = props.gestureDecision.records[0] || {};
 
-  /* Action: Buy, Sell, Cancel (show) | Garbage (hide) )
-   * issue: gesture action (buy/sell) isn't passed to gestureDecision - its implied}
-   * we can test qty to select buy / sell
-   * Action: Market
-   *
-   * TODO:
-   * 0. decide shared display and convert values
-   * 2. <CancelGesture> component
-   *
+  /*
+   * Display Values & Actions
+   * helper functions to display action values and prices
+   * visually different expectation from what's needed to submit Order.
    */
-
-  //VALUES
-  // action: [buy/sell] on qty or record
-  // action Market -> price
-  // action Cancel -> not sure
-  // qty: number
-  // price: number | MARKET
 
   const getAction = (gestureDecision) => {
     if (!gestureDecision) return null;
 
     switch (gestureDecision.action) {
-
       case GestureAction.Buy:
       case GestureAction.Sell:
         return gestureDecision.action;
@@ -43,12 +31,6 @@ export default function GesturesDecisionDisplay(props) {
       default:
         return null;
     }
-
-    //TODO: not sure here but want some indicator
-    // not an order cancel but a gesture cancel
-    // if (action == GestureAction.Cancel) {
-    //   return null;
-    // }
   };
 
   const getPrice = (gestureDecision) => {
@@ -62,7 +44,7 @@ export default function GesturesDecisionDisplay(props) {
 
   return (
     <>
-      {!props.gestureDecision.isGestureDecisionRecordVisible && (
+      {props.gestureDecision.renderState == RenderState.GESTURE_DECISION && (
         <GesturesDecision
           isVisible={!props.gestureDecision.isGestureDecisionRecordVisible}
           caption="Gesture Decision"
@@ -72,13 +54,20 @@ export default function GesturesDecisionDisplay(props) {
         />
       )}
 
-      {props.gestureDecision.isGestureDecisionRecordVisible && (
+      {props.gestureDecision.renderState ==
+        RenderState.GESTURE_DECISION_RECORD && (
         <GesturesDecision
-          isVisible={props.gestureDecision.isGestureDecisionRecordVisible}
           caption="Gesture Decision Flash"
           action={getAction(gestureDecisionRecord)}
           qty={gestureDecisionRecord.qty}
           price={getPrice(gestureDecisionRecord)}
+        />
+      )}
+
+      {props.gestureDecision.renderState == RenderState.GESTURE_CANCEL && (
+        <GesturesDecision
+          caption="Gesture Decision Flash"
+          action={GestureAction.Cancel}
         />
       )}
     </>

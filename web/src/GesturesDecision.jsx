@@ -18,6 +18,7 @@ export default function GesturesDecision(props) {
   //GestureDecisionRecord
   //SUBMITTED style
   //vanilla but..highlighted? fading?
+
   return (
     <table className="table caption-top table-borderless w-100">
       <caption>{props.caption}</caption>
@@ -29,7 +30,7 @@ export default function GesturesDecision(props) {
         </tr>
       </thead>
       <tbody>
-        <tr className={props.isVisible ? "visible" : "invisible"}>
+        <tr>
           <td>{props.action}</td>
           <td>{props.qty}</td>
           <td>{props.price}</td>
