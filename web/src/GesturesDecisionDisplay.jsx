@@ -1,17 +1,13 @@
 import GesturesDecision from "./GesturesDecision.jsx";
-import GesturesDecisionRecordFlash from "./GesturesDecisionRecordFlash.jsx";
 
 export default function GesturesDecisionDisplay(props) {
   const gestureDecisionRecord = props.gestureDecision.records[0] || {};
-  {/* Action: Buy, Sell, Cancel (show) | Garbage (hide) ) */ }
-  {/*
 
-             issue: gesture action (buy/sell) isn't passed to gestureDecision - its implied}
-             we can test qty to select buy / sell
-
-           */}
-  {/* Action: Market */ }
-  /*
+  /* Action: Buy, Sell, Cancel (show) | Garbage (hide) )
+   * issue: gesture action (buy/sell) isn't passed to gestureDecision - its implied}
+   * we can test qty to select buy / sell
+   * Action: Market
+   *
    * TODO:
    * 0. decide shared display and convert values
    * 1. extract to use same header; just change data
@@ -20,19 +16,23 @@ export default function GesturesDecisionDisplay(props) {
    */
   return (
     <>
-      {!props.gestureDecision.isGestureDecisionRecordVisible &&
+      {!props.gestureDecision.isGestureDecisionRecordVisible && (
         <GesturesDecision
-          isDebug={true}
+          caption="Gesture Decision"
+          isVisible={props.gestureDecision.isGestureDecisionRecordVisible}
           gestureDecision={props.gestureDecision}
           gesture={props.gesture}
         />
-      }
-      {props.gestureDecision.isGestureDecisionRecordVisible &&
-        <GesturesDecisionRecordFlash
+      )}
+
+      {props.gestureDecision.isGestureDecisionRecordVisible && (
+        <GesturesDecision
+          caption="Gesture Decision Flash"
           isVisible={props.gestureDecision.isGestureDecisionRecordVisible}
-          gestureDecisionRecord={gestureDecisionRecord}
+          gestureDecision={gestureDecisionRecord}
+          gesture={props.gesture}
         />
-      }
+      )}
     </>
   );
 }
