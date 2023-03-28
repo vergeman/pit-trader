@@ -8,6 +8,7 @@ import MarketLoop from "./player/MarketLoop";
 
 import LoseModal from "./LoseModal";
 import useMarketLoopRunner from "./player/useMarketLoopRunner.jsx";
+import MessagesContainer from "./messages/MessagesContainer.jsx";
 
 export default function Main(props) {
   const config = {
@@ -86,14 +87,7 @@ export default function Main(props) {
         triggerGameState={triggerGameState}
       />
 
-      {/* TODO: make component */}
-      <Row>
-        <Col>
-          <div className="d-flex justify-content-center">
-            News / Alert/ Challenge / Message Component
-          </div>
-        </Col>
-      </Row>
+      <MessagesContainer value="hi" />
     </Container>
   );
 }
