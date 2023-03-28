@@ -24,7 +24,9 @@ export default function CameraGesture(props) {
     const gestureDecision = new GestureDecision(
       props.me,
       props.marketLoop,
-      props.player
+      props.player,
+      750,   //gesture Timeout
+      1000   //gestureDecision view timeout
     );
 
     setGestureBuilder(gestureBuilder);
@@ -57,7 +59,7 @@ export default function CameraGesture(props) {
     [classifier, gestureDecisionRef, gestureBuilder]
   );
 
-  console.log("[CameraGesture] render", gestureData);
+  //console.log("[CameraGesture] render", gestureData);
 
   return (
     <>

@@ -1,4 +1,4 @@
-import GesturesDecision from "./GesturesDecision.jsx";
+import GesturesDecisionDisplay from "./GesturesDecisionDisplay.jsx";
 import GesturesCurrent from "./GesturesCurrent.jsx";
 import GesturesLive from "./GesturesLive.jsx";
 import GesturesRecords from "./GesturesRecords.jsx";
@@ -15,9 +15,16 @@ export default function GesturesPanel(props) {
   return (
     <div className="d-xl-flex justify-content-center">
       <div className="gestures-current gestures-decision gestures-prob w-100">
-        <GesturesDecision gestureDecision={props.gestureDecision} />
-        <GesturesCurrent gesture={props.gesture} />
-        <GesturesLive probs={probs} gestureBuilder={props.gestureBuilder} />
+        <GesturesCurrent isDebug={true} gesture={props.gesture} />
+        <GesturesDecisionDisplay
+          gestureDecision={props.gestureDecision}
+          gesture={props.gesture}
+        />
+        <GesturesLive
+          isDebug={true}
+          probs={probs}
+          gestureBuilder={props.gestureBuilder}
+        />
       </div>
 
       {/* Past Gestures */}
