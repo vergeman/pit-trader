@@ -1,4 +1,5 @@
 export default function GesturesRecords(props) {
+  if (!props.isDebug) return null;
 
   return (
     <table className="table caption-top table-borderless w-100">

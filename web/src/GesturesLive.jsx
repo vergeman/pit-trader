@@ -20,9 +20,7 @@ export default function GesturesLive(props) {
     return metas.sort((a, b) => a.prob < b.prob);
   };
 
-  const metas = buildSortMetaByProb(props.probs).filter(
-    (result) => result.prob >= 0.01
-  );
+  const metas = buildSortMetaByProb(props.probs).splice(0,3);
 
   return (
     <table className="table caption-top table-borderless w-100">

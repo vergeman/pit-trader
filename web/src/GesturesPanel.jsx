@@ -21,7 +21,7 @@ export default function GesturesPanel(props) {
           gesture={props.gesture}
         />
         <GesturesLive
-          isDebug={true}
+          isDebug={false}
           probs={probs}
           gestureBuilder={props.gestureBuilder}
         />
@@ -29,7 +29,8 @@ export default function GesturesPanel(props) {
 
       {/* Past Gestures */}
       <div className="gestures-records">
-        <GesturesRecords records={records} />
+        <GesturesRecords isDebug={false}
+                         records={records} />
       </div>
     </div>
   );
