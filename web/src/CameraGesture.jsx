@@ -7,6 +7,8 @@ import PlayerStatus from "./playerView/PlayerStatus.jsx";
 import PlayerOrders from "./playerView/PlayerOrders.jsx";
 import Classifier from "./gesture/Classifier.js";
 import GestureBuilder from "./gesture/GestureBuilder.ts";
+import { GestureType }from "./gesture/Gesture";
+import { useMessagesDispatch } from "./messages/MessagesContext.jsx";
 
 export default function CameraGesture(props) {
   /* default bootstrap size */
@@ -16,7 +18,7 @@ export default function CameraGesture(props) {
   const [gestureBuilder, setGestureBuilder] = useState(null);
   const [gesture, setGesture] = useState(null);
   const gestureDecisionRef = useRef(null); //fix for stale closure
-
+  const messagesDispatch = useMessagesDispatch();
   useEffect(() => {
     console.log("[CameraGesture.jsx]: useEffect init");
     const gestureBuilder = new GestureBuilder();
@@ -36,6 +38,7 @@ export default function CameraGesture(props) {
     gestureBuilder.load().then(() => {
       classifier.load(gestureBuilder.garbage_idx);
     });
+
   }, [props.me, props.player, props.marketLoop]);
 
   const calcGesture = useCallback(
@@ -51,6 +54,14 @@ export default function CameraGesture(props) {
       //stale closure
       gestureDecisionRef.current.calc(gesture);
 
+      if (gesture.type == GestureType.Qty) {
+
+        // will be too fast
+        messagesDispatch({
+          type: 'add',
+          text: gesture.value
+        });
+      }
       props.triggerGameState(gestureDecisionRef.current);
 
       setGestureData({ ...probsArgMax, gesture });

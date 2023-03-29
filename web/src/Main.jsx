@@ -9,6 +9,7 @@ import MarketLoop from "./player/MarketLoop";
 import LoseModal from "./LoseModal";
 import useMarketLoopRunner from "./player/useMarketLoopRunner.jsx";
 import MessagesContainer from "./messages/MessagesContainer.jsx";
+import MessagesProvider from "./messages/MessagesContext";
 
 export default function Main(props) {
   const config = {
@@ -79,15 +80,16 @@ export default function Main(props) {
     <Container className="pt-6" style={{ background: "azure" }}>
 
       <LoseModal isLose={isLose} resetGame={resetGame} />
+      <MessagesProvider>
+        <CameraGesture
+          me={me}
+          player={player}
+          marketLoop={marketLoop}
+          triggerGameState={triggerGameState}
+        />
 
-      <CameraGesture
-        me={me}
-        player={player}
-        marketLoop={marketLoop}
-        triggerGameState={triggerGameState}
-      />
-
-      <MessagesContainer value="hi" />
+        <MessagesContainer init="test" />
+      </MessagesProvider>
     </Container>
   );
 }
