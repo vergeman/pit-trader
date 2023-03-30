@@ -2,7 +2,7 @@ import { useState } from "react";
 import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
 import OrderTable from "./OrderTable.jsx";
-import MessagesContainer from "../messages/MessagesContainer.jsx";
+import InfoPanel from "../infopanel/InfoPanel.jsx";
 
 /*
  * NB: <Tab> subcomponents don't automatically render if extracted to own
@@ -23,7 +23,7 @@ export default function InfoTabs(props) {
     .sort((a, b) => Number(a.timestamp < b.timestamp));
 
   {/* NB: pass setActiveKey to programmatically change Tab
-    * TODO: expand to reducer? pass into MessagesContainer?
+    * TODO: expand to reducer? pass into InfoPanel?
     */ }
   return (
     <Tabs
@@ -33,7 +33,7 @@ export default function InfoTabs(props) {
       className="mb-3"
     >
       <Tab eventKey="messages" title="Messages">
-        <MessagesContainer init="test" setActiveKey={setActiveKey} />
+        <InfoPanel init="test" setActiveKey={setActiveKey} />
       </Tab>
       <Tab eventKey="quests" title="Quests">
         Quests here

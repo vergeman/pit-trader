@@ -7,7 +7,7 @@ import Player from "./player/Player";
 import MarketLoop from "./player/MarketLoop";
 import LoseModal from "./LoseModal";
 import useMarketLoopRunner from "./player/useMarketLoopRunner.jsx";
-import MessagesProvider from "./messages/MessagesContext";
+import InfoPanelProvider from "./infopanel/InfoPanelContext";
 
 export default function Main(props) {
   const config = {
@@ -76,7 +76,7 @@ export default function Main(props) {
   return (
     <Container className="pt-6" style={{ background: "azure" }}>
       <LoseModal isLose={isLose} resetGame={resetGame} />
-      <MessagesProvider>
+      <InfoPanelProvider>
         {/* CameraGesture set to camera poll */}
         <CameraGesture
           me={me}
@@ -84,7 +84,7 @@ export default function Main(props) {
           marketLoop={marketLoop}
           triggerGameState={triggerGameState}
         />
-      </MessagesProvider>
+      </InfoPanelProvider>
     </Container>
   );
 }

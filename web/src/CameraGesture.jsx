@@ -7,7 +7,7 @@ import PlayerStatus from "./playerView/PlayerStatus.jsx";
 import Classifier from "./gesture/Classifier.js";
 import GestureBuilder from "./gesture/GestureBuilder.ts";
 import { GestureType }from "./gesture/Gesture";
-import { useMessagesDispatch } from "./messages/MessagesContext.jsx";
+import { useMessagesDispatch } from "./infopanel/InfoPanelContext.jsx";
 import InfoTabs from "./playerView/InfoTabs.jsx";
 
 export default function CameraGesture(props) {

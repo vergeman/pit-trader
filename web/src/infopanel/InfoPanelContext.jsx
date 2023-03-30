@@ -1,5 +1,5 @@
 import { createContext, useContext, useReducer } from "react";
-import messagesReducer from "./MessagesReducer.js";
+import messagesReducer from "./InfoPanelReducer.js";
 
 export const MessagesContext = createContext(null);
 export const MessagesDispatchContext = createContext(null);
@@ -10,7 +10,7 @@ export function useMessagesDispatch() {
   return useContext(MessagesDispatchContext);
 }
 
-export default function MessagesProvider({ children }) {
+export default function InfoPanelProvider({ children }) {
   const [messages, dispatch] = useReducer(messagesReducer, []);
 
   return (
