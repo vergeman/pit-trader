@@ -5,6 +5,7 @@ import MatchingEngine from "../engine/MatchingEngine";
 import MarketLoop from "../player/MarketLoop";
 import Player from "../player/Player";
 import { OrderType, OrderStatus, Order } from "../engine/Order";
+import Message from "../infopanel/Message.js";
 
 export enum RenderState {
   GESTURE_DECISION, //vanilla gesture decision (partial order build)
@@ -35,7 +36,7 @@ export class GestureDecision {
   private _records: GestureDecisionRecord[];
   private _renderState: RenderState;
   private _renderStateTimeout: number;
-  private _messages: [];
+  private _messages: any[];
   constructor(
     me: MatchingEngine,
     marketLoop: MarketLoop,
@@ -93,7 +94,7 @@ export class GestureDecision {
   get renderStateTimeout(): number {
     return this._renderStateTimeout;
   }
-  get messages(): [] {
+  get messages(): any[] {
     return this._messages;
   }
   resetMessages(): void {
@@ -103,12 +104,22 @@ export class GestureDecision {
   setQtyFn(value: number) {
     console.log("[setQtyFn] FINAL", value);
     this._qty = value;
+    const msg = {
+      type: Message.SetQty,
+      value: [value]
+    };
+    this._messages.push(msg);
     this.triggerValidOrder();
   }
 
   setPriceFn(value: number) {
     console.log("[setPriceFn] FINAL", value);
     this._price = value;
+    const msg = {
+      type: Message.SetPrice,
+      value: [value]
+    };
+    this._messages.push(msg);
     this.triggerValidOrder();
   }
 

@@ -20,20 +20,23 @@ const populateTemplateString = (template, vars) => {
 };
 
 export function messagesReducer(messages, action) {
+  //TODO: remove demo Button reducer to remove action.text
+  //TODO: add msg type once we get a better idea what's being sent
   let text;
   switch (action.type) {
     case Message.SetPrice:
-      text = populateTemplateString(Message.SetPrice, [action.value.price]);
-
+      text = populateTemplateString(Message.SetPrice, action.value);
+      break;
     case Message.SetQty:
-      text = populateTemplateString(Message.SetQty, [action.value.qty]);
-
+      text = populateTemplateString(Message.SetQty, action.value);
+      break;
+    case "add":
+      text = action.text;
+      break;
     default: {
-      const text = action.text;
-      if (text) {
-        return [{ text }, ...messages];
-      }
-      throw new Error("action doesn't exist", action.type);
+      console.error("action doesn't exist", action);
+      return messages;
     }
   }
+  return [{ text }, ...messages];
 }
