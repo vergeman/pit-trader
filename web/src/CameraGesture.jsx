@@ -4,11 +4,11 @@ import GesturesPanel from "./GesturesPanel.jsx";
 import MatchingEngineView from "./MatchingEngineView.jsx";
 import GestureDecision from "./gesture/GestureDecision";
 import PlayerStatus from "./playerView/PlayerStatus.jsx";
-import PlayerOrders from "./playerView/PlayerOrders.jsx";
 import Classifier from "./gesture/Classifier.js";
 import GestureBuilder from "./gesture/GestureBuilder.ts";
 import { GestureType }from "./gesture/Gesture";
 import { useMessagesDispatch } from "./messages/MessagesContext.jsx";
+import InfoTabs from "./playerView/InfoTabs.jsx";
 
 export default function CameraGesture(props) {
   /* default bootstrap size */
@@ -102,9 +102,11 @@ export default function CameraGesture(props) {
             marketLoop={props.marketLoop}
             player={props.player}
           />
-          <PlayerOrders player={props.player} />
         </div>
       </div>
+
+      {/* Tab displays needs to re-render at CameraGesture level */}
+      <InfoTabs player={props.player} />
     </>
   );
 }

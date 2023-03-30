@@ -5,10 +5,8 @@ import MatchingEngine from "./engine/MatchingEngine";
 import NPCPlayerManager from "./player/NPCPlayerManager";
 import Player from "./player/Player";
 import MarketLoop from "./player/MarketLoop";
-
 import LoseModal from "./LoseModal";
 import useMarketLoopRunner from "./player/useMarketLoopRunner.jsx";
-import MessagesContainer from "./messages/MessagesContainer.jsx";
 import MessagesProvider from "./messages/MessagesContext";
 
 export default function Main(props) {
@@ -62,7 +60,6 @@ export default function Main(props) {
     }
   };
 
-
   const triggerGameState = (gestureDecision) => {
     //console.log("[Main.jsx] triggerGameState");
     const price = marketLoop && marketLoop.getPrice();
@@ -74,21 +71,19 @@ export default function Main(props) {
     }
   };
 
-
   console.log("[Main.jsx] render");
+
   return (
     <Container className="pt-6" style={{ background: "azure" }}>
-
       <LoseModal isLose={isLose} resetGame={resetGame} />
       <MessagesProvider>
+        {/* CameraGesture set to camera poll */}
         <CameraGesture
           me={me}
           player={player}
           marketLoop={marketLoop}
           triggerGameState={triggerGameState}
         />
-
-        <MessagesContainer init="test" />
       </MessagesProvider>
     </Container>
   );
