@@ -5,6 +5,7 @@ import MatchingEngine from "../engine/MatchingEngine";
 import Player from "../player/Player";
 import NPCPlayerManager from "../player/NPCPlayerManager";
 import MarketLoop from "../player/MarketLoop";
+import { isNonNullChain } from "typescript";
 
 const TIMEOUT = 50; //speed this up for tests. Typically 750 seems human-like.
 
@@ -16,7 +17,7 @@ describe("GestureDecision", () => {
     const p = new Player("test");
 
     const gestureDecision = new GestureDecision(me, marketLoop, p, TIMEOUT);
-    const gesture = new Gesture(GestureType.Qty, GestureAction.Buy, 3);
+    const gesture = new Gesture(GestureType.Qty, GestureAction.Buy, 3, 1);
     gestureDecision.triggerValidOrder = jest.fn();
     gestureDecision.calc(gesture);
 
@@ -35,7 +36,7 @@ describe("GestureDecision", () => {
     const p = new Player("test");
 
     const gestureDecision = new GestureDecision(me, marketLoop, p, TIMEOUT);
-    const gesture = new Gesture(GestureType.Price, GestureAction.Sell, 2);
+    const gesture = new Gesture(GestureType.Price, GestureAction.Sell, 2, 1);
     gestureDecision.triggerValidOrder = jest.fn();
     gestureDecision.calc(gesture);
 
@@ -56,8 +57,8 @@ describe("GestureDecision", () => {
     const p = new Player("test");
 
     const gestureDecision = new GestureDecision(me, marketLoop, p, TIMEOUT);
-    const gestureQty = new Gesture(GestureType.Qty, GestureAction.Sell, -2);
-    const gesturePrice = new Gesture(GestureType.Price, GestureAction.Sell, 8);
+    const gestureQty = new Gesture(GestureType.Qty, GestureAction.Sell, -2, 1);
+    const gesturePrice = new Gesture(GestureType.Price, GestureAction.Sell, 8, 1);
 
     expect(me.offers.size()).toBe(0);
 
@@ -80,13 +81,14 @@ describe("GestureDecision", () => {
     const p = new Player("test");
 
     const gestureDecision = new GestureDecision(me, marketLoop, p, TIMEOUT);
-    const gestureQtyL = new Gesture(GestureType.Qty, GestureAction.Buy, 2);
-    const gesturePriceL = new Gesture(GestureType.Price, GestureAction.Buy, 2);
-    const gestureQtyM = new Gesture(GestureType.Qty, GestureAction.Sell, -1);
+    const gestureQtyL = new Gesture(GestureType.Qty, GestureAction.Buy, 2, 1);
+    const gesturePriceL = new Gesture(GestureType.Price, GestureAction.Buy, 2, 1);
+    const gestureQtyM = new Gesture(GestureType.Qty, GestureAction.Sell, -1, 1);
     const gesturePriceM = new Gesture(
       GestureType.Price,
       GestureAction.Market,
-      NaN
+      NaN,
+      null
     );
 
     //build limit
@@ -103,7 +105,7 @@ describe("GestureDecision", () => {
 
     //garbage to unlock
     gestureDecision.calc(
-      new Gesture(GestureType.Action, GestureAction.Garbage, NaN)
+      new Gesture(GestureType.Action, GestureAction.Garbage, NaN, null)
     );
     gestureDecision.calc(gestureQtyM);
     await new Promise((res) => setTimeout(res, TIMEOUT));
@@ -122,12 +124,13 @@ describe("GestureDecision", () => {
     const p = new Player("test");
 
     const gestureDecision = new GestureDecision(me, marketLoop, p, TIMEOUT);
-    const gestureQtyL = new Gesture(GestureType.Qty, GestureAction.Buy, 2);
-    const gesturePriceL = new Gesture(GestureType.Price, GestureAction.Buy, 2);
+    const gestureQtyL = new Gesture(GestureType.Qty, GestureAction.Buy, 2, 1);
+    const gesturePriceL = new Gesture(GestureType.Price, GestureAction.Buy, 2, 1);
     const gesturePriceM = new Gesture(
       GestureType.Price,
       GestureAction.Market,
-      NaN
+      NaN,
+      null
     );
 
     //build limit
@@ -140,7 +143,7 @@ describe("GestureDecision", () => {
 
     //no change
     gestureDecision.calc(
-      new Gesture(GestureType.Action, GestureAction.Garbage, NaN)
+      new Gesture(GestureType.Action, GestureAction.Garbage, NaN, null)
     );
     gestureDecision.calc(gesturePriceM);
     await new Promise((res) => setTimeout(res, TIMEOUT));
@@ -157,11 +160,12 @@ describe("GestureDecision", () => {
     const p = new Player("test");
 
     const gestureDecision = new GestureDecision(me, marketLoop, p, TIMEOUT);
-    const gestureQtyL = new Gesture(GestureType.Qty, GestureAction.Buy, 2);
+    const gestureQtyL = new Gesture(GestureType.Qty, GestureAction.Buy, 2, 1);
     const gestureCancel = new Gesture(
       GestureType.Action,
       GestureAction.Cancel,
-      NaN
+      NaN,
+      null
     );
 
     //build limit
@@ -183,12 +187,13 @@ describe("GestureDecision", () => {
     const p = new Player("test");
 
     const gestureDecision = new GestureDecision(me, marketLoop, p, TIMEOUT);
-    const gestureQtyL = new Gesture(GestureType.Qty, GestureAction.Buy, 2);
-    const gesturePriceL = new Gesture(GestureType.Price, GestureAction.Buy, 2);
+    const gestureQtyL = new Gesture(GestureType.Qty, GestureAction.Buy, 2, 1);
+    const gesturePriceL = new Gesture(GestureType.Price, GestureAction.Buy, 2, 1);
     const gestureCancel = new Gesture(
       GestureType.Action,
       GestureAction.Cancel,
-      NaN
+      NaN,
+      null
     );
 
     //build limit

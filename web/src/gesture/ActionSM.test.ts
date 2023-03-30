@@ -4,7 +4,7 @@ import INPUT_STATE from "./Input_State";
 
 describe("ActionSM", () => {
   it("update() excludes calls to Garbage action", async () => {
-    const gesture = new Gesture(GestureType.Action, GestureAction.Garbage, NaN);
+    const gesture = new Gesture(GestureType.Action, GestureAction.Garbage, NaN, null);
     const TIMEOUT = 100;
     const onFinalTimeout = jest.fn();
     const actionSM = new ActionSM(GestureType.Action, onFinalTimeout, TIMEOUT);
@@ -19,7 +19,7 @@ describe("ActionSM", () => {
   });
 
   it("update() handles cancel action", async () => {
-    const gesture = new Gesture(GestureType.Action, GestureAction.Cancel, NaN);
+    const gesture = new Gesture(GestureType.Action, GestureAction.Cancel, NaN, null);
     const TIMEOUT = 100;
     const onFinalTimeout = jest.fn();
     const actionSM = new ActionSM(GestureType.Action, onFinalTimeout, TIMEOUT);
@@ -33,7 +33,7 @@ describe("ActionSM", () => {
   });
 
   it("update() triggers market order", async () => {
-    const gesture = new Gesture(GestureType.Price, GestureAction.Market, NaN);
+    const gesture = new Gesture(GestureType.Price, GestureAction.Market, NaN, null);
     const TIMEOUT = 100;
     const onFinalTimeout = jest.fn();
     const actionSM = new ActionSM(GestureType.Action, onFinalTimeout, TIMEOUT);

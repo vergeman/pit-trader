@@ -50,19 +50,20 @@ export default class GestureBuilder {
   //expand
   //{"0": {"description": "execute market", "filename": "EXECUTE.csv", "index": 0, "keypress": " "},
   // "10": {"description": "offer 4", "filename": "PRICE_OFFER_4.csv", "index": 10, "keypress": "ALT+4"},
-  build(argMax: number): Gesture {
+  build(argMax: number, probMax: number): Gesture {
     const meta = this.meta[argMax];
 
     //console.log("META", meta);
 
     if (!meta) {
-      return new Gesture(GestureType.Action, GestureAction.None, null);
+      return new Gesture(GestureType.Action, GestureAction.None, null, null);
     }
 
     return new Gesture(
       meta.gestureType as GestureType,
       meta.action as GestureAction,
-      meta.value
+      meta.value,
+      probMax
     );
   }
 }

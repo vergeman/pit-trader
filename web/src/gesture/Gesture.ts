@@ -27,11 +27,18 @@ export class Gesture {
   private _type: GestureType;
   private _action: GestureAction;
   private _value: number | null;
+  private _prob: number | null;
 
-  constructor(type: GestureType, action: GestureAction, value: number | null) {
+  constructor(
+    type: GestureType,
+    action: GestureAction,
+    value: number | null,
+    probMax: number | null
+  ) {
     this._type = type;
     this._action = action;
     this._value = value;
+    this._prob = probMax;
   }
 
   get type(): GestureType {
@@ -45,7 +52,9 @@ export class Gesture {
   get value(): number | null {
     return this._value;
   }
-
+  get prob(): number | null {
+    return this._prob;
+  }
   digit_length(): number {
     const digit_length = this._value === null ? 0 : String(this._value).length;
     return digit_length;

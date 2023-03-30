@@ -66,7 +66,8 @@ export default function CameraGesture(props) {
       if (!classifier) return null;
 
       const probsArgMax = await classifier.classify(landmarks);
-      const gesture = gestureBuilder.build(probsArgMax.argMax);
+      const probMax = probsArgMax.probs[probsArgMax.argMax];
+      const gesture = gestureBuilder.build(probsArgMax.argMax, probMax);
 
       //stale closure
       gestureDecisionRef.current.calc(gesture);
