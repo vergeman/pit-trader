@@ -34,7 +34,8 @@ export class GestureDecision {
   private _action: GestureAction;
   private _records: GestureDecisionRecord[];
   private _renderState: RenderState;
-  private _renderStateTimeout: number
+  private _renderStateTimeout: number;
+  private _messages: [];
   constructor(
     me: MatchingEngine,
     marketLoop: MarketLoop,
@@ -68,6 +69,7 @@ export class GestureDecision {
     this._records = [];
     this._renderState = RenderState.GESTURE_DECISION;
     this._renderStateTimeout = renderStateTimeout;
+    this._messages = [];
   }
 
   get qty(): number | null {
@@ -91,6 +93,13 @@ export class GestureDecision {
   get renderStateTimeout(): number {
     return this._renderStateTimeout;
   }
+  get messages(): [] {
+    return this._messages;
+  }
+  resetMessages(): void {
+    this._messages = [];
+  }
+
   setQtyFn(value: number) {
     console.log("[setQtyFn] FINAL", value);
     this._qty = value;
@@ -145,7 +154,10 @@ export class GestureDecision {
       }
 
       //if no orders just reset gesture
-      this.triggerRenderStateTimer(RenderState.GESTURE_CANCEL, this.renderStateTimeout);
+      this.triggerRenderStateTimer(
+        RenderState.GESTURE_CANCEL,
+        this.renderStateTimeout
+      );
       this.reset();
     }
 
@@ -223,7 +235,10 @@ export class GestureDecision {
     if (order instanceof Order) {
       //reset GestureDecision, but set flag for display purposes
       //need to indicate to user
-      this.triggerRenderStateTimer(RenderState.GESTURE_DECISION_RECORD, this.renderStateTimeout);
+      this.triggerRenderStateTimer(
+        RenderState.GESTURE_DECISION_RECORD,
+        this.renderStateTimeout
+      );
       this.reset();
     }
   }

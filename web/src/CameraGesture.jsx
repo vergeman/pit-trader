@@ -62,23 +62,22 @@ export default function CameraGesture(props) {
     async (landmarks) => {
       //NB: useCallback ensures React.memo works (execute signature will regen on this
       //comonent render)
-
+      //gestureDecisionRef is to handle stale closure
       if (!classifier) return null;
 
       const probsArgMax = await classifier.classify(landmarks);
       const probMax = probsArgMax.probs[probsArgMax.argMax];
       const gesture = gestureBuilder.build(probsArgMax.argMax, probMax);
 
-      //stale closure
+      //calculates gesture and if order is built
       gestureDecisionRef.current.calc(gesture);
 
-      if (gesture.type == GestureType.Qty) {
-        // TODO: function polls, need to handle repetition
-        infoPanel.messagesDispatch({
-          type: "add",
-          text: gesture.value,
-        });
+      //send any messages populated in calc this calcGesture() pass
+      for (let msg of gestureDecisionRef.current.messages) {
+        infoPanel.messagesDispatch(msg);
       }
+      gestureDecisionRef.current.resetMessages();
+
       props.triggerGameState(gestureDecisionRef.current);
 
       setGestureData({ ...probsArgMax, gesture });
