@@ -1,12 +1,15 @@
 import { useCallback, useEffect, useState, useRef } from "react";
+import { Button } from "react-bootstrap";
 import Camera from "./input/Camera.jsx";
 import GesturesPanel from "./GesturesPanel.jsx";
 import MatchingEngineView from "./MatchingEngineView.jsx";
 import GestureDecision from "./gesture/GestureDecision";
 import PlayerStatus from "./playerView/PlayerStatus.jsx";
-import PlayerOrders from "./playerView/PlayerOrders.jsx";
 import Classifier from "./gesture/Classifier.js";
 import GestureBuilder from "./gesture/GestureBuilder.ts";
+import { GestureType } from "./gesture/Gesture";
+import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
+import InfoTabs from "./infopanel/InfoTabs.jsx";
 
 export default function CameraGesture(props) {
   /* default bootstrap size */
@@ -16,6 +19,7 @@ export default function CameraGesture(props) {
   const [gestureBuilder, setGestureBuilder] = useState(null);
   const [gesture, setGesture] = useState(null);
   const gestureDecisionRef = useRef(null); //fix for stale closure
+  const infoPanel = useInfoPanel();
 
   useEffect(() => {
     console.log("[CameraGesture.jsx]: useEffect init");
@@ -25,8 +29,8 @@ export default function CameraGesture(props) {
       props.me,
       props.marketLoop,
       props.player,
-      750,   //gesture Timeout
-      1000   //gestureDecision view timeout
+      750, //gesture Timeout
+      1000 //gestureDecision view timeout
     );
 
     setGestureBuilder(gestureBuilder);
@@ -38,6 +42,22 @@ export default function CameraGesture(props) {
     });
   }, [props.me, props.player, props.marketLoop]);
 
+  //test
+  const testMessages = () => {
+    infoPanel.messagesDispatch({
+      type: "add",
+      text: "messages",
+    });
+  };
+
+  const testActiveTab = () => {
+    const action = {
+      type: "select",
+      value: "live-orders", //tab key
+    };
+    infoPanel.activeTabDispatch(action);
+  };
+
   const calcGesture = useCallback(
     async (landmarks) => {
       //NB: useCallback ensures React.memo works (execute signature will regen on this
@@ -46,11 +66,19 @@ export default function CameraGesture(props) {
       if (!classifier) return null;
 
       const probsArgMax = await classifier.classify(landmarks);
-      const gesture = gestureBuilder.build(probsArgMax.argMax);
+      const probMax = probsArgMax.probs[probsArgMax.argMax];
+      const gesture = gestureBuilder.build(probsArgMax.argMax, probMax);
 
       //stale closure
       gestureDecisionRef.current.calc(gesture);
 
+      if (gesture.type == GestureType.Qty) {
+        // TODO: function polls, need to handle repetition
+        infoPanel.messagesDispatch({
+          type: "add",
+          text: gesture.value,
+        });
+      }
       props.triggerGameState(gestureDecisionRef.current);
 
       setGestureData({ ...probsArgMax, gesture });
@@ -91,9 +119,18 @@ export default function CameraGesture(props) {
             marketLoop={props.marketLoop}
             player={props.player}
           />
-          <PlayerOrders player={props.player} />
         </div>
       </div>
+
+      <Button size="sm" onClick={() => testMessages()}>
+        Message
+      </Button>
+      <Button size="sm" onClick={() => testActiveTab()}>
+        Tab
+      </Button>
+
+      {/* Tab displays needs to re-render at CameraGesture level */}
+      <InfoTabs player={props.player} />
     </>
   );
 }

@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import { Container, Row, Col } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 import CameraGesture from "./CameraGesture.jsx";
 import MatchingEngine from "./engine/MatchingEngine";
 import NPCPlayerManager from "./player/NPCPlayerManager";
 import Player from "./player/Player";
 import MarketLoop from "./player/MarketLoop";
-
 import LoseModal from "./LoseModal";
 import useMarketLoopRunner from "./player/useMarketLoopRunner.jsx";
+import InfoPanelProvider from "./infopanel/InfoPanelContext";
 
 export default function Main(props) {
   const config = {
@@ -60,7 +60,6 @@ export default function Main(props) {
     }
   };
 
-
   const triggerGameState = (gestureDecision) => {
     //console.log("[Main.jsx] triggerGameState");
     const price = marketLoop && marketLoop.getPrice();
@@ -72,28 +71,20 @@ export default function Main(props) {
     }
   };
 
-
   console.log("[Main.jsx] render");
+
   return (
     <Container className="pt-6" style={{ background: "azure" }}>
-
       <LoseModal isLose={isLose} resetGame={resetGame} />
-
-      <CameraGesture
-        me={me}
-        player={player}
-        marketLoop={marketLoop}
-        triggerGameState={triggerGameState}
-      />
-
-      {/* TODO: make component */}
-      <Row>
-        <Col>
-          <div className="d-flex justify-content-center">
-            News / Alert/ Challenge / Message Component
-          </div>
-        </Col>
-      </Row>
+      <InfoPanelProvider>
+        {/* CameraGesture set to camera poll */}
+        <CameraGesture
+          me={me}
+          player={player}
+          marketLoop={marketLoop}
+          triggerGameState={triggerGameState}
+        />
+      </InfoPanelProvider>
     </Container>
   );
 }
