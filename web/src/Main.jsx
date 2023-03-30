@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Container, Row, Col } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 import CameraGesture from "./CameraGesture.jsx";
 import MatchingEngine from "./engine/MatchingEngine";
 import NPCPlayerManager from "./player/NPCPlayerManager";

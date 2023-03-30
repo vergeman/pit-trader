@@ -1,7 +1,9 @@
 export function activeTabReducer(activeTab, action) {
+  //console.log("[activeTabReducer]", action);
   switch (action.type) {
     case "select":
-      return action.value;
+      activeTab = action.value;
+      return activeTab;
     default: {
       throw new Error("action doesn't exist", action);
     }

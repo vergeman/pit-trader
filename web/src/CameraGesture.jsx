@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState, useRef } from "react";
+import { Button } from "react-bootstrap";
 import Camera from "./input/Camera.jsx";
 import GesturesPanel from "./GesturesPanel.jsx";
 import MatchingEngineView from "./MatchingEngineView.jsx";
@@ -6,7 +7,7 @@ import GestureDecision from "./gesture/GestureDecision";
 import PlayerStatus from "./playerView/PlayerStatus.jsx";
 import Classifier from "./gesture/Classifier.js";
 import GestureBuilder from "./gesture/GestureBuilder.ts";
-import { GestureType }from "./gesture/Gesture";
+import { GestureType } from "./gesture/Gesture";
 import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
 import InfoTabs from "./infopanel/InfoTabs.jsx";
 
@@ -28,8 +29,8 @@ export default function CameraGesture(props) {
       props.me,
       props.marketLoop,
       props.player,
-      750,   //gesture Timeout
-      1000   //gestureDecision view timeout
+      750, //gesture Timeout
+      1000 //gestureDecision view timeout
     );
 
     setGestureBuilder(gestureBuilder);
@@ -39,8 +40,23 @@ export default function CameraGesture(props) {
     gestureBuilder.load().then(() => {
       classifier.load(gestureBuilder.garbage_idx);
     });
-
   }, [props.me, props.player, props.marketLoop]);
+
+  //test
+  const testMessages = () => {
+    infoPanel.messagesDispatch({
+      type: "add",
+      text: "messages",
+    });
+  };
+
+  const testActiveTab = () => {
+    const action = {
+      type: "select",
+      value: "live-orders", //tab key
+    };
+    infoPanel.activeTabDispatch(action);
+  };
 
   const calcGesture = useCallback(
     async (landmarks) => {
@@ -56,11 +72,10 @@ export default function CameraGesture(props) {
       gestureDecisionRef.current.calc(gesture);
 
       if (gesture.type == GestureType.Qty) {
-
-        // will be too fast
+        // TODO: function polls, need to handle repetition
         infoPanel.messagesDispatch({
-          type: 'add',
-          text: gesture.value
+          type: "add",
+          text: gesture.value,
         });
       }
       props.triggerGameState(gestureDecisionRef.current);
@@ -105,6 +120,13 @@ export default function CameraGesture(props) {
           />
         </div>
       </div>
+
+      <Button size="sm" onClick={() => testMessages()}>
+        Message
+      </Button>
+      <Button size="sm" onClick={() => testActiveTab()}>
+        Tab
+      </Button>
 
       {/* Tab displays needs to re-render at CameraGesture level */}
       <InfoTabs player={props.player} />
