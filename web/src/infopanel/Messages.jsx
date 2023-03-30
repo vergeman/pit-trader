@@ -1,11 +1,13 @@
 /* News / Alert/ Challenge / Message Component */
-import { useMessages, useMessagesDispatch } from "./InfoPanelContext.jsx";
+import { useInfoPanel } from "./InfoPanelContext.jsx";
 import { Row, Col } from "react-bootstrap";
 
-export default function InfoPanelContainer(props) {
-  const messages = useMessages();
-  const dispatch = useMessagesDispatch();
+export default function Messages(props) {
+  const infoPanel = useInfoPanel();
+  const messages = infoPanel.messages;
+  const dispatch = infoPanel.messagesDispatch;
 
+  //TODO: remove test
   const addMessage = (text) => {
     dispatch({
       type: "add",

@@ -2,7 +2,7 @@ import { useState } from "react";
 import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
 import OrderTable from "./OrderTable.jsx";
-import InfoPanel from "../infopanel/InfoPanel.jsx";
+import Messages from "./Messages.jsx";
 
 /*
  * NB: <Tab> subcomponents don't automatically render if extracted to own
@@ -33,7 +33,7 @@ export default function InfoTabs(props) {
       className="mb-3"
     >
       <Tab eventKey="messages" title="Messages">
-        <InfoPanel init="test" setActiveKey={setActiveKey} />
+        <Messages init="test" setActiveKey={setActiveKey} />
       </Tab>
       <Tab eventKey="quests" title="Quests">
         Quests here

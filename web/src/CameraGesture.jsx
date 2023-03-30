@@ -7,8 +7,8 @@ import PlayerStatus from "./playerView/PlayerStatus.jsx";
 import Classifier from "./gesture/Classifier.js";
 import GestureBuilder from "./gesture/GestureBuilder.ts";
 import { GestureType }from "./gesture/Gesture";
-import { useMessagesDispatch } from "./infopanel/InfoPanelContext.jsx";
-import InfoTabs from "./playerView/InfoTabs.jsx";
+import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
+import InfoTabs from "./infopanel/InfoTabs.jsx";
 
 export default function CameraGesture(props) {
   /* default bootstrap size */
@@ -18,7 +18,8 @@ export default function CameraGesture(props) {
   const [gestureBuilder, setGestureBuilder] = useState(null);
   const [gesture, setGesture] = useState(null);
   const gestureDecisionRef = useRef(null); //fix for stale closure
-  const messagesDispatch = useMessagesDispatch();
+  const infoPanel = useInfoPanel();
+
   useEffect(() => {
     console.log("[CameraGesture.jsx]: useEffect init");
     const gestureBuilder = new GestureBuilder();
@@ -57,7 +58,7 @@ export default function CameraGesture(props) {
       if (gesture.type == GestureType.Qty) {
 
         // will be too fast
-        messagesDispatch({
+        infoPanel.messagesDispatch({
           type: 'add',
           text: gesture.value
         });

@@ -1,13 +1,21 @@
-
-export default function messagesReducer(messages, action) {
-
+export function activeTabReducer(activeTab, action) {
   switch (action.type) {
-    case 'add':
-    console.log("ADD", action.text);
+    case "select":
+      return action.value;
+    default: {
+      throw new Error("action doesn't exist", action);
+    }
+  }
+}
+
+export function messagesReducer(messages, action) {
+  switch (action.type) {
+    case "add":
+      console.log("ADD", action.text);
       return [
         {
           //id?
-          text: action.text
+          text: action.text,
         },
         ...messages,
       ];
@@ -16,5 +24,4 @@ export default function messagesReducer(messages, action) {
       throw new Error("action doesn't exist", action.type);
     }
   }
-
 }

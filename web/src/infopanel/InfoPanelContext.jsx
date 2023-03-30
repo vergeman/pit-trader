@@ -1,23 +1,20 @@
 import { createContext, useContext, useReducer } from "react";
-import messagesReducer from "./InfoPanelReducer.js";
+import { messagesReducer, activeTabReducer } from "./InfoPanelReducer.js";
+export const InfoPanelContext = createContext(null);
 
-export const MessagesContext = createContext(null);
-export const MessagesDispatchContext = createContext(null);
-export function useMessages() {
-  return useContext(MessagesContext);
-}
-export function useMessagesDispatch() {
-  return useContext(MessagesDispatchContext);
+export function useInfoPanel() {
+  return useContext(InfoPanelContext);
 }
 
 export default function InfoPanelProvider({ children }) {
-  const [messages, dispatch] = useReducer(messagesReducer, []);
+  const [messages, messagesDispatch] = useReducer(messagesReducer, []);
+  const [activeTab, activeTabDispatch] = useReducer(activeTabReducer, "messages");
 
   return (
-    <MessagesContext.Provider value={messages}>
-      <MessagesDispatchContext.Provider value={dispatch}>
-        {children}
-      </MessagesDispatchContext.Provider>
-    </MessagesContext.Provider>
+    <InfoPanelContext.Provider
+      value={{ messages, messagesDispatch, activeTab, activeTabDispatch }}
+    >
+      {children}
+    </InfoPanelContext.Provider>
   );
 }
