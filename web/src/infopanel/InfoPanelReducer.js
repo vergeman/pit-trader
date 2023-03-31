@@ -1,4 +1,5 @@
 import Message from "./Message.js";
+import { OrderType } from "../engine/Order.ts";
 
 export function activeTabReducer(activeTab, action) {
   //console.log("[activeTabReducer]", action);
@@ -20,23 +21,44 @@ const populateTemplateString = (template, vars) => {
 };
 
 export function messagesReducer(messages, action) {
+  console.log("[messagesReducer]", action);
+
   //TODO: remove demo Button reducer to remove action.text
   //TODO: add msg type once we get a better idea what's being sent
   let text;
   switch (action.type) {
     case Message.SetPrice:
-      text = populateTemplateString(Message.SetPrice, action.value);
-      break;
     case Message.SetQty:
-      text = populateTemplateString(Message.SetQty, action.value);
-      break;
-    case "add":
-      text = action.text;
-      break;
-    default: {
-      console.error("action doesn't exist", action);
-      return messages;
-    }
+    case Message.CancelOrder:
+    case Message.CancelGesture:
+      text = populateTemplateString(action.type, [action.value]);
+      return [{ text }, ...messages];
+
+    case Message.OrderSubmitted:
+      const order = action.value;
+      const orderType = order.orderType;
+      const qty =
+        order.orderType === OrderType.Limit ? order.qty : order.qtyFilled;
+      const messageType =
+        orderType === OrderType.Limit
+          ? qty > 0
+            ? Message.BuyLimitOrder
+            : Message.SellLimitOrder
+          : qty > 0
+          ? Message.BuyMarketOrder
+          : Message.SellMarketOrder;
+      text = populateTemplateString(messageType, [qty, order.price]);
+      return [{ text }, ...messages];
+
+    case Message.Restart:
+      //resets message array
+      return [];
+
+    case "test":
+      text = "Message";
+      return [{ text }, ...messages];
   }
-  return [{ text }, ...messages];
+
+  console.error("action not detected", action);
+  return messages;
 }

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
 import OrderTable from "./OrderTable.jsx";
@@ -35,7 +34,7 @@ export default function InfoTabs(props) {
       className="mb-3"
     >
       <Tab eventKey="messages" title="Messages">
-        <Messages init="test" />
+        <Messages />
       </Tab>
       <Tab eventKey="quests" title="Quests">
         Quests here

@@ -104,22 +104,14 @@ export class GestureDecision {
   setQtyFn(value: number) {
     console.log("[setQtyFn] FINAL", value);
     this._qty = value;
-    const msg = {
-      type: Message.SetQty,
-      value: [value]
-    };
-    this._messages.push(msg);
+    this.addMessage(Message.SetQty, this._qty);
     this.triggerValidOrder();
   }
 
   setPriceFn(value: number) {
     console.log("[setPriceFn] FINAL", value);
     this._price = value;
-    const msg = {
-      type: Message.SetPrice,
-      value: [value]
-    };
-    this._messages.push(msg);
+    this.addMessage(Message.SetPrice, this._price);
     this.triggerValidOrder();
   }
 
@@ -162,9 +154,13 @@ export class GestureDecision {
         };
 
         this._records.unshift(record);
+
+        this.addMessage(Message.CancelOrder, order.id);
+      } else {
+        //if no orders just reset gesture
+        this.addMessage(Message.CancelGesture, null);
       }
 
-      //if no orders just reset gesture
       this.triggerRenderStateTimer(
         RenderState.GESTURE_CANCEL,
         this.renderStateTimeout
@@ -195,6 +191,8 @@ export class GestureDecision {
           "[GestureDecision] triggerValidOrder: Market order submitted",
           this.qty
         );
+
+        this.addMessage(Message.OrderSubmitted, order);
       } catch (e: any) {
         //TODO: notify user mechanic with message
         //1. store in matchingEngine, have it detect change in MatchingView
@@ -236,6 +234,8 @@ export class GestureDecision {
           "[GestureDecision] triggerValidOrder Limit order submitted",
           order
         );
+
+        this.addMessage(Message.OrderSubmitted, order);
       } catch (e: any) {
         console.error(e.message);
         this.reset();
@@ -244,6 +244,7 @@ export class GestureDecision {
 
     // successful order was created
     if (order instanceof Order) {
+
       //reset GestureDecision, but set flag for display purposes
       //need to indicate to user
       this.triggerRenderStateTimer(
@@ -252,6 +253,11 @@ export class GestureDecision {
       );
       this.reset();
     }
+  }
+
+  addMessage(type: String, value: any) {
+    console.log("[addMessage]", type, value);
+    this._messages.push({type, value});
   }
 
   triggerRenderStateTimer(renderState: RenderState, time: number): void {

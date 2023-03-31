@@ -10,6 +10,7 @@ import GestureBuilder from "./gesture/GestureBuilder.ts";
 import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
 import InfoTabs from "./infopanel/InfoTabs.jsx";
 
+
 export default function CameraGesture(props) {
   /* default bootstrap size */
   const defaultCameraDims = { width: 636, height: 477 };
@@ -44,8 +45,8 @@ export default function CameraGesture(props) {
   //test
   const testMessages = () => {
     infoPanel.messagesDispatch({
-      type: "add",
-      text: "messages",
+      type: "test",
+      value: "messages",
     });
   };
 
