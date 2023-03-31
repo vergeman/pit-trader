@@ -7,7 +7,6 @@ import GestureDecision from "./gesture/GestureDecision";
 import PlayerStatus from "./playerView/PlayerStatus.jsx";
 import Classifier from "./gesture/Classifier.js";
 import GestureBuilder from "./gesture/GestureBuilder.ts";
-import { GestureType } from "./gesture/Gesture";
 import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
 import InfoTabs from "./infopanel/InfoTabs.jsx";
 
@@ -76,6 +75,7 @@ export default function CameraGesture(props) {
       for (let msg of gestureDecisionRef.current.messages) {
         infoPanel.messagesDispatch(msg);
       }
+      //NB: local gestureDecision msgQueue (not context)
       gestureDecisionRef.current.resetMessages();
 
       props.triggerGameState(gestureDecisionRef.current);
