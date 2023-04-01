@@ -26,18 +26,21 @@ export interface Transaction {
   qty: number;
   price: number;
   timestamp: number;
+  status: OrderStatus
 }
 
 export class Order {
   private _id: string;
   private _player_id: string;
   private _orderType: OrderType;
-  private _qty: number; // initial quantity
+  private _initialQty: number; // initial quantity
+  private _qty: number; // working quantity
   private _qtyFilled: number; // filled quantity
   private _transactions: Transaction[];
   private _price: number;
   private _status: OrderStatus;
   private _timestamp: number;
+  private _lastReported: number;
 
   //TODO: what is my price resolution (no decimals)
   //TODO: player submits hit/lift own order -> pre risk check
@@ -49,6 +52,7 @@ export class Order {
   ) {
     this._player_id = player_id;
     this._orderType = orderType;
+    this._initialQty = this._toFixedNum(qty);
     this._qty = this._toFixedNum(qty);
     this._price = this._toFixedNum(orderType === OrderType.Limit ? price : Number.NaN);
 
@@ -57,10 +61,12 @@ export class Order {
     this._transactions = [];
     this._status = OrderStatus.New;
     this._timestamp = Date.now();
+    this._lastReported = 0;
   }
 
   execute(oppOrder: Order): TransactionReport {
     //determine which qty to use Min
+    //const initialQty = this.qty;
     const abs_qty = Math.min(Math.abs(this.qty), Math.abs(oppOrder.qty));
 
     //deduct & apply qtys
@@ -85,6 +91,7 @@ export class Order {
     this._transactions.push({
       id: uuidv4(),
       orderType: this.orderType,
+      status: this.status,
       player_id: oppOrder.player_id,
       qty: qtyFilled,
       price,
@@ -94,6 +101,7 @@ export class Order {
     oppOrder._transactions.push({
       id: uuidv4(),
       orderType: oppOrder.orderType,
+      status: oppOrder.status,
       player_id: this.player_id,
       qty: oppQtyFilled,
       price,
@@ -160,6 +168,17 @@ export class Order {
     return canBuy || canSell;
   }
 
+  getNewTransactions(): Transaction[] {
+
+    const numNew = this._transactions.length - this._lastReported;
+    if (numNew) {
+      const transactions = this._transactions.slice(this._lastReported);
+      this._lastReported += numNew;
+      return transactions;
+    }
+    return [];
+  }
+
   get id(): string {
     return this._id;
   }
@@ -174,6 +193,9 @@ export class Order {
   }
   set price(num: number) {
     this._price = this._toFixedNum(num);
+  }
+  get initialQty(): number {
+    return this._initialQty;
   }
   get qty(): number {
     return this._toFixedNum(this._qty);

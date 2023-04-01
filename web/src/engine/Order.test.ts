@@ -76,4 +76,17 @@ describe("Order", () => {
     expect(transactionReport.qty).toBe(25);
     expect(transactionReport.timestamp).toBeGreaterThanOrEqual(tstamp);
   });
+  it("initialQty is maintained after transactions", async () => {
+    const tstamp = Date.now();
+    await new Promise((res) => setTimeout(res, 10));
+    const o1 = new Order("123", OrderType.Limit, -50, 50);
+    const o2 = new Order("abc", OrderType.Market, 25, NaN);
+    o2.execute(o1);
+
+    expect(o1.qty).toBe(-25);
+    expect(o2.qty).toBe(0);
+
+    expect(o1.initialQty).toBe(-50);
+    expect(o2.initialQty).toBe(25);
+  });
 });

@@ -12,7 +12,9 @@ export const Message = {
   SellMarketOrder: "Sold ${1} Market", //qty at Market
   BuyMarketOrder: "Bought ${1} Market",
 
-  OrderFilled: "Order Filled",
+  FillMarket: "Filled ${1} price: ${2}",
+  FillLimit: "Filled ${1} price: ${2}, working ${3}", //partial qty / remaining qty
+  OrderFilled: "Order Filled - Qty: ${1}, Price: ${2}", //total qty / price
 
   Restart: "Restart",
 };

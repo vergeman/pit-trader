@@ -26,6 +26,8 @@ export function messagesReducer(messages, action) {
   //TODO: remove demo Button reducer to remove action.text
   //TODO: add msg type once we get a better idea what's being sent
   let text;
+  let transaction;
+  let order;
   switch (action.type) {
     case Message.SetPrice:
     case Message.SetQty:
@@ -35,10 +37,12 @@ export function messagesReducer(messages, action) {
       return [{ text }, ...messages];
 
     case Message.OrderSubmitted:
-      const order = action.value;
+      order = action.value;
       const orderType = order.orderType;
       const qty =
-        order.orderType === OrderType.Limit ? order.qty : order.qtyFilled;
+        order.orderType === OrderType.Limit
+          ? order.qty + order.qtyFilled
+          : order.qtyFilled;
       const messageType =
         orderType === OrderType.Limit
           ? qty > 0
@@ -48,6 +52,26 @@ export function messagesReducer(messages, action) {
           ? Message.BuyMarketOrder
           : Message.SellMarketOrder;
       text = populateTemplateString(messageType, [qty, order.price]);
+      return [{ text }, ...messages];
+
+    case Message.FillLimit:
+    case Message.FillMarket:
+      transaction = action.value.transaction;
+      order = action.value.order;
+
+      text = populateTemplateString(action.type, [
+        -transaction.qty,
+        transaction.price,
+        order.qty
+      ]);
+      return [{ text }, ...messages];
+
+    case Message.OrderFilled:
+      order = action.value;
+      text = populateTemplateString(action.type, [
+        order.qtyFilled,
+        order.priceFilled().toFixed(1),
+      ]);
       return [{ text }, ...messages];
 
     case Message.Restart:

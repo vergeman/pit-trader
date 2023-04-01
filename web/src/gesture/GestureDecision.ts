@@ -244,7 +244,6 @@ export class GestureDecision {
 
     // successful order was created
     if (order instanceof Order) {
-
       //reset GestureDecision, but set flag for display purposes
       //need to indicate to user
       this.triggerRenderStateTimer(
@@ -255,9 +254,34 @@ export class GestureDecision {
     }
   }
 
+  getNewMessages() {
+    const transactionMsgs: any = [];
+    for (let order of this.player.orders) {
+      for (let transaction of order.getNewTransactions()) {
+        const type =
+          order.orderType == OrderType.Limit
+            ? Message.FillLimit
+            : Message.FillMarket;
+        transactionMsgs.push({
+          type,
+          value: { order, transaction },
+        });
+
+        if (transaction.status == OrderStatus.Complete) {
+          transactionMsgs.push({
+            type: Message.OrderFilled,
+            value: order,
+          });
+        }
+      }
+    }
+
+    return ([] as any).concat(this.messages, transactionMsgs);
+  }
+
   addMessage(type: String, value: any) {
     console.log("[addMessage]", type, value);
-    this._messages.push({type, value});
+    this._messages.push({ type, value });
   }
 
   triggerRenderStateTimer(renderState: RenderState, time: number): void {
