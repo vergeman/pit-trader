@@ -7,16 +7,19 @@ import Player from "./player/Player";
 import MarketLoop from "./player/MarketLoop";
 import LoseModal from "./LoseModal";
 import useMarketLoopRunner from "./player/useMarketLoopRunner.jsx";
-import InfoPanelProvider from "./infopanel/InfoPanelContext";
+import { InfoPanelProvider } from "./infopanel/InfoPanelContext";
 
 export default function Main(props) {
+
   const config = {
     tick: 1000,
     limitPL: -1000,
   };
 
+
   const [isLose, setIsLose] = useState(false);
   const [isLoop, setIsLoop] = useState(true);
+  const [gameID, setGameID] = useState(0);
 
   const [me, setMe] = useState(null);
   const [npcPlayerManager, setNPCPlayerManager] = useState(null);
@@ -24,6 +27,7 @@ export default function Main(props) {
   const [marketLoop, setMarketLoop] = useState(null);
 
   const [gestureDecision, setGestureDecision] = useState(null);
+
 
   useEffect(() => {
     const npcs = [
@@ -47,7 +51,8 @@ export default function Main(props) {
   useMarketLoopRunner(marketLoop, isLoop, 1000);
 
   const resetGame = () => {
-    console.log("reset");
+    //fired on modal
+    console.log("[Main] resetGame()");
     if (player) {
       gestureDecision.resetRecords();
       player.reset();
@@ -55,6 +60,7 @@ export default function Main(props) {
       me.reset();
       marketLoop.init();
 
+      setGameID(gameID + 1); //resets context provider
       setIsLose(false);
       setIsLoop(true);
     }
@@ -71,12 +77,12 @@ export default function Main(props) {
     }
   };
 
-  console.log("[Main.jsx] render");
+  console.log("[Main.jsx] render", gameID);
 
   return (
     <Container className="pt-6" style={{ background: "azure" }}>
       <LoseModal isLose={isLose} resetGame={resetGame} />
-      <InfoPanelProvider>
+      <InfoPanelProvider gameID={gameID}>
         {/* CameraGesture set to camera poll */}
         <CameraGesture
           me={me}

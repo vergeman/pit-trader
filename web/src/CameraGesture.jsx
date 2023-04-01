@@ -7,9 +7,9 @@ import GestureDecision from "./gesture/GestureDecision";
 import PlayerStatus from "./playerView/PlayerStatus.jsx";
 import Classifier from "./gesture/Classifier.js";
 import GestureBuilder from "./gesture/GestureBuilder.ts";
-import { GestureType } from "./gesture/Gesture";
 import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
 import InfoTabs from "./infopanel/InfoTabs.jsx";
+
 
 export default function CameraGesture(props) {
   /* default bootstrap size */
@@ -45,8 +45,8 @@ export default function CameraGesture(props) {
   //test
   const testMessages = () => {
     infoPanel.messagesDispatch({
-      type: "add",
-      text: "messages",
+      type: "test",
+      value: "messages",
     });
   };
 
@@ -62,23 +62,23 @@ export default function CameraGesture(props) {
     async (landmarks) => {
       //NB: useCallback ensures React.memo works (execute signature will regen on this
       //comonent render)
-
+      //gestureDecisionRef is to handle stale closure
       if (!classifier) return null;
 
       const probsArgMax = await classifier.classify(landmarks);
       const probMax = probsArgMax.probs[probsArgMax.argMax];
       const gesture = gestureBuilder.build(probsArgMax.argMax, probMax);
 
-      //stale closure
+      //calculates gesture and if order is built
       gestureDecisionRef.current.calc(gesture);
 
-      if (gesture.type == GestureType.Qty) {
-        // TODO: function polls, need to handle repetition
-        infoPanel.messagesDispatch({
-          type: "add",
-          text: gesture.value,
-        });
+      //send any messages populated in calc this calcGesture() pass
+      for (let msg of gestureDecisionRef.current.getNewMessages() ) {
+        infoPanel.messagesDispatch(msg);
       }
+      //NB: local gestureDecision msgQueue (not context)
+      gestureDecisionRef.current.resetMessages();
+
       props.triggerGameState(gestureDecisionRef.current);
 
       setGestureData({ ...probsArgMax, gesture });

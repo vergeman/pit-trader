@@ -5,6 +5,7 @@ import MatchingEngine from "../engine/MatchingEngine";
 import MarketLoop from "../player/MarketLoop";
 import Player from "../player/Player";
 import { OrderType, OrderStatus, Order } from "../engine/Order";
+import Message from "../infopanel/Message.js";
 
 export enum RenderState {
   GESTURE_DECISION, //vanilla gesture decision (partial order build)
@@ -34,7 +35,8 @@ export class GestureDecision {
   private _action: GestureAction;
   private _records: GestureDecisionRecord[];
   private _renderState: RenderState;
-  private _renderStateTimeout: number
+  private _renderStateTimeout: number;
+  private _messages: any[];
   constructor(
     me: MatchingEngine,
     marketLoop: MarketLoop,
@@ -68,6 +70,7 @@ export class GestureDecision {
     this._records = [];
     this._renderState = RenderState.GESTURE_DECISION;
     this._renderStateTimeout = renderStateTimeout;
+    this._messages = [];
   }
 
   get qty(): number | null {
@@ -91,15 +94,24 @@ export class GestureDecision {
   get renderStateTimeout(): number {
     return this._renderStateTimeout;
   }
+  get messages(): any[] {
+    return this._messages;
+  }
+  resetMessages(): void {
+    this._messages = [];
+  }
+
   setQtyFn(value: number) {
     console.log("[setQtyFn] FINAL", value);
     this._qty = value;
+    this.addMessage(Message.SetQty, this._qty);
     this.triggerValidOrder();
   }
 
   setPriceFn(value: number) {
     console.log("[setPriceFn] FINAL", value);
     this._price = value;
+    this.addMessage(Message.SetPrice, this._price);
     this.triggerValidOrder();
   }
 
@@ -142,10 +154,17 @@ export class GestureDecision {
         };
 
         this._records.unshift(record);
+
+        this.addMessage(Message.CancelOrder, order.id);
+      } else {
+        //if no orders just reset gesture
+        this.addMessage(Message.CancelGesture, null);
       }
 
-      //if no orders just reset gesture
-      this.triggerRenderStateTimer(RenderState.GESTURE_CANCEL, this.renderStateTimeout);
+      this.triggerRenderStateTimer(
+        RenderState.GESTURE_CANCEL,
+        this.renderStateTimeout
+      );
       this.reset();
     }
 
@@ -172,6 +191,8 @@ export class GestureDecision {
           "[GestureDecision] triggerValidOrder: Market order submitted",
           this.qty
         );
+
+        this.addMessage(Message.OrderSubmitted, order);
       } catch (e: any) {
         //TODO: notify user mechanic with message
         //1. store in matchingEngine, have it detect change in MatchingView
@@ -213,6 +234,8 @@ export class GestureDecision {
           "[GestureDecision] triggerValidOrder Limit order submitted",
           order
         );
+
+        this.addMessage(Message.OrderSubmitted, order);
       } catch (e: any) {
         console.error(e.message);
         this.reset();
@@ -223,9 +246,42 @@ export class GestureDecision {
     if (order instanceof Order) {
       //reset GestureDecision, but set flag for display purposes
       //need to indicate to user
-      this.triggerRenderStateTimer(RenderState.GESTURE_DECISION_RECORD, this.renderStateTimeout);
+      this.triggerRenderStateTimer(
+        RenderState.GESTURE_DECISION_RECORD,
+        this.renderStateTimeout
+      );
       this.reset();
     }
+  }
+
+  getNewMessages() {
+    const transactionMsgs: any = [];
+    for (let order of this.player.orders) {
+      for (let transaction of order.getNewTransactions()) {
+        const type =
+          order.orderType == OrderType.Limit
+            ? Message.FillLimit
+            : Message.FillMarket;
+        transactionMsgs.push({
+          type,
+          value: { order, transaction },
+        });
+
+        if (transaction.status == OrderStatus.Complete) {
+          transactionMsgs.push({
+            type: Message.OrderFilled,
+            value: order,
+          });
+        }
+      }
+    }
+
+    return ([] as any).concat(this.messages, transactionMsgs);
+  }
+
+  addMessage(type: String, value: any) {
+    console.log("[addMessage]", type, value);
+    this._messages.push({ type, value });
   }
 
   triggerRenderStateTimer(renderState: RenderState, time: number): void {
