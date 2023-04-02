@@ -122,12 +122,14 @@ export default function CameraGesture(props) {
         </div>
       </div>
 
-      <Button size="sm" onClick={() => testMessages()}>
-        Message
-      </Button>
-      <Button size="sm" onClick={() => testActiveTab()}>
-        Tab
-      </Button>
+      <div class="wrap">
+        <Button size="sm" onClick={() => testMessages()}>
+          Message
+        </Button>
+        <Button size="sm" onClick={() => testActiveTab()}>
+          Tab
+        </Button>
+      </div>
 
       {/* Tab displays needs to re-render at CameraGesture level */}
       <InfoTabs player={props.player} />

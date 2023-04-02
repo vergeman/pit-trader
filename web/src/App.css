@@ -33,8 +33,30 @@
   }
 }
 
+
 /*
- *  layout grid
+ * main layout
+ * main container set to fullscreen 100vh:
+ * 1. .main-wrapper elements (webcam, gestures, ME display, etc)
+ * 2. tab content expandable to remaining screen size
+ *   flex: 0 0 auto (grow/shrink/basis initial size)
+ *   flex: 1 1 auto (fill remainder)
+ */
+
+#main {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.tab-content {
+  flex: 1 1 auto;
+  overflow-y: auto;
+}
+
+
+/*
+ *  layout grid for main-wrapper elements
  */
 
 .d-grid.main-wrapper {
@@ -57,6 +79,7 @@
   grid-column: 2/4;
   grid-row: 2/3;
 }
+
 
 
 /* desktop */
