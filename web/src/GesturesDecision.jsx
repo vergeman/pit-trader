@@ -66,7 +66,7 @@ export default function GesturesDecision(props) {
 
   //Note: not sure where to style, but want indicators for now
   return (
-    <table className="table table-sm caption-top w-100">
+    <table className="table table-sm  table-bordered caption-top w-100">
       <caption>{props.caption}</caption>
       <thead>
         <tr>

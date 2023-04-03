@@ -80,7 +80,7 @@ export default function Main(props) {
   console.log("[Main.jsx] render", gameID);
 
   return (
-    <Container id="main" className="pt-6" style={{ background: "azure" }}>
+    <Container id="main" className="pt-6">
       <LoseModal isLose={isLose} resetGame={resetGame} />
       <InfoPanelProvider gameID={gameID}>
         {/* CameraGesture set to camera poll */}

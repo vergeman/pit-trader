@@ -37,7 +37,7 @@ export default function MatchingEngineView(props) {
   return (
     <>
       {/* Mobile condensed bid/offer view */}
-      <Table size="sm" className="text-center caption-top d-md-none">
+      <Table size="sm" className="text-center table-bordered caption-top d-md-none">
         <thead>
           <tr>
             <th>Qty</th>
@@ -50,16 +50,16 @@ export default function MatchingEngineView(props) {
         <tbody>
           <tr>
             <td>{bestBidOrder && bestBidOrder.qty}</td>
-            <td>{bestBidOrder && bestBidOrder.price}</td>
-            <td>{bestOfferOrder && bestOfferOrder.price}</td>
-            <td>{bestOfferOrder && bestOfferOrder.qty}</td>
+            <td className="me-bid-bg">{bestBidOrder && bestBidOrder.price}</td>
+            <td className="me-price-bg">{bestOfferOrder && bestOfferOrder.price}</td>
+            <td className="me-offer-bg">{bestOfferOrder && bestOfferOrder.qty}</td>
             <td>{lastPrice}</td>
           </tr>
         </tbody>
       </Table>
 
       {/* Desktop 'active trader' view */}
-      <Table size="sm" className="text-center caption-top d-none d-md-table">
+      <Table size="sm" className="text-center table-bordered caption-top d-none d-md-table">
         <thead>
           <tr>
             <th>Buy Qty</th>
@@ -74,9 +74,9 @@ export default function MatchingEngineView(props) {
             return (
               <tr key={price} className={price == lastPrice ? "me-isLast" : ""}>
                 <td>{bidMaps.playerOrdersPriceQtyMap.get(Number(price))}</td>
-                <td>{bidMaps.allOrdersPriceQtyMap.get(Number(price))}</td>
-                <td>{renderPrice(price, gridNumMaxLen)}</td>
-                <td>{offerMaps.allOrdersPriceQtyMap.get(Number(price))}</td>
+                <td className="me-bid-bg">{bidMaps.allOrdersPriceQtyMap.get(Number(price))}</td>
+                <td className="me-price-bg">{renderPrice(price, gridNumMaxLen)}</td>
+                <td className="me-offer-bg">{offerMaps.allOrdersPriceQtyMap.get(Number(price))}</td>
                 <td>{offerMaps.playerOrdersPriceQtyMap.get(Number(price))}</td>
               </tr>
             );

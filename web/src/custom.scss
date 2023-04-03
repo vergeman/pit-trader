@@ -1,11 +1,59 @@
 // Override default variables before the import
-//$body-bg: #000;
-
-$font-size-base: .85rem;
-caption { padding: .25rem; }
 
 /* Theme */
-th { font-weight: 400;}
+
+$body-bg: #161616;
+$body-color: #dedede;
+$font-size-base: .85rem;
+
+/* Table */
+.table > :not(caption) > * > * {
+  box-shadow: none;
+}
+caption { padding: .25rem; }
+$table-bg: #0a0a0a;
+$table-border-color: #2e2e2e;
+
+td {
+  border-color: $table-border-color;
+}
+
+th {
+  font-weight: 400;
+  background: #1b1b1b !important;
+  color: #8c8c8c;
+  border-color: #3c3c3c;
+}
+
+
+//ME
+
+.me-bid-bg {
+  background: #0a1811 !important;
+}
+.me-offer-bg {
+  background: #1f0b0b  !important;
+}
+.me-price-bg {
+  color: #fefdfd  !important;
+}
+
+//Tabs
+$nav-tabs-border-color: #505050;
+$nav-tabs-link-active-border-color: #505050 #505050 #161616;
+$nav-tabs-link-active-color: #e9ecef;
+$nav-link-hover-color: #e9ecef;
+$nav-tabs-link-hover-border-color: #505050 #505050 #161616;
+
+//profile view / score
+.player-status-label {
+  color: #969696
+}
+.player-status-value {
+  color: #dedede
+}
+
+
 
 // Import Bootstrap and its default variables
 @import '~bootstrap/scss/bootstrap.scss';

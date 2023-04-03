@@ -16,7 +16,7 @@ export default function PlayerStatus(props) {
   //open, avgPrice -> pnl, price, last
   return (
     <div>
-      <div className="d-flex flex-wrap justify-content-between text-bg-dark p-1">
+      <div className="d-flex flex-wrap justify-content-around p-1">
         <PlayerStatusHeaderElement label="Name" value={props.player.name} />
         <PlayerStatusHeaderElement label="Position" value={openPosition} />
         <PlayerStatusHeaderElement label="P&L" value={pnl} />
