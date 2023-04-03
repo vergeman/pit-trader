@@ -85,8 +85,13 @@
 
 
 
-/* desktop */
-@media (min-width: 992px) {
+/* desktop view >= 768
+ * 2 50% width columns, camera and full market when >= desktop
+ *
+ * mobile:
+ * stacked, collapsed view < 768
+ */
+@media (min-width: 768px) {
 
   .d-grid.main-wrapper {
     grid-template-columns: calc(50% - 1.5rem * .5) 1.5rem calc(50% - 1.5rem * .5);

@@ -21,7 +21,7 @@ export default function PlayerStatus(props) {
         <PlayerStatusHeaderElement label="Position" value={openPosition} />
         <PlayerStatusHeaderElement label="P&L" value={pnl} />
         <PlayerStatusHeaderElement label="Avg Price" value={avgPrice} />
-        <PlayerStatusHeaderElement label="Last" value={lastPrice} />
+        <PlayerStatusHeaderElement label="Last" value={lastPrice} className="d-none d-md-flex"/>
       </div>
     </div>
   );
