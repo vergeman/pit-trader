@@ -2,5 +2,10 @@
 //$body-bg: #000;
 
 $font-size-base: .85rem;
+caption { padding: .25rem; }
+
+/* Theme */
+th { font-weight: 400;}
+
 // Import Bootstrap and its default variables
 @import '~bootstrap/scss/bootstrap.scss';

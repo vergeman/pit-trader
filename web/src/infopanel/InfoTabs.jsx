@@ -31,7 +31,6 @@ export default function InfoTabs(props) {
       onSelect={(k) => activeTabDispatch({ type: "select", value: k })}
       activeKey={activeTab}
       defaultActiveKey={defaultActiveKey}
-      className="mb-3"
     >
       <Tab eventKey="messages" title="Messages">
         <Messages />

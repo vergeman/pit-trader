@@ -102,7 +102,6 @@ export default function CameraGesture(props) {
         </div>
 
         <div className="gestures">
-          Gestures
           <GesturesPanel
             gestureData={gestureData}
             gesture={gesture}
@@ -122,7 +121,7 @@ export default function CameraGesture(props) {
         </div>
       </div>
 
-      <div class="wrap">
+      <div class="wrap d-none">
         <Button size="sm" onClick={() => testMessages()}>
           Message
         </Button>
