@@ -92,21 +92,12 @@ export default function CameraGesture(props) {
   return (
     <>
       <div className="d-grid main-wrapper">
-        <div className="camera">
+        <div className="camera text-center">
           <Camera
             isActive={true}
             width={defaultCameraDims.width}
             height={defaultCameraDims.height}
             calcGesture={calcGesture}
-          />
-        </div>
-
-        <div className="gestures">
-          <GesturesPanel
-            gestureData={gestureData}
-            gesture={gesture}
-            gestureBuilder={gestureBuilder}
-            gestureDecision={gestureDecisionRef.current}
           />
         </div>
 
@@ -119,6 +110,16 @@ export default function CameraGesture(props) {
             player={props.player}
           />
         </div>
+
+        <div className="gestures">
+          <GesturesPanel
+            gestureData={gestureData}
+            gesture={gesture}
+            gestureBuilder={gestureBuilder}
+            gestureDecision={gestureDecisionRef.current}
+          />
+        </div>
+
       </div>
 
       <div class="wrap d-none">
