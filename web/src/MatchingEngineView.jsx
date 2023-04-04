@@ -50,9 +50,9 @@ export default function MatchingEngineView(props) {
         <tbody>
           <tr>
             <td>{bestBidOrder && bestBidOrder.qty}</td>
-            <td className="me-bid-bg">{bestBidOrder && bestBidOrder.price}</td>
-            <td className="me-price-bg">{bestOfferOrder && bestOfferOrder.price}</td>
-            <td className="me-offer-bg">{bestOfferOrder && bestOfferOrder.qty}</td>
+            <td className="me-bid">{bestBidOrder && bestBidOrder.price}</td>
+            <td className="me-price">{bestOfferOrder && bestOfferOrder.price}</td>
+            <td className="me-offer">{bestOfferOrder && bestOfferOrder.qty}</td>
             <td>{lastPrice}</td>
           </tr>
         </tbody>
@@ -74,9 +74,9 @@ export default function MatchingEngineView(props) {
             return (
               <tr key={price} className={price == lastPrice ? "me-isLast" : ""}>
                 <td>{bidMaps.playerOrdersPriceQtyMap.get(Number(price))}</td>
-                <td className="me-bid-bg">{bidMaps.allOrdersPriceQtyMap.get(Number(price))}</td>
-                <td className="me-price-bg">{renderPrice(price, gridNumMaxLen)}</td>
-                <td className="me-offer-bg">{offerMaps.allOrdersPriceQtyMap.get(Number(price))}</td>
+                <td className="me-bid">{bidMaps.allOrdersPriceQtyMap.get(Number(price))}</td>
+                <td className="me-price">{renderPrice(price, gridNumMaxLen)}</td>
+                <td className="me-offer">{offerMaps.allOrdersPriceQtyMap.get(Number(price))}</td>
                 <td>{offerMaps.playerOrdersPriceQtyMap.get(Number(price))}</td>
               </tr>
             );

@@ -28,22 +28,30 @@ th {
 
 //ME
 
-.me-bid-bg {
+tr.me-isLast > td.me-price {
+  background: #595959;
+  color: #fff;
+  font-weight: 700;
+
+}
+
+.me-bid {
   background: #0a1811 !important;
 }
-.me-offer-bg {
+.me-offer {
   background: #1f0b0b  !important;
 }
-.me-price-bg {
-  color: #fefdfd  !important;
+.me-price {
+  color: #f7f7f7;
 }
 
 //Tabs
 $nav-tabs-border-color: #505050;
 $nav-tabs-link-active-border-color: #505050 #505050 #161616;
-$nav-tabs-link-active-color: #e9ecef;
+$nav-tabs-link-active-color: #8c8c8c;
 $nav-link-hover-color: #e9ecef;
 $nav-tabs-link-hover-border-color: #505050 #505050 #161616;
+#main .tab-content { margin: 0 -1rem; }
 
 //profile view / score
 .player-status-label {
