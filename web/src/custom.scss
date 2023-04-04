@@ -54,7 +54,13 @@ $nav-tabs-link-hover-border-color: #505050 #505050 #161616;
 #main .tab-content { margin: 0 -1rem; }
 
 //profile view / score
+.player-status {
+  background: #013a58;
+  color: #dedede;
+  border: 1px solid #465c67;
+}
 .player-status-label {
+
   color: #969696
 }
 .player-status-value {

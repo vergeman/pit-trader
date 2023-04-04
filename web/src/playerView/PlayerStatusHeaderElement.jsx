@@ -4,7 +4,7 @@ export default function PlayerStatusHeaderElement(props) {
       <span className="player-status-label">
         {props.label}
       </span>
-      <span className="player-status-value">
+      <span className="player-status-value fs-5">
         {props.value}
       </span>
     </div>
