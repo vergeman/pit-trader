@@ -71,6 +71,12 @@ export default function CameraGesture(props) {
 
       //calculates gesture and if order is built
       gestureDecisionRef.current.calc(gesture);
+
+      //stash gesture as pseudo obj for now
+      const x= landmarks.gesture.x;
+      const y = landmarks.gesture.y;
+      gesture.x = x;
+      gesture.y = y;
       landmarks.setGesture(gesture);
 
       //send any messages populated in calc this calcGesture() pass
@@ -89,11 +95,25 @@ export default function CameraGesture(props) {
   );
 
   //console.log("[CameraGesture] render", gestureData);
+  const landmarkStyle = {
+    position: 'absolute',
+    background: 'white',
+    color: 'black',
+    opacity: .5,
+    top: gesture ? gesture.y * 636 : 0,
+    left: gesture ? gesture.x *380.8: 0
+  };
+
 
   return (
     <>
       <div className="d-grid main-wrapper">
-        <div className="camera text-center">
+        <div className="camera text-center position-relative">
+
+          <div className="landmark-render" style={landmarkStyle}>
+            {gesture && `${gesture.action} ${gesture.value}`}
+          </div>
+
           <Camera
             isActive={true}
             width={defaultCameraDims.width}

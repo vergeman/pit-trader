@@ -28,6 +28,8 @@ export class Gesture {
   private _action: GestureAction;
   private _value: number | null;
   private _prob: number | null;
+  private x: number = 0;
+  private y: number= 0;
 
   constructor(
     type: GestureType,

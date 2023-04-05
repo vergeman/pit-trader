@@ -52,6 +52,10 @@ export default function useHandsDetection(canvasRef, landmarks) {
 
           console.log("calc", minX, minY, maxX - minX, maxY - minY );
 
+          //setting gesture coords
+          landmarks.gesture.x = minX
+          landmarks.gesture.y = minY
+
           //boundingbox
           //canvasCtx.fillRect(minX * 640, minY * 480, (maxX-minX)*640, (maxY-minY) * 480); //x,y, width, height
 
