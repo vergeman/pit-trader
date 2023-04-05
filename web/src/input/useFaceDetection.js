@@ -17,7 +17,7 @@ export default function useFaceDetection(canvasRef, landmarks) {
       window.drawRectangle(canvasCtx, results.detections[0].boundingBox, {
         color: "blue",
         lineWidth: 4,
-        fillColor: "#00000000",
+        fillColor: "rgba(0, 0, 0, 0.8)",
       });
 
       //NB: landmarks order for facedetection in FaceKeypoint order left/right

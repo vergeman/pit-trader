@@ -71,6 +71,7 @@ export default function CameraGesture(props) {
 
       //calculates gesture and if order is built
       gestureDecisionRef.current.calc(gesture);
+      landmarks.setGesture(gesture);
 
       //send any messages populated in calc this calcGesture() pass
       for (let msg of gestureDecisionRef.current.getNewMessages() ) {

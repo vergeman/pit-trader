@@ -11,6 +11,12 @@ export default class Landmarks {
 
     this.base_x = 0;
     this.base_y = 0;
+
+    this.gesture = {};
+  }
+
+  setGesture(gesture) {
+    this.gesture = gesture;
   }
 
   resetHandLandmarks() {
