@@ -31,13 +31,13 @@ export default function GesturesDecision(props) {
 
   const calcStyleClass = (props) => {
     if (
-      props.renderState == RenderState.GESTURE_CANCEL &&
-      props.action == GestureAction.Cancel
+      props.renderState === RenderState.GESTURE_CANCEL &&
+      props.action === GestureAction.Cancel
     ) {
       return StyleClass.CancelGesture;
     }
 
-    if (props.action == GestureAction.Cancel) {
+    if (props.action === GestureAction.Cancel) {
       return StyleClass.CancelOrder;
     }
 
@@ -46,9 +46,9 @@ export default function GesturesDecision(props) {
     }
 
     if (
-      (props.qty && props.qty == props.value) ||
-      (props.qty && props.action == props.value) ||
-      (props.price && props.price == props.value)
+      (props.qty && props.qty === props.value) ||
+      (props.qty && props.action === props.value) ||
+      (props.price && props.price === props.value)
     ) {
       return StyleClass.Locked;
     }
@@ -61,16 +61,26 @@ export default function GesturesDecision(props) {
 
   function TableDataCell(props) {
     const styleClass = calcStyleClass(props);
-    return <td className={styleClass}>{props.value}</td>;
+    return (
+      <td className={`${styleClass} bg-transparent fs-1`}>
+        {props.value}&nbsp;
+      </td>
+    );
   }
 
   //Note: not sure where to style, but want indicators for now
   return (
-    <table className="table table-sm  table-bordered caption-top w-100">
-      <caption>{props.caption}</caption>
-      <thead>
+    <table id="gestureDecision" className="table table-sm w-100 text-center mt-5">
+      <tbody>
         <tr>
-          <th className={calcStyleClass({ ...props, value: props.action })}>
+          <TableDataCell {...props} value={props.action} />
+          <TableDataCell {...props} value={props.qty} />
+          <TableDataCell {...props} value={props.price} />
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <th className={calcStyleClass({ ...props, value: props.action})}>
             Action
           </th>
           <th className={calcStyleClass({ ...props, value: props.qty })}>
@@ -80,14 +90,7 @@ export default function GesturesDecision(props) {
             Price&nbsp;
           </th>
         </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <TableDataCell {...props} value={props.action || "-"} />
-          <TableDataCell {...props} value={props.qty} />
-          <TableDataCell {...props} value={props.price} />
-        </tr>
-      </tbody>
+      </tfoot>
     </table>
   );
 }
