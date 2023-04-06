@@ -61,9 +61,10 @@ export default function GesturesDecision(props) {
 
   function TableDataCell(props) {
     const styleClass = calcStyleClass(props);
+    const displayValue = props.value || "\u00A0";
     return (
       <td className={`${styleClass} bg-transparent fs-1`}>
-        {props.value}&nbsp;
+        {displayValue}
       </td>
     );
   }
@@ -71,6 +72,7 @@ export default function GesturesDecision(props) {
   //Note: not sure where to style, but want indicators for now
   return (
     <table id="gestureDecision" className="table table-sm w-100 text-center mt-5">
+      <caption className="text-center">{props.caption}</caption>
       <tbody>
         <tr>
           <TableDataCell {...props} value={props.action} />
@@ -84,10 +86,10 @@ export default function GesturesDecision(props) {
             Action
           </th>
           <th className={calcStyleClass({ ...props, value: props.qty })}>
-            Qty&nbsp;&nbsp;&nbsp;
+            Qty
           </th>
           <th className={calcStyleClass({ ...props, value: props.price })}>
-            Price&nbsp;
+            Price
           </th>
         </tr>
       </tfoot>

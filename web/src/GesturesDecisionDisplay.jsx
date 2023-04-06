@@ -48,7 +48,7 @@ export default function GesturesDecisionDisplay(props) {
       {props.gestureDecision.renderState == RenderState.GESTURE_DECISION && (
         <GesturesDecision
           renderState={props.gestureDecision.renderState}
-          caption="Gesture Decision"
+          caption="Order Builder"
           action={getAction(props.gestureDecision)}
           qty={props.gestureDecision.qty}
           price={getPrice(props.gestureDecision)}
@@ -59,7 +59,7 @@ export default function GesturesDecisionDisplay(props) {
         RenderState.GESTURE_DECISION_RECORD && (
         <GesturesDecision
           renderState={props.gestureDecision.renderState}
-          caption="Gesture Decision Flash"
+          caption="Order Builder"
           action={getAction(gestureDecisionRecord)}
           qty={gestureDecisionRecord.qty}
           price={getPrice(gestureDecisionRecord)}
@@ -69,7 +69,7 @@ export default function GesturesDecisionDisplay(props) {
       {props.gestureDecision.renderState == RenderState.GESTURE_CANCEL && (
         <GesturesDecision
           renderState={props.gestureDecision.renderState}
-          caption="Gesture Decision Flash"
+          caption="Order Builder"
           action={GestureAction.Cancel}
         />
       )}
