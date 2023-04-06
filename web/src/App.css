@@ -109,6 +109,29 @@
 
 
 /* GestureDecision */
+table#gestureDecision td {
+  font-size: 80px;
+  width: 33.33%;
+}
+table#gestureDecision th {
+  background: transparent !important;
+  font-size: 1rem;
+}
+
+table#gestureDecision {
+  border: 0px solid transparent;
+}
+
+@keyframes pulsate {
+  0%,
+  100% {
+    color: orange;
+  }
+  50% {
+    color: grey;
+  }
+}
+
 .is-cancel-gesture {
   color: pink;
 }
@@ -123,6 +146,7 @@
 }
 .is-needed {
   color: orange;
+  animation: pulsate 1.4s ease-in-out infinite alternate
 }
 
 /* Extended Helpers */
