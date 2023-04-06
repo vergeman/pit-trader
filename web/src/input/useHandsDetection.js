@@ -73,13 +73,30 @@ export default function useHandsDetection(canvasRef, landmarks) {
           const width = textMetrics.width;
           const height = textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent;
 
+          //dynamic panel (follow hand)
+          /*
           canvasCtx.fillStyle = "rgba(0, 0, 0, 1)";
           canvasCtx.fillRect(minX * 640, minY * 480, width, -height );
-
           canvasCtx.fillStyle = "#fafafa";
           canvasCtx.fillText(text, minX * 640, minY * 480);
+          */
 
-          //x,y, width, height
+          //static panel
+          //NB: text is measured bottom-up (y value placement is bottom of text)
+          /*
+          canvasCtx.fillStyle = "rgba(0, 0, 0, 1)";
+          canvasCtx.fillRect(0, 0, width, height );
+          canvasCtx.fillStyle = "#fafafa";
+          canvasCtx.fillText(text, 0, height);
+          */
+
+          //static - bottom
+          /*
+          canvasCtx.fillStyle = "rgba(0, 0, 0, 1)";
+          canvasCtx.fillRect(320 - (width / 2), 480-height, width, height + 10);
+          canvasCtx.fillStyle = "#fafafa";
+          canvasCtx.fillText(text, 320 -( width / 2), 480);
+          */
         }
 
 
