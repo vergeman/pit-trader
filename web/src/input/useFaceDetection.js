@@ -12,7 +12,7 @@ export default function useFaceDetection(canvasRef, landmarks) {
     landmarks.resetFaceLandmarks();
 
     if (results.detections.length > 0) {
-      //canvasCtx.save();
+/*      //canvasCtx.save();
 
       window.drawRectangle(canvasCtx, results.detections[0].boundingBox, {
         color: "blue",
@@ -28,7 +28,7 @@ export default function useFaceDetection(canvasRef, landmarks) {
       });
 
       //canvasCtx.restore();
-
+*/
       //detections[ {landmarks: [ {x,y,z} ] } ]
       landmarks.setFaceLandmarks(results.detections[0].landmarks);
     }
