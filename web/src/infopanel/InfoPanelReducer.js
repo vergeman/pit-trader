@@ -34,7 +34,7 @@ export function messagesReducer(messages, action) {
     case Message.CancelOrder:
     case Message.CancelGesture:
       text = populateTemplateString(action.type, [action.value]);
-      return [{ text }, ...messages];
+      return [{ time: new Date(), text }, ...messages];
 
     case Message.OrderSubmitted:
       order = action.value;
@@ -52,7 +52,7 @@ export function messagesReducer(messages, action) {
           ? Message.BuyMarketOrder
           : Message.SellMarketOrder;
       text = populateTemplateString(messageType, [qty, order.price]);
-      return [{ text }, ...messages];
+      return [{ time: new Date(), text }, ...messages];
 
     case Message.FillLimit:
     case Message.FillMarket:
@@ -62,9 +62,9 @@ export function messagesReducer(messages, action) {
       text = populateTemplateString(action.type, [
         -transaction.qty,
         transaction.price,
-        order.qty
+        order.qty,
       ]);
-      return [{ text }, ...messages];
+      return [{ time: new Date(), text }, ...messages];
 
     case Message.OrderFilled:
       order = action.value;
@@ -72,7 +72,7 @@ export function messagesReducer(messages, action) {
         order.qtyFilled,
         order.priceFilled().toFixed(1),
       ]);
-      return [{ text }, ...messages];
+      return [{ time: new Date(), text }, ...messages];
 
     case Message.Restart:
       //resets message array
@@ -80,7 +80,7 @@ export function messagesReducer(messages, action) {
 
     case "test":
       text = "Message";
-      return [{ text }, ...messages];
+      return [{ time: new Date(), text }, ...messages];
   }
 
   console.error("action not detected", action);

@@ -92,22 +92,12 @@ export default function CameraGesture(props) {
   return (
     <>
       <div className="d-grid main-wrapper">
-        <div className="camera">
+        <div className="camera text-center">
           <Camera
             isActive={true}
             width={defaultCameraDims.width}
             height={defaultCameraDims.height}
             calcGesture={calcGesture}
-          />
-        </div>
-
-        <div className="gestures">
-          Gestures
-          <GesturesPanel
-            gestureData={gestureData}
-            gesture={gesture}
-            gestureBuilder={gestureBuilder}
-            gestureDecision={gestureDecisionRef.current}
           />
         </div>
 
@@ -120,14 +110,26 @@ export default function CameraGesture(props) {
             player={props.player}
           />
         </div>
+
+        <div className="gestures">
+          <GesturesPanel
+            gestureData={gestureData}
+            gesture={gesture}
+            gestureBuilder={gestureBuilder}
+            gestureDecision={gestureDecisionRef.current}
+          />
+        </div>
+
       </div>
 
-      <Button size="sm" onClick={() => testMessages()}>
-        Message
-      </Button>
-      <Button size="sm" onClick={() => testActiveTab()}>
-        Tab
-      </Button>
+      <div class="wrap d-none">
+        <Button size="sm" onClick={() => testMessages()}>
+          Message
+        </Button>
+        <Button size="sm" onClick={() => testActiveTab()}>
+          Tab
+        </Button>
+      </div>
 
       {/* Tab displays needs to re-render at CameraGesture level */}
       <InfoTabs player={props.player} />

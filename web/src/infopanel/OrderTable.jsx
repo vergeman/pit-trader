@@ -4,7 +4,7 @@ export default function OrderTable(props) {
   if (!props.orders) return null;
 
   return (
-    <Table borderless="true" size="sm" className="w-100">
+    <Table bordered size="sm" className="w-100">
       <thead>
         <tr>
           <th>Time</th>

@@ -33,37 +33,58 @@
   }
 }
 
+
 /*
- *  layout grid
+ * main layout
+ * main container set to fullscreen 100vh:
+ * 1. .main-wrapper elements (webcam, gestures, ME display, etc)
+ * 2. tab content expandable to remaining screen size
+ *   flex: 0 0 auto (grow/shrink/basis initial size)
+ *   flex: 1 1 auto (fill remainder)
+ *
+ * TODO: mobile padding on tab-content
  */
 
-.d-grid.main-wrapper {
-  grid-template-columns: 50% 50%;
-  grid-template-rows: auto 1fr;
+#main {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
 
-/* mobile first */
-.main-wrapper .camera {
-  grid-column: 1/3;
-  grid-row: 1/2;
-}
-
-.main-wrapper .gestures {
-  grid-column: 1/2;
-  grid-row: 2/3;
-}
-
-.main-wrapper .me {
-  grid-column: 2/4;
-  grid-row: 2/3;
+.tab-content {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: .5rem 1rem;
 }
 
 
-/* desktop */
-@media (min-width: 992px) {
+/*
+ *  layout grid for main-wrapper elements
+ */
+
+
+/* desktop view >= 768
+ * 3 columns [~50%, spacing, ~50%], camera and full market when >= desktop
+ * 2 rows: auto, and fill row
+ *
+ * mobile:
+ * stacked, collapsed view < 768
+ */
+
+
+
+.output_canvas {
+  background: url("https://www.washingtonpost.com/wp-apps/imrs.php?src=https://arc-anglerfish-washpost-prod-washpost.s3.amazonaws.com/public/4YWTZITUPII6VLM3EVHMTGMTXQ.jpg&w=916");
+  background-size: cover;
+  max-height: 30vh;
+}
+
+
+@media (min-width: 768px) {
 
   .d-grid.main-wrapper {
     grid-template-columns: calc(50% - 1.5rem * .5) 1.5rem calc(50% - 1.5rem * .5);
+    grid-template-rows: auto 1fr;
   }
 
   .main-wrapper .camera {
@@ -71,11 +92,21 @@
     grid-row: 1/2;
   }
 
+  .main-wrapper .gestures {
+    grid-column: 1/2;
+    grid-row: 2/3;
+  }
+
   .main-wrapper .me {
     grid-column: 3/4;
     grid-row: 1/3;
   }
+
+  .output_canvas {
+    max-height: 40vh;
+  }
 }
+
 
 /* GestureDecision */
 .is-cancel-gesture {
@@ -96,16 +127,10 @@
 
 /* Extended Helpers */
 
-.fs-7 {
-  font-size: .875rem;
-}
 .pt-6 {
   padding-top: 4rem;
 }
 
-.me-isLast {
-  background: forestgreen;
-}
 .control-panel {
   position: absolute;
   top: 2rem;
@@ -116,9 +141,4 @@
 }
 .input_video {
   display: none;
-}
-
-.output_canvas {
-  background: url("https://www.washingtonpost.com/wp-apps/imrs.php?src=https://arc-anglerfish-washpost-prod-washpost.s3.amazonaws.com/public/4YWTZITUPII6VLM3EVHMTGMTXQ.jpg&w=916");
-  background-size: cover;
 }

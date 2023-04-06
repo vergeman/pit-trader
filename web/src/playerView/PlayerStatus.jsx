@@ -15,13 +15,13 @@ export default function PlayerStatus(props) {
   const lastPrice = props.marketLoop.getDisplayLastPrice();
   //open, avgPrice -> pnl, price, last
   return (
-    <div>
-      <div className="d-flex flex-wrap justify-content-between text-bg-dark p-1">
-        <PlayerStatusHeaderElement label="Name" value={props.player.name} />
+    <div className="player-status mb-3">
+      <div className="d-flex flex-wrap justify-content-around p-1">
+        <PlayerStatusHeaderElement label="Name" value={props.player.name} className="d-none d-md-flex"/>
         <PlayerStatusHeaderElement label="Position" value={openPosition} />
         <PlayerStatusHeaderElement label="P&L" value={pnl} />
         <PlayerStatusHeaderElement label="Avg Price" value={avgPrice} />
-        <PlayerStatusHeaderElement label="Last" value={lastPrice} />
+        <PlayerStatusHeaderElement label="Last" value={lastPrice && lastPrice.toFixed(1)} className="d-none d-md-flex"/>
       </div>
     </div>
   );
