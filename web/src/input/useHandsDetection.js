@@ -17,15 +17,16 @@ export default function useHandsDetection(canvasRef, landmarks) {
       ] of results.multiHandLandmarks.entries()) {
         //canvasCtx.save();
 
-        window.drawConnectors(canvasCtx, _landmarks, window.HAND_CONNECTIONS, {
-          color: "#00FF00",
-          lineWidth: 5,
-        });
-        window.drawLandmarks(canvasCtx, _landmarks, {
-          color: "#FF0000",
-          lineWidth: 2,
-        });
-
+        if (landmarks.recognizedGesture){
+          window.drawConnectors(canvasCtx, _landmarks, window.HAND_CONNECTIONS, {
+            color: "#00FF00",
+            lineWidth: 5,
+          });
+          window.drawLandmarks(canvasCtx, _landmarks, {
+            color: "#FF0000",
+            lineWidth: 2,
+          });
+        }
         //canvasCtx.restore();
 
         //multiHandedness[0,1].label "Left / Right"
