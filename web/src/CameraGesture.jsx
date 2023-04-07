@@ -119,7 +119,6 @@ export default function CameraGesture(props) {
             gestureDecision={gestureDecisionRef.current}
           />
         </div>
-
       </div>
 
       <div class="wrap d-none">

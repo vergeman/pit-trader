@@ -63,7 +63,7 @@ export default function GesturesDecision(props) {
     const styleClass = calcStyleClass(props);
     const displayValue = props.value || "\u00A0";
     return (
-      <td className={`${styleClass} bg-transparent fs-1`}>
+      <td className={`${styleClass} bg-transparent`}>
         {displayValue}
       </td>
     );
@@ -71,7 +71,7 @@ export default function GesturesDecision(props) {
 
   //Note: not sure where to style, but want indicators for now
   return (
-    <table id="gestureDecision" className="table table-sm w-100 text-center mt-5">
+    <table id="gestureDecision" className="table table-sm w-100 text-center">
       <caption className="text-center">{props.caption}</caption>
       <tbody>
         <tr>
