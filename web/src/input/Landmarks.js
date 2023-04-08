@@ -1,3 +1,4 @@
+import { GestureAction } from "../gesture/Gesture.ts";
 import * as glMatrix from "gl-matrix";
 glMatrix.glMatrix.setMatrixArrayType(Float64Array);
 
@@ -11,6 +12,15 @@ export default class Landmarks {
 
     this.base_x = 0;
     this.base_y = 0;
+
+    this.recognizedGesture = false;
+  }
+
+  setRecognizedGesture(gesture) {
+    this.recognizedGesture = ![
+      GestureAction.None,
+      GestureAction.Garbage,
+    ].includes(gesture.action);
   }
 
   resetHandLandmarks() {
@@ -74,7 +84,7 @@ export default class Landmarks {
     if (x < min) return min;
     if (x > max) return max;
     return x;
-  };
+  }
 
   setFingersOpen(hand, palmOrientations, landmarks) {
     //
@@ -115,7 +125,7 @@ export default class Landmarks {
     // FINGERS
     //
     const FINGER_ANGLE = 15;
-    const FINGER_RADIANS = FINGER_ANGLE * Math.PI / 180;
+    const FINGER_RADIANS = (FINGER_ANGLE * Math.PI) / 180;
     const norm_u = glMatrix.vec3.create();
     const norm_v = glMatrix.vec3.create();
     const out_u = glMatrix.vec3.create();
@@ -123,10 +133,9 @@ export default class Landmarks {
     //same points per finger
 
     for (let i = 0; i < 4; i++) {
-
-      const pt1 = this.getVec3LandmarksIndex(landmarks, 5 + (i * 4));
-      const pt3 = this.getVec3LandmarksIndex(landmarks, 7 + (i * 4));
-      const pt4 = this.getVec3LandmarksIndex(landmarks, 8 + (i * 4));
+      const pt1 = this.getVec3LandmarksIndex(landmarks, 5 + i * 4);
+      const pt3 = this.getVec3LandmarksIndex(landmarks, 7 + i * 4);
+      const pt4 = this.getVec3LandmarksIndex(landmarks, 8 + i * 4);
       glMatrix.vec3.subtract(u, pt4, pt1);
       glMatrix.vec3.subtract(v, pt4, pt3);
       const dot = glMatrix.vec3.dot(u, v);
@@ -163,10 +172,12 @@ export default class Landmarks {
   }
 
   get() {
-    return [].concat(this.handLandmarks,
-                     this.faceLandmarks,
-                     this.palmOrientations,
-                     this.fingersOpens);
+    return [].concat(
+      this.handLandmarks,
+      this.faceLandmarks,
+      this.palmOrientations,
+      this.fingersOpens
+    );
   }
 
   print() {

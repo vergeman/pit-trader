@@ -72,6 +72,9 @@ export default function CameraGesture(props) {
       //calculates gesture and if order is built
       gestureDecisionRef.current.calc(gesture);
 
+      //toggles for draw
+      landmarks.setRecognizedGesture(gesture);
+
       //send any messages populated in calc this calcGesture() pass
       for (let msg of gestureDecisionRef.current.getNewMessages() ) {
         infoPanel.messagesDispatch(msg);
@@ -119,7 +122,6 @@ export default function CameraGesture(props) {
             gestureDecision={gestureDecisionRef.current}
           />
         </div>
-
       </div>
 
       <div class="wrap d-none">

@@ -15,7 +15,7 @@ export default function PlayerStatus(props) {
   const lastPrice = props.marketLoop.getDisplayLastPrice();
   //open, avgPrice -> pnl, price, last
   return (
-    <div className="player-status mb-3">
+    <div className="player-status mb-md-2">
       <div className="d-flex flex-wrap justify-content-around p-1">
         <PlayerStatusHeaderElement label="Name" value={props.player.name} className="d-none d-md-flex"/>
         <PlayerStatusHeaderElement label="Position" value={openPosition} />

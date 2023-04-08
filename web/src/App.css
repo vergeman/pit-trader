@@ -107,10 +107,63 @@
   }
 }
 
+/* Gesture Current */
+
+table#gestureCurrent {
+  boxShadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  transform: translate3d(0; 0; 0);
+
+  text-align: center;
+
+  width: 66.66%;
+  margin: 1rem auto;
+  /*fs-3*/
+  font-size: 1.75rem;
+}
+table#gestureCurrent td {
+  width: 33.33%;
+  text-transform: uppercase;
+}
+table#gestureCurrent caption {
+  font-size: .85rem;
+  text-align: center;
+}
+
+table#gestureCurrent td:nth-child(1),
+table#gestureCurrent td:nth-child(2){
+  border-right: 1px solid #0a0a0a;
+}
 
 /* GestureDecision */
+table#gestureDecision td {
+  font-size: 80px;
+  width: 33.33%;
+  font-size: 2.75rem;
+}
+
+table#gestureDecision th {
+  background: transparent !important;
+  font-size: 1.25rem;
+  text-transform: uppercase;
+}
+
+table#gestureDecision {
+  border: 0px solid transparent;
+  text-transform: uppercase;
+}
+
+@keyframes pulsate {
+  0%,
+  100% {
+    color: orange;
+  }
+  50% {
+    color: grey;
+  }
+}
+
 .is-cancel-gesture {
-  color: pink;
+  color: salmon;
 }
 .is-cancel-order {
   color: red;
@@ -123,6 +176,7 @@
 }
 .is-needed {
   color: orange;
+  animation: pulsate 1.4s ease-in-out infinite alternate
 }
 
 /* Extended Helpers */
