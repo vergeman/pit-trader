@@ -2,12 +2,13 @@ import { v4 as uuidv4 } from "uuid";
 
 export enum OrderType {
   Market,
-  Limit
+  Limit,
 }
 
 export enum OrderStatus {
   New,
   Live,
+  Fill, //Partial fill
   Complete,
   Cancelled,
   Rejected,
@@ -21,12 +22,12 @@ export interface TransactionReport {
 
 export interface Transaction {
   id: string;
-  orderType: OrderType,
+  orderType: OrderType;
   player_id: string;
   qty: number;
   price: number;
   timestamp: number;
-  status: OrderStatus
+  status: OrderStatus;
 }
 
 export class Order {
@@ -54,7 +55,9 @@ export class Order {
     this._orderType = orderType;
     this._initialQty = this._toFixedNum(qty);
     this._qty = this._toFixedNum(qty);
-    this._price = this._toFixedNum(orderType === OrderType.Limit ? price : Number.NaN);
+    this._price = this._toFixedNum(
+      orderType === OrderType.Limit ? price : Number.NaN
+    );
 
     this._id = uuidv4();
     this._qtyFilled = 0;
@@ -79,7 +82,7 @@ export class Order {
     //gesture can be anything, but want to execute at best price
     //e.g. can't trust new orders, but can trust prices in matching engine (ME
     //can be better)
-    let price = oppOrder.price
+    let price = oppOrder.price;
 
     //update both status
     this._checkSetComplete();
@@ -91,7 +94,10 @@ export class Order {
     this._transactions.push({
       id: uuidv4(),
       orderType: this.orderType,
-      status: this.status,
+      status:
+        this.status === OrderStatus.Complete
+          ? OrderStatus.Complete
+          : OrderStatus.Fill,
       player_id: oppOrder.player_id,
       qty: qtyFilled,
       price,
@@ -101,7 +107,10 @@ export class Order {
     oppOrder._transactions.push({
       id: uuidv4(),
       orderType: oppOrder.orderType,
-      status: oppOrder.status,
+      status:
+        oppOrder.status === OrderStatus.Complete
+          ? OrderStatus.Complete
+          : OrderStatus.Fill,
       player_id: this.player_id,
       qty: oppQtyFilled,
       price,
@@ -169,7 +178,6 @@ export class Order {
   }
 
   getNewTransactions(): Transaction[] {
-
     const numNew = this._transactions.length - this._lastReported;
     if (numNew) {
       const transactions = this._transactions.slice(this._lastReported);
