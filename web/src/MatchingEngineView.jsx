@@ -73,11 +73,11 @@ export default function MatchingEngineView(props) {
           {prices.map((price, i) => {
             return (
               <tr key={price} className={price == lastPrice ? "me-isLast" : ""}>
-                <td>{bidMaps.playerOrdersPriceQtyMap.get(Number(price))}</td>
+                <td className="me-order">{bidMaps.playerOrdersPriceQtyMap.get(Number(price))}</td>
                 <td className="me-bid">{bidMaps.allOrdersPriceQtyMap.get(Number(price))}</td>
                 <td className="me-price">{renderPrice(price, gridNumMaxLen)}</td>
                 <td className="me-offer">{offerMaps.allOrdersPriceQtyMap.get(Number(price))}</td>
-                <td>{offerMaps.playerOrdersPriceQtyMap.get(Number(price))}</td>
+                <td className="me-order">{offerMaps.playerOrdersPriceQtyMap.get(Number(price))}</td>
               </tr>
             );
           })}
