@@ -63,14 +63,19 @@ export default function GesturesDecisionDisplay(props) {
           action={getAction(gestureDecisionRecord)}
           qty={gestureDecisionRecord.qty}
           price={getPrice(gestureDecisionRecord)}
+          actionOnly={getAction(gestureDecisionRecord) == GestureAction.Cancel}
         />
       )}
 
+      {/*
+       * Gesture Clear (not order)
+       * clear and send blank text to avoid confusion of different cancel types to user
+       */}
       {props.gestureDecision.renderState == RenderState.GESTURE_CANCEL && (
         <GesturesDecision
           renderState={props.gestureDecision.renderState}
           caption="Order Builder"
-          action={GestureAction.Cancel}
+          action={""}
         />
       )}
     </>

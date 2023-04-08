@@ -76,21 +76,30 @@ export default function GesturesDecision(props) {
       <tbody>
         <tr>
           <TableDataCell {...props} value={props.action} />
-          <TableDataCell {...props} value={props.qty} />
-          <TableDataCell {...props} value={props.price} />
+          {
+            !props.actionOnly &&
+            <>
+              <TableDataCell {...props} value={props.qty} />
+              <TableDataCell {...props} value={props.price} />
+            </>
+          }
         </tr>
       </tbody>
       <tfoot>
         <tr>
-          <th className={calcStyleClass({ ...props, value: props.action})}>
+          <th className={calcStyleClass({ ...props, value: props.action })}>
             Action
           </th>
-          <th className={calcStyleClass({ ...props, value: props.qty })}>
-            Qty
-          </th>
-          <th className={calcStyleClass({ ...props, value: props.price })}>
-            Price
-          </th>
+          {!props.actionOnly &&
+            <>
+              <th className={calcStyleClass({ ...props, value: props.qty })}>
+                Qty
+              </th>
+              <th className={calcStyleClass({ ...props, value: props.price })}>
+                Price
+              </th>
+            </>
+          }
         </tr>
       </tfoot>
     </table>
