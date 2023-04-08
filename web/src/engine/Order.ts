@@ -40,7 +40,8 @@ export class Order {
   private _transactions: Transaction[];
   private _price: number;
   private _status: OrderStatus;
-  private _timestamp: number;
+  private _timestamp: number;  //createdAt
+  private _updatedAt: number;  //updatedAt
   private _lastReported: number;
 
   //TODO: what is my price resolution (no decimals)
@@ -64,6 +65,7 @@ export class Order {
     this._transactions = [];
     this._status = OrderStatus.New;
     this._timestamp = Date.now();
+    this._updatedAt = Date.now();
     this._lastReported = 0;
   }
 
@@ -117,6 +119,10 @@ export class Order {
       timestamp,
     });
 
+    //updatedAt both orders
+    this.updatedAt = timestamp;
+    oppOrder.updatedAt = timestamp;
+
     return {
       qty: abs_qty,
       price,
@@ -145,6 +151,7 @@ export class Order {
   _checkSetComplete(): void {
     if (this.qty === 0) {
       this._status = OrderStatus.Complete;
+      this.updatedAt = Date.now();
     }
   }
 
@@ -153,11 +160,13 @@ export class Order {
     if (this.qty > 0) {
       this.qty -= num;
       this._qtyFilled += num;
+      this.updatedAt = Date.now();
       return -num;
     }
     if (this.qty < 0) {
       this.qty += num;
       this._qtyFilled -= num;
+      this.updatedAt = Date.now();
       return num;
     }
     return 0;
@@ -165,9 +174,11 @@ export class Order {
 
   cancelled() {
     this._status = OrderStatus.Cancelled;
+    this.updatedAt = Date.now();
   }
   reject() {
     this._status = OrderStatus.Rejected;
+    this.updatedAt = Date.now();
   }
 
   canTransact(oppOrder: Order): boolean {
@@ -222,6 +233,12 @@ export class Order {
   }
   get timestamp(): number {
     return this._timestamp;
+  }
+  get updatedAt(): number {
+    return this._updatedAt;
+  }
+  set updatedAt(timestamp) {
+    this._updatedAt = timestamp;
   }
   get transactions(): Transaction[] {
     return this._transactions;

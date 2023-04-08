@@ -142,8 +142,27 @@ export class Player {
         const t = { ...transaction, qty: -transaction.qty };
         histories.push(t);
       }
+
+      // fake a transaction to display a Cancelled Order
+      // (we show completes and partials, it's strange not to show a cancel)
+      if (order.status == OrderStatus.Cancelled) {
+
+        const t: Transaction =  {
+          id: order.id,
+          orderType: order.orderType,
+          player_id: order.player_id,
+          qty: order.qty,
+          price: order.price,
+          status: OrderStatus.Cancelled,
+          timestamp: order.updatedAt,
+        };
+
+        histories.push(t);
+      }
     }
-    return histories;
+    return histories.sort((a: Transaction, b: Transaction) =>
+      Number(a.timestamp < b.timestamp)
+    );
   }
 
   hasLost(price: number): boolean {
