@@ -4,6 +4,8 @@ import Tab from "react-bootstrap/Tab";
 import OrderTable from "./OrderTable.jsx";
 import Messages from "./Messages.jsx";
 import { useInfoPanel } from "./InfoPanelContext";
+import useTabNums from "./useTabNums.jsx";
+
 /*
  * NB: <Tab> subcomponents don't automatically render if extracted to own
  * component - keep all <Tab>'s here.
@@ -24,32 +26,13 @@ export default function InfoTabs(props) {
         .sort((a, b) => Number(a.timestamp < b.timestamp))
     : [];
 
-  const initTabNums = {
-    //eventKey: num
-    "order-history": orderHistories.length,
-    "live-orders": liveOrders.length,
-  };
-
-  const [tabNums, setTabNums] = useState(initTabNums);
-
-  //reset the tabNum to active tab so there is no 'new'
-  useEffect(() => {
-    resetTabNum(activeTab);
-  }, [liveOrders.length, orderHistories.length]);
-
-  const resetTabNum = (eventKey) => {
-    let num = 0;
-    switch (eventKey) {
-      case "order-history":
-        num = orderHistories.length;
-        break;
-      case "live-orders":
-        num = liveOrders.length;
-        break;
-    }
-    tabNums[eventKey] = num;
-    setTabNums({ ...tabNums });
-  };
+  //TODO: refactor to take eventKey mapping e.g {live-orders: liveOrders}
+  //want single locale for keys and hook dependencies
+  const { tabNums, resetTabNum } = useTabNums(
+    activeTab,
+    liveOrders,
+    orderHistories
+  );
 
   const selectTabHandler = (eventKey) => {
     resetTabNum(eventKey);
