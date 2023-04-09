@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
 import OrderTable from "./OrderTable.jsx";
@@ -12,7 +11,9 @@ import useTabNums from "./useTabNums.jsx";
  */
 export default function InfoTabs(props) {
   const defaultActiveKey = "messages";
-  const { activeTab, activeTabDispatch } = useInfoPanel();
+  const { activeTab, activeTabDispatch, messages } = useInfoPanel();
+
+  const quests = []; //TODO: quests
 
   const liveOrders = props.player
     ? []
@@ -30,6 +31,8 @@ export default function InfoTabs(props) {
   //want single locale for keys and hook dependencies
   const { tabNums, resetTabNum } = useTabNums(
     activeTab,
+    messages,
+    quests,
     liveOrders,
     orderHistories
   );
@@ -62,10 +65,16 @@ export default function InfoTabs(props) {
       activeKey={activeTab}
       defaultActiveKey={defaultActiveKey}
     >
-      <Tab eventKey="messages" title="Messages">
-        <Messages />
+      <Tab
+        eventKey="messages"
+        title={tabTitleNew("Messages", messages.length - tabNums["messages"])}
+      >
+        <Messages messages={messages} />
       </Tab>
-      <Tab eventKey="quests" title="Quests">
+      <Tab
+        eventKey="quests"
+        title={tabTitleNew("Quests", quests.length - tabNums["quests"])}
+      >
         Quests here
       </Tab>
       <Tab
