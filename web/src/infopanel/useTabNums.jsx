@@ -1,47 +1,32 @@
 import { useState, useEffect } from "react";
 
-export default function useTabNums(
-  activeTab,
-  messages,
-  quests,
-  liveOrders,
-  orderHistories
-) {
-  const initTabNums = {
-    //eventKey: num
-    "messages": messages.length,
-    "quests": quests.length,
-    "order-history": orderHistories.length,
-    "live-orders": liveOrders.length,
+export default function useTabNums(activeTab, tabMap) {
+  //eventKey: last number
+  //e.g. {"messages": 2}
+  const initTabNumLens = (tabMap) => {
+    const initTabNums = {};
+    Array.from(tabMap.entries()).map(([k, v]) => {
+      initTabNums[k] = v.values.length;
+    });
+    return initTabNums;
   };
 
-  const [tabNums, setTabNums] = useState(initTabNums);
+  const [tabNums, setTabNums] = useState(() => initTabNumLens(tabMap));
 
   const resetTabNum = (eventKey) => {
     let num = 0;
-    switch (eventKey) {
-      case "messages":
-        num = messages.length;
-        break;
-      case "quests":
-        num = quests.length;
-        break;
-      case "order-history":
-        num = orderHistories.length;
-        break;
-      case "live-orders":
-        num = liveOrders.length;
-        break;
-    }
-
+    num = tabMap.get(eventKey).values.length;
     tabNums[eventKey] = num;
     setTabNums({ ...tabNums });
   };
 
   // reset the tabNum on active tab so there is no 'new'
-  useEffect(() => {
-    resetTabNum(activeTab);
-  }, [messages.length, quests.length, liveOrders.length, orderHistories.length]);
+  useEffect(
+    () => {
+      resetTabNum(activeTab);
+    },
+    Array.from(tabMap.values()).map((v) => v.values.length)
+  );
 
   return { tabNums, resetTabNum };
 }
