@@ -1,9 +1,7 @@
 /* News / Alert/ Challenge / Message Component */
 import Table from "react-bootstrap/Table";
-import { useInfoPanel } from "./InfoPanelContext.jsx";
 
 export default function Messages(props) {
-  const { messages } = useInfoPanel();
 
   return (
     <Table bordered size="sm" className="w-100">
@@ -14,7 +12,7 @@ export default function Messages(props) {
         </tr>
       </thead>
       <tbody>
-        {messages.map((message, i) => {
+        {props.messages.map((message, i) => {
           return (
             <tr key={`message-${i}`}>
               <td>{message.time && message.time.toLocaleTimeString([], {hour12: false,
