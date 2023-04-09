@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
 import OrderTable from "./OrderTable.jsx";
@@ -11,24 +12,70 @@ export default function InfoTabs(props) {
   const defaultActiveKey = "messages";
   const { activeTab, activeTabDispatch } = useInfoPanel();
 
-  if (!props.player) return null;
-
-  const liveOrders = []
-    .concat(props.player.getLiveBids(), props.player.getLiveOffers())
-    .sort((a, b) => Number(a.timestamp < b.timestamp));
+  const liveOrders = props.player
+    ? []
+        .concat(props.player.getLiveBids(), props.player.getLiveOffers())
+        .sort((a, b) => Number(a.timestamp < b.timestamp))
+    : [];
 
   const orderHistories = props.player
-    .orderHistories()
-    .sort((a, b) => Number(a.timestamp < b.timestamp));
+    ? props.player
+        .orderHistories()
+        .sort((a, b) => Number(a.timestamp < b.timestamp))
+    : [];
+
+  const initTabNums = {
+    //eventKey: num
+    "order-history": orderHistories.length,
+    "live-orders": liveOrders.length,
+  };
+
+  const [tabNums, setTabNums] = useState(initTabNums);
+
+  //reset the tabNum to active tab so there is no 'new'
+  useEffect(() => {
+    resetTabNum(activeTab);
+  }, [liveOrders.length, orderHistories.length]);
+
+  const resetTabNum = (eventKey) => {
+    let num = 0;
+    switch (eventKey) {
+      case "order-history":
+        num = orderHistories.length;
+        break;
+      case "live-orders":
+        num = liveOrders.length;
+        break;
+    }
+    tabNums[eventKey] = num;
+    setTabNums({ ...tabNums });
+  };
+
+  const selectTabHandler = (eventKey) => {
+    resetTabNum(eventKey);
+    activeTabDispatch({ type: "select", value: eventKey });
+  };
+
+  const tabTitleNew = (titleText, num) => {
+    return (
+      <span>
+        {titleText}
+        {!!num && <span style={{ color: "red" }}> ({num})</span>}
+      </span>
+    );
+  };
 
   {
     /* NB: pass setActiveKey to programmatically change Tab
      * TODO: expand to reducer? pass into InfoPanel?
      */
   }
+
+  if (!props.player) return null;
+
   return (
     <Tabs
-      onSelect={(k) => activeTabDispatch({ type: "select", value: k })}
+      onSelect={(k) => selectTabHandler(k)}
       activeKey={activeTab}
       defaultActiveKey={defaultActiveKey}
     >
@@ -38,10 +85,22 @@ export default function InfoTabs(props) {
       <Tab eventKey="quests" title="Quests">
         Quests here
       </Tab>
-      <Tab eventKey="live-orders" title="Live Orders">
+      <Tab
+        eventKey="live-orders"
+        title={tabTitleNew(
+          "Live Orders",
+          liveOrders.length - tabNums["live-orders"]
+        )}
+      >
         <OrderTable type="live" orders={liveOrders} />
       </Tab>
-      <Tab eventKey="order-history" title="Order History">
+      <Tab
+        eventKey="order-history"
+        title={tabTitleNew(
+          "Order History",
+          orderHistories.length - tabNums["order-history"]
+        )}
+      >
         <OrderTable type="histories" orders={orderHistories} />
       </Tab>
     </Tabs>
