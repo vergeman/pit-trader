@@ -7,7 +7,8 @@ import Player from "./player/Player";
 import GestureDecision from "./gesture/GestureDecision";
 import MarketLoop from "./player/MarketLoop";
 import LoseModal from "./LoseModal";
-import { InfoPanelProvider } from "./infopanel/InfoPanelContext";
+import Message from "./infopanel/Message";
+import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
 import { useGameStateContext, GameState } from "./GameStateContext.jsx";
 
 export default function Main(props) {
@@ -15,8 +16,6 @@ export default function Main(props) {
     tick: 1000,
     limitPL: -1000,
   };
-
-  const [gameID, setGameID] = useState(0);
 
   const [me, setMe] = useState(new MatchingEngine());
   const [npcPlayerManager, setNPCPlayerManager] = useState(
@@ -40,6 +39,7 @@ export default function Main(props) {
     )
   );
 
+  const { messagesDispatch } = useInfoPanel();
   const gameStateContext = useGameStateContext();
 
   //INIT
@@ -72,13 +72,12 @@ export default function Main(props) {
     //fired on modal
     console.log("[Main] resetGame()");
     if (player) {
+      messagesDispatch({ type: Message.Restart }); //clear infopanel messages
       gestureDecision.resetRecords();
       player.reset();
       npcPlayerManager.resetAll();
       me.reset();
       marketLoop.init();
-
-      setGameID(gameID + 1); //triggers reset of context provider
 
       gameStateContext.setState(GameState.RUN);
     }
@@ -92,7 +91,7 @@ export default function Main(props) {
     }
   };
 
-  console.log("[Main.jsx] render", gameID);
+  console.log("[Main.jsx] render");
 
   return (
     <Container id="main" className="pt-6">
@@ -100,16 +99,16 @@ export default function Main(props) {
         isLose={gameStateContext.state == GameState.LOSE}
         resetGame={resetGame}
       />
-      <InfoPanelProvider gameID={gameID}>
-        {/* CameraGesture set to camera poll */}
-        <CameraGesture
-          me={me}
-          player={player}
-          marketLoop={marketLoop}
-          gestureDecision={gestureDecision}
-          checkGameState={checkGameState}
-        />
-      </InfoPanelProvider>
+
+      {/* CameraGesture set to camera poll */}
+      <CameraGesture
+        me={me}
+        player={player}
+        marketLoop={marketLoop}
+        gestureDecision={gestureDecision}
+        checkGameState={checkGameState}
+      />
+
     </Container>
   );
 }

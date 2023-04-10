@@ -5,6 +5,7 @@ import Main from "./Main.jsx";
 import Home from "./Home.jsx";
 import Navbar from "./Navbar.jsx";
 import { GameStateContextProvider } from "./GameStateContext.jsx";
+import InfoPanelProvider from "./infopanel/InfoPanelContext.jsx";
 
 function App() {
   return (
@@ -17,8 +18,11 @@ function App() {
             path="/demo"
             element={
               <GameStateContextProvider>
-                <Main />
+                <InfoPanelProvider>
+                  <Main />
+                </InfoPanelProvider>
               </GameStateContextProvider>
+
             }
           />
         </Routes>
