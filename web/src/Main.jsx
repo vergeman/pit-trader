@@ -7,7 +7,6 @@ import Player from "./player/Player";
 import GestureDecision from "./gesture/GestureDecision";
 import MarketLoop from "./player/MarketLoop";
 import LoseModal from "./LoseModal";
-import useMarketLoopRunner from "./player/useMarketLoopRunner.jsx";
 import { InfoPanelProvider } from "./infopanel/InfoPanelContext";
 
 export default function Main(props) {
@@ -42,11 +41,26 @@ export default function Main(props) {
     )
   );
 
+  //INIT
   useEffect(() => {
     marketLoop.init();
   }, []);
 
-  useMarketLoopRunner(marketLoop, isLoop, 1000);
+  //GAMESTATE
+  useEffect(() => {
+    if (isLoop) {
+      marketLoop.start(1000);
+    }
+
+    if (!isLoop) {
+      marketLoop.stop();
+    }
+
+    return () => {
+      console.log("[Main.jsx] cleanup");
+      marketLoop.stop();
+    };
+  }, [isLoop]);
 
   const resetGame = () => {
     //fired on modal

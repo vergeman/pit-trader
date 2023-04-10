@@ -24,7 +24,7 @@ class MarketLoop {
     this._qtySeed = qtySeed;
     this._loopInterval = -1;
     this._isActive = false; //flag for Camera (speed up dev load)
-    this._isInit = false;   //flag indicating ready for run()
+    this._isInit = false; //flag indicating ready for run()
   }
 
   init() {
@@ -58,8 +58,22 @@ class MarketLoop {
   get isInit(): boolean {
     return this._isInit;
   }
+  get isActive(): boolean {
+    return this._isActive;
+  }
 
-  stop() {
+  start(maxTurnDelay: number): number {
+    const numPlayers = this.npcPlayerManager.numPlayers;
+    this._loopInterval = window.setInterval(
+      () => this.run(maxTurnDelay),
+      numPlayers * maxTurnDelay
+    );
+    this._isActive = true;
+    return this._loopInterval;
+  }
+
+  stop(): void {
+    clearInterval(this._loopInterval);
     this._isActive = false;
   }
 
@@ -172,10 +186,9 @@ class MarketLoop {
         order.price,
         maxDelta,
         "->",
-        Math.round( (order.price + maxDelta) * 10) / 10
+        Math.round((order.price + maxDelta) * 10) / 10
       );
       this.me.updateOrderPrice(order, order.price + maxDelta);
-
 
       //for bid/offers .1 apart, maxDelta will be 0 to prevent executing at
       //own prices. In this case we add likelihood to remove bids /offers
@@ -183,27 +196,25 @@ class MarketLoop {
       if (maxDelta == 0) {
         const prob = Math.random();
 
-        let orderQueue:Order[] = [];
+        let orderQueue: Order[] = [];
         //do nothing < .33
         //remove bids
-        if (prob >= .33 && prob < .66) {
+        if (prob >= 0.33 && prob < 0.66) {
           console.log(player.name, "maxDelta 0, canceling bids");
-          orderQueue = player.getLiveBids()
+          orderQueue = player.getLiveBids();
         }
 
         //remove offers
-        if (prob >= .66) {
+        if (prob >= 0.66) {
           console.log(player.name, "maxDelta 0, canceling offers");
-          orderQueue = player.getLiveOffers()
+          orderQueue = player.getLiveOffers();
         }
 
-        orderQueue.forEach(order => {
-          order.cancelled()
+        orderQueue.forEach((order) => {
+          order.cancelled();
           this.me.cancel(order);
         });
-
       }
-
     });
   }
 
