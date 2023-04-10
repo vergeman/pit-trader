@@ -42,22 +42,6 @@ export default function CameraGesture(props) {
     });
   }, [props.me, props.player, props.marketLoop]);
 
-  //test
-  const testMessages = () => {
-    infoPanel.messagesDispatch({
-      type: "test",
-      value: "messages",
-    });
-  };
-
-  const testActiveTab = () => {
-    const action = {
-      type: "select",
-      value: "live-orders", //tab key
-    };
-    infoPanel.activeTabDispatch(action);
-  };
-
   const calcGesture = useCallback(
     async (landmarks) => {
       //NB: useCallback ensures React.memo works (execute signature will regen on this
@@ -122,15 +106,6 @@ export default function CameraGesture(props) {
             gestureDecision={gestureDecisionRef.current}
           />
         </div>
-      </div>
-
-      <div class="wrap d-none">
-        <Button size="sm" onClick={() => testMessages()}>
-          Message
-        </Button>
-        <Button size="sm" onClick={() => testActiveTab()}>
-          Tab
-        </Button>
       </div>
 
       {/* Tab displays needs to re-render at CameraGesture level */}
