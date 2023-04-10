@@ -79,6 +79,7 @@ export default function Main(props) {
       me.reset();
       marketLoop.init();
 
+      gameStateContext.setGameID(gameStateContext.gameID + 1);
       gameStateContext.setState(GameState.RUN);
     }
   };
@@ -91,7 +92,7 @@ export default function Main(props) {
     }
   };
 
-  console.log("[Main.jsx] render");
+  console.log("[Main.jsx] render gameID:", gameStateContext.gameID);
 
   return (
     <Container id="main" className="pt-6">

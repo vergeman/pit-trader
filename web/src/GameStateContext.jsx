@@ -14,10 +14,11 @@ export function useGameStateContext() {
 
 export function GameStateContextProvider(props) {
   const [state, setState] = useState(GameState.RUN);
+  const [gameID, setGameID] = useState(0);
 
   //TODO: gameId
   return (
-    <GameStateContext.Provider value={{ state, setState }}>
+    <GameStateContext.Provider value={{ state, setState, gameID, setGameID }}>
       {props.children}
     </GameStateContext.Provider>
   );
