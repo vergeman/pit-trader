@@ -9,7 +9,7 @@ import MarketLoop from "./player/MarketLoop";
 import LoseModal from "./LoseModal";
 import Message from "./infopanel/Message";
 import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
-import { useGameStateContext, GameState } from "./GameStateContext.jsx";
+import { useGameContext, GameState } from "./GameContext.jsx";
 
 export default function Main(props) {
   const config = {
@@ -40,7 +40,7 @@ export default function Main(props) {
   );
 
   const { messagesDispatch } = useInfoPanel();
-  const gameStateContext = useGameStateContext();
+  const gameContext = useGameContext();
 
   //INIT
   useEffect(() => {
@@ -49,8 +49,9 @@ export default function Main(props) {
 
   //GAMESTATE
   useEffect(() => {
-    switch (gameStateContext.state) {
+    switch (gameContext.state) {
       case GameState.INIT:
+        //any pre stuff?
       case GameState.RUN:
         marketLoop.start(1000);
         break;
@@ -66,7 +67,7 @@ export default function Main(props) {
       console.log("[Main.jsx] cleanup");
       marketLoop.stop();
     };
-  }, [gameStateContext.state]);
+  }, [gameContext.state]);
 
   const resetGame = () => {
     //fired on modal
@@ -79,8 +80,8 @@ export default function Main(props) {
       me.reset();
       marketLoop.init();
 
-      gameStateContext.setGameID(gameStateContext.gameID + 1);
-      gameStateContext.setState(GameState.RUN);
+      gameContext.setGameID(gameContext.gameID + 1);
+      gameContext.setState(GameState.RUN);
     }
   };
 
@@ -88,16 +89,19 @@ export default function Main(props) {
     const price = marketLoop && marketLoop.getPrice();
 
     if (player && player.hasLost(price)) {
-      gameStateContext.setState(GameState.LOSE);
+      gameContext.setState(GameState.LOSE);
+    } else {
+      //change from init
+      gameContext.setState(GameState.RUN);
     }
   };
 
-  console.log("[Main.jsx] render gameID:", gameStateContext.gameID);
+  console.log("[Main.jsx] render gameID:", gameContext.gameID);
 
   return (
     <Container id="main" className="pt-6">
       <LoseModal
-        isLose={gameStateContext.state == GameState.LOSE}
+        isLose={gameContext.state == GameState.LOSE}
         resetGame={resetGame}
       />
 

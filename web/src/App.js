@@ -4,7 +4,7 @@ import { Routes, Route } from "react-router-dom";
 import Main from "./Main.jsx";
 import Home from "./Home.jsx";
 import Navbar from "./Navbar.jsx";
-import { GameStateContextProvider } from "./GameStateContext.jsx";
+import { GameContextProvider } from "./GameContext.jsx";
 import InfoPanelProvider from "./infopanel/InfoPanelContext.jsx";
 
 function App() {
@@ -17,11 +17,11 @@ function App() {
           <Route
             path="/demo"
             element={
-              <GameStateContextProvider>
+              <GameContextProvider>
                 <InfoPanelProvider>
                   <Main />
                 </InfoPanelProvider>
-              </GameStateContextProvider>
+              </GameContextProvider>
 
             }
           />

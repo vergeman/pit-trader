@@ -7,6 +7,7 @@ import Classifier from "./gesture/Classifier.js";
 import GestureBuilder from "./gesture/GestureBuilder.ts";
 import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
 import InfoTabs from "./infopanel/InfoTabs.jsx";
+import { useGameContext, GameState } from "./GameContext.jsx";
 
 export default function CameraGesture(props) {
   /* default bootstrap size */
@@ -16,6 +17,7 @@ export default function CameraGesture(props) {
   const [gestureBuilder, setGestureBuilder] = useState(null);
   const [gesture, setGesture] = useState(null);
   const infoPanel = useInfoPanel();
+  const gameContext = useGameContext();
 
   useEffect(() => {
     console.log("[CameraGesture.jsx]: useEffect init");
@@ -63,6 +65,7 @@ export default function CameraGesture(props) {
   );
 
   //console.log("[CameraGesture] render", gestureData);
+  const isReady = gameContext.state != GameState.INIT;
 
   return (
     <>
@@ -70,34 +73,52 @@ export default function CameraGesture(props) {
         <div className="camera text-center">
           <Camera
             isActive={true}
+            isVisible={isReady}
             width={defaultCameraDims.width}
             height={defaultCameraDims.height}
             calcGesture={calcGesture}
           />
         </div>
 
-        {/*NB: views needs to be updated per iteration */}
-        <div className="me">
-          <PlayerStatus player={props.player} marketLoop={props.marketLoop} />
-          <MatchingEngineView
-            me={props.me}
-            marketLoop={props.marketLoop}
-            player={props.player}
-          />
-        </div>
+        {/*TODO: more informative loading feedback for spinner*/}
+        {!isReady && (
+          <div className="d-flex flex-column justify-content-center vh-75">
+            <div
+              className="spinner-border align-self-center"
+              role="status"
+            ></div>
+            <div className="mt-3 fs-2 align-self-center">Loading</div>
+          </div>
+        )}
 
-        <div className="gestures">
-          <GesturesPanel
-            gestureData={gestureData}
-            gesture={gesture}
-            gestureBuilder={gestureBuilder}
-            gestureDecision={props.gestureDecision}
-          />
-        </div>
+        {isReady && (
+          <>
+            <div className="me">
+              <PlayerStatus
+                player={props.player}
+                marketLoop={props.marketLoop}
+              />
+              <MatchingEngineView
+                me={props.me}
+                marketLoop={props.marketLoop}
+                player={props.player}
+              />
+            </div>
+
+            <div className="gestures">
+              <GesturesPanel
+                gestureData={gestureData}
+                gesture={gesture}
+                gestureBuilder={gestureBuilder}
+                gestureDecision={props.gestureDecision}
+              />
+            </div>
+          </>
+        )}
       </div>
 
       {/* Tab displays needs to re-render at CameraGesture level */}
-      <InfoTabs player={props.player} />
+      {isReady && <InfoTabs player={props.player} />}
     </>
   );
 }

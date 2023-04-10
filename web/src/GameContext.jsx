@@ -1,5 +1,5 @@
 import { useState, createContext, useContext } from "react";
-export const GameStateContext = createContext(null);
+export const GameContext = createContext(null);
 
 export const GameState = {
   INIT: 1, //TODO: currently inactve, but for any loading screen
@@ -8,20 +8,20 @@ export const GameState = {
   STOP: 4,
 };
 
-export function useGameStateContext() {
-  return useContext(GameStateContext);
+export function useGameContext() {
+  return useContext(GameContext);
 }
 
-export function GameStateContextProvider(props) {
+export function GameContextProvider(props) {
   const [state, setState] = useState(GameState.RUN);
   const [gameID, setGameID] = useState(0);
 
   //TODO: gameId
   return (
-    <GameStateContext.Provider value={{ state, setState, gameID, setGameID }}>
+    <GameContext.Provider value={{ state, setState, gameID, setGameID }}>
       {props.children}
-    </GameStateContext.Provider>
+    </GameContext.Provider>
   );
 }
 
-export default GameStateContext;
+export default GameContext;
