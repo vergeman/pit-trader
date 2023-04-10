@@ -78,14 +78,13 @@ export default function Main(props) {
       me.reset();
       marketLoop.init();
 
-      setGameID(gameID + 1); //resets context provider
+      setGameID(gameID + 1); //triggers reset of context provider
 
       gameStateContext.setState(GameState.RUN);
     }
   };
 
-  const triggerGameState = () => {
-    //console.log("[Main.jsx] triggerGameState");
+  const checkGameState = () => {
     const price = marketLoop && marketLoop.getPrice();
 
     if (player && player.hasLost(price)) {
@@ -108,7 +107,7 @@ export default function Main(props) {
           player={player}
           marketLoop={marketLoop}
           gestureDecision={gestureDecision}
-          triggerGameState={triggerGameState}
+          checkGameState={checkGameState}
         />
       </InfoPanelProvider>
     </Container>

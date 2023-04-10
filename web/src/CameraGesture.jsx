@@ -54,7 +54,7 @@ export default function CameraGesture(props) {
       //NB: local gestureDecision msgQueue (not context)
       props.gestureDecision.resetMessages();
 
-      props.triggerGameState();
+      props.checkGameState();
 
       setGestureData({ ...probsArgMax, gesture });
       setGesture(gesture);
