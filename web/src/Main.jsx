@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Container } from "react-bootstrap";
 import CameraGesture from "./CameraGesture.jsx";
 import MatchingEngine from "./engine/MatchingEngine";
@@ -8,6 +8,7 @@ import GestureDecision from "./gesture/GestureDecision";
 import MarketLoop from "./player/MarketLoop";
 import LoseModal from "./LoseModal";
 import { InfoPanelProvider } from "./infopanel/InfoPanelContext";
+import { useGameStateContext } from "./GameStateContext.jsx";
 
 export default function Main(props) {
   const config = {
@@ -15,7 +16,6 @@ export default function Main(props) {
     limitPL: -1000,
   };
 
-  const [isLose, setIsLose] = useState(false);
   const [isLoop, setIsLoop] = useState(true);
   const [gameID, setGameID] = useState(0);
 
@@ -40,6 +40,8 @@ export default function Main(props) {
       1000 //gestureDecision view timeout
     )
   );
+
+  const gameStateContext = useGameStateContext();
 
   //INIT
   useEffect(() => {
@@ -73,7 +75,9 @@ export default function Main(props) {
       marketLoop.init();
 
       setGameID(gameID + 1); //resets context provider
-      setIsLose(false);
+      gameStateContext.setIsLose(false);
+
+      //setIsLose(false);
       setIsLoop(true);
     }
   };
@@ -83,7 +87,8 @@ export default function Main(props) {
     const price = marketLoop && marketLoop.getPrice();
 
     if (player && player.hasLost(price)) {
-      setIsLose(true);
+      gameStateContext.setIsLose(true);
+      //setIsLose(true);
       setIsLoop(false);
     }
   };
@@ -92,7 +97,7 @@ export default function Main(props) {
 
   return (
     <Container id="main" className="pt-6">
-      <LoseModal isLose={isLose} resetGame={resetGame} />
+      <LoseModal isLose={gameStateContext.isLose} resetGame={resetGame} />
       <InfoPanelProvider gameID={gameID}>
         {/* CameraGesture set to camera poll */}
         <CameraGesture

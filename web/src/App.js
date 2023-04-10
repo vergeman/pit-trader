@@ -4,6 +4,7 @@ import { Routes, Route } from "react-router-dom";
 import Main from "./Main.jsx";
 import Home from "./Home.jsx";
 import Navbar from "./Navbar.jsx";
+import { GameStateContextProvider } from "./GameStateContext.jsx";
 
 function App() {
   return (
@@ -12,7 +13,14 @@ function App() {
       {
         <Routes>
           <Route exact path="/" element={<Home />} />
-          <Route path="/demo" element={<Main />} />
+          <Route
+            path="/demo"
+            element={
+              <GameStateContextProvider>
+                <Main />
+              </GameStateContextProvider>
+            }
+          />
         </Routes>
       }
     </div>
