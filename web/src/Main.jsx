@@ -4,51 +4,63 @@ import CameraGesture from "./CameraGesture.jsx";
 import MatchingEngine from "./engine/MatchingEngine";
 import NPCPlayerManager from "./player/NPCPlayerManager";
 import Player from "./player/Player";
+import GestureDecision from "./gesture/GestureDecision";
 import MarketLoop from "./player/MarketLoop";
 import LoseModal from "./LoseModal";
-import useMarketLoopRunner from "./player/useMarketLoopRunner.jsx";
 import { InfoPanelProvider } from "./infopanel/InfoPanelContext";
 
 export default function Main(props) {
-
   const config = {
     tick: 1000,
     limitPL: -1000,
   };
 
-
   const [isLose, setIsLose] = useState(false);
   const [isLoop, setIsLoop] = useState(true);
   const [gameID, setGameID] = useState(0);
 
-  const [me, setMe] = useState(null);
-  const [npcPlayerManager, setNPCPlayerManager] = useState(null);
-  const [player, setPlayer] = useState(null);
-  const [marketLoop, setMarketLoop] = useState(null);
-
-  const [gestureDecision, setGestureDecision] = useState(null);
-
-
-  useEffect(() => {
-    const npcs = [
+  const [me, setMe] = useState(new MatchingEngine());
+  const [npcPlayerManager, setNPCPlayerManager] = useState(
+    new NPCPlayerManager(me, [
       new Player("npc-A"),
       new Player("npc-B"),
       new Player("npc-C"),
-    ];
-    const me = new MatchingEngine();
-    const npcPlayerManager = new NPCPlayerManager(me, npcs);
-    const player = new Player("test", true, config);
-    const marketLoop = new MarketLoop(npcPlayerManager, 100);
+    ])
+  );
+  const [player, setPlayer] = useState(new Player("test", true, config));
+  const [marketLoop, setMarketLoop] = useState(
+    new MarketLoop(npcPlayerManager, 100)
+  );
+  const [gestureDecision, setGestureDecision] = useState(
+    new GestureDecision(
+      me,
+      marketLoop,
+      player,
+      750, //gesture Timeout
+      1000 //gestureDecision view timeout
+    )
+  );
 
-    setMe(me);
-    setNPCPlayerManager(npcPlayerManager);
-    setPlayer(player);
-    setMarketLoop(marketLoop);
-
+  //INIT
+  useEffect(() => {
     marketLoop.init();
   }, []);
 
-  useMarketLoopRunner(marketLoop, isLoop, 1000);
+  //GAMESTATE
+  useEffect(() => {
+    if (isLoop) {
+      marketLoop.start(1000);
+    }
+
+    if (!isLoop) {
+      marketLoop.stop();
+    }
+
+    return () => {
+      console.log("[Main.jsx] cleanup");
+      marketLoop.stop();
+    };
+  }, [isLoop]);
 
   const resetGame = () => {
     //fired on modal
@@ -66,14 +78,13 @@ export default function Main(props) {
     }
   };
 
-  const triggerGameState = (gestureDecision) => {
+  const triggerGameState = () => {
     //console.log("[Main.jsx] triggerGameState");
     const price = marketLoop && marketLoop.getPrice();
 
     if (player && player.hasLost(price)) {
       setIsLose(true);
       setIsLoop(false);
-      setGestureDecision(gestureDecision);
     }
   };
 
@@ -88,6 +99,7 @@ export default function Main(props) {
           me={me}
           player={player}
           marketLoop={marketLoop}
+          gestureDecision={gestureDecision}
           triggerGameState={triggerGameState}
         />
       </InfoPanelProvider>

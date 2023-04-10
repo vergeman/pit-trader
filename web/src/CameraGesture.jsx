@@ -1,15 +1,12 @@
-import { useCallback, useEffect, useState, useRef } from "react";
-import { Button } from "react-bootstrap";
+import { useCallback, useEffect, useState } from "react";
 import Camera from "./input/Camera.jsx";
 import GesturesPanel from "./GesturesPanel.jsx";
 import MatchingEngineView from "./MatchingEngineView.jsx";
-import GestureDecision from "./gesture/GestureDecision";
 import PlayerStatus from "./playerView/PlayerStatus.jsx";
 import Classifier from "./gesture/Classifier.js";
 import GestureBuilder from "./gesture/GestureBuilder.ts";
 import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
 import InfoTabs from "./infopanel/InfoTabs.jsx";
-
 
 export default function CameraGesture(props) {
   /* default bootstrap size */
@@ -18,24 +15,15 @@ export default function CameraGesture(props) {
   const [classifier, setClassifier] = useState(null);
   const [gestureBuilder, setGestureBuilder] = useState(null);
   const [gesture, setGesture] = useState(null);
-  const gestureDecisionRef = useRef(null); //fix for stale closure
   const infoPanel = useInfoPanel();
 
   useEffect(() => {
     console.log("[CameraGesture.jsx]: useEffect init");
     const gestureBuilder = new GestureBuilder();
     const classifier = new Classifier();
-    const gestureDecision = new GestureDecision(
-      props.me,
-      props.marketLoop,
-      props.player,
-      750, //gesture Timeout
-      1000 //gestureDecision view timeout
-    );
 
     setGestureBuilder(gestureBuilder);
     setClassifier(classifier);
-    gestureDecisionRef.current = gestureDecision;
 
     gestureBuilder.load().then(() => {
       classifier.load(gestureBuilder.garbage_idx);
@@ -46,7 +34,7 @@ export default function CameraGesture(props) {
     async (landmarks) => {
       //NB: useCallback ensures React.memo works (execute signature will regen on this
       //comonent render)
-      //gestureDecisionRef is to handle stale closure
+
       if (!classifier) return null;
 
       const probsArgMax = await classifier.classify(landmarks);
@@ -54,24 +42,24 @@ export default function CameraGesture(props) {
       const gesture = gestureBuilder.build(probsArgMax.argMax, probMax);
 
       //calculates gesture and if order is built
-      gestureDecisionRef.current.calc(gesture);
+      props.gestureDecision.calc(gesture);
 
       //toggles for draw
       landmarks.setRecognizedGesture(gesture);
 
       //send any messages populated in calc this calcGesture() pass
-      for (let msg of gestureDecisionRef.current.getNewMessages() ) {
+      for (let msg of props.gestureDecision.getNewMessages()) {
         infoPanel.messagesDispatch(msg);
       }
       //NB: local gestureDecision msgQueue (not context)
-      gestureDecisionRef.current.resetMessages();
+      props.gestureDecision.resetMessages();
 
-      props.triggerGameState(gestureDecisionRef.current);
+      props.triggerGameState();
 
       setGestureData({ ...probsArgMax, gesture });
       setGesture(gesture);
     },
-    [classifier, gestureDecisionRef, gestureBuilder]
+    [classifier, gestureBuilder]
   );
 
   //console.log("[CameraGesture] render", gestureData);
@@ -103,7 +91,7 @@ export default function CameraGesture(props) {
             gestureData={gestureData}
             gesture={gesture}
             gestureBuilder={gestureBuilder}
-            gestureDecision={gestureDecisionRef.current}
+            gestureDecision={props.gestureDecision}
           />
         </div>
       </div>
