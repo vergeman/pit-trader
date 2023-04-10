@@ -8,7 +8,7 @@ import GestureDecision from "./gesture/GestureDecision";
 import MarketLoop from "./player/MarketLoop";
 import LoseModal from "./LoseModal";
 import { InfoPanelProvider } from "./infopanel/InfoPanelContext";
-import { useGameStateContext } from "./GameStateContext.jsx";
+import { useGameStateContext, GameState } from "./GameStateContext.jsx";
 
 export default function Main(props) {
   const config = {
@@ -16,7 +16,6 @@ export default function Main(props) {
     limitPL: -1000,
   };
 
-  const [isLoop, setIsLoop] = useState(true);
   const [gameID, setGameID] = useState(0);
 
   const [me, setMe] = useState(new MatchingEngine());
@@ -50,19 +49,24 @@ export default function Main(props) {
 
   //GAMESTATE
   useEffect(() => {
-    if (isLoop) {
-      marketLoop.start(1000);
-    }
+    switch (gameStateContext.state) {
+      case GameState.INIT:
+      case GameState.RUN:
+        marketLoop.start(1000);
+        break;
+      case GameState.LOSE:
+      case GameState.STOP:
+        marketLoop.stop();
+        break;
 
-    if (!isLoop) {
-      marketLoop.stop();
+      default:
     }
 
     return () => {
       console.log("[Main.jsx] cleanup");
       marketLoop.stop();
     };
-  }, [isLoop]);
+  }, [gameStateContext.state]);
 
   const resetGame = () => {
     //fired on modal
@@ -75,10 +79,8 @@ export default function Main(props) {
       marketLoop.init();
 
       setGameID(gameID + 1); //resets context provider
-      gameStateContext.setIsLose(false);
 
-      //setIsLose(false);
-      setIsLoop(true);
+      gameStateContext.setState(GameState.RUN);
     }
   };
 
@@ -87,9 +89,7 @@ export default function Main(props) {
     const price = marketLoop && marketLoop.getPrice();
 
     if (player && player.hasLost(price)) {
-      gameStateContext.setIsLose(true);
-      //setIsLose(true);
-      setIsLoop(false);
+      gameStateContext.setState(GameState.LOSE);
     }
   };
 
@@ -97,7 +97,10 @@ export default function Main(props) {
 
   return (
     <Container id="main" className="pt-6">
-      <LoseModal isLose={gameStateContext.isLose} resetGame={resetGame} />
+      <LoseModal
+        isLose={gameStateContext.state == GameState.LOSE}
+        resetGame={resetGame}
+      />
       <InfoPanelProvider gameID={gameID}>
         {/* CameraGesture set to camera poll */}
         <CameraGesture
