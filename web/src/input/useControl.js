@@ -1,11 +1,16 @@
 import { useState, useEffect } from "react";
+import { useGlobalContext } from "../GlobalContext.jsx";
 
 export default function useControl(controlRef) {
+  const {isDebug} = useGlobalContext();
   const [control, setControl] = useState(null);
   const [fpsControl, setFPSControl] = useState(null);
 
   useEffect(() => {
     console.log("[controlFPS] useEffect");
+
+    //show only on debug
+    if (!isDebug) return;
 
     const controlsElement = controlRef.current;
 
