@@ -4,18 +4,17 @@ import CameraGesture from "./CameraGesture.jsx";
 import MatchingEngine from "./engine/MatchingEngine";
 import NPCPlayerManager from "./player/NPCPlayerManager";
 import Player from "./player/Player";
+import GestureDecision from "./gesture/GestureDecision";
 import MarketLoop from "./player/MarketLoop";
 import LoseModal from "./LoseModal";
 import useMarketLoopRunner from "./player/useMarketLoopRunner.jsx";
 import { InfoPanelProvider } from "./infopanel/InfoPanelContext";
 
 export default function Main(props) {
-
   const config = {
     tick: 1000,
     limitPL: -1000,
   };
-
 
   const [isLose, setIsLose] = useState(false);
   const [isLoop, setIsLoop] = useState(true);
@@ -28,7 +27,6 @@ export default function Main(props) {
 
   const [gestureDecision, setGestureDecision] = useState(null);
 
-
   useEffect(() => {
     const npcs = [
       new Player("npc-A"),
@@ -39,11 +37,19 @@ export default function Main(props) {
     const npcPlayerManager = new NPCPlayerManager(me, npcs);
     const player = new Player("test", true, config);
     const marketLoop = new MarketLoop(npcPlayerManager, 100);
+    const gestureDecision = new GestureDecision(
+      me,
+      marketLoop,
+      player,
+      750, //gesture Timeout
+      1000 //gestureDecision view timeout
+    );
 
     setMe(me);
     setNPCPlayerManager(npcPlayerManager);
     setPlayer(player);
     setMarketLoop(marketLoop);
+    setGestureDecision(gestureDecision);
 
     marketLoop.init();
   }, []);
@@ -66,14 +72,13 @@ export default function Main(props) {
     }
   };
 
-  const triggerGameState = (gestureDecision) => {
+  const triggerGameState = () => {
     //console.log("[Main.jsx] triggerGameState");
     const price = marketLoop && marketLoop.getPrice();
 
     if (player && player.hasLost(price)) {
       setIsLose(true);
       setIsLoop(false);
-      setGestureDecision(gestureDecision);
     }
   };
 
@@ -88,6 +93,7 @@ export default function Main(props) {
           me={me}
           player={player}
           marketLoop={marketLoop}
+          gestureDecision={gestureDecision}
           triggerGameState={triggerGameState}
         />
       </InfoPanelProvider>
