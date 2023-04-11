@@ -13,7 +13,7 @@ export function useGameContext() {
 }
 
 export function GameContextProvider(props) {
-  const [state, setState] = useState(GameState.RUN);
+  const [state, setState] = useState(GameState.INIT);
   const [gameID, setGameID] = useState(0);
 
   //TODO: gameId
