@@ -10,13 +10,7 @@ function Camera(props) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
 
-  useCamera(
-    props.isActive,
-    videoRef,
-    controlRef,
-    canvasRef,
-    props.calcGesture
-  );
+  useCamera(props.isActive, videoRef, controlRef, canvasRef, props.calcGesture);
 
   const handleResize = (e) => {
     //TODO: debounce
@@ -42,7 +36,9 @@ function Camera(props) {
         <video ref={videoRef} className="input_video"></video>
         <canvas
           ref={canvasRef}
-          className="output_canvas"
+          className={["output_canvas", props.isVisible ? "" : "d-none"].join(
+            " "
+          )}
           width={`${width}px`}
           height={`${height}px`}
         ></canvas>

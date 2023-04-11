@@ -185,6 +185,10 @@ table#gestureDecision {
   padding-top: 4rem;
 }
 
+.vh-75 {
+  height: 75vh;
+}
+
 .control-panel {
   position: absolute;
   top: 2rem;

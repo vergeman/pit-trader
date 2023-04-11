@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Container } from "react-bootstrap";
 import CameraGesture from "./CameraGesture.jsx";
 import MatchingEngine from "./engine/MatchingEngine";
@@ -7,17 +7,15 @@ import Player from "./player/Player";
 import GestureDecision from "./gesture/GestureDecision";
 import MarketLoop from "./player/MarketLoop";
 import LoseModal from "./LoseModal";
-import { InfoPanelProvider } from "./infopanel/InfoPanelContext";
+import Message from "./infopanel/Message";
+import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
+import { useGameContext, GameState } from "./GameContext.jsx";
 
 export default function Main(props) {
   const config = {
     tick: 1000,
     limitPL: -1000,
   };
-
-  const [isLose, setIsLose] = useState(false);
-  const [isLoop, setIsLoop] = useState(true);
-  const [gameID, setGameID] = useState(0);
 
   const [me, setMe] = useState(new MatchingEngine());
   const [npcPlayerManager, setNPCPlayerManager] = useState(
@@ -41,6 +39,9 @@ export default function Main(props) {
     )
   );
 
+  const { messagesDispatch } = useInfoPanel();
+  const gameContext = useGameContext();
+
   //INIT
   useEffect(() => {
     marketLoop.init();
@@ -48,61 +49,71 @@ export default function Main(props) {
 
   //GAMESTATE
   useEffect(() => {
-    if (isLoop) {
-      marketLoop.start(1000);
-    }
+    switch (gameContext.state) {
+      case GameState.INIT:
+        //any pre stuff?
+      case GameState.RUN:
+        marketLoop.start(1000);
+        break;
+      case GameState.LOSE:
+      case GameState.STOP:
+        marketLoop.stop();
+        break;
 
-    if (!isLoop) {
-      marketLoop.stop();
+      default:
     }
 
     return () => {
       console.log("[Main.jsx] cleanup");
       marketLoop.stop();
     };
-  }, [isLoop]);
+  }, [gameContext.state]);
 
   const resetGame = () => {
     //fired on modal
     console.log("[Main] resetGame()");
     if (player) {
+      messagesDispatch({ type: Message.Restart }); //clear infopanel messages
       gestureDecision.resetRecords();
       player.reset();
       npcPlayerManager.resetAll();
       me.reset();
       marketLoop.init();
 
-      setGameID(gameID + 1); //resets context provider
-      setIsLose(false);
-      setIsLoop(true);
+      gameContext.setGameID(gameContext.gameID + 1);
+      gameContext.setState(GameState.RUN);
     }
   };
 
-  const triggerGameState = () => {
-    //console.log("[Main.jsx] triggerGameState");
+  const checkGameState = () => {
     const price = marketLoop && marketLoop.getPrice();
 
     if (player && player.hasLost(price)) {
-      setIsLose(true);
-      setIsLoop(false);
+      gameContext.setState(GameState.LOSE);
+    } else {
+      //change from init
+      gameContext.setState(GameState.RUN);
     }
   };
 
-  console.log("[Main.jsx] render", gameID);
+  console.log("[Main.jsx] render gameID:", gameContext.gameID);
 
   return (
     <Container id="main" className="pt-6">
-      <LoseModal isLose={isLose} resetGame={resetGame} />
-      <InfoPanelProvider gameID={gameID}>
-        {/* CameraGesture set to camera poll */}
-        <CameraGesture
-          me={me}
-          player={player}
-          marketLoop={marketLoop}
-          gestureDecision={gestureDecision}
-          triggerGameState={triggerGameState}
-        />
-      </InfoPanelProvider>
+      <LoseModal
+        isLose={gameContext.state == GameState.LOSE}
+        resetGame={resetGame}
+      />
+
+      {/* CameraGesture set to camera poll */}
+      <CameraGesture
+        me={me}
+        player={player}
+        marketLoop={marketLoop}
+        gestureDecision={gestureDecision}
+        checkGameState={checkGameState}
+      />
+
     </Container>
   );
 }
