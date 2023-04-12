@@ -4,11 +4,11 @@ export default function Actions(props) {
   return (
     <div>
       <h4>Actions</h4>
-      <p>There are a plethora of other hand signals, notably:</p>
+      <p>Other important hand signals:</p>
       <p>
         <div>
           <strong>Cancel</strong>: Cancel an order, or clear a previous hand
-          signal.
+          signal, place hand horiztional across throat.
         </div>
         <div>
           <strong>Market</strong>: Execute the order at the current market price. The signal
@@ -23,7 +23,7 @@ export default function Actions(props) {
         />
         <InstructionFigure
           src={`${process.env.PUBLIC_URL}/instructions/market.png`}
-          caption="Market"
+          caption="Market Price"
           className="fit"
         />
       </div>

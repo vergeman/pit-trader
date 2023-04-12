@@ -4,11 +4,14 @@ export default function Prices(props) {
   return (
     <div>
       <h4>Prices</h4>
-      <p>To indicate a price, extend the numeric hand signal from the body</p>
+      <p>Extend the numeric hand signal in front of the body to denote a price.</p>
       <p>
-        Note the palm orientation indicates a buyer (3 bid), and a seller (at
-        5).
+        The palm's orientation indicates a buyer or seller:
       </p>
+      <ul>
+        <li>Facing in: a buyer (Pay 3)</li>
+        <li>Facing away: a seller (Offer 5).</li>
+      </ul>
       <div className="d-flex justify-content-evenly align-items-end">
         <InstructionFigure
           src={`${process.env.PUBLIC_URL}/instructions/price-buy-3.png`}

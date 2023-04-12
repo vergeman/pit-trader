@@ -197,7 +197,10 @@ table#gestureDecision {
 .pt-6 {
   padding-top: 4rem;
 }
-
+.px-3-5 {
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
 .vh-75 {
   height: 75vh;
 }

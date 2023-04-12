@@ -9,21 +9,21 @@ export default function Examples(props) {
         <strong>Price</strong> hand signals.
       </p>
       <p>
-        This trader indicates he wants to "Buy 7 for 3" - a quantity of 7
-        contracts paying a price of 3.
+        The trader below will "pay 3 for 7".
       </p>
 
       <div className="d-flex justify-content-evenly align-items-end">
         <InstructionFigure
-          src={`${process.env.PUBLIC_URL}/instructions/qty-buy-7.png`}
-          caption="Buy 7"
+          src={`${process.env.PUBLIC_URL}/instructions/price-buy-3.png`}
+          caption="Price: 3"
           className="fit"
         />
         <InstructionFigure
-          src={`${process.env.PUBLIC_URL}/instructions/price-buy-3.png`}
-          caption="For 3"
+          src={`${process.env.PUBLIC_URL}/instructions/qty-buy-7.png`}
+          caption="Quantity: 7"
           className="fit"
         />
+
       </div>
     </div>
   );

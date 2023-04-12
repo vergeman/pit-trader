@@ -8,11 +8,11 @@ import Actions from "./Actions.jsx";
 export default function Instructions(props) {
   return (
     <Container className="instructions bg-light text-dark">
-      <h1 className="text-center">Instructions</h1>
+      <h1 className="offset-2 px-3-5 py-2">Instructions</h1>
       <Tab.Container defaultActiveKey="numbers">
         <Row>
           {/* Nav */}
-          <Col sm={3}>
+          <Col sm={2}>
             <Nav variant="pills" className="flex-column">
               <Nav.Item>
                 <Nav.Link eventKey="numbers">Numbers</Nav.Link>
@@ -33,7 +33,7 @@ export default function Instructions(props) {
           </Col>
 
           {/* Content */}
-          <Col sm={9}>
+          <Col sm={10}>
             <Tab.Content>
               <Tab.Pane eventKey="numbers">
                 <Numbers />
