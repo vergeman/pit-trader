@@ -179,6 +179,19 @@ table#gestureDecision {
   animation: pulsate 1.4s ease-in-out infinite alternate
 }
 
+/* Instruction Panel */
+.instructions img.fit {
+  object-fit: "contain";
+  height: 7rem;
+}
+
+@media (min-width: 768px) {
+  .instructions img.fit {
+    height: 10rem;
+  }
+}
+
+
 /* Extended Helpers */
 
 .pt-6 {

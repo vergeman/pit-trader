@@ -1,12 +1,13 @@
 import { Container, Col, Nav, Row, Tab } from "react-bootstrap";
-
-function TabMainContent(props) {
-  return `Hello ${props.test}`;
-}
+import Numbers from "./Numbers.jsx";
+import Prices from "./Prices.jsx";
+import Quantities from "./Quantities.jsx";
+import Examples from "./Examples.jsx";
+import Actions from "./Actions.jsx";
 
 export default function Instructions(props) {
   return (
-    <Container className="bg-light text-dark">
+    <Container className="instructions bg-light text-dark">
       <h1 className="text-center">Instructions</h1>
       <Tab.Container defaultActiveKey="numbers">
         <Row>
@@ -35,19 +36,19 @@ export default function Instructions(props) {
           <Col sm={9}>
             <Tab.Content>
               <Tab.Pane eventKey="numbers">
-                <TabMainContent />
+                <Numbers />
               </Tab.Pane>
               <Tab.Pane eventKey="price">
-                <TabMainContent />
+                <Prices />
               </Tab.Pane>
               <Tab.Pane eventKey="quantity">
-                <TabMainContent />
+                <Quantities />
               </Tab.Pane>
               <Tab.Pane eventKey="example">
-                <TabMainContent />
+                <Examples />
               </Tab.Pane>
               <Tab.Pane eventKey="action">
-                <TabMainContent />
+                <Actions />
               </Tab.Pane>
             </Tab.Content>
           </Col>
