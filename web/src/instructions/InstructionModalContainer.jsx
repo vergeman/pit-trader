@@ -28,7 +28,7 @@ export default function InstructionModalContainer(props) {
             {props.children}
 
             <div className="mt-2 text-dark">
-              Images provided by{" "}
+              Detailed Instructions and images courtesy of the{" "}
               <a href="https://tradepractices.files.wordpress.com/2012/07/commodity-and-futures-handsignals.pdf">
                 CME
               </a>

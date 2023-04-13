@@ -11,7 +11,7 @@ export default function Instructions(props) {
       <Tab.Container defaultActiveKey="numbers">
         <Row>
           {/* Nav */}
-          <Col sm={2}>
+          <Col sm={3}>
             <Nav variant="pills" className="flex-column">
               <Nav.Item>
                 <Nav.Link eventKey="numbers">Numbers</Nav.Link>
@@ -28,11 +28,12 @@ export default function Instructions(props) {
               <Nav.Item>
                 <Nav.Link eventKey="action">Actions</Nav.Link>
               </Nav.Item>
+              <hr className="d-xs-block d-sm-none"/>
             </Nav>
           </Col>
 
           {/* Content */}
-          <Col sm={10}>
+          <Col sm={9}>
             <Tab.Content>
               <Tab.Pane eventKey="numbers">
                 <Numbers />
