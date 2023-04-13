@@ -1,4 +1,6 @@
 import InstructionFigure from "./InstructionFigure.jsx";
+import InstructionModalContainer from "./InstructionModalContainer.jsx";
+import Instructions from "./index.jsx";
 
 export default function LoadingInstructions(props) {
   return (
@@ -43,9 +45,11 @@ export default function LoadingInstructions(props) {
         </tbody>
       </table>
 
-      <h5 className="text-end">
-        Detailed Instructions?
-      </h5>
+      <div className="text-end">
+        <InstructionModalContainer buttonLabel="Detailed Instructions?">
+          <Instructions />
+        </InstructionModalContainer>
+      </div>
     </div>
   );
 }
