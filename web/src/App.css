@@ -220,6 +220,16 @@ table#gestureDecision.table {
   height: 75vh;
 }
 
+.rounded-sm {
+  border-radius: .375rem;
+}
+
+@media (max-width: 567px) {
+  .rounded-sm {
+    border-radius: 0px;
+  }
+}
+
 .control-panel {
   position: absolute;
   top: 2rem;

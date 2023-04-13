@@ -8,7 +8,6 @@ import Actions from "./Actions.jsx";
 export default function Instructions(props) {
   return (
     <Container className="instructions bg-light text-dark">
-      <h1 className="offset-2 px-3-5 py-2">Instructions</h1>
       <Tab.Container defaultActiveKey="numbers">
         <Row>
           {/* Nav */}

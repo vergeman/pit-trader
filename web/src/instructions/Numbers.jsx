@@ -43,14 +43,6 @@ export default function Numbers(props) {
           className="fit"
         />
       </div>
-
-      <p className="mt-2">
-        Images provided by{" "}
-        <a href="https://tradepractices.files.wordpress.com/2012/07/commodity-and-futures-handsignals.pdf">
-          CME
-        </a>
-        .
-      </p>
     </div>
   );
 }

@@ -4,7 +4,7 @@ import Instructions from "./index.jsx";
 
 export default function LoadingInstructions(props) {
   return (
-    <div className="bg-light text-dark rounded p-3">
+    <div className="bg-light text-dark rounded-sm p-3">
       <h4>Quick Reminder</h4>
 
       <div className="d-flex justify-content-evenly align-items-end">
@@ -46,7 +46,7 @@ export default function LoadingInstructions(props) {
       </table>
 
       <div className="text-end">
-        <InstructionModalContainer buttonLabel="Detailed Instructions?">
+        <InstructionModalContainer title="Detailed Instructions">
           <Instructions />
         </InstructionModalContainer>
       </div>

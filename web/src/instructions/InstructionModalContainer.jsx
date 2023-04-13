@@ -10,23 +10,24 @@ export default function InstructionModalContainer(props) {
 
   return (
     <>
-      <Button onClick={handleOpen}>Detailed Instructions</Button>
+      <Button onClick={handleOpen}>{props.title}</Button>
       <div className="modal show">
-        <Modal show={show} onHide={handleClose}>
+        <Modal size="lg" show={show} onHide={handleClose}>
           <Modal.Header closeButton>
-            <Modal.Title>{props.buttonLabel}</Modal.Title>
+            <Modal.Title className="text-dark">{props.title}</Modal.Title>
           </Modal.Header>
 
           <Modal.Body>
             {props.children}
-          </Modal.Body>
 
-          <Modal.Footer>
-            <Button variant="secondary">Close</Button>
-            <Button variant="primary" onClick={() => handleClose()}>
-              Restart
-            </Button>
-          </Modal.Footer>
+            <p className="mt-2 text-dark">
+              Images provided by{" "}
+              <a href="https://tradepractices.files.wordpress.com/2012/07/commodity-and-futures-handsignals.pdf">
+                CME
+              </a>
+              .
+            </p>
+          </Modal.Body>
         </Modal>
       </div>
     </>
