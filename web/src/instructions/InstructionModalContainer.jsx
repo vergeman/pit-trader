@@ -10,7 +10,14 @@ export default function InstructionModalContainer(props) {
 
   return (
     <>
-      <Button onClick={handleOpen}>{props.title}</Button>
+      {props.button && <Button onClick={handleOpen}>{props.title}</Button>}
+
+      {!props.button && (
+        <a className="nav-link" href="#" onClick={handleOpen}>
+          {props.title}
+        </a>
+      )}
+
       <div className="modal show">
         <Modal size="lg" show={show} onHide={handleClose}>
           <Modal.Header closeButton>

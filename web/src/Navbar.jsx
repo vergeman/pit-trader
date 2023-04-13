@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import {Container, Nav, Navbar} from "react-bootstrap";
+import { Container, Nav, Navbar } from "react-bootstrap";
+import { Instructions, InstructionModalContainer } from "./instructions";
 
 export default function NavbarComponent() {
   const inheritStyle = { color: "inherit", textDecoration: "inherit" };
@@ -22,7 +23,7 @@ export default function NavbarComponent() {
         </Navbar.Brand>
 
         {/* Links */}
-        <Nav className="me-auto">
+        <Nav className="me-auto w-100">
           <Nav.Link as={Link} to="/">
             Home
           </Nav.Link>
@@ -31,6 +32,10 @@ export default function NavbarComponent() {
             Demo
           </Nav.Link>
         </Nav>
+
+        <InstructionModalContainer title="Instructions">
+          <Instructions />
+        </InstructionModalContainer>
       </Container>
     </Navbar>
   );
