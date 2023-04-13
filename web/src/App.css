@@ -106,6 +106,21 @@
   }
 }
 
+/* Main Tables */
+
+#main .table > :not(caption) > * > * {
+  box-shadow: none;
+}
+#main .table caption { padding: .25rem; }
+#main .table th {
+  font-weight: 400;
+  color: #8c8c8c;
+}
+#main .table {
+  background-color: #0a0a0a;
+  border-color: #2e2e2e;
+}
+
 /* Gesture Current */
 
 table#gestureCurrent {
@@ -146,9 +161,10 @@ table#gestureDecision th {
   text-transform: uppercase;
 }
 
-table#gestureDecision {
-  border: 0px solid transparent;
+table#gestureDecision.table {
   text-transform: uppercase;
+  background: transparent;
+  border: transparent;
 }
 
 @keyframes pulsate {
