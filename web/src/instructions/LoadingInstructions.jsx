@@ -1,22 +1,22 @@
-import { Image, Figure } from "react-bootstrap";
 import InstructionFigure from "./InstructionFigure.jsx";
 
 export default function LoadingInstructions(props) {
   return (
-    <div className="bg-light text-dark rounded">
-      <h4>Quick Guide</h4>
+    <div className="bg-light text-dark rounded p-3">
+      <h4>Quick Reminder</h4>
+
       <div className="d-flex justify-content-evenly align-items-end">
         {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => {
           return (
             <InstructionFigure
               src={`${process.env.PUBLIC_URL}/instructions/${num}.png`}
-              width={num > 5 ? 110 : 60}
+              width={num > 5 ? 80 : 50}
               caption={num}
             />
           );
         })}
       </div>
-      <table>
+      <table className="table text-dark">
         <thead>
           <tr>
             <th>Action</th>
@@ -42,6 +42,10 @@ export default function LoadingInstructions(props) {
           </tr>
         </tbody>
       </table>
+
+      <h5 className="text-end">
+        Detailed Instructions?
+      </h5>
     </div>
   );
 }
