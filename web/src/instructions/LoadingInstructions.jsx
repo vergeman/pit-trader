@@ -8,9 +8,10 @@ export default function LoadingInstructions(props) {
       <h4>Quick Reminder</h4>
 
       <div className="d-flex justify-content-evenly align-items-end">
-        {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => {
+        {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((num, i) => {
           return (
             <InstructionFigure
+              key={`instruction-image-${i}`}
               src={`${process.env.PUBLIC_URL}/instructions/${num}.png`}
               width={num > 5 ? 80 : 50}
               caption={num}

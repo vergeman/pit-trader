@@ -20,13 +20,13 @@ export default function InstructionModalContainer(props) {
           <Modal.Body>
             {props.children}
 
-            <p className="mt-2 text-dark">
+            <div className="mt-2 text-dark">
               Images provided by{" "}
               <a href="https://tradepractices.files.wordpress.com/2012/07/commodity-and-futures-handsignals.pdf">
                 CME
               </a>
               .
-            </p>
+            </div>
           </Modal.Body>
         </Modal>
       </div>
