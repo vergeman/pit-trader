@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { Spinner } from "react-bootstrap";
 import Camera from "./input/Camera.jsx";
 import GesturesPanel from "./GesturesPanel.jsx";
 import MatchingEngineView from "./MatchingEngineView.jsx";
@@ -83,10 +84,11 @@ export default function CameraGesture(props) {
         {/*TODO: more informative loading feedback for spinner*/}
         {!isReady && (
           <div className="d-flex flex-column justify-content-center vh-75">
-            <div
-              className="spinner-border align-self-center"
+            <Spinner
+              animation="border"
               role="status"
-            ></div>
+              className="align-self-center"
+            />
             <div className="mt-3 fs-2 align-self-center">Loading</div>
           </div>
         )}
