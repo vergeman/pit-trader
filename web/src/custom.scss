@@ -8,23 +8,8 @@ $body-color: #dedede;
 $font-size-base: .85rem;
 
 /* Table */
-.table > :not(caption) > * > * {
-  box-shadow: none;
-}
-caption { padding: .25rem; }
-$table-bg: #0a0a0a;
-$table-border-color: #2e2e2e;
 
-td {
-  border-color: $table-border-color;
-}
 
-th {
-  font-weight: 400;
-  background: #1b1b1b !important;
-  color: #8c8c8c;
-  border-color: #3c3c3c;
-}
 
 
 //ME
