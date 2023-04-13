@@ -1,6 +1,6 @@
 import InstructionFigure from "./InstructionFigure.jsx";
 import InstructionModalContainer from "./InstructionModalContainer.jsx";
-import Instructions from "./index.jsx";
+import Instructions from "./Instructions.jsx";
 
 export default function LoadingInstructions(props) {
   return (

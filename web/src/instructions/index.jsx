@@ -1,58 +1,16 @@
-import { Container, Col, Nav, Row, Tab } from "react-bootstrap";
-import Numbers from "./Numbers.jsx";
-import Prices from "./Prices.jsx";
-import Quantities from "./Quantities.jsx";
-import Examples from "./Examples.jsx";
-import Actions from "./Actions.jsx";
+export { default as InstructionFigure } from "./InstructionFigure.jsx";
 
-export default function Instructions(props) {
-  return (
-    <Container className="instructions bg-light text-dark">
-      <Tab.Container defaultActiveKey="numbers">
-        <Row>
-          {/* Nav */}
-          <Col sm={2}>
-            <Nav variant="pills" className="flex-column">
-              <Nav.Item>
-                <Nav.Link eventKey="numbers">Numbers</Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey="price">Prices</Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey="quantity">Quantities</Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey="example">Example</Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey="action">Actions</Nav.Link>
-              </Nav.Item>
-            </Nav>
-          </Col>
+export { default as Actions } from "./Actions.jsx";
+export { default as Examples } from "./Examples.jsx";
+export { default as Numbers } from "./Numbers.jsx";
+export { default as Prices } from "./Prices.jsx";
+export { default as Quantities } from "./Quantities.jsx";
 
-          {/* Content */}
-          <Col sm={10}>
-            <Tab.Content>
-              <Tab.Pane eventKey="numbers">
-                <Numbers />
-              </Tab.Pane>
-              <Tab.Pane eventKey="price">
-                <Prices />
-              </Tab.Pane>
-              <Tab.Pane eventKey="quantity">
-                <Quantities />
-              </Tab.Pane>
-              <Tab.Pane eventKey="example">
-                <Examples />
-              </Tab.Pane>
-              <Tab.Pane eventKey="action">
-                <Actions />
-              </Tab.Pane>
-            </Tab.Content>
-          </Col>
-        </Row>
-      </Tab.Container>
-    </Container>
-  );
-}
+/* Detailed Instructions */
+export { default as Instructions } from "./Instructions.jsx";
+
+/* Quick Instructions Panel (Home) */
+export { default as LoadingInstructions } from "./LoadingInstructions.jsx";
+
+/* Modal shell housing Detailed Instructions */
+export { default as InstructionModalContainer } from "./InstructionModalContainer.jsx";

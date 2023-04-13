@@ -1,8 +1,7 @@
 import logo from "./logo.svg";
 import { Link } from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
-import Instructions from "./instructions";
-import LoadingInstructions from "./instructions/LoadingInstructions.jsx";
+import { LoadingInstructions } from "./instructions";
 
 export default function Home() {
   return (
