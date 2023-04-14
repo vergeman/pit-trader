@@ -11,18 +11,13 @@ export default function Home() {
         alt="background image pit trading"
       />
       <div className="App-header">
-
-        <h1 class="display-1 fw-bold">
-          Pit Trader
-        </h1>
+        <h1 id="home-hero-text">PIT TRADER</h1>
 
         <Link to="/demo">
-          <Button size="lg" variant="dark">Enter</Button>
+          <Button id="home-hero-cta" className="mt-4" size="lg" variant="dark">
+            Enter
+          </Button>
         </Link>
-      </div>
-
-      <div className="d-flex flex-column justify-center align-items-center">
-        <LoadingInstructions />
       </div>
     </div>
   );

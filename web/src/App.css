@@ -31,6 +31,26 @@
   height: 100%;
   object-fit: cover;
 }
+#home-hero-text {
+  font-family: "Overpass";
+  font-size: 4rem;
+  text-shadow: 14px 10px 14px rgba(0,0,0,0.3);
+}
+@media (min-width: 768px) {
+  #home-hero-text {
+    font-size: 8rem;
+  }
+}
+
+#home-hero-cta {
+  font-size: 2rem;
+  box-shadow: 14px 10px 14px rgba(0,0,0,0.3);
+}
+@media (min-width: 768px) {
+  #home-hero-cta {
+    font-size: 3rem;
+  }
+}
 
 /*
  * main layout
