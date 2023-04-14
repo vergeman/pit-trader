@@ -89,6 +89,8 @@ export default function Main(props) {
     const price = marketLoop && marketLoop.getPrice();
 
     if (player && player.hasLost(price)) {
+      player.calcPnL(price);
+      marketLoop.stop();
       gameContext.setState(GameState.LOSE);
     } else {
       //change from init
@@ -101,6 +103,8 @@ export default function Main(props) {
   return (
     <Container id="main" className="pt-6">
       <LoseModal
+        player={player}
+        price={marketLoop && marketLoop.getPrice()}
         isLose={gameContext.state == GameState.LOSE}
         resetGame={resetGame}
       />

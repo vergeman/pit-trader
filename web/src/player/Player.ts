@@ -11,6 +11,7 @@ export class Player {
   private _name: string;
   private _isLive: boolean;
   private _delta: number;
+  private _maxPnL: number;
   private _orders: Order[];
   private readonly _config: PlayerConfig;
 
@@ -26,6 +27,7 @@ export class Player {
     this._name = name;
     this._isLive = isLive;
     this._delta = 0;
+    this._maxPnL = 0;
     this._orders = [];
 
     this._config = config;
@@ -58,9 +60,15 @@ export class Player {
   set delta(d: number) {
     this._delta = d;
   }
-
+  get maxPnL(): number {
+    return this._maxPnL;
+  }
+  set maxPnL(num: number) {
+    this._maxPnL = num;
+  }
   reset(): void {
     this.orders = [];
+    this.maxPnL = 0;
   }
 
   hasLiveBids(): boolean {
@@ -106,7 +114,7 @@ export class Player {
         //console.log("MTM", mtm, price, fillPrice, transaction)
       }
     }
-
+    this.maxPnL = Math.max(pnl, this.maxPnL);
     return pnl;
   }
 
@@ -146,8 +154,7 @@ export class Player {
       // fake a transaction to display a Cancelled Order
       // (we show completes and partials, it's strange not to show a cancel)
       if (order.status == OrderStatus.Cancelled) {
-
-        const t: Transaction =  {
+        const t: Transaction = {
           id: order.id,
           orderType: order.orderType,
           player_id: order.player_id,

@@ -194,6 +194,19 @@ table#gestureDecision.table {
   animation: pulsate 1.4s ease-in-out infinite alternate
 }
 
+.losemodal-score {
+  text-align: right;
+}
+@media (min-width: 768px) {
+  .losemodal-score {
+    padding-right: 6.25rem;
+    text-align: right;
+  }
+}
+.isLive {
+  background: #fff3cd;
+}
+
 /* Instruction Panel */
 .instructions img.fit {
   object-fit: "contain";

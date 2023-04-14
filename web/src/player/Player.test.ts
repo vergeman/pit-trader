@@ -211,6 +211,24 @@ describe("Player", () => {
     expect(p.orders.length).toBe(2);
   });
 
+  it("calcPnL sets maxPnL member variable", () => {
+    const p = new Player("test", true, { tick: 1000, limitPL: -1000000 });
+    const me = new MatchingEngine();
+    const o1b = new Order(p.id, OrderType.Limit, 10, 100);
+    const o1s = new Order(p.id, OrderType.Limit, -10, 101);
+    p.addOrder(o1b);
+    p.addOrder(o1s);
+    me.process(o1b);
+    me.process(o1s);
+
+    //NB: player test is long 10
+    const o2 = new Order('123"', OrderType.Limit, -10, 100);
+    me.process(o2);
+    expect(p.calcPnL(103)).toBe(30000);
+    expect(p.maxPnL).toBe(30000);
+    expect(p.calcPnL(102)).toBe(20000);
+    expect(p.maxPnL).toBe(30000);
+  })
   //pending:
   //needs last traded or best price; market info
   //need to determine if bid or offer order
