@@ -3,7 +3,7 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 
 export default function LoseModal(props) {
-  const [show, setShow] = useState(true);
+  const [show, setShow] = useState(props.isLose);
   const handleClose = () => setShow(false);
 
   const reset = () => {
@@ -15,12 +15,12 @@ export default function LoseModal(props) {
     setShow(props.isLose);
   }, [props.isLose]);
 
-  console.log("[LoseModal] render", props.player);
+  console.log("[LoseModal] render", props.price, props.player);
 
   const players = [
     {
       name: props.player.name,
-      score: Math.round(props.player.maxPnL).toLocaleString(),
+      score: Math.round(props.player.maxPnL),
       isLive: true,
     },
     { name: "James Simons", score: 79846 },
@@ -56,7 +56,7 @@ export default function LoseModal(props) {
                     <tr className={p.isLive ? "isLive" : ""}>
                       <td>{p.name}</td>
                       <td className="losemodal-score">
-                        {parseInt(p.score || 0).toLocaleString()}
+                        {(p.score).toLocaleString()}
                       </td>
                     </tr>
                   );

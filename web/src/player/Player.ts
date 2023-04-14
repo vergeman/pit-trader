@@ -68,6 +68,7 @@ export class Player {
   }
   reset(): void {
     this.orders = [];
+    this.maxPnL = 0;
   }
 
   hasLiveBids(): boolean {
