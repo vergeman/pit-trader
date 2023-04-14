@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Container, Row, Col, Button } from "react-bootstrap";
+import { Container, Row, Col, Button, Card} from "react-bootstrap";
 import { LoadingInstructions } from "./instructions";
 
 export default function Home() {
@@ -20,7 +20,7 @@ export default function Home() {
   };
 
   const [defaultBadge, setDefaultBadge] = useState(defaultBadgeBuilder());
-  const [badge, setBadge] = useState(null);
+  const [badge, setBadge] = useState("");
 
   return (
     <div>
@@ -32,15 +32,19 @@ export default function Home() {
       <div className="App-header">
         <h1 id="home-hero-text">PIT TRADER</h1>
 
-        <input
-          name="badge"
-          placeholder={defaultBadge}
-          value={badge}
-          onChange={changeBadgeInputHandler}
-        />
+        <div id="home-badge">
+          <p className="fs-6 fw-light text-dark">Enter Badge ID</p>
+          <input
+            name="badge"
+            className="fw-light no-border w-100"
+            placeholder={defaultBadge}
+            value={badge}
+            onChange={changeBadgeInputHandler}
+          />
+        </div>
 
         <Link to={`/demo?badge=${badge || defaultBadge}`}>
-          <Button id="home-hero-cta" className="mt-4" size="lg" variant="dark">
+          <Button id="home-hero-cta" size="lg" variant="dark">
             Enter
           </Button>
         </Link>

@@ -22,6 +22,9 @@
   }
 }
 
+/*
+ * HOME
+ */
 
 #home-background-image {
   position: fixed;
@@ -32,7 +35,7 @@
   object-fit: cover;
 }
 #home-hero-text {
-  font-family: "Overpass";
+  font-family: "Overpass", sans-serif;
   font-size: 4rem;
   text-shadow: 14px 10px 14px rgba(0,0,0,0.3);
 }
@@ -50,6 +53,24 @@
   #home-hero-cta {
     font-size: 3rem;
   }
+}
+
+/* Badge box */
+#home-badge {
+  padding: 1rem;
+  background: #ecae01;
+  width: 16rem;
+  margin-bottom: 2rem;
+}
+#home-badge input {
+  font-size:2rem;
+}
+
+.no-border, .no-border:hover, .no-border:focus, .no-border:focus-visible, .no-border:active {
+  border: 0;
+  box-shadow: none;
+  background: #ecae01;
+  outline: none;
 }
 
 /*
