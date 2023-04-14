@@ -15,10 +15,14 @@ export default function LoseModal(props) {
     setShow(props.isLose);
   }, [props.isLose]);
 
-  console.log("[LoseModal] render");
+  console.log("[LoseModal] render", props.player);
 
   const players = [
-    { name: props.player.name, score: Math.round(props.player.maxPnL).toLocaleString(), isLive: true },
+    {
+      name: props.player.name,
+      score: Math.round(props.player.maxPnL).toLocaleString(),
+      isLive: true,
+    },
     { name: "James Simons", score: 79846 },
     { name: "Ray Dalio", score: 72611 },
     { name: "Steven Cohen", score: 61188 },
@@ -29,7 +33,6 @@ export default function LoseModal(props) {
     { name: "John Paulson", score: 1364 },
   ].sort((a, b) => b.score - a.score);
 
-
   return (
     <div className="modal show">
       <Modal show={show} onHide={handleClose}>
@@ -39,7 +42,8 @@ export default function LoseModal(props) {
 
         <Modal.Body>
           <div className="d-flex justify-content-center">
-            <table className="table text-dark">
+            <table className="table text-dark caption-top">
+              <caption>Highest Recorded PnL</caption>
               <thead>
                 <tr>
                   <th>Player</th>
@@ -51,7 +55,9 @@ export default function LoseModal(props) {
                   return (
                     <tr className={p.isLive ? "isLive" : ""}>
                       <td>{p.name}</td>
-                      <td className="losemodal-score">{parseInt(p.score).toLocaleString()}</td>
+                      <td className="losemodal-score">
+                        {parseInt(p.score || 0).toLocaleString()}
+                      </td>
                     </tr>
                   );
                 })}
@@ -60,12 +66,16 @@ export default function LoseModal(props) {
           </div>
 
           <div className="d-flex justify-content-center">
-            <Button style={{ textAlign: 'right' }} variant="primary" onClick={() => reset()} >
+            <Button
+              style={{ textAlign: "right" }}
+              variant="primary"
+              onClick={() => reset()}
+            >
               Restart
-          </Button>
-        </div>
-      </Modal.Body>
-    </Modal>
-    </div >
+            </Button>
+          </div>
+        </Modal.Body>
+      </Modal>
+    </div>
   );
 }
