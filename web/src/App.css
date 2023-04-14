@@ -1,16 +1,6 @@
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
 .App-header {
-  min-height: 66vh;
+  /* min-height: 66vh; */
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -32,6 +22,15 @@
   }
 }
 
+
+#home-background-image {
+  position: fixed;
+  z-index: -1;
+  opacity: .2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
 /*
  * main layout

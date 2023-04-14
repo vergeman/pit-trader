@@ -43,7 +43,7 @@ export default function LoseModal(props) {
         <Modal.Body>
           <div className="d-flex justify-content-center">
             <table className="table text-dark caption-top">
-              <caption>Highest Recorded PnL</caption>
+              <caption>You Blew Up! 🤯</caption>
               <thead>
                 <tr>
                   <th>Player</th>
