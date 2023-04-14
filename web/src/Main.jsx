@@ -25,7 +25,10 @@ export default function Main(props) {
       new Player("npc-C"),
     ])
   );
-  const [player, setPlayer] = useState(new Player("test", true, config));
+  const badge = new URLSearchParams(window.location.search).get("badge");
+  const [player, setPlayer] = useState(
+    new Player(badge || "Trader", true, config)
+  );
   const [marketLoop, setMarketLoop] = useState(
     new MarketLoop(npcPlayerManager, 100)
   );
@@ -51,7 +54,7 @@ export default function Main(props) {
   useEffect(() => {
     switch (gameContext.state) {
       case GameState.INIT:
-        //any pre stuff?
+      //any pre stuff?
       case GameState.RUN:
         marketLoop.start(1000);
         break;
