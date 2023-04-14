@@ -1,8 +1,27 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import { LoadingInstructions } from "./instructions";
 
 export default function Home() {
+  const defaultBadgeBuilder = () => {
+    const badge = [];
+    const iters = Math.ceil(Math.random()) + 3; //3 or 4
+    for (let i = 0; i < iters; i++) {
+      const charCode = Math.floor(Math.random() * 26 + 97); //0-25 + 97 (a)
+      badge.push(String.fromCharCode(charCode).toUpperCase());
+    }
+    return badge.join("");
+  };
+
+  const changeBadgeInputHandler = (e) => {
+    const val = e.target.value.toUpperCase();
+    setBadge(val);
+  };
+
+  const [defaultBadge, setDefaultBadge] = useState(defaultBadgeBuilder());
+  const [badge, setBadge] = useState(null);
+
   return (
     <div>
       <img
@@ -13,7 +32,14 @@ export default function Home() {
       <div className="App-header">
         <h1 id="home-hero-text">PIT TRADER</h1>
 
-        <Link to="/demo">
+        <input
+          name="badge"
+          placeholder={defaultBadge}
+          value={badge}
+          onChange={changeBadgeInputHandler}
+        />
+
+        <Link to={`/demo?badge=${badge || defaultBadge}`}>
           <Button id="home-hero-cta" className="mt-4" size="lg" variant="dark">
             Enter
           </Button>
