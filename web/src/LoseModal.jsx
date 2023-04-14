@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
 
 export default function LoseModal(props) {
-
-  const [show, setShow] = useState(props.isLose);
+  const [show, setShow] = useState(true);
   const handleClose = () => setShow(false);
 
   const reset = () => {
@@ -12,34 +11,61 @@ export default function LoseModal(props) {
     setShow(false);
   };
 
-  useEffect( () => {
+  useEffect(() => {
     setShow(props.isLose);
   }, [props.isLose]);
 
   console.log("[LoseModal] render");
 
+  const players = [
+    { name: props.player.name, score: Math.round(props.player.maxPnL).toLocaleString(), isLive: true },
+    { name: "James Simons", score: 79846 },
+    { name: "Ray Dalio", score: 72611 },
+    { name: "Steven Cohen", score: 61188 },
+    { name: "Kenneth Griffin", score: 47651 },
+    { name: "George Soros", score: 41875 },
+    { name: "Paul Tudor Jones II", score: 26971 },
+    { name: "Michael Burry", score: 12532 },
+    { name: "John Paulson", score: 1364 },
+  ].sort((a, b) => b.score - a.score);
+
+
   return (
-    <div
-      className="modal show"
-    >
+    <div className="modal show">
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Modal title</Modal.Title>
+          <Modal.Title className="text-dark">Peak Scores</Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
-          <p>Modal body text goes here.</p>
-        </Modal.Body>
+          <div className="d-flex justify-content-center">
+            <table className="table text-dark">
+              <thead>
+                <tr>
+                  <th>Player</th>
+                  <th className="losemodal-score">Highest $</th>
+                </tr>
+              </thead>
+              <tbody>
+                {players.map((p) => {
+                  return (
+                    <tr className={p.isLive ? "isLive" : ""}>
+                      <td>{p.name}</td>
+                      <td className="losemodal-score">{parseInt(p.score).toLocaleString()}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
 
-        <Modal.Footer>
-          <Button variant="secondary">
-            Close
+          <div className="d-flex justify-content-center">
+            <Button style={{ textAlign: 'right' }} variant="primary" onClick={() => reset()} >
+              Restart
           </Button>
-          <Button variant="primary" onClick={() => reset()}>
-            Restart
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </div>
+        </div>
+      </Modal.Body>
+    </Modal>
+    </div >
   );
 }

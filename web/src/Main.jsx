@@ -101,6 +101,7 @@ export default function Main(props) {
   return (
     <Container id="main" className="pt-6">
       <LoseModal
+        player={player}
         isLose={gameContext.state == GameState.LOSE}
         resetGame={resetGame}
       />
