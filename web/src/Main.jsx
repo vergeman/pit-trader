@@ -88,6 +88,12 @@ export default function Main(props) {
   const checkGameState = () => {
     const price = marketLoop && marketLoop.getPrice();
 
+    //calcGesture time delay sometimes allow MTM
+    //to touch loss threshold but bounce back up.
+    //This can trigger LoseModal on/off.
+    //Early terminate once a loss is touched
+    if (gameContext.state == GameState.LOSE) return;
+
     if (player && player.hasLost(price)) {
       player.calcPnL(price);
       marketLoop.stop();
@@ -117,7 +123,6 @@ export default function Main(props) {
         gestureDecision={gestureDecision}
         checkGameState={checkGameState}
       />
-
     </Container>
   );
 }
