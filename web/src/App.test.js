@@ -1,13 +1,15 @@
-import { BrowserRouter } from 'react-router-dom';
-import { render, screen } from '@testing-library/react';
-import App from './App';
+import { BrowserRouter } from "react-router-dom";
+import { render, screen } from "@testing-library/react";
+import App from "./App";
 
-test('renders demo link', () => {
+test("renders title link", () => {
+  const TITLE = "PIT TRADER";
+
   render(
-      <BrowserRouter>
+    <BrowserRouter>
       <App />
-      </BrowserRouter>
+    </BrowserRouter>
   );
-  const linkElement = screen.getByText("demo");
+  const linkElement = screen.getByText(TITLE);
   expect(linkElement).toBeInTheDocument();
 });
