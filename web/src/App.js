@@ -2,6 +2,7 @@ import "./custom.scss";
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import Main from "./Main.jsx";
+import Test from "./Test.jsx";
 import Home from "./Home.jsx";
 import Navbar from "./Navbar.jsx";
 import { GameContextProvider } from "./GameContext.jsx";
@@ -19,7 +20,7 @@ function App() {
             element={
               <GameContextProvider>
                 <InfoPanelProvider>
-                  <Main />
+                  <Test />
                 </InfoPanelProvider>
               </GameContextProvider>
 
