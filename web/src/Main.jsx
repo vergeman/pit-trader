@@ -98,9 +98,9 @@ export default function Main(props) {
     if (gameContext.state == GameState.LOSE) return;
 
     if (player && player.hasLost(price)) {
+      gameContext.setState(GameState.LOSE);
       player.calcPnL(price);
       marketLoop.stop();
-      gameContext.setState(GameState.LOSE);
     } else {
       //change from init
       gameContext.setState(GameState.RUN);
