@@ -33,6 +33,31 @@ export default function CameraGesture(props) {
     });
   }, [props.me, props.player, props.marketLoop]);
 
+  /*
+   * checkGameState every frame; determine if player lost or not, toggle
+   * accordingly
+   */
+  useEffect(() => {
+    console.log("[checkGameState]", gameContext.state);
+
+    const price = props.marketLoop && props.marketLoop.getPrice();
+
+    //calcGesture time delay sometimes allow MTM to touch loss threshold but
+    //bounce back up. This can trigger LoseModal on/off. Early terminate once a
+    //loss is touched
+    if (gameContext.state == GameState.LOSE) return;
+
+    if (props.player && props.player.hasLost(price)) {
+      props.marketLoop.stop();
+      gameContext.setState(GameState.LOSE);
+      console.log("You Lose", props.player.lostPnL);
+    } else if (gesture !== null) {
+      //init -> run
+      gameContext.setState(GameState.RUN);
+    }
+  }, [gesture]);
+
+  //useCallback to cache rerender of Camera by calcGesture (due to setGesture)
   const calcGesture = useCallback(
     async (landmarks) => {
       //NB: useCallback ensures React.memo works (execute signature will regen on this
@@ -56,8 +81,6 @@ export default function CameraGesture(props) {
       }
       //NB: local gestureDecision msgQueue (not context)
       props.gestureDecision.resetMessages();
-
-      props.checkGameState();
 
       setGestureData({ ...probsArgMax, gesture });
       setGesture(gesture);
