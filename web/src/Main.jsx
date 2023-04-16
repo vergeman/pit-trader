@@ -25,7 +25,10 @@ export default function Main(props) {
       new Player("npc-C"),
     ])
   );
-  const [player, setPlayer] = useState(new Player("test", true, config));
+  const badge = new URLSearchParams(window.location.search).get("badge");
+  const [player, setPlayer] = useState(
+    new Player(badge || "Trader", true, config)
+  );
   const [marketLoop, setMarketLoop] = useState(
     new MarketLoop(npcPlayerManager, 100)
   );
@@ -51,7 +54,7 @@ export default function Main(props) {
   useEffect(() => {
     switch (gameContext.state) {
       case GameState.INIT:
-        //any pre stuff?
+      //any pre stuff?
       case GameState.RUN:
         marketLoop.start(1000);
         break;
@@ -85,20 +88,7 @@ export default function Main(props) {
     }
   };
 
-  const checkGameState = () => {
-    const price = marketLoop && marketLoop.getPrice();
-
-    if (player && player.hasLost(price)) {
-      player.calcPnL(price);
-      marketLoop.stop();
-      gameContext.setState(GameState.LOSE);
-    } else {
-      //change from init
-      gameContext.setState(GameState.RUN);
-    }
-  };
-
-  console.log("[Main.jsx] render gameID:", gameContext.gameID);
+  console.log("[Main.jsx] render:", gameContext.state);
 
   return (
     <Container id="main" className="pt-6">
@@ -115,9 +105,7 @@ export default function Main(props) {
         player={player}
         marketLoop={marketLoop}
         gestureDecision={gestureDecision}
-        checkGameState={checkGameState}
       />
-
     </Container>
   );
 }

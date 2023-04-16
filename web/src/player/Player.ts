@@ -12,6 +12,7 @@ export class Player {
   private _isLive: boolean;
   private _delta: number;
   private _maxPnL: number;
+  private _lostPnL: number | null;
   private _orders: Order[];
   private readonly _config: PlayerConfig;
 
@@ -28,6 +29,7 @@ export class Player {
     this._isLive = isLive;
     this._delta = 0;
     this._maxPnL = 0;
+    this._lostPnL = null;
     this._orders = [];
 
     this._config = config;
@@ -66,9 +68,16 @@ export class Player {
   set maxPnL(num: number) {
     this._maxPnL = num;
   }
+  get lostPnL(): number | null {
+    return this._lostPnL;
+  }
+  set lostPnL(val) {
+    this._lostPnL = val;
+  }
   reset(): void {
     this.orders = [];
     this.maxPnL = 0;
+    this.lostPnL = null;
   }
 
   hasLiveBids(): boolean {
@@ -172,8 +181,15 @@ export class Player {
     );
   }
 
+  // determine if lost, and if so, freeze that pnl number for display.
+  // marketLoop setTimeout can cause sight drift before marketLoop stop
   hasLost(price: number): boolean {
-    return this.calcPnL(price) < this._config.limitPL;
+    const pnl = this.calcPnL(price);
+    if (pnl < this._config.limitPL) {
+      if (this.lostPnL === null) this.lostPnL = pnl;
+      return true;
+    }
+    return false;
   }
 
   //TODO: augment order.execute to have player carry a netPosition equivalent

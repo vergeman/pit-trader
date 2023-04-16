@@ -4,7 +4,6 @@ import Modal from "react-bootstrap/Modal";
 
 export default function LoseModal(props) {
   const [show, setShow] = useState(props.isLose);
-  const handleClose = () => setShow(false);
 
   const reset = () => {
     props.resetGame();
@@ -35,8 +34,8 @@ export default function LoseModal(props) {
 
   return (
     <div className="modal show">
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
+      <Modal show={show} onHide={reset}>
+        <Modal.Header>
           <Modal.Title className="text-dark">Peak Scores</Modal.Title>
         </Modal.Header>
 
