@@ -10,7 +10,13 @@ export class Player {
   private _id: string;
   private _name: string;
   private _isLive: boolean;
-  private _delta: number;  //NB: this is not position related, but a bias for price
+  /*
+   * _delta: this is not position related, but a bias for price: new or updated
+   * orders are incremented/decremented by delta from marketLoop.getPrice()
+   *
+   * see buidRepenishOrder()
+   */
+  private _delta: number;
   private _maxPnL: number;
   private _lostPnL: number | null;
   private _orders: Order[];
@@ -204,8 +210,10 @@ export class Player {
    * 'NPC' behaviors
    */
 
+  //used by npc in marketloop to update orders
   //ensure delta doesn't exceed own bid / offer
   //e is to prevent immediate self-execution
+  //
   //TODO: possible check range too large (e.g. generate gesture reachable orders
   //- range of 1) might not be a problem
   calcMaxBidOfferDelta(_default: number = 0.5): number {
@@ -232,40 +240,47 @@ export class Player {
     return Math.random() <= skipTurnThresh;
   }
 
-  generateRandomMax(qtyMax: number = 5): number {
-    return Math.floor(Math.random() * qtyMax + 1);
+  /*
+   * returns integer range bound value [1, 5]. This is to ensure price +/- delta
+   * remains in an accessible range to be acted on in the marketLoop.
+   *
+   * e.g. price is 103.5, a .5 delta caps the order price to 103.0 or 104.0,
+   * versus something further away.
+   */
+  generateRandomMax(numMax: number = 5): number {
+    return Math.floor(Math.random() * numMax + 1);
   }
 
   buildReplenishOrder(
-    bidOfferToggle: -1 | 1,
+    bidOffer: -1 | 1,
     price: number,
     qtyMax?: number,
-    delta?: number
+    delta_override?: number
   ): Order {
-    const _delta = this.generateRandomMax() / 10;
-    const randomQty = bidOfferToggle * this.generateRandomMax(qtyMax);
+    const randomMax_delta = this.generateRandomMax() / 10;
+    const randomQty = bidOffer * this.generateRandomMax(qtyMax);
 
-    //NB: when replenishing, new orders built "around" an iniital price
+    //NB: when replenishing, new orders built "around" an initial price
     //bids: price - delta
     //offers: price + delta
     const order = this.buildOrder(
       randomQty,
-      price - bidOfferToggle * (delta || _delta)
+      price - bidOffer * (delta_override || randomMax_delta)
     );
     return order;
   }
 
-  replenish(price: number, qtyMax?: number, delta?: number): Order[] {
+  replenish(price: number, qtyMax?: number, delta_override?: number): Order[] {
     const orders = [];
 
     if (!this.hasLiveBids()) {
-      const order = this.buildReplenishOrder(1, price, qtyMax, delta);
+      const order = this.buildReplenishOrder(1, price, qtyMax, delta_override);
       orders.push(order);
       this.addOrder(order);
     }
 
     if (!this.hasLiveOffers()) {
-      const order = this.buildReplenishOrder(-1, price, qtyMax, delta);
+      const order = this.buildReplenishOrder(-1, price, qtyMax, delta_override);
       orders.push(order);
       this.addOrder(order);
     }
