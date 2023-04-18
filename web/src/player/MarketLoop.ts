@@ -11,21 +11,28 @@ class MarketLoop {
   private _newsManager: NewsManager;
   private _priceSeed: number;
   private _qtySeed: number;
+  private _minTurnDelay: number;
+  private _maxTurnDelay: number;
   private _loopInterval: number;
   private _isActive: boolean;
   private _isInit: boolean;
 
-  constructor({ npcPlayerManager, priceSeed, qtySeed }: {
-    npcPlayerManager: NPCPlayerManager,
-    priceSeed: number,
-    qtySeed?: number
-  }
-  ) {
+  constructor({
+    npcPlayerManager,
+    priceSeed,
+    qtySeed,
+  }: {
+    npcPlayerManager: NPCPlayerManager;
+    priceSeed: number;
+    qtySeed?: number;
+  }) {
     this._npcPlayerManager = npcPlayerManager;
     this._me = npcPlayerManager.me;
     this._newsManager = new NewsManager();
     this._priceSeed = priceSeed;
     this._qtySeed = qtySeed || 1;
+    this._minTurnDelay = 250;
+    this._maxTurnDelay = 1000;
     this._loopInterval = -1;
     this._isActive = false; //flag for Camera (speed up dev load)
     this._isInit = false; //flag indicating ready for run()
@@ -62,6 +69,18 @@ class MarketLoop {
   get qtySeed(): number {
     return this._qtySeed;
   }
+  get minTurnDelay(): number {
+    return this._minTurnDelay;
+  }
+  set minTurnDelay(num: number) {
+    this._minTurnDelay = num;
+  }
+  get maxTurnDelay(): number {
+    return this._maxTurnDelay;
+  }
+  set maxTurnDelay(num: number) {
+    this._maxTurnDelay = num;
+  }
   get isInit(): boolean {
     return this._isInit;
   }
@@ -70,10 +89,14 @@ class MarketLoop {
   }
 
   start(minTurnDelay: number, maxTurnDelay: number): number {
+    this.minTurnDelay = minTurnDelay;
+    this.maxTurnDelay = maxTurnDelay;
+
     const numPlayers = this.npcPlayerManager.numPlayers;
+
     this._loopInterval = window.setInterval(
-      () => this.run(minTurnDelay, maxTurnDelay),
-      numPlayers * maxTurnDelay
+      () => this.run(this.minTurnDelay, this.maxTurnDelay),
+      numPlayers * this.maxTurnDelay
     );
     this._isActive = true;
     return this._loopInterval;
@@ -165,7 +188,11 @@ class MarketLoop {
   //each player takes a turn() - undergoes a series of actions
   //each player's turn takes maxTurnDelay
   //within each player's turn - the actual action (turn() call) is randomized
-  async run(minTurnDelay: number = 250, maxTurnDelay: number, delayOverride?: number) {
+  async run(
+    minTurnDelay: number = 250,
+    maxTurnDelay: number,
+    delayOverride?: number
+  ) {
     //console.log("[MarketLoop] RUN", Date.now(), maxTurnDelay);
 
     const players = this.npcPlayerManager.getRandomizedPlayerList();
@@ -176,7 +203,8 @@ class MarketLoop {
       //delay = [minTurnDelay, maxTurnDelay] each turn takes total of
       //maxTurnDelay, but action done randomly in that period
       const delay =
-        Math.floor(Math.random() * (maxTurnDelay - minTurnDelay)) + minTurnDelay;
+        Math.floor(Math.random() * (maxTurnDelay - minTurnDelay)) +
+        minTurnDelay;
       await new Promise((res) => setTimeout(res, delay));
 
       this.turn(player);
