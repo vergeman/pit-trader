@@ -5,6 +5,8 @@ const events = [
     delta: 1,
     direction: 1,
     numPlayer: 0,
+    minTurnDelay: 100,
+    maxTurnDelay: 250,
   },
   {
     msg: `bye2`,
@@ -12,6 +14,8 @@ const events = [
     delta: 1,
     direction: 1,
     numPlayer: 0,
+    minTurnDelay: 100,
+    maxTurnDelay: 250,
   },
 ];
 

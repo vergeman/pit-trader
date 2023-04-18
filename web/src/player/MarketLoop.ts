@@ -11,8 +11,8 @@ class MarketLoop {
   private _newsManager: NewsManager;
   private _priceSeed: number;
   private _qtySeed: number;
-  private _minTurnDelay: number;
-  private _maxTurnDelay: number;
+  private _defaultMinTurnDelay: number;
+  private _defaultMaxTurnDelay: number;
   private _loopInterval: number;
   private _isActive: boolean;
   private _isInit: boolean;
@@ -31,8 +31,8 @@ class MarketLoop {
     this._newsManager = new NewsManager();
     this._priceSeed = priceSeed;
     this._qtySeed = qtySeed || 1;
-    this._minTurnDelay = 250;
-    this._maxTurnDelay = 1000;
+    this._defaultMinTurnDelay = 250;
+    this._defaultMaxTurnDelay = 1000;
     this._loopInterval = -1;
     this._isActive = false; //flag for Camera (speed up dev load)
     this._isInit = false; //flag indicating ready for run()
@@ -69,18 +69,6 @@ class MarketLoop {
   get qtySeed(): number {
     return this._qtySeed;
   }
-  get minTurnDelay(): number {
-    return this._minTurnDelay;
-  }
-  set minTurnDelay(num: number) {
-    this._minTurnDelay = num;
-  }
-  get maxTurnDelay(): number {
-    return this._maxTurnDelay;
-  }
-  set maxTurnDelay(num: number) {
-    this._maxTurnDelay = num;
-  }
   get isInit(): boolean {
     return this._isInit;
   }
@@ -89,14 +77,11 @@ class MarketLoop {
   }
 
   start(minTurnDelay: number, maxTurnDelay: number): number {
-    this.minTurnDelay = minTurnDelay;
-    this.maxTurnDelay = maxTurnDelay;
-
     const numPlayers = this.npcPlayerManager.numPlayers;
 
     this._loopInterval = window.setInterval(
-      () => this.run(this.minTurnDelay, this.maxTurnDelay),
-      numPlayers * this.maxTurnDelay
+      () => this.run(minTurnDelay, maxTurnDelay),
+      numPlayers * maxTurnDelay
     );
     this._isActive = true;
     return this._loopInterval;
@@ -175,9 +160,37 @@ class MarketLoop {
     //there are a lot of calcEvents even 99% happens fairly often
     //TODO: apply the created event
     if (prob > 0.99) {
+      //each event has some combinations of effects
       const event = this.newsManager.createEvent();
+
       //if type xyz, do ...
       //add num players, adjust deltas / direction
+
+      /* Event min/maxTurnDelay */
+      if (event && event.minTurnDelay && event.maxTurnDelay) {
+        console.log(
+          "[Event] Start",
+          event,
+          event.minTurnDelay,
+          event.maxTurnDelay
+        );
+        this.stop();
+        this.start(event.minTurnDelay, event.maxTurnDelay);
+
+        setTimeout(() => {
+          //TODO: cleanup - remove players, reset player deltas
+          console.log(
+            "[Event] Cleanup",
+            this,
+            this._defaultMinTurnDelay,
+            this._defaultMaxTurnDelay
+          );
+          this.newsManager.hasEvent = false;
+          this.stop();
+          this.start(this._defaultMinTurnDelay, this._defaultMaxTurnDelay);
+        }, event.duration);
+      }
+
       return event;
     }
 

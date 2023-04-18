@@ -56,7 +56,7 @@ export default function Main(props) {
       case GameState.INIT:
       //any pre stuff?
       case GameState.RUN:
-        marketLoop.start(250, 1000);
+        marketLoop.start();
         break;
       case GameState.LOSE:
       case GameState.STOP:

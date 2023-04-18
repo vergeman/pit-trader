@@ -3,8 +3,10 @@ export interface Event {
   msg: string;
   duration: number; //ms
   delta: number;
-  direction: -1 | 1;
+  direction: number | 1 | -1;
   numPlayer: number;
+  minTurnDelay: number;
+  maxTurnDelay: number;
   //turn time number? e.g. increase/decrease marketLoop frenzy
 }
 
@@ -25,7 +27,7 @@ export class NewsManager {
   }
 
   //generates Event types
-  createEvent() {
+  createEvent(): Event | false {
     if (this.hasEvent) return false;
 
     this.hasEvent = true;
@@ -33,8 +35,6 @@ export class NewsManager {
     const i = Math.floor(Math.random() * events.length);
 
     const event = events[i];
-
-    setTimeout(() => (this.hasEvent = false), event.duration);
 
     return event;
   }
