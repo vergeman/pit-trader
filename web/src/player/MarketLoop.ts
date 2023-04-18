@@ -68,10 +68,10 @@ class MarketLoop {
     return this._isActive;
   }
 
-  start(maxTurnDelay: number): number {
+  start(minTurnDelay: number, maxTurnDelay: number): number {
     const numPlayers = this.npcPlayerManager.numPlayers;
     this._loopInterval = window.setInterval(
-      () => this.run(maxTurnDelay),
+      () => this.run(minTurnDelay, maxTurnDelay),
       numPlayers * maxTurnDelay
     );
     this._isActive = true;
@@ -145,6 +145,8 @@ class MarketLoop {
 
     const prob = Math.random();
 
+    //WORKING HERE
+
     //TODO: tie into fps somehow, this gets polled
     //there are a lot of calcEvents even 99% happens fairly often
     //TODO: apply the created event
@@ -162,7 +164,7 @@ class MarketLoop {
   //each player takes a turn() - undergoes a series of actions
   //each player's turn takes maxTurnDelay
   //within each player's turn - the actual action (turn() call) is randomized
-  async run(maxTurnDelay: number, baseDelay: number = 250) {
+  async run(minTurnDelay: number = 250, maxTurnDelay: number, delayOverride?: number) {
     //console.log("[MarketLoop] RUN", Date.now(), maxTurnDelay);
 
     const players = this.npcPlayerManager.getRandomizedPlayerList();
@@ -170,9 +172,10 @@ class MarketLoop {
     for (const player of players) {
       console.log("TURN:", player.name);
 
-      //delay = [baseDelay, maxTurnDelay - baseDelay] e.g [250, 750]
+      //delay = [minTurnDelay, maxTurnDelay] each turn takes total of
+      //maxTurnDelay, but action done randomly in that period
       const delay =
-        Math.floor(Math.random() * (maxTurnDelay - baseDelay)) + baseDelay;
+        Math.floor(Math.random() * (maxTurnDelay - minTurnDelay)) + minTurnDelay;
       await new Promise((res) => setTimeout(res, delay));
 
       this.turn(player);
