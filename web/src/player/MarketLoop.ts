@@ -3,10 +3,12 @@ import Player from "./Player";
 import MatchingEngine from "../engine/MatchingEngine";
 import { Order } from "../engine/Order";
 import { TransactionReport } from "../engine/Order";
+import { NewsManager, Event } from "./NewsManager";
 
 class MarketLoop {
   private _npcPlayerManager: NPCPlayerManager;
   private _me: MatchingEngine;
+  private _newsManager: NewsManager;
   private _priceSeed: number;
   private _qtySeed: number;
   private _loopInterval: number;
@@ -20,6 +22,7 @@ class MarketLoop {
   ) {
     this._npcPlayerManager = npcPlayerManager;
     this._me = npcPlayerManager.me;
+    this._newsManager = new NewsManager();
     this._priceSeed = priceSeed;
     this._qtySeed = qtySeed;
     this._loopInterval = -1;
@@ -45,6 +48,9 @@ class MarketLoop {
 
   get npcPlayerManager(): NPCPlayerManager {
     return this._npcPlayerManager;
+  }
+  get newsManager(): NewsManager {
+    return this._newsManager;
   }
   get me(): MatchingEngine {
     return this._me;
@@ -138,12 +144,15 @@ class MarketLoop {
     console.log("[marketLoop] calcEvent");
 
     const prob = Math.random();
-    //there are a lot of calcEvents even 99/100 happens oftenx
 
-    //should tie into fps somehow
-    if (prob > (.98)) {
-      //newsManager.createEvent()
-      //flag and do something
+    //TODO: tie into fps somehow, this gets polled
+    //there are a lot of calcEvents even 99% happens fairly often
+    //TODO: apply the created event
+    if (prob > 0.99) {
+      const event = this.newsManager.createEvent();
+      //if type xyz, do ...
+      //add num players, adjust deltas / direction
+      return event;
     }
 
     return false;
