@@ -57,6 +57,20 @@ export default function CameraGesture(props) {
     }
   }, [gesture]);
 
+  /*
+   * NewsManager
+   */
+
+  useEffect( () => {
+    console.log("[CameraGesture] newsManager");
+
+    const event = props.marketLoop.calcEvent();
+    if (event) {
+      //Dispatch event to messages
+      //infoPanel.messagesDispatch(event.msg);
+    }
+  }, [gesture]);
+
   //useCallback to cache rerender of Camera by calcGesture (due to setGesture)
   const calcGesture = useCallback(
     async (landmarks) => {

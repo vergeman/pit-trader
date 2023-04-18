@@ -134,6 +134,21 @@ class MarketLoop {
     return this.priceSeed;
   }
 
+  calcEvent() {
+    console.log("[marketLoop] calcEvent");
+
+    const prob = Math.random();
+    //there are a lot of calcEvents even 99/100 happens oftenx
+
+    //should tie into fps somehow
+    if (prob > (.98)) {
+      //newsManager.createEvent()
+      //flag and do something
+    }
+
+    return false;
+  }
+
   //run()
   //each player takes a turn() - undergoes a series of actions
   //each player's turn takes maxTurnDelay
