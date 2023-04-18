@@ -15,16 +15,17 @@ class MarketLoop {
   private _isActive: boolean;
   private _isInit: boolean;
 
-  constructor(
+  constructor({ npcPlayerManager, priceSeed, qtySeed }: {
     npcPlayerManager: NPCPlayerManager,
     priceSeed: number,
-    qtySeed: number
+    qtySeed?: number
+  }
   ) {
     this._npcPlayerManager = npcPlayerManager;
     this._me = npcPlayerManager.me;
     this._newsManager = new NewsManager();
     this._priceSeed = priceSeed;
-    this._qtySeed = qtySeed;
+    this._qtySeed = qtySeed || 1;
     this._loopInterval = -1;
     this._isActive = false; //flag for Camera (speed up dev load)
     this._isInit = false; //flag indicating ready for run()

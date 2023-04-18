@@ -30,7 +30,7 @@ export default function Main(props) {
     new Player(badge || "Trader", true, config)
   );
   const [marketLoop, setMarketLoop] = useState(
-    new MarketLoop(npcPlayerManager, 100)
+    new MarketLoop({npcPlayerManager, priceSeed: 100})
   );
   const [gestureDecision, setGestureDecision] = useState(
     new GestureDecision(
