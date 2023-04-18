@@ -1,3 +1,4 @@
+import events from "./events.template.js";
 export interface Event {
   msg: string;
   duration: number; //ms
@@ -29,17 +30,9 @@ export class NewsManager {
 
     this.hasEvent = true;
 
-    //TODO: import Event templates from json?
-    //make random selection of template
-    const event: Event = {
-      msg: `hi-${this._id}`,
-      duration: 3000,
-      delta: 1,
-      direction: 1,
-      numPlayer: 0,
-    };
+    const i = Math.floor(Math.random() * events.length);
 
-    this._id++;
+    const event = events[i];
 
     setTimeout(() => (this.hasEvent = false), event.duration);
 
