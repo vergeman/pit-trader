@@ -7,6 +7,7 @@ export interface Event {
   numPlayer: number;
   minTurnDelay: number;
   maxTurnDelay: number;
+  skipTurnThreshold: number;
   //turn time number? e.g. increase/decrease marketLoop frenzy
 }
 

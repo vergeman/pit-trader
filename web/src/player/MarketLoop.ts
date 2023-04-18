@@ -13,6 +13,8 @@ class MarketLoop {
   private _qtySeed: number;
   private _defaultMinTurnDelay: number;
   private _defaultMaxTurnDelay: number;
+  private _defaultSkipTurnThreshold: number;
+  private _skipTurnThreshold: number;
   private _loopInterval: number;
   private _isActive: boolean;
   private _isInit: boolean;
@@ -33,6 +35,8 @@ class MarketLoop {
     this._qtySeed = qtySeed || 1;
     this._defaultMinTurnDelay = 250;
     this._defaultMaxTurnDelay = 1000;
+    this._defaultSkipTurnThreshold = 0.33;
+    this._skipTurnThreshold = this._defaultSkipTurnThreshold;
     this._loopInterval = -1;
     this._isActive = false; //flag for Camera (speed up dev load)
     this._isInit = false; //flag indicating ready for run()
@@ -74,6 +78,12 @@ class MarketLoop {
   }
   get isActive(): boolean {
     return this._isActive;
+  }
+  get skipTurnThreshold(): number {
+    return this._skipTurnThreshold;
+  }
+  set skipTurnThreshold(num: number) {
+    this._skipTurnThreshold = num;
   }
 
   start(minTurnDelay: number, maxTurnDelay: number): number {
@@ -163,11 +173,25 @@ class MarketLoop {
       //each event has some combinations of effects
       const event = this.newsManager.createEvent();
 
+      if (!event) return false;
+
       //if type xyz, do ...
       //add num players, adjust deltas / direction
 
+      /* Event skipTurnThreshold */
+      if (event.skipTurnThreshold) {
+        console.log("[Event] Start", event, event.skipTurnThreshold);
+
+        this.skipTurnThreshold = event.skipTurnThreshold;
+        setTimeout(() => {
+          console.log("[Event] Cleanup", this, this._defaultSkipTurnThreshold);
+          this.newsManager.hasEvent = false;
+          this.skipTurnThreshold = this._defaultSkipTurnThreshold;
+        }, event.duration);
+      }
+
       /* Event min/maxTurnDelay */
-      if (event && event.minTurnDelay && event.maxTurnDelay) {
+      if (event.minTurnDelay && event.maxTurnDelay) {
         console.log(
           "[Event] Start",
           event,
@@ -229,13 +253,13 @@ class MarketLoop {
     this.replenishAll();
   }
 
-  turn(player: Player, probSkip: number = 0.33) {
+  turn(player: Player) {
     //if execution initiated by another player (this player missing either a bid
     //or offer) -> skip turn to replenish
     if (!player.hasLiveBids() || !player.hasLiveOffers()) return;
 
     //calc prob: do nothing
-    if (player.calcSkipTurn(probSkip)) return;
+    if (player.calcSkipTurn(this.skipTurnThreshold)) return;
 
     //
     // at this point player has bid and offer - now attempt to induce action

@@ -7,6 +7,7 @@ const events = [
     numPlayer: 0,
     minTurnDelay: 100,
     maxTurnDelay: 250,
+    skipTurnThreshold: 0.2, //default .33, higher increases skipped turn (no action)
   },
   {
     msg: `bye2`,
@@ -16,6 +17,7 @@ const events = [
     numPlayer: 0,
     minTurnDelay: 100,
     maxTurnDelay: 250,
+    skipTurnThreshold: 1,
   },
 ];
 
