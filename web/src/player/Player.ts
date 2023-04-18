@@ -10,7 +10,7 @@ export class Player {
   private _id: string;
   private _name: string;
   private _isLive: boolean;
-  private _delta: number;
+  private _delta: number;  //NB: this is not position related, but a bias for price
   private _maxPnL: number;
   private _lostPnL: number | null;
   private _orders: Order[];
@@ -243,13 +243,13 @@ export class Player {
     delta?: number
   ): Order {
     const _delta = this.generateRandomMax() / 10;
-    const randomMax = bidOfferToggle * this.generateRandomMax(qtyMax);
+    const randomQty = bidOfferToggle * this.generateRandomMax(qtyMax);
 
     //NB: when replenishing, new orders built "around" an iniital price
     //bids: price - delta
     //offers: price + delta
     const order = this.buildOrder(
-      randomMax,
+      randomQty,
       price - bidOfferToggle * (delta || _delta)
     );
     return order;
