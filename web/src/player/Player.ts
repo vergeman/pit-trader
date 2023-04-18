@@ -8,6 +8,7 @@ interface PlayerConfig {
 
 export class Player {
   private _id: string;
+  private _group_id: string;
   private _name: string;
   private _isLive: boolean;
   /*
@@ -31,6 +32,7 @@ export class Player {
     }
   ) {
     this._id = uuidv4();
+    this._group_id = "0";
     this._name = name;
     this._isLive = isLive;
     this._delta = 0;
@@ -44,7 +46,12 @@ export class Player {
   get id(): string {
     return this._id;
   }
-
+  get group_id(): string {
+    return this._group_id;
+  }
+  set group_id(group_id) {
+    this._group_id = group_id;
+  }
   get name(): string {
     return this._name;
   }

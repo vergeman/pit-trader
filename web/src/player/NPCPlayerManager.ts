@@ -33,9 +33,25 @@ export default class NPCPlayerManager {
     return this._me;
   }
 
+  removePlayer(id: string): boolean {
+    return delete this.players[id];
+  }
+
+  removeGroup(group_id: string): number {
+    const players = Object.values(this._players);
+    let num = 0;
+    for (let i = 0; i < players.length; i++) {
+      if (players[i].group_id === group_id) {
+        this.removePlayer(players[i].id);
+        num++;
+      }
+    }
+    return num;
+  }
+
   resetAll() {
     const players = Object.values(this._players);
-    players.forEach( player => player.reset() );
+    players.forEach((player) => player.reset());
   }
 
   getRandomizedPlayerList(): Player[] {
