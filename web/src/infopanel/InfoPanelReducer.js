@@ -78,6 +78,10 @@ export function messagesReducer(messages, action) {
       //resets message array
       return [];
 
+    case Message.NewsEvent:
+      text = action.value;
+      return [{ time: new Date(), text }, ...messages];
+
     case "test":
       text = "Message";
       return [{ time: new Date(), text }, ...messages];

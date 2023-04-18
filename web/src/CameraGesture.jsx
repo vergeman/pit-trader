@@ -9,6 +9,7 @@ import GestureBuilder from "./gesture/GestureBuilder.ts";
 import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
 import InfoTabs from "./infopanel/InfoTabs.jsx";
 import { useGameContext, GameState } from "./GameContext.jsx";
+import {Message} from "./infopanel/Message";
 
 export default function CameraGesture(props) {
   /* default bootstrap size */
@@ -66,8 +67,8 @@ export default function CameraGesture(props) {
 
     const event = props.marketLoop.calcEvent();
     if (event) {
-      //Dispatch event to messages
-      //infoPanel.messagesDispatch(event.msg);
+      const msg = { type: Message.NewsEvent, value: event.msg };
+      infoPanel.messagesDispatch(msg);
     }
   }, [gesture]);
 
