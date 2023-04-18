@@ -86,7 +86,10 @@ class MarketLoop {
     this._skipTurnThreshold = num;
   }
 
-  start(minTurnDelay: number, maxTurnDelay: number): number {
+  start(
+    minTurnDelay: number = this._defaultMinTurnDelay,
+    maxTurnDelay: number = this._defaultMinTurnDelay
+  ): number {
     const numPlayers = this.npcPlayerManager.numPlayers;
 
     this._loopInterval = window.setInterval(
@@ -179,10 +182,10 @@ class MarketLoop {
       //add num players, adjust deltas / direction
 
       /* Event skipTurnThreshold */
-      if (event.skipTurnThreshold) {
-        console.log("[Event] Start", event, event.skipTurnThreshold);
+      if (event.marketLoop.skipTurnThreshold) {
+        console.log("[Event] Start", event, event.marketLoop.skipTurnThreshold);
 
-        this.skipTurnThreshold = event.skipTurnThreshold;
+        this.skipTurnThreshold = event.marketLoop.skipTurnThreshold;
         setTimeout(() => {
           console.log("[Event] Cleanup", this, this._defaultSkipTurnThreshold);
           this.newsManager.hasEvent = false;
@@ -191,15 +194,18 @@ class MarketLoop {
       }
 
       /* Event min/maxTurnDelay */
-      if (event.minTurnDelay && event.maxTurnDelay) {
+      if (event.marketLoop.minTurnDelay && event.marketLoop.maxTurnDelay) {
         console.log(
           "[Event] Start",
           event,
-          event.minTurnDelay,
-          event.maxTurnDelay
+          event.marketLoop.minTurnDelay,
+          event.marketLoop.maxTurnDelay
         );
         this.stop();
-        this.start(event.minTurnDelay, event.maxTurnDelay);
+        this.start(
+          event.marketLoop.minTurnDelay,
+          event.marketLoop.maxTurnDelay
+        );
 
         setTimeout(() => {
           //TODO: cleanup - remove players, reset player deltas

@@ -5,10 +5,11 @@ export interface Event {
   delta: number;
   direction: number | 1 | -1;
   numPlayer: number;
-  minTurnDelay: number;
-  maxTurnDelay: number;
-  skipTurnThreshold: number;
-  //turn time number? e.g. increase/decrease marketLoop frenzy
+  marketLoop: {
+    minTurnDelay: number;
+    maxTurnDelay: number;
+    skipTurnThreshold: number;
+  }
 }
 
 export class NewsManager {
