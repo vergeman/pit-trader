@@ -33,16 +33,30 @@ export default class NPCPlayerManager {
     return this._me;
   }
 
-  removePlayer(id: string): boolean {
+  deletePlayer(id: string): boolean {
     return delete this.players[id];
   }
 
-  removeGroup(group_id: string): number {
+  markRemovePlayer(id: string): boolean {
+    const player = this.players[id];
+    const bids = player.getLiveBids();
+    const offers = player.getLiveOffers();
+    const liveOrders = ([] as any).concat(bids, offers);
+
+    for (let order of liveOrders) {
+      this._me.cancel(order);
+    }
+
+    this.players[id].markRemoved = true;
+    return this.players[id].markRemoved;
+  }
+
+  markRemoveGroup(group_id: string): number {
     const players = Object.values(this._players);
     let num = 0;
     for (let i = 0; i < players.length; i++) {
       if (players[i].group_id === group_id) {
-        this.removePlayer(players[i].id);
+        this.markRemovePlayer(players[i].id);
         num++;
       }
     }
@@ -56,6 +70,7 @@ export default class NPCPlayerManager {
 
   getRandomizedPlayerList(): Player[] {
     const players = Object.values(this._players);
+    console.log("[NPCPlayerManager]", players.length);
     let num = players.length;
     let indexes = [...Array(num).keys()]; //[0 to num]
 

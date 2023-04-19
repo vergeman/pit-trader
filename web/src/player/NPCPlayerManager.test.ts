@@ -58,7 +58,12 @@ describe("NPCPlayerManager", () => {
     let ordered = [player_a, player_b, player_c, player_d];
     const pm = new NPCPlayerManager(me, ordered);
     expect(pm.numPlayers).toBe(4);
-    pm.removePlayer(player_b.id);
+
+    pm.markRemovePlayer(player_b.id);
+    for (const player of Object.values(pm.players)) {
+      pm.deletePlayer(player.id);
+    }
+
     expect(pm.numPlayers).toBe(3);
     expect(pm.players[player_a.id]).toBe(player_a);
     expect(pm.players[player_b.id]).toBe(undefined);
@@ -79,9 +84,12 @@ describe("NPCPlayerManager", () => {
     const pm = new NPCPlayerManager(me, ordered);
 
     expect(pm.numPlayers).toBe(4);
-    pm.removeGroup("test");
-    expect(pm.numPlayers).toBe(2);
+    pm.markRemoveGroup("test");
+    for (const player of Object.values(pm.players)) {
+      pm.deletePlayer(player.id);
+    }
 
+    expect(pm.numPlayers).toBe(2);
     expect(pm.players[player_a.id]).toBe(player_a);
     expect(pm.players[player_b.id]).toBe(undefined);
     expect(pm.players[player_c.id]).toBe(player_c);

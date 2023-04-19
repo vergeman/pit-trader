@@ -11,6 +11,7 @@ export class Player {
   private _group_id: string;
   private _name: string;
   private _isLive: boolean;
+  private _markRemoved: boolean;
   /*
    * _delta: this is not position related, but a bias for price: new or updated
    * orders are incremented/decremented by delta from marketLoop.getPrice()
@@ -35,6 +36,7 @@ export class Player {
     this._group_id = "0";
     this._name = name;
     this._isLive = isLive;
+    this._markRemoved = false;
     this._delta = 0;
     this._maxPnL = 0;
     this._lostPnL = null;
@@ -59,7 +61,12 @@ export class Player {
   get isLive(): boolean {
     return this._isLive;
   }
-
+  get markRemoved(): boolean {
+    return this._markRemoved;
+  }
+  set markRemoved(flag: boolean) {
+    this._markRemoved = flag;
+  }
   get orders(): Order[] {
     return this._orders;
   }

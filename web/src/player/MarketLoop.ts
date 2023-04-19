@@ -167,11 +167,8 @@ class MarketLoop {
 
     const prob = Math.random();
 
-    //WORKING HERE
-
     //TODO: tie into fps somehow, this gets polled
     //there are a lot of calcEvents even 99% happens fairly often
-    //TODO: apply the created event
     if (prob > 0.99) {
       //each event has some combinations of effects
       const event = this.newsManager.createEvent();
@@ -180,6 +177,29 @@ class MarketLoop {
 
       //if type xyz, do ...
       //add num players, adjust deltas / direction
+
+      /* Event add / remove Players */
+      if (event.addPlayers) {
+        console.log(
+          "[Event] Start",
+          event,
+          this.npcPlayerManager.numPlayers,
+          event.addPlayers
+        );
+
+        //add Players
+        for (let i = 0; i < event.addPlayers; i++) {
+          const player = new Player(`${event.id}-${i}`);
+          player.group_id = event.id;
+          this.npcPlayerManager.addPlayer(player);
+        }
+
+        setTimeout(() => {
+          this.newsManager.hasEvent = false;
+          this.npcPlayerManager.markRemoveGroup(event.id);
+          console.log("[Event] Cleanup", this.npcPlayerManager.numPlayers);
+        }, event.duration);
+      }
 
       /* Event skipTurnThreshold */
       if (event.marketLoop.skipTurnThreshold) {
@@ -241,8 +261,14 @@ class MarketLoop {
     const players = this.npcPlayerManager.getRandomizedPlayerList();
 
     for (const player of players) {
-      console.log("TURN:", player.name);
+      if (player.markRemoved) continue;
 
+      console.log(
+        "TURN:",
+        player.name,
+        players.length,
+        this.newsManager.hasEvent
+      );
       //delay = [minTurnDelay, maxTurnDelay] each turn takes total of
       //maxTurnDelay, but action done randomly in that period
       const delay =
@@ -254,6 +280,14 @@ class MarketLoop {
 
       //finish balance of maxTurnDelay
       await new Promise((res) => setTimeout(res, maxTurnDelay - delay));
+    }
+
+    //clear away players to be removed
+    for (const player of players) {
+      if (player.markRemoved) {
+        console.log("TURN: deleting", player.name);
+        this.npcPlayerManager.deletePlayer(player.id);
+      }
     }
 
     this.replenishAll();
