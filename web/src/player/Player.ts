@@ -57,7 +57,6 @@ export class Player {
   get name(): string {
     return this._name;
   }
-
   get isLive(): boolean {
     return this._isLive;
   }
@@ -70,15 +69,12 @@ export class Player {
   get orders(): Order[] {
     return this._orders;
   }
-
   set orders(orders: Order[]) {
     this._orders = orders;
   }
-
   get delta(): number {
     return this._delta;
   }
-
   set delta(d: number) {
     this._delta = d;
   }
@@ -265,12 +261,9 @@ export class Player {
     return Math.floor(Math.random() * numMax + 1);
   }
 
-  buildReplenishOrder(
-    bidOffer: -1 | 1,
-    price: number,
-    qtyMax?: number,
-  ): Order {
-    const randomMax_delta = this.generateRandomMax() / 10;
+  buildReplenishOrder(bidOffer: -1 | 1, price: number, qtyMax?: number): Order {
+    // add player's delta to shift depending on event; but default is 0
+    const randomMax_delta = this.delta + this.generateRandomMax() / 10;
     const randomQty = bidOffer * this.generateRandomMax(qtyMax);
 
     //NB: when replenishing, new orders built "around" an initial price

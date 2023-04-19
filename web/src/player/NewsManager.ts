@@ -61,7 +61,7 @@ export class NewsManager {
    * EVENTS
    */
 
-  /* Event add / remove Players */
+  /* Event add / remove Players, adjust delta */
   _addPlayers(event: Event, marketLoop: MarketLoop) {
     const npcPlayerManager = marketLoop.npcPlayerManager;
 
@@ -76,6 +76,7 @@ export class NewsManager {
     for (let i = 0; i < event.addPlayers; i++) {
       const player = new Player(`${event.id}-${i}`);
       player.group_id = event.id;
+      player.delta = event.delta;
       npcPlayerManager.addPlayer(player);
     }
 
