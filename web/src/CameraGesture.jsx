@@ -63,7 +63,7 @@ export default function CameraGesture(props) {
    */
 
   useEffect( () => {
-    console.log("[CameraGesture] newsManager");
+    //console.log("[CameraGesture] newsManager");
 
     const event = props.marketLoop.calcEvent();
     if (event) {

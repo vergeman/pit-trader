@@ -61,7 +61,9 @@ describe("NPCPlayerManager", () => {
 
     pm.markRemovePlayer(player_b.id);
     for (const player of Object.values(pm.players)) {
-      pm.deletePlayer(player.id);
+      if (player.markRemoved) {
+        pm.deletePlayer(player.id);
+      }
     }
 
     expect(pm.numPlayers).toBe(3);
@@ -86,7 +88,9 @@ describe("NPCPlayerManager", () => {
     expect(pm.numPlayers).toBe(4);
     pm.markRemoveGroup("test");
     for (const player of Object.values(pm.players)) {
-      pm.deletePlayer(player.id);
+      if (player.markRemoved) {
+        pm.deletePlayer(player.id);
+      }
     }
 
     expect(pm.numPlayers).toBe(2);

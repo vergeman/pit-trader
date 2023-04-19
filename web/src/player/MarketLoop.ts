@@ -172,7 +172,7 @@ class MarketLoop {
   }
 
   calcEvent() {
-    console.log("[marketLoop] calcEvent");
+    //console.log("[marketLoop] calcEvent");
 
     const prob = Math.random();
 
