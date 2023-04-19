@@ -7,7 +7,7 @@ export interface Event {
   msg: string;
   duration: number; //ms
   delta: number;
-  direction: number | 1 | -1;
+  forceDirection: 1 | -1 | number | null;
   addPlayers: number;
   marketLoop: {
     minTurnDelay: number;
@@ -48,12 +48,15 @@ export class NewsManager {
   executeEvent(event: Event, marketLoop: MarketLoop) {
     if (event.addPlayers) {
       this._addPlayers(event, marketLoop);
+      return;
     }
     if (event.marketLoop.skipTurnThreshold) {
       this._skipTurnThreshold(event, marketLoop);
+      return;
     }
     if (event.marketLoop.minTurnDelay && event.marketLoop.maxTurnDelay) {
       this._minMaxTurnDelay(event, marketLoop);
+      return;
     }
   }
 
@@ -61,10 +64,9 @@ export class NewsManager {
    * EVENTS
    */
 
-  /* Event add / remove Players, adjust delta */
+  /* Event add / remove Players, adjust delta, direction */
   _addPlayers(event: Event, marketLoop: MarketLoop) {
     const npcPlayerManager = marketLoop.npcPlayerManager;
-
     console.log(
       "[Event] Start",
       event,
@@ -77,6 +79,7 @@ export class NewsManager {
       const player = new Player(`${event.id}-${i}`);
       player.group_id = event.id;
       player.delta = event.delta;
+      player.forceDirection = event.forceDirection as 1 | -1 | null;
       npcPlayerManager.addPlayer(player);
     }
 

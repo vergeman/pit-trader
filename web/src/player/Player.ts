@@ -19,6 +19,7 @@ export class Player {
    * see buidRepenishOrder()
    */
   private _delta: number;
+  private _forceDirection: 1 | -1 | null;
   private _maxPnL: number;
   private _lostPnL: number | null;
   private _orders: Order[];
@@ -38,6 +39,7 @@ export class Player {
     this._isLive = isLive;
     this._markRemoved = false;
     this._delta = 0;
+    this._forceDirection = null;
     this._maxPnL = 0;
     this._lostPnL = null;
     this._orders = [];
@@ -77,6 +79,12 @@ export class Player {
   }
   set delta(d: number) {
     this._delta = d;
+  }
+  get forceDirection(): 1 | -1 | null {
+    return this._forceDirection;
+  }
+  set forceDirection(val: 1 | -1 | null) {
+    this._forceDirection = val;
   }
   get maxPnL(): number {
     return this._maxPnL;
@@ -271,13 +279,25 @@ export class Player {
     //offers: price + delta
     const order = this.buildOrder(
       randomQty,
-      price - (bidOffer * randomMax_delta)
+      price - bidOffer * randomMax_delta
     );
     return order;
   }
 
   replenish(price: number, qtyMax?: number): Order[] {
     const orders = [];
+
+    //for events that modify players
+    if (this.forceDirection !== null) {
+      const order = this.buildReplenishOrder(
+        this.forceDirection,
+        price,
+        qtyMax
+      );
+      orders.push(order);
+      this.addOrder(order);
+      return orders;
+    }
 
     if (!this.hasLiveBids()) {
       const order = this.buildReplenishOrder(1, price, qtyMax);

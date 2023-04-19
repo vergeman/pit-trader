@@ -96,9 +96,15 @@ class MarketLoop {
 
   start(
     minTurnDelay: number = this._defaultMinTurnDelay,
-    maxTurnDelay: number = this._defaultMinTurnDelay
+    maxTurnDelay: number = this._defaultMaxTurnDelay
   ): number {
     const numPlayers = this.npcPlayerManager.numPlayers;
+    console.log(
+      "[marketLoop] start()",
+      this._loopInterval,
+      minTurnDelay,
+      maxTurnDelay
+    );
 
     this._loopInterval = window.setInterval(
       () => this.run(minTurnDelay, maxTurnDelay),
@@ -109,6 +115,7 @@ class MarketLoop {
   }
 
   stop(): void {
+    console.log("[marketLoop] stop()", this._loopInterval);
     clearInterval(this._loopInterval);
     this._isActive = false;
   }
@@ -184,7 +191,6 @@ class MarketLoop {
       if (!event) return false;
 
       this.newsManager.executeEvent(event, this);
-      //TODO: adjust player deltas / direction
 
       return event;
     }
@@ -197,13 +203,13 @@ class MarketLoop {
   //each player's turn takes maxTurnDelay
   //within each player's turn - the actual action (turn() call) is randomized
   async run(
-    minTurnDelay: number = 250,
+    minTurnDelay: number,
     maxTurnDelay: number,
     delayOverride?: number
   ) {
     //console.log("[MarketLoop] RUN", Date.now(), maxTurnDelay);
 
-    const players = this.npcPlayerManager.getRandomizedPlayerList();
+    let players = this.npcPlayerManager.getRandomizedPlayerList();
 
     for (const player of players) {
       if (player.markRemoved) continue;
@@ -228,9 +234,15 @@ class MarketLoop {
     }
 
     //clear away players to be removed
+    players = this.npcPlayerManager.getRandomizedPlayerList();
+
     for (const player of players) {
       if (player.markRemoved) {
-        console.log("TURN: deleting", player.name);
+        // console.log(
+        //   "TURN: deleting",
+        //   player.name,
+        //   this.npcPlayerManager.numPlayers
+        // );
         this.npcPlayerManager.deletePlayer(player.id);
       }
     }

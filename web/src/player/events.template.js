@@ -4,7 +4,7 @@ const events = [
     msg: `bye`,
     duration: 3000,
     delta: 0,
-    direction: 1,
+    forceDirection: null,
     addPlayers: 0,
     marketLoop: {
       minTurnDelay: 100,
@@ -17,7 +17,7 @@ const events = [
     msg: `bye2`,
     duration: 3000,
     delta: 0,
-    direction: 1,
+    forceDirection: null,
     addPlayers: 0,
     marketLoop: {
       minTurnDelay: 100,
@@ -30,7 +30,7 @@ const events = [
     msg: `add players`,
     duration: 10000,
     delta: 0,
-    direction: 1,
+    forceDirection: null,
     addPlayers: 4,  //TODO: add by group-id? then we can add vanillas
     marketLoop: {
       minTurnDelay: 250,
@@ -43,8 +43,34 @@ const events = [
     msg: `delta boost`,
     duration: 10000,
     delta: .5,
-    direction: 1,
+    forceDirection: null,
     addPlayers: 4,
+    marketLoop: {
+      minTurnDelay: 250,
+      maxTurnDelay: 500,
+      skipTurnThreshold: .33,
+    }
+  },
+  {
+    id: "test5",
+    msg: `force direction buy`,
+    duration: 5000,
+    delta: 0,
+    forceDirection: 1,
+    addPlayers: 8,
+    marketLoop: {
+      minTurnDelay: 250,
+      maxTurnDelay: 500,
+      skipTurnThreshold: .33,
+    }
+  },
+  {
+    id: "test6",
+    msg: `force direction sell`,
+    duration: 5000,
+    delta: 0,
+    forceDirection: -1,
+    addPlayers: 10,
     marketLoop: {
       minTurnDelay: 250,
       maxTurnDelay: 500,
