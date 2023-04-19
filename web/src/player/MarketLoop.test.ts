@@ -14,6 +14,7 @@ describe("MarketLoop", () => {
     ];
     const npcPlayerManager = new NPCPlayerManager(me, initPlayers);
     const ml = new MarketLoop({ npcPlayerManager, priceSeed: 100, qtySeed: 4 });
+    ml.init();
 
     const maxTurnDelay = 20;
     ml.turn = jest.fn(() => {}) as jest.Mock;
@@ -80,7 +81,7 @@ describe("MarketLoop", () => {
       }
     });
 
-    it("init() creates list of players and with submitted bid/offer orders with same midpoint price and qtySeed limits", () => {
+    it("init() creates list of players and with submitted bid/offer orders between midpoint price and qtySeed limits", () => {
       const me = new MatchingEngine();
       const ordered = [new Player("a"), new Player("b"), new Player("c")];
       const qtySeed = 4;
@@ -100,17 +101,16 @@ describe("MarketLoop", () => {
               Math.abs(order.qty) <= qtySeed + 1 && Math.abs(order.qty) >= 1
           )
         ).toBeTruthy();
-        expect(player.orders.length).toBe(2);
-        const midpoint: number =
-          player.orders.reduce((sum, order) => sum + order.price, 0) / 2;
-        midpoints.push(midpoint);
-      }
 
-      //midpoint prices are all the same
-      let j = midpoints.length - 1;
-      for (let i = 0; i < midpoints.length; i++) {
-        expect(midpoints[i] === midpoints[j]).toBeTruthy();
-        j--;
+        expect(player.orders.length).toBe(2);
+
+        const price = ml.getPrice();
+        const bids = player.getLiveBids();
+        const offers = player.getLiveOffers();
+        const validBids = bids.every((order) => order.price <= price);
+        const validOffers = offers.every((order) => order.price >= price);
+        expect(validBids).toBeTruthy();
+        expect(validOffers).toBeTruthy();
       }
     });
   });
@@ -218,7 +218,14 @@ describe("MarketLoop", () => {
       marketLoop.init();
       const price = marketLoop.getPrice();
 
-      expect(price).toBe(priceSeed);
+      const bid = marketLoop.me.bids.peek();
+      const offer = marketLoop.me.offers.peek();
+
+      if (bid && offer) {
+        expect(price).toBeGreaterThan(bid.price);
+        expect(price).toBeLessThan(offer.price);
+        expect(price).toBe((bid.price + offer.price) / 2);
+      }
     });
 
     it("getPrice() returns midpoint of live markets when nothing traded", () => {

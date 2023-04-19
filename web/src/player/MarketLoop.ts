@@ -46,8 +46,7 @@ class MarketLoop {
     const randomizedPlayers = this.npcPlayerManager.getRandomizedPlayerList();
 
     for (let player of randomizedPlayers) {
-      const delta = player.generateRandomMax() / 10;
-      const orders = player.replenish(this.priceSeed, this.qtySeed, delta);
+      const orders = player.replenish(this.priceSeed, this.qtySeed);
 
       //add to ME
       for (const order of orders) {

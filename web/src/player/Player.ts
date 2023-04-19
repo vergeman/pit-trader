@@ -269,7 +269,6 @@ export class Player {
     bidOffer: -1 | 1,
     price: number,
     qtyMax?: number,
-    delta_override?: number
   ): Order {
     const randomMax_delta = this.generateRandomMax() / 10;
     const randomQty = bidOffer * this.generateRandomMax(qtyMax);
@@ -279,22 +278,22 @@ export class Player {
     //offers: price + delta
     const order = this.buildOrder(
       randomQty,
-      price - bidOffer * (delta_override || randomMax_delta)
+      price - (bidOffer * randomMax_delta)
     );
     return order;
   }
 
-  replenish(price: number, qtyMax?: number, delta_override?: number): Order[] {
+  replenish(price: number, qtyMax?: number): Order[] {
     const orders = [];
 
     if (!this.hasLiveBids()) {
-      const order = this.buildReplenishOrder(1, price, qtyMax, delta_override);
+      const order = this.buildReplenishOrder(1, price, qtyMax);
       orders.push(order);
       this.addOrder(order);
     }
 
     if (!this.hasLiveOffers()) {
-      const order = this.buildReplenishOrder(-1, price, qtyMax, delta_override);
+      const order = this.buildReplenishOrder(-1, price, qtyMax);
       orders.push(order);
       this.addOrder(order);
     }
