@@ -11,9 +11,9 @@ class MarketLoop {
   private _newsManager: NewsManager;
   private _priceSeed: number;
   private _qtySeed: number;
-  private _defaultMinTurnDelay: number;
-  private _defaultMaxTurnDelay: number;
-  private _defaultSkipTurnThreshold: number;
+  private readonly _defaultMinTurnDelay: number;
+  private readonly _defaultMaxTurnDelay: number;
+  private readonly _defaultSkipTurnThreshold: number;
   private _skipTurnThreshold: number;
   private _loopInterval: number;
   private _isActive: boolean;
@@ -78,6 +78,15 @@ class MarketLoop {
   }
   get isActive(): boolean {
     return this._isActive;
+  }
+  get defaultMinTurnDelay(): number {
+    return this._defaultMinTurnDelay;
+  }
+  get defaultMaxTurnDelay(): number {
+    return this._defaultMaxTurnDelay;
+  }
+  get defaultSkipTurnThreshold(): number {
+    return this._defaultSkipTurnThreshold;
   }
   get skipTurnThreshold(): number {
     return this._skipTurnThreshold;
@@ -175,71 +184,8 @@ class MarketLoop {
 
       if (!event) return false;
 
-      //if type xyz, do ...
-      //add num players, adjust deltas / direction
-
-      /* Event add / remove Players */
-      if (event.addPlayers) {
-        console.log(
-          "[Event] Start",
-          event,
-          this.npcPlayerManager.numPlayers,
-          event.addPlayers
-        );
-
-        //add Players
-        for (let i = 0; i < event.addPlayers; i++) {
-          const player = new Player(`${event.id}-${i}`);
-          player.group_id = event.id;
-          this.npcPlayerManager.addPlayer(player);
-        }
-
-        setTimeout(() => {
-          this.newsManager.hasEvent = false;
-          this.npcPlayerManager.markRemoveGroup(event.id);
-          console.log("[Event] Cleanup", this.npcPlayerManager.numPlayers);
-        }, event.duration);
-      }
-
-      /* Event skipTurnThreshold */
-      if (event.marketLoop.skipTurnThreshold) {
-        console.log("[Event] Start", event, event.marketLoop.skipTurnThreshold);
-
-        this.skipTurnThreshold = event.marketLoop.skipTurnThreshold;
-        setTimeout(() => {
-          console.log("[Event] Cleanup", this, this._defaultSkipTurnThreshold);
-          this.newsManager.hasEvent = false;
-          this.skipTurnThreshold = this._defaultSkipTurnThreshold;
-        }, event.duration);
-      }
-
-      /* Event min/maxTurnDelay */
-      if (event.marketLoop.minTurnDelay && event.marketLoop.maxTurnDelay) {
-        console.log(
-          "[Event] Start",
-          event,
-          event.marketLoop.minTurnDelay,
-          event.marketLoop.maxTurnDelay
-        );
-        this.stop();
-        this.start(
-          event.marketLoop.minTurnDelay,
-          event.marketLoop.maxTurnDelay
-        );
-
-        setTimeout(() => {
-          //TODO: cleanup - remove players, reset player deltas
-          console.log(
-            "[Event] Cleanup",
-            this,
-            this._defaultMinTurnDelay,
-            this._defaultMaxTurnDelay
-          );
-          this.newsManager.hasEvent = false;
-          this.stop();
-          this.start(this._defaultMinTurnDelay, this._defaultMaxTurnDelay);
-        }, event.duration);
-      }
+      this.newsManager.executeEvent(event, this);
+      //TODO: adjust player deltas / direction
 
       return event;
     }
