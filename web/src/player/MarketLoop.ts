@@ -33,8 +33,8 @@ class MarketLoop {
     this._newsManager = new NewsManager();
     this._priceSeed = priceSeed;
     this._qtySeed = qtySeed || 1;
-    this._defaultMinTurnDelay = 250;
-    this._defaultMaxTurnDelay = 1000;
+    this._defaultMinTurnDelay = 150;
+    this._defaultMaxTurnDelay = 500;
     this._defaultSkipTurnThreshold = 0.33;
     this._skipTurnThreshold = this._defaultSkipTurnThreshold;
     this._loopInterval = -1;
@@ -101,16 +101,24 @@ class MarketLoop {
     const numPlayers = this.npcPlayerManager.numPlayers;
     console.log(
       "[marketLoop] start()",
+      this._isActive,
       this._loopInterval,
       minTurnDelay,
-      maxTurnDelay
+      maxTurnDelay,
+      numPlayers,
+      numPlayers * maxTurnDelay
     );
+
+    this.run(minTurnDelay, maxTurnDelay);
+    this._isActive = true;
 
     this._loopInterval = window.setInterval(
       () => this.run(minTurnDelay, maxTurnDelay),
       numPlayers * maxTurnDelay
     );
-    this._isActive = true;
+
+    console.log("[marketLoop] start:", this._isActive, this._loopInterval);
+
     return this._loopInterval;
   }
 
@@ -207,9 +215,15 @@ class MarketLoop {
     maxTurnDelay: number,
     delayOverride?: number
   ) {
-    //console.log("[MarketLoop] RUN", Date.now(), maxTurnDelay);
-
     let players = this.npcPlayerManager.getRandomizedPlayerList();
+
+    console.log(
+      "[MarketLoop] RUN()",
+      this._loopInterval,
+      minTurnDelay,
+      maxTurnDelay,
+      players.length
+    );
 
     for (const player of players) {
       if (player.markRemoved) continue;
@@ -238,11 +252,11 @@ class MarketLoop {
 
     for (const player of players) {
       if (player.markRemoved) {
-        // console.log(
-        //   "TURN: deleting",
-        //   player.name,
-        //   this.npcPlayerManager.numPlayers
-        // );
+        console.log(
+          "TURN: deleting",
+          player.name,
+          this.npcPlayerManager.numPlayers
+        );
         this.npcPlayerManager.deletePlayer(player.id);
       }
     }

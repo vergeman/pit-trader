@@ -46,15 +46,12 @@ export class NewsManager {
   executeEvent(event: Event, marketLoop: MarketLoop) {
     if (event.addPlayers) {
       this._addPlayers(event, marketLoop);
-      return;
     }
     if (event.marketLoop.skipTurnThreshold) {
       this._skipTurnThreshold(event, marketLoop);
-      return;
     }
     if (event.marketLoop.minTurnDelay && event.marketLoop.maxTurnDelay) {
       this._minMaxTurnDelay(event, marketLoop);
-      return;
     }
   }
 
@@ -65,9 +62,11 @@ export class NewsManager {
   /* Event add / remove Players, adjust delta, direction */
   _addPlayers(event: Event, marketLoop: MarketLoop) {
     this.hasEvent++;
+    const price = marketLoop && marketLoop.getPrice();
     const npcPlayerManager = marketLoop.npcPlayerManager;
     console.log(
       "[Event] Start",
+      this.hasEvent,
       event,
       npcPlayerManager.numPlayers,
       event.addPlayers
@@ -79,12 +78,22 @@ export class NewsManager {
       player.group_id = event.id;
       player.delta = event.delta;
       player.forceDirection = event.forceDirection as 1 | -1 | null;
+
       npcPlayerManager.addPlayer(player);
+      const orders = player.replenish(price);
+      for (let order of orders) {
+        marketLoop.me.process(order);
+      }
     }
 
     setTimeout(() => {
+      console.log(
+        "[Event] Cleanup",
+        this.hasEvent,
+        event.id,
+        npcPlayerManager.numPlayers
+      );
       npcPlayerManager.markRemoveGroup(event.id);
-      console.log("[Event] Cleanup", npcPlayerManager.numPlayers);
       this.hasEvent--;
     }, event.duration);
   }
@@ -92,12 +101,18 @@ export class NewsManager {
   /* Event skipTurnThreshold */
   _skipTurnThreshold(event: Event, marketLoop: MarketLoop) {
     this.hasEvent++;
-    console.log("[Event] Start", event, event.marketLoop.skipTurnThreshold);
+    console.log(
+      "[Event] Start",
+      this.hasEvent,
+      event,
+      event.marketLoop.skipTurnThreshold
+    );
 
     marketLoop.skipTurnThreshold = event.marketLoop.skipTurnThreshold;
     setTimeout(() => {
       console.log(
         "[Event] Cleanup",
+        this.hasEvent,
         event,
         marketLoop.defaultSkipTurnThreshold
       );
@@ -111,6 +126,7 @@ export class NewsManager {
     this.hasEvent++;
     console.log(
       "[Event] Start",
+      this.hasEvent,
       event,
       event.marketLoop.minTurnDelay,
       event.marketLoop.maxTurnDelay
@@ -124,6 +140,7 @@ export class NewsManager {
     setTimeout(() => {
       console.log(
         "[Event] Cleanup",
+        this.hasEvent,
         marketLoop,
         marketLoop.defaultMinTurnDelay,
         marketLoop.defaultMaxTurnDelay

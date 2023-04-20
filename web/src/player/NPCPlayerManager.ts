@@ -26,7 +26,8 @@ export default class NPCPlayerManager {
   }
 
   get numPlayers(): number {
-    return Object.keys(this.players).length;
+    const players = Object.keys(this._players);
+    return players.length;
   }
 
   get me(): MatchingEngine {
@@ -34,7 +35,8 @@ export default class NPCPlayerManager {
   }
 
   deletePlayer(id: string): boolean {
-    return delete this.players[id];
+    const d = delete this._players[id];
+    return d;
   }
 
   markRemovePlayer(id: string): boolean {
@@ -70,7 +72,7 @@ export default class NPCPlayerManager {
 
   getRandomizedPlayerList(): Player[] {
     const players = Object.values(this._players);
-    console.log("[NPCPlayerManager]", players.length);
+
     let num = players.length;
     let indexes = [...Array(num).keys()]; //[0 to num]
 

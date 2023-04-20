@@ -9,7 +9,7 @@ import GestureBuilder from "./gesture/GestureBuilder.ts";
 import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
 import InfoTabs from "./infopanel/InfoTabs.jsx";
 import { useGameContext, GameState } from "./GameContext.jsx";
-import {Message} from "./infopanel/Message";
+import { Message } from "./infopanel/Message";
 
 export default function CameraGesture(props) {
   /* default bootstrap size */
@@ -20,6 +20,10 @@ export default function CameraGesture(props) {
   const [gesture, setGesture] = useState(null);
   const infoPanel = useInfoPanel();
   const gameContext = useGameContext();
+
+  const npcPlayerManager =
+    props.marketLoop && props.marketLoop.npcPlayerManager;
+  const numNPC = npcPlayerManager && npcPlayerManager.numPlayers;
 
   useEffect(() => {
     console.log("[CameraGesture.jsx]: useEffect init");
@@ -38,8 +42,11 @@ export default function CameraGesture(props) {
    * checkGameState every frame; determine if player lost or not, toggle
    * accordingly
    */
+
   useEffect(() => {
-    console.log("[checkGameState]", gameContext.state);
+    console.log(
+      `[checkGameState]: ${gameContext.state}, npcPlayers: ${numNPC}`
+    );
 
     const price = props.marketLoop && props.marketLoop.getPrice();
 
@@ -62,7 +69,7 @@ export default function CameraGesture(props) {
    * NewsManager
    */
 
-  useEffect( () => {
+  useEffect(() => {
     //console.log("[CameraGesture] newsManager");
 
     const event = props.marketLoop.calcEvent();
