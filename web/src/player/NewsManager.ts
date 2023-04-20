@@ -17,10 +17,10 @@ export interface Event {
 }
 
 export class NewsManager {
-  private _hasEvent: boolean;
+  private _hasEvent: number;
 
   constructor() {
-    this._hasEvent = false;
+    this._hasEvent = 0;
   }
 
   get hasEvent() {
@@ -35,8 +35,6 @@ export class NewsManager {
   //but there's no hard rule
   createEvent(): Event | false {
     if (this.hasEvent) return false;
-
-    this.hasEvent = true;
 
     const i = Math.floor(Math.random() * events.length);
 
@@ -66,6 +64,7 @@ export class NewsManager {
 
   /* Event add / remove Players, adjust delta, direction */
   _addPlayers(event: Event, marketLoop: MarketLoop) {
+    this.hasEvent++;
     const npcPlayerManager = marketLoop.npcPlayerManager;
     console.log(
       "[Event] Start",
@@ -84,14 +83,15 @@ export class NewsManager {
     }
 
     setTimeout(() => {
-      this.hasEvent = false;
       npcPlayerManager.markRemoveGroup(event.id);
       console.log("[Event] Cleanup", npcPlayerManager.numPlayers);
+      this.hasEvent--;
     }, event.duration);
   }
 
   /* Event skipTurnThreshold */
   _skipTurnThreshold(event: Event, marketLoop: MarketLoop) {
+    this.hasEvent++;
     console.log("[Event] Start", event, event.marketLoop.skipTurnThreshold);
 
     marketLoop.skipTurnThreshold = event.marketLoop.skipTurnThreshold;
@@ -101,13 +101,14 @@ export class NewsManager {
         event,
         marketLoop.defaultSkipTurnThreshold
       );
-      this.hasEvent = false;
       marketLoop.skipTurnThreshold = marketLoop.defaultSkipTurnThreshold;
+      this.hasEvent--;
     }, event.duration);
   }
 
   /* Event min/maxTurnDelay */
   _minMaxTurnDelay(event: Event, marketLoop: MarketLoop) {
+    this.hasEvent++;
     console.log(
       "[Event] Start",
       event,
@@ -127,12 +128,14 @@ export class NewsManager {
         marketLoop.defaultMinTurnDelay,
         marketLoop.defaultMaxTurnDelay
       );
-      this.hasEvent = false;
+
       marketLoop.stop();
       marketLoop.start(
         marketLoop.defaultMinTurnDelay,
         marketLoop.defaultMaxTurnDelay
       );
+
+      this.hasEvent--;
     }, event.duration);
   }
 }
