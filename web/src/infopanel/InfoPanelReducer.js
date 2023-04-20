@@ -79,8 +79,13 @@ export function messagesReducer(messages, action) {
       return [];
 
     case Message.NewsEvent:
-      text = action.value;
-      return [{ time: new Date(), text }, ...messages];
+      const event = action.value;
+      text = event.msg;
+      const time = new Date();
+      const endTime = new Date(time);
+      endTime.setMilliseconds(time.getMilliseconds() + (event.duration || 0));
+
+      return [{ time, endTime, text, type: Message.NewsEvent }, ...messages];
 
     case "test":
       text = "Message";

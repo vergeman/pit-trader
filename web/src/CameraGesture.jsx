@@ -74,7 +74,7 @@ export default function CameraGesture(props) {
 
     const event = props.marketLoop.calcEvent();
     if (event) {
-      const msg = { type: Message.NewsEvent, value: event.msg };
+      const msg = { type: Message.NewsEvent, value: event };
       infoPanel.messagesDispatch(msg);
     }
   }, [gesture]);
