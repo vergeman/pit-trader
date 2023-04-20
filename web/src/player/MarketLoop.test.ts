@@ -12,22 +12,27 @@ describe("MarketLoop", () => {
       new Player("test2"),
       new Player("test3"),
     ];
-    const pm = new NPCPlayerManager(me, initPlayers);
-    const ml = new MarketLoop(pm, 100, 4);
+    const npcPlayerManager = new NPCPlayerManager(me, initPlayers);
+    const ml = new MarketLoop({ npcPlayerManager, priceSeed: 100, qtySeed: 4 });
+    ml.init();
 
     const maxTurnDelay = 20;
     ml.turn = jest.fn(() => {}) as jest.Mock;
 
     const start = Date.now();
-    await ml.run(maxTurnDelay, 10);
+    await ml.run(10, maxTurnDelay);
     const end = Date.now();
 
     const runCount = (ml.turn as jest.Mock).mock.calls.length;
-    expect(runCount).toBe(pm.numPlayers);
+    expect(runCount).toBe(npcPlayerManager.numPlayers);
 
     //also test less than some arbitrary noise
-    expect(end - start).toBeGreaterThan(maxTurnDelay * pm.numPlayers);
-    expect(end - start).toBeLessThan((maxTurnDelay + 10) * pm.numPlayers);
+    expect(end - start).toBeGreaterThan(
+      maxTurnDelay * npcPlayerManager.numPlayers
+    );
+    expect(end - start).toBeLessThan(
+      (maxTurnDelay + 10) * npcPlayerManager.numPlayers
+    );
   });
 
   it("run() calls replenishAll() to replenish any executed orders", async () => {
@@ -37,8 +42,8 @@ describe("MarketLoop", () => {
       new Player("test2"),
       new Player("test3"),
     ];
-    const pm = new NPCPlayerManager(me, initPlayers);
-    const ml = new MarketLoop(pm, 100, 4);
+    const npcPlayerManager = new NPCPlayerManager(me, initPlayers);
+    const ml = new MarketLoop({ npcPlayerManager, priceSeed: 100, qtySeed: 4 });
     ml.init();
 
     ml.replenishAll = jest.fn(() => {}) as jest.Mock;
@@ -53,8 +58,12 @@ describe("MarketLoop", () => {
     it("init() populates respective players orders in player's and matching engine queues", () => {
       const me = new MatchingEngine();
       const ordered = [new Player("a"), new Player("b"), new Player("c")];
-      const pm = new NPCPlayerManager(me, ordered);
-      const ml = new MarketLoop(pm, 50, 4);
+      const npcPlayerManager = new NPCPlayerManager(me, ordered);
+      const ml = new MarketLoop({
+        npcPlayerManager,
+        priceSeed: 50,
+        qtySeed: 4,
+      });
       ml.init();
 
       //ensure player has orders
@@ -72,12 +81,16 @@ describe("MarketLoop", () => {
       }
     });
 
-    it("init() creates list of players and with submitted bid/offer orders with same midpoint price and qtySeed limits", () => {
+    it("init() creates list of players and with submitted bid/offer orders between midpoint price and qtySeed limits", () => {
       const me = new MatchingEngine();
       const ordered = [new Player("a"), new Player("b"), new Player("c")];
       const qtySeed = 4;
-      const pm = new NPCPlayerManager(me, ordered);
-      const ml = new MarketLoop(pm, 100, 4);
+      const npcPlayerManager = new NPCPlayerManager(me, ordered);
+      const ml = new MarketLoop({
+        npcPlayerManager,
+        priceSeed: 100,
+        qtySeed: 4,
+      });
       ml.init();
 
       const midpoints = [];
@@ -88,17 +101,16 @@ describe("MarketLoop", () => {
               Math.abs(order.qty) <= qtySeed + 1 && Math.abs(order.qty) >= 1
           )
         ).toBeTruthy();
-        expect(player.orders.length).toBe(2);
-        const midpoint: number =
-          player.orders.reduce((sum, order) => sum + order.price, 0) / 2;
-        midpoints.push(midpoint);
-      }
 
-      //midpoint prices are all the same
-      let j = midpoints.length - 1;
-      for (let i = 0; i < midpoints.length; i++) {
-        expect(midpoints[i] === midpoints[j]).toBeTruthy();
-        j--;
+        expect(player.orders.length).toBe(2);
+
+        const price = ml.getPrice();
+        const bids = player.getLiveBids();
+        const offers = player.getLiveOffers();
+        const validBids = bids.every((order) => order.price <= price);
+        const validOffers = offers.every((order) => order.price >= price);
+        expect(validBids).toBeTruthy();
+        expect(validOffers).toBeTruthy();
       }
     });
   });
@@ -111,13 +123,18 @@ describe("MarketLoop", () => {
         new Player("test2"),
         new Player("test3"),
       ];
-      const pm = new NPCPlayerManager(me, players);
-      const ml = new MarketLoop(pm, 100, 4);
+      const npcPlayerManager = new NPCPlayerManager(me, players);
+      const ml = new MarketLoop({
+        npcPlayerManager,
+        priceSeed: 100,
+        qtySeed: 4,
+      });
       ml.init();
+      ml.skipTurnThreshold = 0;
 
       for (const player of players) {
         const oldPrices = player.orders.map((order) => order.price);
-        ml.turn(player, 0);
+        ml.turn(player);
         //change in price or execution
         const hasPriceChange = !player.orders.every((order) =>
           oldPrices.includes(order.price)
@@ -141,12 +158,17 @@ describe("MarketLoop", () => {
         new Player("test5"),
       ];
 
-      const pm = new NPCPlayerManager(me, players);
-      const ml = new MarketLoop(pm, 100, 4);
+      const npcPlayerManager = new NPCPlayerManager(me, players);
+      const ml = new MarketLoop({
+        npcPlayerManager,
+        priceSeed: 100,
+        qtySeed: 4,
+      });
 
       ml.init();
+      ml.skipTurnThreshold = 0;
       for (const player of players) {
-        ml.turn(player, 0);
+        ml.turn(player);
       }
 
       const hasExecuted = players.some(
@@ -187,20 +209,35 @@ describe("MarketLoop", () => {
       const priceSeed = 100;
       const me = new MatchingEngine();
       const players = [new Player("a"), new Player("b"), new Player("c")];
-      const pm = new NPCPlayerManager(me, players);
-      const marketLoop = new MarketLoop(pm, priceSeed, 4);
+      const npcPlayerManager = new NPCPlayerManager(me, players);
+      const marketLoop = new MarketLoop({
+        npcPlayerManager,
+        priceSeed,
+        qtySeed: 4,
+      });
       marketLoop.init();
       const price = marketLoop.getPrice();
 
-      expect(price).toBe(priceSeed);
+      const bid = marketLoop.me.bids.peek();
+      const offer = marketLoop.me.offers.peek();
+
+      if (bid && offer) {
+        expect(price).toBeGreaterThan(bid.price);
+        expect(price).toBeLessThan(offer.price);
+        expect(price).toBe((bid.price + offer.price) / 2);
+      }
     });
 
     it("getPrice() returns midpoint of live markets when nothing traded", () => {
       const priceSeed = 100;
       const me = new MatchingEngine();
       const players = [new Player("a")];
-      const pm = new NPCPlayerManager(me, players);
-      const marketLoop = new MarketLoop(pm, priceSeed, 4);
+      const npcPlayerManager = new NPCPlayerManager(me, players);
+      const marketLoop = new MarketLoop({
+        npcPlayerManager,
+        priceSeed,
+        qtySeed: 4,
+      });
 
       const order1 = new Order(players[0].id, OrderType.Limit, 1, 100);
       const order2 = new Order(players[0].id, OrderType.Limit, -1, 102);
@@ -214,8 +251,12 @@ describe("MarketLoop", () => {
       const priceSeed = 100;
       const me = new MatchingEngine();
       const players = [new Player("a"), new Player("b"), new Player("c")];
-      const pm = new NPCPlayerManager(me, players);
-      const marketLoop = new MarketLoop(pm, priceSeed, 4);
+      const npcPlayerManager = new NPCPlayerManager(me, players);
+      const marketLoop = new MarketLoop({
+        npcPlayerManager,
+        priceSeed,
+        qtySeed: 4,
+      });
       marketLoop.init();
 
       const order = new Order(players[0].id, OrderType.Market, 1, NaN);

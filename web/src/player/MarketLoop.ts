@@ -3,25 +3,40 @@ import Player from "./Player";
 import MatchingEngine from "../engine/MatchingEngine";
 import { Order } from "../engine/Order";
 import { TransactionReport } from "../engine/Order";
+import { NewsManager, Event } from "./NewsManager";
 
 class MarketLoop {
   private _npcPlayerManager: NPCPlayerManager;
   private _me: MatchingEngine;
+  private _newsManager: NewsManager;
   private _priceSeed: number;
   private _qtySeed: number;
+  private readonly _defaultMinTurnDelay: number;
+  private readonly _defaultMaxTurnDelay: number;
+  private readonly _defaultSkipTurnThreshold: number;
+  private _skipTurnThreshold: number;
   private _loopInterval: number;
   private _isActive: boolean;
   private _isInit: boolean;
 
-  constructor(
-    npcPlayerManager: NPCPlayerManager,
-    priceSeed: number,
-    qtySeed: number
-  ) {
+  constructor({
+    npcPlayerManager,
+    priceSeed,
+    qtySeed,
+  }: {
+    npcPlayerManager: NPCPlayerManager;
+    priceSeed: number;
+    qtySeed?: number;
+  }) {
     this._npcPlayerManager = npcPlayerManager;
     this._me = npcPlayerManager.me;
+    this._newsManager = new NewsManager();
     this._priceSeed = priceSeed;
-    this._qtySeed = qtySeed;
+    this._qtySeed = qtySeed || 1;
+    this._defaultMinTurnDelay = 150;
+    this._defaultMaxTurnDelay = 500;
+    this._defaultSkipTurnThreshold = 0.33;
+    this._skipTurnThreshold = this._defaultSkipTurnThreshold;
     this._loopInterval = -1;
     this._isActive = false; //flag for Camera (speed up dev load)
     this._isInit = false; //flag indicating ready for run()
@@ -31,8 +46,7 @@ class MarketLoop {
     const randomizedPlayers = this.npcPlayerManager.getRandomizedPlayerList();
 
     for (let player of randomizedPlayers) {
-      const delta = player.generateRandomMax() / 10;
-      const orders = player.replenish(this.priceSeed, this.qtySeed, delta);
+      const orders = player.replenish(this.priceSeed, this.qtySeed);
 
       //add to ME
       for (const order of orders) {
@@ -45,6 +59,9 @@ class MarketLoop {
 
   get npcPlayerManager(): NPCPlayerManager {
     return this._npcPlayerManager;
+  }
+  get newsManager(): NewsManager {
+    return this._newsManager;
   }
   get me(): MatchingEngine {
     return this._me;
@@ -61,18 +78,52 @@ class MarketLoop {
   get isActive(): boolean {
     return this._isActive;
   }
+  get defaultMinTurnDelay(): number {
+    return this._defaultMinTurnDelay;
+  }
+  get defaultMaxTurnDelay(): number {
+    return this._defaultMaxTurnDelay;
+  }
+  get defaultSkipTurnThreshold(): number {
+    return this._defaultSkipTurnThreshold;
+  }
+  get skipTurnThreshold(): number {
+    return this._skipTurnThreshold;
+  }
+  set skipTurnThreshold(num: number) {
+    this._skipTurnThreshold = num;
+  }
 
-  start(maxTurnDelay: number): number {
+  start(
+    minTurnDelay: number = this._defaultMinTurnDelay,
+    maxTurnDelay: number = this._defaultMaxTurnDelay
+  ): number {
     const numPlayers = this.npcPlayerManager.numPlayers;
-    this._loopInterval = window.setInterval(
-      () => this.run(maxTurnDelay),
+    console.log(
+      "[marketLoop] start()",
+      this._isActive,
+      this._loopInterval,
+      minTurnDelay,
+      maxTurnDelay,
+      numPlayers,
       numPlayers * maxTurnDelay
     );
+
+    this.run(minTurnDelay, maxTurnDelay);
     this._isActive = true;
+
+    this._loopInterval = window.setInterval(
+      () => this.run(minTurnDelay, maxTurnDelay),
+      numPlayers * maxTurnDelay
+    );
+
+    console.log("[marketLoop] start:", this._isActive, this._loopInterval);
+
     return this._loopInterval;
   }
 
   stop(): void {
+    console.log("[marketLoop] stop()", this._loopInterval);
     clearInterval(this._loopInterval);
     this._isActive = false;
   }
@@ -134,21 +185,60 @@ class MarketLoop {
     return this.priceSeed;
   }
 
+  calcEvent() {
+    //console.log("[marketLoop] calcEvent");
+
+    const prob = Math.random();
+
+    //TODO: tie into fps somehow, this gets polled
+    //there are a lot of calcEvents even 99% happens fairly often
+    if (prob > 0.99) {
+      //each event has some combinations of effects
+      const event = this.newsManager.createEvent();
+
+      if (!event) return false;
+
+      this.newsManager.executeEvent(event, this);
+
+      return event;
+    }
+
+    return false;
+  }
+
   //run()
   //each player takes a turn() - undergoes a series of actions
   //each player's turn takes maxTurnDelay
   //within each player's turn - the actual action (turn() call) is randomized
-  async run(maxTurnDelay: number, baseDelay: number = 250) {
-    //console.log("[MarketLoop] RUN", Date.now(), maxTurnDelay);
+  async run(
+    minTurnDelay: number,
+    maxTurnDelay: number,
+    delayOverride?: number
+  ) {
+    let players = this.npcPlayerManager.getRandomizedPlayerList();
 
-    const players = this.npcPlayerManager.getRandomizedPlayerList();
+    console.log(
+      "[MarketLoop] RUN()",
+      this._loopInterval,
+      minTurnDelay,
+      maxTurnDelay,
+      players.length
+    );
 
     for (const player of players) {
-      console.log("TURN:", player.name);
+      if (player.markRemoved) continue;
 
-      //delay = [baseDelay, maxTurnDelay - baseDelay] e.g [250, 750]
+      console.log(
+        "TURN:",
+        player.name,
+        players.length,
+        this.newsManager.hasEvent
+      );
+      //delay = [minTurnDelay, maxTurnDelay] each turn takes total of
+      //maxTurnDelay, but action done randomly in that period
       const delay =
-        Math.floor(Math.random() * (maxTurnDelay - baseDelay)) + baseDelay;
+        Math.floor(Math.random() * (maxTurnDelay - minTurnDelay)) +
+        minTurnDelay;
       await new Promise((res) => setTimeout(res, delay));
 
       this.turn(player);
@@ -157,16 +247,30 @@ class MarketLoop {
       await new Promise((res) => setTimeout(res, maxTurnDelay - delay));
     }
 
+    //clear away players to be removed
+    players = this.npcPlayerManager.getRandomizedPlayerList();
+
+    for (const player of players) {
+      if (player.markRemoved) {
+        console.log(
+          "TURN: deleting",
+          player.name,
+          this.npcPlayerManager.numPlayers
+        );
+        this.npcPlayerManager.deletePlayer(player.id);
+      }
+    }
+
     this.replenishAll();
   }
 
-  turn(player: Player, probSkip: number = 0.33) {
+  turn(player: Player) {
     //if execution initiated by another player (this player missing either a bid
     //or offer) -> skip turn to replenish
     if (!player.hasLiveBids() || !player.hasLiveOffers()) return;
 
     //calc prob: do nothing
-    if (player.calcSkipTurn(probSkip)) return;
+    if (player.calcSkipTurn(this.skipTurnThreshold)) return;
 
     //
     // at this point player has bid and offer - now attempt to induce action

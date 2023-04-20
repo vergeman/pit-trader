@@ -26,20 +26,53 @@ export default class NPCPlayerManager {
   }
 
   get numPlayers(): number {
-    return Object.keys(this.players).length;
+    const players = Object.keys(this._players);
+    return players.length;
   }
 
   get me(): MatchingEngine {
     return this._me;
   }
 
+  deletePlayer(id: string): boolean {
+    const d = delete this._players[id];
+    return d;
+  }
+
+  markRemovePlayer(id: string): boolean {
+    const player = this.players[id];
+    const bids = player.getLiveBids();
+    const offers = player.getLiveOffers();
+    const liveOrders = ([] as any).concat(bids, offers);
+
+    for (let order of liveOrders) {
+      this._me.cancel(order);
+    }
+
+    this.players[id].markRemoved = true;
+    return this.players[id].markRemoved;
+  }
+
+  markRemoveGroup(group_id: string): number {
+    const players = Object.values(this._players);
+    let num = 0;
+    for (let i = 0; i < players.length; i++) {
+      if (players[i].group_id === group_id) {
+        this.markRemovePlayer(players[i].id);
+        num++;
+      }
+    }
+    return num;
+  }
+
   resetAll() {
     const players = Object.values(this._players);
-    players.forEach( player => player.reset() );
+    players.forEach((player) => player.reset());
   }
 
   getRandomizedPlayerList(): Player[] {
     const players = Object.values(this._players);
+
     let num = players.length;
     let indexes = [...Array(num).keys()]; //[0 to num]
 

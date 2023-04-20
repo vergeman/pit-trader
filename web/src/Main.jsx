@@ -23,6 +23,7 @@ export default function Main(props) {
       new Player("npc-A"),
       new Player("npc-B"),
       new Player("npc-C"),
+      new Player("npc-D"),
     ])
   );
   const badge = new URLSearchParams(window.location.search).get("badge");
@@ -30,7 +31,7 @@ export default function Main(props) {
     new Player(badge || "Trader", true, config)
   );
   const [marketLoop, setMarketLoop] = useState(
-    new MarketLoop(npcPlayerManager, 100)
+    new MarketLoop({ npcPlayerManager, priceSeed: 100 })
   );
   const [gestureDecision, setGestureDecision] = useState(
     new GestureDecision(
@@ -56,7 +57,7 @@ export default function Main(props) {
       case GameState.INIT:
       //any pre stuff?
       case GameState.RUN:
-        marketLoop.start(1000);
+        marketLoop.start();
         break;
       case GameState.LOSE:
       case GameState.STOP:
