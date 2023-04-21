@@ -1,30 +1,29 @@
-import { events, bossevents } from "./events.template.js";
+import {
+  GestureDecisionEvent,
+  NewsEvent,
+  Event,
+  EventState,
+  EventType,
+} from "./Event";
+import Order from "../engine/Order";
+import { events, bossevents } from "./events.template";
 import Player from "./Player";
 import MarketLoop from "./MarketLoop";
-
-export interface Event {
-  id: string;
-  msg: string;
-  duration: number; //ms
-  delta: number;
-  forceDirection: 1 | -1 | number | null;
-  addPlayers: number;
-  marketLoop: {
-    minTurnDelay: number;
-    maxTurnDelay: number;
-    skipTurnThreshold: number;
-  };
-}
+import GestureDecision from "../gesture/GestureDecision";
 
 export class EventManager {
   private _marketLoop: MarketLoop;
+  private _gestureDecision: GestureDecision;
   private _hasEvent: number;
   private _event: Event | null;
+  private _eventState: EventState;
 
-  constructor(marketLoop: MarketLoop) {
+  constructor(marketLoop: MarketLoop, gestureDecision: GestureDecision) {
     this._marketLoop = marketLoop;
+    this._gestureDecision = gestureDecision;
     this._hasEvent = 0;
     this._event = null;
+    this._eventState = EventState.None;
   }
 
   get marketLoop(): MarketLoop {
@@ -32,6 +31,9 @@ export class EventManager {
   }
   set marketLoop(marketLoop: MarketLoop) {
     this.marketLoop = marketLoop;
+  }
+  get gestureDecision(): GestureDecision {
+    return this._gestureDecision;
   }
   get hasEvent() {
     return this._hasEvent;
@@ -45,16 +47,27 @@ export class EventManager {
   set event(e: Event | null) {
     this._event = e;
   }
+  get eventState(): EventState {
+    return this._eventState;
+  }
+  set eventState(state: EventState) {
+    this._eventState = state;
+  }
 
   //TODO: tie into fps somehow, this gets polled
   //there are a lot of calcEvents even 99% happens fairly often
-  generate(): Event | null {
+  //generate(): Event | null {
+  generate() {
     if (this.hasEvent) return null;
 
     const prob = Math.random();
     if (prob < 0.99) return null;
 
-    const event = this._createEvent();
+    //const event = this._createEvent();
+    console.log("[EventManager] generate");
+    const event = bossevents[0];
+    this.event = event;
+
     return event;
   }
 
@@ -85,20 +98,28 @@ export class EventManager {
   executeEvent() {
     if (!this.event) return false;
 
-    const event = this.event;
+    //GestureDecisionEvents
+    const gdEvent = this.event as GestureDecisionEvent;
 
-    if (event.id == "boss-1") {
-      //this._bossEvent(event, this.marketLoop);
+    if (gdEvent.id == "boss-1") {
+      this._bossEventOrder(gdEvent, this.gestureDecision);
       return;
     }
-    if (event.addPlayers) {
-      this._addPlayers(event, this.marketLoop);
+
+    //NewsEvents
+    const newsEvent = this.event as NewsEvent;
+
+    if (newsEvent.addPlayers) {
+      this._addPlayers(newsEvent, this.marketLoop);
     }
-    if (event.marketLoop.skipTurnThreshold) {
-      this._skipTurnThreshold(event, this.marketLoop);
+    if (newsEvent.marketLoop.skipTurnThreshold) {
+      this._skipTurnThreshold(newsEvent, this.marketLoop);
     }
-    if (event.marketLoop.minTurnDelay && event.marketLoop.maxTurnDelay) {
-      this._minMaxTurnDelay(event, this.marketLoop);
+    if (
+      newsEvent.marketLoop.minTurnDelay &&
+      newsEvent.marketLoop.maxTurnDelay
+    ) {
+      this._minMaxTurnDelay(newsEvent, this.marketLoop);
     }
   }
 
@@ -113,26 +134,56 @@ export class EventManager {
    * EVENTS
    */
 
+  _bossMatchFn(order: Order, gestureDecision: GestureDecision) {
+    //TODO: move the events / marketLoop to one time  - executeEvent
+    //the match function is the callback
+
+    /*
+     * Match
+     */
+    //if (this.eventState)
+    //TODO: write match logic
+    this.eventState = EventState.Match;
+
+    //TODO: change EventState and return
+    console.log("[_bossMatchFn] eventState", this.eventState);
+
+    return this.eventState;
+  }
+
   /* Boss Event Stub */
-  _bossEvent(event: Event, marketLoop: MarketLoop) {
+  _bossEventOrder(
+    event: GestureDecisionEvent,
+    gestureDecision: GestureDecision
+  ) {
+    //this without bind/arrow function refers to gestureDecision
+    //wiuth arrow in CameraGesture, refers to EventManager
+    console.log("[bossEvent]", this, gestureDecision);
+    gestureDecision.eventMode = true;
     this.hasEvent++;
-    marketLoop.stop();
+    this.marketLoop.stop();
+    console.log("[bossEvent] stop");
 
-    //Match
-    //TODO: write intercept() function
     //TODO: stash current timeout intervals for use in setTimeout
+    //(e.g. overwritten in generic marketLoop.start)
 
-    //marketLoop.me.intercept(true, Order);
-
+    //cleanup
     setTimeout(() => {
       //TODO: restore start with stashed time vars
-      //marketLoop.start()
+      console.log("[bossEvent] Cleanup");
+      this.marketLoop.start();
       this._cleanup();
-    }, event.duration);
+
+      //turn off gesture
+      //this.eventState = EventState.None; //-> how to trigger None
+      //this.onEventEnd()
+      //this.event = null;
+      gestureDecision.eventMode = false;
+    }, (event && event.duration) || 5000);
   }
 
   /* Event add / remove Players, adjust delta, direction */
-  _addPlayers(event: Event, marketLoop: MarketLoop) {
+  _addPlayers(event: NewsEvent, marketLoop: MarketLoop) {
     this.hasEvent++;
     const price = marketLoop && marketLoop.getPrice();
     const npcPlayerManager = marketLoop.npcPlayerManager;
@@ -171,7 +222,7 @@ export class EventManager {
   }
 
   /* Event skipTurnThreshold */
-  _skipTurnThreshold(event: Event, marketLoop: MarketLoop) {
+  _skipTurnThreshold(event: NewsEvent, marketLoop: MarketLoop) {
     this.hasEvent++;
     console.log(
       "[Event] Start",
@@ -194,7 +245,7 @@ export class EventManager {
   }
 
   /* Event min/maxTurnDelay */
-  _minMaxTurnDelay(event: Event, marketLoop: MarketLoop) {
+  _minMaxTurnDelay(event: NewsEvent, marketLoop: MarketLoop) {
     this.hasEvent++;
     console.log(
       "[Event] Start",

@@ -1,4 +1,5 @@
-import { GestureAction } from "../gesture/Gesture.ts";
+import { GestureAction } from "../gesture/Gesture";
+import { EventType } from "./Event";
 
 /* Defaults
  * id 0 - would affect vanilla players, but for most part want to leave vanillas
@@ -25,25 +26,30 @@ import { GestureAction } from "../gesture/Gesture.ts";
   },
 },
 */
-export const bossevents = [{
-  id: "boss-1",
-  img: "boss-1.png",
-  text: "Hey, buy 5 for 3",
-  duration: 5000,
-  bonus: 10000,
-  gesture: {
-    qty: 5,
-    price: 3,
-    action: GestureAction.Buy //Market
-  }
-}];
+
+export const bossevents = [
+  {
+    id: "boss-1",
+    type: EventType.GestureDecisionEvent,
+    img: "boss-1.png",
+    msg: "Hey, buy 5 for 3",
+    duration: 5000,
+    bonus: 10000,
+    gesture: {
+      qty: 5,
+      price: 3,
+      action: GestureAction.Buy, //Market
+    },
+  },
+];
 
 export const events = [
   {
     id: "1",
+    type: EventType.NewsEvent,
     msg: "US Economy Grew at a Faster Pace in Last Quarter Than Previously Estimated",
     duration: 7000,
-    delta: -.1,
+    delta: -0.1,
     forceDirection: 1,
     addPlayers: 4,
     marketLoop: {
@@ -54,9 +60,10 @@ export const events = [
   },
   {
     id: "2",
+    type: EventType.NewsEvent,
     msg: "GDP Growth Shows Robust Economic Recovery",
     duration: 7000,
-    delta: -.1,
+    delta: -0.1,
     forceDirection: 1,
     addPlayers: 4,
     marketLoop: {
@@ -67,9 +74,10 @@ export const events = [
   },
   {
     id: "3",
+    type: EventType.NewsEvent,
     msg: "US GDP Contracts in Last Quarter, Marking Worst Drop Since 2008 Financial Crisis",
     duration: 7000,
-    delta: -.2,
+    delta: -0.2,
     forceDirection: -1,
     addPlayers: 4,
     marketLoop: {
@@ -80,9 +88,10 @@ export const events = [
   },
   {
     id: "4",
+    type: EventType.NewsEvent,
     msg: "US Economy Shrank More Than Expected in Last Quarter",
     duration: 7000,
-    delta: -.1,
+    delta: -0.1,
     forceDirection: -1,
     addPlayers: 4,
     marketLoop: {
@@ -93,6 +102,7 @@ export const events = [
   },
   {
     id: "5",
+    type: EventType.NewsEvent,
     msg: "Fed Leaves Interest Rates Unchanged, Signals Future Rate Cuts Possible",
     duration: 7000,
     delta: 0.2,
@@ -106,6 +116,7 @@ export const events = [
   },
   {
     id: "6",
+    type: EventType.NewsEvent,
     msg: "Low Interest Rates Help Sustain Economic Growth",
     duration: 7000,
     delta: -0.2,
@@ -119,10 +130,10 @@ export const events = [
   },
   {
     id: "7",
+    type: EventType.NewsEvent,
     msg: "Federal Reserve Raises Interest Rates, Causing Stock Market to Plunge",
-
     duration: 9000,
-    delta: -.25,
+    delta: -0.25,
     forceDirection: -1,
     addPlayers: 8,
     marketLoop: {
@@ -133,8 +144,8 @@ export const events = [
   },
   {
     id: "8",
+    type: EventType.NewsEvent,
     msg: "Interest Rates Hike Adds to Market Volatility, Raises Worries of Slowdown",
-
     duration: 9000,
     delta: -0.5,
     forceDirection: null,
@@ -147,10 +158,10 @@ export const events = [
   },
   {
     id: "9",
+    type: EventType.NewsEvent,
     msg: "Inflation Rate Hits Highest Level in Years, Fueling Concerns About Rising Prices",
-
     duration: 9000,
-    delta: .2,
+    delta: 0.2,
     forceDirection: -1,
     addPlayers: 6,
     marketLoop: {
@@ -161,9 +172,10 @@ export const events = [
   },
   {
     id: "10",
+    type: EventType.NewsEvent,
     msg: "Unemployment Rate Drops to Record Low, Boosting Confidence in Economy",
     duration: 3500,
-    delta: -.2,
+    delta: -0.2,
     forceDirection: 1,
     addPlayers: 6,
     marketLoop: {
@@ -174,6 +186,7 @@ export const events = [
   },
   {
     id: "11",
+    type: EventType.NewsEvent,
     msg: "Unemployment Rate Rises Unexpectedly, Raising Concerns of Economic Slowdown",
     duration: 3500,
     delta: 0.2,
@@ -188,10 +201,11 @@ export const events = [
 
   {
     id: "12",
+    type: EventType.NewsEvent,
     msg: "Political Stability and Government Action Boosts Investor Confidence",
     sentiment: "bullish",
     duration: 7000,
-    delta: -.2,
+    delta: -0.2,
     forceDirection: 1,
     addPlayers: 6,
     marketLoop: {
@@ -202,10 +216,10 @@ export const events = [
   },
   {
     id: "13",
+    type: EventType.NewsEvent,
     msg: "Political Turmoil and Uncertainty Leads to Market Sell-Off",
-
     duration: 7000,
-    delta: -.2,
+    delta: -0.2,
     forceDirection: -1,
     addPlayers: 6,
     marketLoop: {

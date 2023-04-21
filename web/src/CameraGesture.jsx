@@ -10,6 +10,7 @@ import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
 import InfoTabs from "./infopanel/InfoTabs.jsx";
 import { useGameContext, GameState } from "./GameContext.jsx";
 import { Message } from "./infopanel/Message";
+import { EventType } from "./player/Event";
 
 export default function CameraGesture(props) {
   /* default bootstrap size */
@@ -73,7 +74,15 @@ export default function CameraGesture(props) {
     //console.log("[CameraGesture] EventManager");
     const event = props.eventManager.generate();
 
-    if (event) {
+    if (!event) return;
+
+
+    if (event.type == EventType.Bossman) {
+      //set
+    }
+
+    if (event.type == EventType.News) {
+
       props.eventManager.executeEvent();
       //bossman?
 
@@ -81,6 +90,7 @@ export default function CameraGesture(props) {
       const msg = { type: Message.NewsEvent, value: event };
       infoPanel.messagesDispatch(msg);
     }
+
   }, [gesture]);
 
 
