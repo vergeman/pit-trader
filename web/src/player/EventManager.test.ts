@@ -1,21 +1,34 @@
+import MatchingEngine from "../engine/MatchingEngine";
+import Player from "./Player";
+import NPCPlayerManager from "./NPCPlayerManager";
+import MarketLoop from "./MarketLoop";
 import EventManager from "./EventManager";
 
 describe("EventManager", () => {
-  it("locks createEvent()", () => {
-    const nm = new EventManager();
+  it("generate locks further event creation()", () => {
+    const me = new MatchingEngine();
+    const initPlayers = [
+      new Player("test1"),
+      new Player("test2"),
+      new Player("test3"),
+    ];
+    const npcPlayerManager = new NPCPlayerManager(me, initPlayers);
+    const ml = new MarketLoop({ npcPlayerManager, priceSeed: 100, qtySeed: 4 });
+
+    const eventManager = new EventManager(ml);
     const numIter = 5;
     let i = 0;
     let j = 0;
     let k = 0;
 
     while (i < numIter) {
-      const event = nm.createEvent();
-      nm.hasEvent++;
+      const event = eventManager._createEvent();
+      eventManager.hasEvent++;
       event ? j++ : k++;
       i++;
     }
     expect(j).toBe(1);
     expect(k).toBe(numIter - 1);
-    expect(nm.hasEvent).toBe(numIter);
+    expect(eventManager.hasEvent).toBe(numIter);
   });
 });

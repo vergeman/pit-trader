@@ -10,6 +10,7 @@ import LoseModal from "./LoseModal";
 import Message from "./infopanel/Message";
 import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
 import { useGameContext, GameState } from "./GameContext.jsx";
+import { EventManager, Event } from "./player/EventManager.ts";
 
 export default function Main(props) {
   const config = {
@@ -32,6 +33,9 @@ export default function Main(props) {
   );
   const [marketLoop, setMarketLoop] = useState(
     new MarketLoop({ npcPlayerManager, priceSeed: 100 })
+  );
+  const [eventManager, setEventManager] = useState(
+    new EventManager(marketLoop)
   );
   const [gestureDecision, setGestureDecision] = useState(
     new GestureDecision(
@@ -105,6 +109,7 @@ export default function Main(props) {
         me={me}
         player={player}
         marketLoop={marketLoop}
+        eventManager={eventManager}
         gestureDecision={gestureDecision}
       />
     </Container>

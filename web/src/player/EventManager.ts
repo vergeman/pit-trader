@@ -1,4 +1,4 @@
-import {events, bossevents} from "./events.template.js";
+import { events, bossevents } from "./events.template.js";
 import Player from "./Player";
 import MarketLoop from "./MarketLoop";
 
@@ -17,25 +17,53 @@ export interface Event {
 }
 
 export class EventManager {
+  private _marketLoop: MarketLoop;
   private _hasEvent: number;
+  private _event: Event | null;
 
-  constructor() {
+  constructor(marketLoop: MarketLoop) {
+    this._marketLoop = marketLoop;
     this._hasEvent = 0;
+    this._event = null;
   }
 
+  get marketLoop(): MarketLoop {
+    return this._marketLoop;
+  }
+  set marketLoop(marketLoop: MarketLoop) {
+    this.marketLoop = marketLoop;
+  }
   get hasEvent() {
     return this._hasEvent;
   }
   set hasEvent(e) {
     this._hasEvent = e;
   }
+  get event(): Event | null {
+    return this._event;
+  }
+  set event(e: Event | null) {
+    this._event = e;
+  }
+
+  //TODO: tie into fps somehow, this gets polled
+  //there are a lot of calcEvents even 99% happens fairly often
+  generate(): Event | null {
+    if (this.hasEvent) return null;
+
+    const prob = Math.random();
+    if (prob < 0.99) return null;
+
+    const event = this._createEvent();
+    return event;
+  }
 
   //generates Event type
+
   //locks with hasEvent to prevent concurrent events for now
   //but there's no hard rule
-  createEvent() {
-    if (this.hasEvent) return false;
-
+  _createEvent(): Event | null {
+    if (this.hasEvent) return null;
     //TODO: decide between boss and news (weight)?
     //create event types: Boss type vs Message Type?
     //are these even in conflict - we need to distinguish, but not necessarily
@@ -46,34 +74,44 @@ export class EventManager {
     // return event;
 
     //News
+    //TODO: events make indicative its static file
     const i = Math.floor(Math.random() * events.length);
 
-    const event = events[i];
+    this._event = events[i];
 
-    return event;
+    return this._event;
   }
 
-  executeEvent(event: Event, marketLoop: MarketLoop) {
+  executeEvent() {
+    if (!this.event) return false;
+
+    const event = this.event;
 
     if (event.id == "boss-1") {
-      this._bossEvent(event, marketLoop);
+      //this._bossEvent(event, this.marketLoop);
       return;
     }
     if (event.addPlayers) {
-      this._addPlayers(event, marketLoop);
+      this._addPlayers(event, this.marketLoop);
     }
     if (event.marketLoop.skipTurnThreshold) {
-      this._skipTurnThreshold(event, marketLoop);
+      this._skipTurnThreshold(event, this.marketLoop);
     }
     if (event.marketLoop.minTurnDelay && event.marketLoop.maxTurnDelay) {
-      this._minMaxTurnDelay(event, marketLoop);
+      this._minMaxTurnDelay(event, this.marketLoop);
+    }
+  }
+
+  _cleanup() {
+    this.hasEvent--;
+    if (this.hasEvent === 0) {
+      this._event = null;
     }
   }
 
   /*
    * EVENTS
    */
-
 
   /* Boss Event Stub */
   _bossEvent(event: Event, marketLoop: MarketLoop) {
@@ -86,15 +124,12 @@ export class EventManager {
 
     //marketLoop.me.intercept(true, Order);
 
-    setTimeout( () => {
-
+    setTimeout(() => {
       //TODO: restore start with stashed time vars
       //marketLoop.start()
-      this.hasEvent--;
-    }, event.duration)
-
+      this._cleanup();
+    }, event.duration);
   }
-
 
   /* Event add / remove Players, adjust delta, direction */
   _addPlayers(event: Event, marketLoop: MarketLoop) {
@@ -131,7 +166,7 @@ export class EventManager {
         npcPlayerManager.numPlayers
       );
       npcPlayerManager.markRemoveGroup(event.id);
-      this.hasEvent--;
+      this._cleanup();
     }, event.duration);
   }
 
@@ -154,7 +189,7 @@ export class EventManager {
         marketLoop.defaultSkipTurnThreshold
       );
       marketLoop.skipTurnThreshold = marketLoop.defaultSkipTurnThreshold;
-      this.hasEvent--;
+      this._cleanup();
     }, event.duration);
   }
 
@@ -189,7 +224,7 @@ export class EventManager {
         marketLoop.defaultMaxTurnDelay
       );
 
-      this.hasEvent--;
+      this._cleanup();
     }, event.duration);
   }
 }

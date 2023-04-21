@@ -71,13 +71,22 @@ export default function CameraGesture(props) {
 
   useEffect(() => {
     //console.log("[CameraGesture] EventManager");
+    const event = props.eventManager.generate();
 
-    const event = props.marketLoop.calcEvent();
     if (event) {
+      props.eventManager.executeEvent();
+      //bossman?
+
+      //news
       const msg = { type: Message.NewsEvent, value: event };
       infoPanel.messagesDispatch(msg);
     }
   }, [gesture]);
+
+
+  /*
+   * calcGesture (gesture poll)
+   */
 
   //useCallback to cache rerender of Camera by calcGesture (due to setGesture)
   const calcGesture = useCallback(
