@@ -3,12 +3,12 @@ import Player from "./Player";
 import MatchingEngine from "../engine/MatchingEngine";
 import { Order } from "../engine/Order";
 import { TransactionReport } from "../engine/Order";
-import { NewsManager, Event } from "./NewsManager";
+import { EventManager, Event } from "./EventManager";
 
 class MarketLoop {
   private _npcPlayerManager: NPCPlayerManager;
   private _me: MatchingEngine;
-  private _newsManager: NewsManager;
+  private _eventManager: EventManager;
   private _priceSeed: number;
   private _qtySeed: number;
   private readonly _defaultMinTurnDelay: number;
@@ -30,7 +30,7 @@ class MarketLoop {
   }) {
     this._npcPlayerManager = npcPlayerManager;
     this._me = npcPlayerManager.me;
-    this._newsManager = new NewsManager();
+    this._eventManager = new EventManager();
     this._priceSeed = priceSeed;
     this._qtySeed = qtySeed || 1;
     this._defaultMinTurnDelay = 150;
@@ -60,8 +60,8 @@ class MarketLoop {
   get npcPlayerManager(): NPCPlayerManager {
     return this._npcPlayerManager;
   }
-  get newsManager(): NewsManager {
-    return this._newsManager;
+  get eventManager(): EventManager {
+    return this._eventManager;
   }
   get me(): MatchingEngine {
     return this._me;
@@ -194,11 +194,11 @@ class MarketLoop {
     //there are a lot of calcEvents even 99% happens fairly often
     if (prob > 0.99) {
       //each event has some combinations of effects
-      const event = this.newsManager.createEvent();
+      const event = this.eventManager.createEvent();
 
       if (!event) return false;
 
-      this.newsManager.executeEvent(event, this);
+      this.eventManager.executeEvent(event, this);
 
       return event;
     }
@@ -232,7 +232,7 @@ class MarketLoop {
         "TURN:",
         player.name,
         players.length,
-        this.newsManager.hasEvent
+        this.eventManager.hasEvent
       );
       //delay = [minTurnDelay, maxTurnDelay] each turn takes total of
       //maxTurnDelay, but action done randomly in that period

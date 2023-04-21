@@ -1,8 +1,8 @@
-import NewsManager from "./NewsManager";
+import EventManager from "./EventManager";
 
-describe("NewsManager", () => {
+describe("EventManager", () => {
   it("locks createEvent()", () => {
-    const nm = new NewsManager();
+    const nm = new EventManager();
     const numIter = 5;
     let i = 0;
     let j = 0;

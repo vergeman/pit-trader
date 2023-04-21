@@ -1,3 +1,5 @@
+import { GestureAction } from "../gesture/Gesture.ts";
+
 /* Defaults
  * id 0 - would affect vanilla players, but for most part want to leave vanillas
  * alone because we need entities on the other side to trade against
@@ -23,21 +25,20 @@
   },
 },
 */
-const events2 = [{
-  id: "1",
-  msg: "US Economy Grew at a Faster Pace in Last Quarter Than Previously Estimated",
-  duration: 7000,
-  delta: -.1,
-  forceDirection: 1,
-  addPlayers: 4,
-  marketLoop: {
-    minTurnDelay: 150,
-    maxTurnDelay: 350,
-    skipTurnThreshold: 0,
-  },
+export const bossevents = [{
+  id: "boss-1",
+  img: "boss-1.png",
+  text: "Hey, buy 5 for 3",
+  duration: 5000,
+  bonus: 10000,
+  gesture: {
+    qty: 5,
+    price: 3,
+    action: GestureAction.Buy //Market
+  }
 }];
 
-const events = [
+export const events = [
   {
     id: "1",
     msg: "US Economy Grew at a Faster Pace in Last Quarter Than Previously Estimated",

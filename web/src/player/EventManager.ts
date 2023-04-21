@@ -1,4 +1,4 @@
-import events from "./events.template.js";
+import {events, bossevents} from "./events.template.js";
 import Player from "./Player";
 import MarketLoop from "./MarketLoop";
 
@@ -16,7 +16,7 @@ export interface Event {
   };
 }
 
-export class NewsManager {
+export class EventManager {
   private _hasEvent: number;
 
   constructor() {
@@ -33,9 +33,19 @@ export class NewsManager {
   //generates Event type
   //locks with hasEvent to prevent concurrent events for now
   //but there's no hard rule
-  createEvent(): Event | false {
+  createEvent() {
     if (this.hasEvent) return false;
 
+    //TODO: decide between boss and news (weight)?
+    //create event types: Boss type vs Message Type?
+    //are these even in conflict - we need to distinguish, but not necessarily
+    // choose between them
+
+    //Boss
+    // let event = bossevents[0];
+    // return event;
+
+    //News
     const i = Math.floor(Math.random() * events.length);
 
     const event = events[i];
@@ -44,6 +54,11 @@ export class NewsManager {
   }
 
   executeEvent(event: Event, marketLoop: MarketLoop) {
+
+    if (event.id == "boss-1") {
+      this._bossEvent(event, marketLoop);
+      return;
+    }
     if (event.addPlayers) {
       this._addPlayers(event, marketLoop);
     }
@@ -58,6 +73,28 @@ export class NewsManager {
   /*
    * EVENTS
    */
+
+
+  /* Boss Event Stub */
+  _bossEvent(event: Event, marketLoop: MarketLoop) {
+    this.hasEvent++;
+    marketLoop.stop();
+
+    //Match
+    //TODO: write intercept() function
+    //TODO: stash current timeout intervals for use in setTimeout
+
+    //marketLoop.me.intercept(true, Order);
+
+    setTimeout( () => {
+
+      //TODO: restore start with stashed time vars
+      //marketLoop.start()
+      this.hasEvent--;
+    }, event.duration)
+
+  }
+
 
   /* Event add / remove Players, adjust delta, direction */
   _addPlayers(event: Event, marketLoop: MarketLoop) {
@@ -157,4 +194,4 @@ export class NewsManager {
   }
 }
 
-export default NewsManager;
+export default EventManager;
