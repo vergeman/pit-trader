@@ -6,11 +6,13 @@ export enum EventType {
   GestureDecisionEvent,
 }
 
+//corresponds to component visuals
 export enum EventState {
   None,
-  Active,
-  Match,
-  NoMatch,
+  Active,  //initial screen
+  NoMatch, //submit a miss
+  Win,     //matched event w/ order
+  Lost     //expired
 }
 
 export interface GestureDecisionEvent extends Event {

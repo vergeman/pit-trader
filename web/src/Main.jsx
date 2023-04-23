@@ -86,6 +86,8 @@ export default function Main(props) {
       player.reset();
       npcPlayerManager.resetAll();
       me.reset();
+      eventManager.reset();
+      marketLoop.stop();
       marketLoop.init();
 
       gameContext.setGameID(gameContext.gameID + 1);

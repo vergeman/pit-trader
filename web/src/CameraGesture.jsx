@@ -72,11 +72,18 @@ export default function CameraGesture(props) {
    */
 
   useEffect(() => {
+
+    if (gameContext.state == GameState.LOSE) {
+      props.marketLoop.stop();
+      return;
+    };
+
     //console.log("[CameraGesture] EventManager");
     const event = props.eventManager.generate();
 
     //issue: we do need to poll so can't just return
     if (!event) return;
+
 
     //one time init
     if (event && event.type == EventType.GestureDecisionEvent) {
@@ -105,9 +112,8 @@ export default function CameraGesture(props) {
           msg,
           props.eventManager.eventState
         );
-        infoPanel.eventStateDispatch(msg);
 
-        //props.eventManager.event.reset();
+        infoPanel.eventStateDispatch(msg);
       };
 
       event.onEnd = () => {
@@ -115,13 +121,34 @@ export default function CameraGesture(props) {
         //props.eventManager.eventState = EventState.None; //TODO: verify handled by reset()
         props.gestureDecision.onSubmitOrder = null;
         event.onEnd = () => {};
-
+        console.log("[CameraGesture] EventonEnd eventState", props.eventManager.eventState);
         const msg = {
           type: EventType.GestureDecisionEvent,
           value: props.eventManager.eventState,
         };
 
         infoPanel.eventStateDispatch(msg);
+
+        props.marketLoop.start();
+
+        //on end, want a slight delay so user can see win/loss
+        //here we allow marketloop and general execution to run
+        //but events are disabled for a brief period
+        setTimeout(() => {
+
+          props.eventManager.reset();
+          props.eventManager._cleanup();
+
+          console.log("[CameraGesture] EventonEndTimeout eventState", props.eventManager.eventState);
+
+          const msg = {
+            type: EventType.GestureDecisionEvent,
+            value: props.eventManager.eventState //should be None
+          };
+
+          infoPanel.eventStateDispatch(msg);
+        }, 3000);
+
       };
 
       //initial active state
@@ -152,7 +179,7 @@ export default function CameraGesture(props) {
       const msg = { type: Message.NewsEvent, value: event };
       infoPanel.messagesDispatch(msg);
     }
-  }, [gesture]);
+  }, [gesture, props.eventManager.eventState]);
 
   /*
    * calcGesture (gesture poll)

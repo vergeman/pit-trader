@@ -92,6 +92,9 @@ class MarketLoop {
     minTurnDelay: number = this._defaultMinTurnDelay,
     maxTurnDelay: number = this._defaultMaxTurnDelay
   ): number {
+
+    if (this._isActive) return this._loopInterval;
+
     const numPlayers = this.npcPlayerManager.numPlayers;
     console.log(
       "[marketLoop] start()",

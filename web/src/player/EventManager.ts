@@ -130,6 +130,11 @@ export class EventManager {
     }
   }
 
+  reset() {
+    this.eventState = EventState.None
+    this.timeouts = [];
+  }
+
   clearTimeouts() {
     for (const timeout of this.timeouts) {
       clearTimeout(timeout);
@@ -155,6 +160,11 @@ export class EventManager {
     /*
      * Match
      */
+    //if none, win, lost - event doesn't exist or is over, so no gesture comparison
+    //if active/nomatch it's ongoing
+    //make sure once a state changes we lock
+    if (![EventState.Active, EventState.NoMatch].includes(this.eventState)) return this.eventState;
+
     const event = this.event as GestureDecisionEvent;
 
     console.log("[gestureDecisionOrderMatch] MATCHING", event.gesture, order);
@@ -163,7 +173,7 @@ export class EventManager {
       event.gesture.price == order.gesturePrice &&
       event.gesture.orderType == order.orderType
     ) {
-      this.eventState = EventState.Match;
+      this.eventState = EventState.Win;
       console.log(
         "[gestureDecisionOrderMatch] eventState MATCH",
         this.eventState
@@ -177,7 +187,7 @@ export class EventManager {
     }
 
     //MATCH
-    if (this.eventState == EventState.Match) {
+    if (this.eventState == EventState.Win) {
       console.log("[gestureDecisionOrderMatch] event", this.event);
 
       this.clearTimeouts();
@@ -200,31 +210,30 @@ export class EventManager {
     this.hasEvent++;
     this.marketLoop.stop();
     console.log("[GestureDecisionOrderEvent] stop");
-    console.log("[GestureDecisionOrderEvent] hasEvent", this.hasEvent);
+
     //TODO: stash current timeout intervals for use in setTimeout
     //(e.g. overwritten in generic marketLoop.start)
 
     this.eventState = EventState.Active;
-    //TODO:
-    //1.refactor setTimeout cleanup to reset()
-    //2.call reset on gesture match (right now its waiting the entire duration,
-    //regardless of success)
+
+    //TODO: refactor onEnd() / reset() / cleanup() make it clearer
 
     //cleanup
     //attach to event for early terminate
     const reset = () => {
       //TODO: restore start with stashed time vars
       console.log("[GestureDecisionOrderEvent] Cleanup");
-      this.eventState = EventState.None;
-      event.onEnd();
-      this._cleanup();
-      this.marketLoop.start();
 
-      console.log("[GestureDecisionOrderEvent] hasEvent", this.hasEvent);
-      //turn off gesture
-      //this.eventState = EventState.None; //-> how to trigger None
-      //this.onEventEnd()
-      //this.event = null;
+      if (this.eventState !== EventState.Win) {
+        this.eventState = EventState.Lost;
+      }
+
+      event.onEnd();
+
+      // this._cleanup();
+      // this.marketLoop.start();
+
+      console.log("[GestureDecisionOrderEvent] Cleanup hasEvent", this.hasEvent);
 
       return this.eventState;
     };
