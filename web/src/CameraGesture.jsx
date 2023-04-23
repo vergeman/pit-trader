@@ -10,7 +10,8 @@ import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
 import InfoTabs from "./infopanel/InfoTabs.jsx";
 import { useGameContext, GameState } from "./GameContext.jsx";
 import { Message } from "./infopanel/Message";
-import { EventType } from "./player/Event";
+import { EventState, EventType } from "./player/Event";
+import EventManager from "./player/EventManager";
 
 export default function CameraGesture(props) {
   /* default bootstrap size */
@@ -74,25 +75,59 @@ export default function CameraGesture(props) {
     //console.log("[CameraGesture] EventManager");
     const event = props.eventManager.generate();
 
+    //issue: we do need to poll so can't just return
     if (!event) return;
 
+    //one time init
+    if (event && event.type == EventType.GestureDecisionEvent) {
+      console.log(
+        "[CameraGesture] EventManager EventType.GestureDecisionEvent"
+      );
 
-    if (event.type == EventType.Bossman) {
-      //set
+      //this is callback on successful gesture
+      //we need access to infoPanel context/reducer
+      //props.gestureDecision.onEvent = (order, gestureDecision) => {
+      props.gestureDecision.onSubmitOrder = (order, gestureDecision) => {
+        const state = props.eventManager.gestureDecisionOrderMatch(
+          order,
+          gestureDecision
+        );
+
+        //state will be checked in boss reducer
+        //NB: this is Message.NewsEvent to temp show on infopanel
+        const msg = {
+          type: Message.NewsEvent,
+          value: { msg: props.eventManager.eventState },
+        };
+        console.log(
+          "[CameraGesture] EventManager Callback",
+          state,
+          msg,
+          props.eventManager.eventState
+        );
+        infoPanel.messagesDispatch(msg);
+
+        //props.eventManager.event.reset();
+      };
+
+      event.onEnd = () => {
+        console.log("[event] onEnd", event);
+        props.gestureDecision.onSubmitOrder = null;
+        event.onEnd = () => {};
+        //TODO: infopanel dispatch EventState.None
+      };
+
+      console.log("[CameraGesture]", props.eventManager.event);
+      props.eventManager.executeEvent();
     }
 
-    if (event.type == EventType.News) {
-
+    if (event && event.type == EventType.NewsEvent) {
       props.eventManager.executeEvent();
-      //bossman?
-
       //news
       const msg = { type: Message.NewsEvent, value: event };
       infoPanel.messagesDispatch(msg);
     }
-
   }, [gesture]);
-
 
   /*
    * calcGesture (gesture poll)

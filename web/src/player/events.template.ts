@@ -31,15 +31,17 @@ export const bossevents = [
   {
     id: "boss-1",
     type: EventType.GestureDecisionEvent,
-    img: "boss-1.png",
     msg: "Hey, buy 5 for 3",
-    duration: 5000,
+    duration: 10000,
+    img: "boss-1.png",
     bonus: 10000,
     gesture: {
       qty: 5,
       price: 3,
       action: GestureAction.Buy, //Market
     },
+    onEnd: () => {},
+    reset: () => {}
   },
 ];
 

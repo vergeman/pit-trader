@@ -20,6 +20,8 @@ export interface GestureDecisionEvent extends Event {
     price: number;
     action: GestureAction;
   };
+  onEnd: () => void ;
+  reset: () => void ;
 }
 
 export interface NewsEvent extends Event {

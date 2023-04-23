@@ -37,6 +37,8 @@ export class GestureDecision {
   private _renderState: RenderState;
   private _renderStateTimeout: number;
   private _messages: any[];
+  private _onSubmitOrder: null | ((order: Order, gestureDecision: GestureDecision) => void)
+
   constructor(
     me: MatchingEngine,
     marketLoop: MarketLoop,
@@ -71,6 +73,7 @@ export class GestureDecision {
     this._renderState = RenderState.GESTURE_DECISION;
     this._renderStateTimeout = renderStateTimeout;
     this._messages = [];
+    this._onSubmitOrder = null;
   }
 
   get qty(): number | null {
@@ -97,6 +100,13 @@ export class GestureDecision {
   get messages(): any[] {
     return this._messages;
   }
+  get onSubmitOrder(): null | ((order: Order, gestureDecision: GestureDecision) => void) {
+    return this._onSubmitOrder;
+  }
+  set onSubmitOrder(fn: null | ((order: Order, gestureDecision: GestureDecision) => void) ) {
+    this._onSubmitOrder = fn;
+  }
+
   resetMessages(): void {
     this._messages = [];
   }
@@ -119,6 +129,18 @@ export class GestureDecision {
     console.log("[setActionFn] FINAL", action);
     this._action = action;
     this.triggerValidOrder();
+  }
+
+  submitOrder(order: Order) {
+    console.log("[GestureDecision] submitOrder");
+
+    if (this.onSubmitOrder) {
+      this.onSubmitOrder(order, this);
+      return;
+    }
+
+    this.me.process(order);
+    this.player.addOrder(order);
   }
 
   //NB: distinction between gesturePrice (this.price) and orderPrice (base price + gesturePrice / 10)
@@ -173,8 +195,7 @@ export class GestureDecision {
       order = new Order(this.player.id, OrderType.Market, this.qty, NaN);
       console.log("MARKET", order);
       try {
-        this.me.process(order);
-        this.player.addOrder(order);
+        this.submitOrder(order);
 
         const record: GestureDecisionRecord = {
           related_id: order.id,
@@ -216,8 +237,7 @@ export class GestureDecision {
       order = new Order(this.player.id, OrderType.Limit, this.qty, orderPrice);
       console.log("LIMIT", order);
       try {
-        this.me.process(order);
-        this.player.addOrder(order);
+        this.submitOrder(order);
 
         const record: GestureDecisionRecord = {
           related_id: order.id,

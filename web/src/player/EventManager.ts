@@ -15,8 +15,9 @@ export class EventManager {
   private _marketLoop: MarketLoop;
   private _gestureDecision: GestureDecision;
   private _hasEvent: number;
-  private _event: Event | null;
+  private _event: GestureDecisionEvent | NewsEvent | null;
   private _eventState: EventState;
+  private _timeouts: NodeJS.Timeout[];
 
   constructor(marketLoop: MarketLoop, gestureDecision: GestureDecision) {
     this._marketLoop = marketLoop;
@@ -24,6 +25,7 @@ export class EventManager {
     this._hasEvent = 0;
     this._event = null;
     this._eventState = EventState.None;
+    this._timeouts = [];
   }
 
   get marketLoop(): MarketLoop {
@@ -41,10 +43,10 @@ export class EventManager {
   set hasEvent(e) {
     this._hasEvent = e;
   }
-  get event(): Event | null {
+  get event(): GestureDecisionEvent | NewsEvent | null {
     return this._event;
   }
-  set event(e: Event | null) {
+  set event(e: GestureDecisionEvent | NewsEvent | null) {
     this._event = e;
   }
   get eventState(): EventState {
@@ -53,7 +55,12 @@ export class EventManager {
   set eventState(state: EventState) {
     this._eventState = state;
   }
-
+  get timeouts(): NodeJS.Timeout[] {
+    return this._timeouts;
+  }
+  set timeouts(timeouts: NodeJS.Timeout[]) {
+    this._timeouts = timeouts;
+  }
   //TODO: tie into fps somehow, this gets polled
   //there are a lot of calcEvents even 99% happens fairly often
   //generate(): Event | null {
@@ -102,7 +109,7 @@ export class EventManager {
     const gdEvent = this.event as GestureDecisionEvent;
 
     if (gdEvent.id == "boss-1") {
-      this._bossEventOrder(gdEvent, this.gestureDecision);
+      this.enableGestureDecisionOrderEvent(gdEvent, this.gestureDecision);
       return;
     }
 
@@ -123,6 +130,12 @@ export class EventManager {
     }
   }
 
+  clearTimeouts() {
+    for (const timeout of this.timeouts) {
+      clearTimeout(timeout);
+    }
+  }
+
   _cleanup() {
     this.hasEvent--;
     if (this.hasEvent === 0) {
@@ -134,7 +147,7 @@ export class EventManager {
    * EVENTS
    */
 
-  _bossMatchFn(order: Order, gestureDecision: GestureDecision) {
+  gestureDecisionOrderMatch(order: Order, gestureDecision: GestureDecision) {
     //TODO: move the events / marketLoop to one time  - executeEvent
     //the match function is the callback
 
@@ -145,41 +158,64 @@ export class EventManager {
     //TODO: write match logic
     this.eventState = EventState.Match;
 
+    if (this.eventState == EventState.Match) {
+      console.log("[gestureDecisionOrderMatch] event", this.event);
+
+      //TODO: make sure reset is called when this.event is no longer needed
+      this.clearTimeouts();
+      (this.event as GestureDecisionEvent).reset();
+    }
+    //if match, reset();
+
     //TODO: change EventState and return
-    console.log("[_bossMatchFn] eventState", this.eventState);
+    console.log("[gestureDecisionOrderMatch] eventState", this.eventState);
 
     return this.eventState;
   }
 
   /* Boss Event Stub */
-  _bossEventOrder(
+  enableGestureDecisionOrderEvent(
     event: GestureDecisionEvent,
     gestureDecision: GestureDecision
   ) {
     //this without bind/arrow function refers to gestureDecision
-    //wiuth arrow in CameraGesture, refers to EventManager
-    console.log("[bossEvent]", this, gestureDecision);
-    gestureDecision.eventMode = true;
+    //with arrow in CameraGesture, refers to EventManager
+    console.log("[GestureDecisionOrderEvent]", event, gestureDecision);
     this.hasEvent++;
     this.marketLoop.stop();
-    console.log("[bossEvent] stop");
-
+    console.log("[GestureDecisionOrderEvent] stop");
+    console.log("[GestureDecisionOrderEvent] hasEvent", this.hasEvent);
     //TODO: stash current timeout intervals for use in setTimeout
     //(e.g. overwritten in generic marketLoop.start)
 
-    //cleanup
-    setTimeout(() => {
-      //TODO: restore start with stashed time vars
-      console.log("[bossEvent] Cleanup");
-      this.marketLoop.start();
-      this._cleanup();
+    //TODO:
+    //1.refactor setTimeout cleanup to reset()
+    //2.call reset on gesture match (right now its waiting the entire duration,
+    //regardless of success)
 
+    //cleanup
+    //attach to event for early terminate
+    const reset = () => {
+      //TODO: restore start with stashed time vars
+      console.log("[GestureDecisionOrderEvent] Cleanup");
+
+      event.onEnd();
+      this._cleanup();
+      this.marketLoop.start();
+
+      console.log("[GestureDecisionOrderEvent] hasEvent", this.hasEvent);
       //turn off gesture
       //this.eventState = EventState.None; //-> how to trigger None
       //this.onEventEnd()
       //this.event = null;
-      gestureDecision.eventMode = false;
-    }, (event && event.duration) || 5000);
+    };
+
+    event.reset = reset;
+    const timeout = setTimeout(
+      () => reset(),
+      (event && event.duration) || 5000
+    );
+    this.timeouts.push(timeout);
   }
 
   /* Event add / remove Players, adjust delta, direction */

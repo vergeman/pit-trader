@@ -34,9 +34,6 @@ export default function Main(props) {
   const [marketLoop, setMarketLoop] = useState(
     new MarketLoop({ npcPlayerManager, priceSeed: 100 })
   );
-  const [eventManager, setEventManager] = useState(
-    new EventManager(marketLoop)
-  );
   const [gestureDecision, setGestureDecision] = useState(
     new GestureDecision(
       me,
@@ -45,6 +42,9 @@ export default function Main(props) {
       750, //gesture Timeout
       1000 //gestureDecision view timeout
     )
+  );
+  const [eventManager, setEventManager] = useState(
+    new EventManager(marketLoop, gestureDecision)
   );
 
   const { messagesDispatch } = useInfoPanel();
