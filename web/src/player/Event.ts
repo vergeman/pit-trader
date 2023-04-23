@@ -1,4 +1,5 @@
 import { GestureAction } from "../gesture/Gesture";
+import { OrderType } from '../engine/Order';
 
 export enum EventType {
   NewsEvent,
@@ -18,7 +19,7 @@ export interface GestureDecisionEvent extends Event {
   gesture: {
     qty: number;
     price: number;
-    action: GestureAction;
+    orderType: OrderType;
   };
   onEnd: () => void ;
   reset: () => void ;

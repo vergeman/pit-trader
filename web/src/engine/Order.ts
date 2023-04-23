@@ -39,9 +39,10 @@ export class Order {
   private _qtyFilled: number; // filled quantity
   private _transactions: Transaction[];
   private _price: number;
+  private _gesturePrice: number | undefined;
   private _status: OrderStatus;
-  private _timestamp: number;  //createdAt
-  private _updatedAt: number;  //updatedAt
+  private _timestamp: number; //createdAt
+  private _updatedAt: number; //updatedAt
   private _lastReported: number;
 
   //TODO: what is my price resolution (no decimals)
@@ -50,7 +51,8 @@ export class Order {
     player_id: string,
     orderType: OrderType,
     qty: number,
-    price: number
+    price: number,
+    gesturePrice?: number
   ) {
     this._player_id = player_id;
     this._orderType = orderType;
@@ -59,6 +61,7 @@ export class Order {
     this._price = this._toFixedNum(
       orderType === OrderType.Limit ? price : Number.NaN
     );
+    this._gesturePrice = gesturePrice;
 
     this._id = uuidv4();
     this._qtyFilled = 0;
@@ -67,6 +70,10 @@ export class Order {
     this._timestamp = Date.now();
     this._updatedAt = Date.now();
     this._lastReported = 0;
+  }
+
+  get gesturePrice(): number | undefined {
+    return this._gesturePrice;
   }
 
   execute(oppOrder: Order): TransactionReport {

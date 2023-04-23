@@ -1,5 +1,6 @@
 import { GestureAction } from "../gesture/Gesture";
 import { EventType } from "./Event";
+import { OrderType } from "../engine/Order";
 
 /* Defaults
  * id 0 - would affect vanilla players, but for most part want to leave vanillas
@@ -34,11 +35,11 @@ export const bossevents = [
     msg: "Hey, buy 5 for 3",
     duration: 10000,
     img: "boss-1.png",
-    bonus: 10000,
+    bonus: 30000,
     gesture: {
       qty: 5,
       price: 3,
-      action: GestureAction.Buy, //Market
+      orderType: OrderType.Limit // Limit or Market, price market is NaN
     },
     onEnd: () => {},
     reset: () => {}

@@ -112,14 +112,36 @@ export default function CameraGesture(props) {
 
       event.onEnd = () => {
         console.log("[event] onEnd", event);
+        //props.eventManager.eventState = EventState.None; //TODO: verify handled by reset()
         props.gestureDecision.onSubmitOrder = null;
         event.onEnd = () => {};
-        //TODO: infopanel dispatch EventState.None
+
+        const msg = {
+          type: Message.NewsEvent,
+          value: { msg: props.eventManager.eventState },
+        };
+        infoPanel.messagesDispatch(msg);
       };
 
+      //initial active state
       console.log("[CameraGesture]", props.eventManager.event);
-      props.eventManager.executeEvent();
+      const state = props.eventManager.executeEvent();
+      const msg = {
+        type: Message.NewsEvent,
+        value: { msg: props.eventManager.eventState },
+      };
+      console.log(
+        "[CameraGesture] EventManager",
+        state,
+        msg,
+        props.eventManager.eventState
+      );
+      infoPanel.messagesDispatch(msg);
     }
+
+    /*
+     * News
+     */
 
     if (event && event.type == EventType.NewsEvent) {
       props.eventManager.executeEvent();

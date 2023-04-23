@@ -108,7 +108,7 @@ export class EventManager {
     //GestureDecisionEvents
     const gdEvent = this.event as GestureDecisionEvent;
 
-    if (gdEvent.id == "boss-1") {
+    if (gdEvent.type === EventType.GestureDecisionEvent) {
       this.enableGestureDecisionOrderEvent(gdEvent, this.gestureDecision);
       return;
     }
@@ -140,6 +140,7 @@ export class EventManager {
     this.hasEvent--;
     if (this.hasEvent === 0) {
       this._event = null;
+      this.timeouts = [];
     }
   }
 
@@ -154,20 +155,35 @@ export class EventManager {
     /*
      * Match
      */
-    //if (this.eventState)
-    //TODO: write match logic
-    this.eventState = EventState.Match;
+    const event = this.event as GestureDecisionEvent;
 
+    console.log("[gestureDecisionOrderMatch] MATCHING", event.gesture, order);
+    if (
+      event.gesture.qty == order.qty &&
+      event.gesture.price == order.gesturePrice &&
+      event.gesture.orderType == order.orderType
+    ) {
+      this.eventState = EventState.Match;
+      console.log(
+        "[gestureDecisionOrderMatch] eventState MATCH",
+        this.eventState
+      );
+    } else {
+      this.eventState = EventState.NoMatch;
+      console.log(
+        "[gestureDecisionOrderMatch] eventState NO MATCH",
+        this.eventState
+      );
+    }
+
+    //MATCH
     if (this.eventState == EventState.Match) {
       console.log("[gestureDecisionOrderMatch] event", this.event);
 
-      //TODO: make sure reset is called when this.event is no longer needed
       this.clearTimeouts();
       (this.event as GestureDecisionEvent).reset();
     }
-    //if match, reset();
 
-    //TODO: change EventState and return
     console.log("[gestureDecisionOrderMatch] eventState", this.eventState);
 
     return this.eventState;
@@ -188,6 +204,7 @@ export class EventManager {
     //TODO: stash current timeout intervals for use in setTimeout
     //(e.g. overwritten in generic marketLoop.start)
 
+    this.eventState = EventState.Active;
     //TODO:
     //1.refactor setTimeout cleanup to reset()
     //2.call reset on gesture match (right now its waiting the entire duration,
@@ -198,7 +215,7 @@ export class EventManager {
     const reset = () => {
       //TODO: restore start with stashed time vars
       console.log("[GestureDecisionOrderEvent] Cleanup");
-
+      this.eventState = EventState.None;
       event.onEnd();
       this._cleanup();
       this.marketLoop.start();
@@ -208,6 +225,8 @@ export class EventManager {
       //this.eventState = EventState.None; //-> how to trigger None
       //this.onEventEnd()
       //this.event = null;
+
+      return this.eventState;
     };
 
     event.reset = reset;

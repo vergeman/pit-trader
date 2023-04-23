@@ -37,7 +37,9 @@ export class GestureDecision {
   private _renderState: RenderState;
   private _renderStateTimeout: number;
   private _messages: any[];
-  private _onSubmitOrder: null | ((order: Order, gestureDecision: GestureDecision) => void)
+  private _onSubmitOrder:
+    | null
+    | ((order: Order, gestureDecision: GestureDecision) => void);
 
   constructor(
     me: MatchingEngine,
@@ -100,10 +102,14 @@ export class GestureDecision {
   get messages(): any[] {
     return this._messages;
   }
-  get onSubmitOrder(): null | ((order: Order, gestureDecision: GestureDecision) => void) {
+  get onSubmitOrder():
+    | null
+    | ((order: Order, gestureDecision: GestureDecision) => void) {
     return this._onSubmitOrder;
   }
-  set onSubmitOrder(fn: null | ((order: Order, gestureDecision: GestureDecision) => void) ) {
+  set onSubmitOrder(
+    fn: null | ((order: Order, gestureDecision: GestureDecision) => void)
+  ) {
     this._onSubmitOrder = fn;
   }
 
@@ -234,7 +240,13 @@ export class GestureDecision {
     // LIMIT ORDER
     if (this.price !== null && this.qty !== null) {
       const orderPrice = this.calcOrderPrice(this.qty, this.price);
-      order = new Order(this.player.id, OrderType.Limit, this.qty, orderPrice);
+      order = new Order(
+        this.player.id,
+        OrderType.Limit,
+        this.qty,
+        orderPrice,
+        this.price
+      );
       console.log("LIMIT", order);
       try {
         this.submitOrder(order);
