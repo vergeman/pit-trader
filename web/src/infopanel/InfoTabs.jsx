@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
+import Quests from "./Quests.jsx";
 import OrderTable from "./OrderTable.jsx";
 import Messages from "./Messages.jsx";
 import { useInfoPanel } from "./InfoPanelContext";
@@ -20,7 +21,7 @@ const TabMapKey = {
 
 export default function InfoTabs(props) {
   const defaultActiveKey = "messages";
-  const { activeTab, activeTabDispatch, messages } = useInfoPanel();
+  const { activeTab, activeTabDispatch, messages, eventState } = useInfoPanel();
 
   const quests = []; //TODO: quests
 
@@ -96,7 +97,7 @@ export default function InfoTabs(props) {
         eventKey={TabMapKey.QUESTS}
         title={tabTitleNew(TabMapKey.QUESTS, tabMap, tabNums)}
       >
-        Quests here
+        <Quests eventState={eventState}/>
       </Tab>
       <Tab
         eventKey={TabMapKey.LIVEORDERS}

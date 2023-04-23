@@ -96,8 +96,8 @@ export default function CameraGesture(props) {
         //state will be checked in boss reducer
         //NB: this is Message.NewsEvent to temp show on infopanel
         const msg = {
-          type: Message.NewsEvent,
-          value: { msg: props.eventManager.eventState },
+          type: EventType.GestureDecisionEvent,
+          value: props.eventManager.eventState,
         };
         console.log(
           "[CameraGesture] EventManager Callback",
@@ -105,7 +105,7 @@ export default function CameraGesture(props) {
           msg,
           props.eventManager.eventState
         );
-        infoPanel.messagesDispatch(msg);
+        infoPanel.eventStateDispatch(msg);
 
         //props.eventManager.event.reset();
       };
@@ -117,18 +117,19 @@ export default function CameraGesture(props) {
         event.onEnd = () => {};
 
         const msg = {
-          type: Message.NewsEvent,
-          value: { msg: props.eventManager.eventState },
+          type: EventType.GestureDecisionEvent,
+          value: props.eventManager.eventState,
         };
-        infoPanel.messagesDispatch(msg);
+
+        infoPanel.eventStateDispatch(msg);
       };
 
       //initial active state
       console.log("[CameraGesture]", props.eventManager.event);
       const state = props.eventManager.executeEvent();
       const msg = {
-        type: Message.NewsEvent,
-        value: { msg: props.eventManager.eventState },
+        type: EventType.GestureDecisionEvent,
+        value: props.eventManager.eventState,
       };
       console.log(
         "[CameraGesture] EventManager",
@@ -136,7 +137,9 @@ export default function CameraGesture(props) {
         msg,
         props.eventManager.eventState
       );
-      infoPanel.messagesDispatch(msg);
+
+      infoPanel.activeTabDispatch({ type: "select", value: "quests" });
+      infoPanel.eventStateDispatch(msg);
     }
 
     /*

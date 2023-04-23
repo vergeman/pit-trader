@@ -95,3 +95,9 @@ export function messagesReducer(messages, action) {
   console.error("action not detected", action);
   return messages;
 }
+
+export function eventStateReducer(eventState, action) {
+  console.log("[eventStateReducer]", action);
+  eventState = action.value;
+  return eventState;
+}
