@@ -14,7 +14,6 @@ import GestureDecision from "../gesture/GestureDecision";
 export class EventManager {
   private _marketLoop: MarketLoop;
   private _gestureDecision: GestureDecision;
-  private _hasEvent: number;
   private _event: GestureDecisionEvent | NewsEvent | null;
   private _gestureDecisionEventState: GestureDecisionEventState;
   private _timeouts: NodeJS.Timeout[];
@@ -22,7 +21,6 @@ export class EventManager {
   constructor(marketLoop: MarketLoop, gestureDecision: GestureDecision) {
     this._marketLoop = marketLoop;
     this._gestureDecision = gestureDecision;
-    this._hasEvent = 0;
     this._event = null;
     this._gestureDecisionEventState = GestureDecisionEventState.None;
     this._timeouts = [];
@@ -36,12 +34,6 @@ export class EventManager {
   }
   get gestureDecision(): GestureDecision {
     return this._gestureDecision;
-  }
-  get hasEvent() {
-    return this._hasEvent;
-  }
-  set hasEvent(e) {
-    this._hasEvent = e;
   }
   get event(): GestureDecisionEvent | NewsEvent | null {
     return this._event;
@@ -61,22 +53,28 @@ export class EventManager {
   set timeouts(timeouts: NodeJS.Timeout[]) {
     this._timeouts = timeouts;
   }
+
+  hasEvent(): boolean {
+    return !!(this._event && this._event.isActive);
+  }
+
   //TODO: tie into fps somehow, this gets polled
   //there are a lot of calcEvents even 99% happens fairly often
   //generate(): Event | null {
-  generate() {
-    if (this.hasEvent) return null;
+  generate(prob: number = 0.99) {
+    if (this.hasEvent()) return null;
 
-    const prob = Math.random();
-    if (prob < 0.99) return null;
+    const randomProb = Math.random();
+    if (randomProb < prob) return null;
 
     // console.log("[EventManager] generate");
 
-    //newS event
+    //News event
     const event = this._createEvent();
 
     //Boss Event
     // const event = bossevents[0];
+
     this.event = event;
 
     return event;
@@ -87,7 +85,8 @@ export class EventManager {
   //locks with hasEvent to prevent concurrent events for now
   //but there's no hard rule
   _createEvent(): GestureDecisionEvent | NewsEvent | null {
-    if (this.hasEvent) return null;
+
+    if (this.hasEvent()) return null;
     //TODO: decide between boss and news (weight)?
     //TODO: make events indicative its loading from static source
     //create event types: Boss type vs Message Type?
@@ -97,14 +96,13 @@ export class EventManager {
     //News
     const i = Math.floor(Math.random() * events.length);
     const news = events[i];
-    this._event = new NewsEvent({ ...news });
+    this.event = new NewsEvent({ ...news });
     //news old
     //this._event = events[i] as NewsEvent;
 
     //Boss
     //this._event = bossevents[0];
-
-    return this._event;
+    return this.event;
   }
 
   executeEvent() {
@@ -119,20 +117,10 @@ export class EventManager {
     }
 
     //NewsEvents
-    const newsEvent = this.event as NewsEvent;
+    //const newsEvent = this.event as NewsEvent;
+    //newsEvent.begin(this.marketLoop)
 
-    if (newsEvent.addPlayers) {
-      this._addPlayers(newsEvent, this.marketLoop);
-    }
-    if (newsEvent.marketLoop.skipTurnThreshold) {
-      this._skipTurnThreshold(newsEvent, this.marketLoop);
-    }
-    if (
-      newsEvent.marketLoop.minTurnDelay &&
-      newsEvent.marketLoop.maxTurnDelay
-    ) {
-      this._minMaxTurnDelay(newsEvent, this.marketLoop);
-    }
+    this.event.begin(this.marketLoop);
   }
 
   reset() {
@@ -146,13 +134,13 @@ export class EventManager {
     }
   }
 
-  cleanup() {
-    this.hasEvent--;
-    if (this.hasEvent === 0) {
-      this._event = null;
-      this.timeouts = [];
-    }
-  }
+  // cleanup() {
+  //   this.hasEvent--;
+  //   if (this.hasEvent === 0) {
+  //     this._event = null;
+  //     this.timeouts = [];
+  //   }
+  // }
 
   /*
    * EVENTS
@@ -221,7 +209,8 @@ export class EventManager {
     //this without bind/arrow function refers to gestureDecision
     //with arrow in CameraGesture, refers to EventManager
     console.log("[GestureDecisionOrderEvent]", event, gestureDecision);
-    this.hasEvent++;
+    //this.hasEvent++;
+    this.hasEvent();
     this.marketLoop.stop();
     console.log("[GestureDecisionOrderEvent] stop");
 
@@ -249,7 +238,7 @@ export class EventManager {
 
       console.log(
         "[GestureDecisionOrderEvent] Cleanup hasEvent",
-        this.hasEvent
+        this.hasEvent()
       );
 
       return this.gestureDecisionEventState;
@@ -263,102 +252,6 @@ export class EventManager {
     this.timeouts.push(timeout);
   }
 
-  /* Event add / remove Players, adjust delta, direction */
-  _addPlayers(event: NewsEvent, marketLoop: MarketLoop) {
-    this.hasEvent++;
-    const price = marketLoop && marketLoop.getPrice();
-    const npcPlayerManager = marketLoop.npcPlayerManager;
-    console.log(
-      "[Event] Start",
-      this.hasEvent,
-      event,
-      npcPlayerManager.numPlayers,
-      event.addPlayers
-    );
-
-    //add Players
-    for (let i = 0; i < event.addPlayers; i++) {
-      const player = new Player(`${event.id}-${i}`);
-      player.group_id = event.id;
-      player.delta = event.delta;
-      player.forceDirection = event.forceDirection as 1 | -1 | null;
-
-      npcPlayerManager.addPlayer(player);
-      const orders = player.replenish(price);
-      for (let order of orders) {
-        marketLoop.me.process(order);
-      }
-    }
-
-    setTimeout(() => {
-      console.log(
-        "[Event] Cleanup",
-        this.hasEvent,
-        event.id,
-        npcPlayerManager.numPlayers
-      );
-      npcPlayerManager.markRemoveGroup(event.id);
-      this.cleanup();
-    }, event.duration);
-  }
-
-  /* Event skipTurnThreshold */
-  _skipTurnThreshold(event: NewsEvent, marketLoop: MarketLoop) {
-    this.hasEvent++;
-    console.log(
-      "[Event] Start",
-      this.hasEvent,
-      event,
-      event.marketLoop.skipTurnThreshold
-    );
-
-    marketLoop.skipTurnThreshold = event.marketLoop.skipTurnThreshold;
-    setTimeout(() => {
-      console.log(
-        "[Event] Cleanup",
-        this.hasEvent,
-        event,
-        marketLoop.defaultSkipTurnThreshold
-      );
-      marketLoop.skipTurnThreshold = marketLoop.defaultSkipTurnThreshold;
-      this.cleanup();
-    }, event.duration);
-  }
-
-  /* Event min/maxTurnDelay */
-  _minMaxTurnDelay(event: NewsEvent, marketLoop: MarketLoop) {
-    this.hasEvent++;
-    console.log(
-      "[Event] Start",
-      this.hasEvent,
-      event,
-      event.marketLoop.minTurnDelay,
-      event.marketLoop.maxTurnDelay
-    );
-    marketLoop.stop();
-    marketLoop.start(
-      event.marketLoop.minTurnDelay,
-      event.marketLoop.maxTurnDelay
-    );
-
-    setTimeout(() => {
-      console.log(
-        "[Event] Cleanup",
-        this.hasEvent,
-        marketLoop,
-        marketLoop.defaultMinTurnDelay,
-        marketLoop.defaultMaxTurnDelay
-      );
-
-      marketLoop.stop();
-      marketLoop.start(
-        marketLoop.defaultMinTurnDelay,
-        marketLoop.defaultMaxTurnDelay
-      );
-
-      this.cleanup();
-    }, event.duration);
-  }
 }
 
 export default EventManager;

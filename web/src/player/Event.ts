@@ -32,9 +32,10 @@ export interface IEvent {
   type: EventType;
   msg: string;
   duration: number; //ms
+  isActive: number;
+
   begin(): void;
   end(): void;
-
   //reset?
   //cleanup?
 }
@@ -44,6 +45,7 @@ export class Event implements IEvent {
   private _type: EventType;
   private _msg: string;
   private _duration: number;
+  private _isActive: number;
 
   constructor({
     id,
@@ -60,6 +62,7 @@ export class Event implements IEvent {
     this._type = type;
     this._msg = msg;
     this._duration = duration;
+    this._isActive = 0;
   }
 
   get id(): string {
@@ -74,9 +77,32 @@ export class Event implements IEvent {
   get duration(): number {
     return this._duration;
   }
+  get isActive(): number {
+    return this._isActive;
+  }
+  set isActive(num: number) {
+    this._isActive = num;
+  }
 
-  begin(): void {}
+  begin(): void {
+    console.log("[Event] begin");
+  }
 
-  end(): void {}
+  end(): void {
+    console.log("[Event] end");
+  }
+
+
+  cleanup() {
+    this.isActive--;
+    //if (this.isActive === 0) {
+      //this._event = null;
+      //this.timeouts = [];
+    //}
+  }
+
+  delay(duration: number): Promise<void> {
+    return new Promise(res => setTimeout(res, duration));
+  }
 }
 export default Event;

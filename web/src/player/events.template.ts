@@ -55,7 +55,7 @@ export const events = [
     delta: -0.1,
     forceDirection: 1,
     addPlayers: 4,
-    marketLoop: {
+    marketLoopConfig: {
       minTurnDelay: 150,
       maxTurnDelay: 350,
       skipTurnThreshold: 0,
@@ -69,7 +69,7 @@ export const events = [
     delta: -0.1,
     forceDirection: 1,
     addPlayers: 4,
-    marketLoop: {
+    marketLoopConfig: {
       minTurnDelay: 150,
       maxTurnDelay: 350,
       skipTurnThreshold: 0,
@@ -83,7 +83,7 @@ export const events = [
     delta: -0.2,
     forceDirection: -1,
     addPlayers: 4,
-    marketLoop: {
+    marketLoopConfig: {
       minTurnDelay: 150,
       maxTurnDelay: 350,
       skipTurnThreshold: 0,
@@ -97,7 +97,7 @@ export const events = [
     delta: -0.1,
     forceDirection: -1,
     addPlayers: 4,
-    marketLoop: {
+    marketLoopConfig: {
       minTurnDelay: 150,
       maxTurnDelay: 350,
       skipTurnThreshold: 0.125,
@@ -111,7 +111,7 @@ export const events = [
     delta: 0.2,
     forceDirection: 1,
     addPlayers: 4,
-    marketLoop: {
+    marketLoopConfig: {
       minTurnDelay: 150,
       maxTurnDelay: 350,
       skipTurnThreshold: 0.33,
@@ -125,7 +125,7 @@ export const events = [
     delta: -0.2,
     forceDirection: 1,
     addPlayers: 4,
-    marketLoop: {
+    marketLoopConfig: {
       minTurnDelay: 150,
       maxTurnDelay: 300,
       skipTurnThreshold: 0,
@@ -139,7 +139,7 @@ export const events = [
     delta: -0.25,
     forceDirection: -1,
     addPlayers: 8,
-    marketLoop: {
+    marketLoopConfig: {
       minTurnDelay: 150,
       maxTurnDelay: 350,
       skipTurnThreshold: 0,
@@ -153,7 +153,7 @@ export const events = [
     delta: -0.5,
     forceDirection: null,
     addPlayers: 8,
-    marketLoop: {
+    marketLoopConfig: {
       minTurnDelay: 150,
       maxTurnDelay: 350,
       skipTurnThreshold: 0.25,
@@ -167,7 +167,7 @@ export const events = [
     delta: 0.2,
     forceDirection: -1,
     addPlayers: 6,
-    marketLoop: {
+    marketLoopConfig: {
       minTurnDelay: 150,
       maxTurnDelay: 350,
       skipTurnThreshold: 0.25,
@@ -181,7 +181,7 @@ export const events = [
     delta: -0.2,
     forceDirection: 1,
     addPlayers: 6,
-    marketLoop: {
+    marketLoopConfig: {
       minTurnDelay: 150,
       maxTurnDelay: 350,
       skipTurnThreshold: 0.1,
@@ -195,7 +195,7 @@ export const events = [
     delta: 0.2,
     forceDirection: -1,
     addPlayers: 4,
-    marketLoop: {
+    marketLoopConfig: {
       minTurnDelay: 150,
       maxTurnDelay: 350,
       skipTurnThreshold: 0.33,
@@ -211,7 +211,7 @@ export const events = [
     delta: -0.2,
     forceDirection: 1,
     addPlayers: 6,
-    marketLoop: {
+    marketLoopConfig: {
       minTurnDelay: 150,
       maxTurnDelay: 350,
       skipTurnThreshold: 0.125,
@@ -225,7 +225,7 @@ export const events = [
     delta: -0.2,
     forceDirection: -1,
     addPlayers: 6,
-    marketLoop: {
+    marketLoopConfig: {
       minTurnDelay: 150,
       maxTurnDelay: 350,
       skipTurnThreshold: 0.125,

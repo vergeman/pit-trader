@@ -23,13 +23,15 @@ describe("EventManager", () => {
     let k = 0;
 
     while (i < numIter) {
-      const event = eventManager._createEvent();
-      eventManager.hasEvent++;
-      event ? j++ : k++;
+      const event = eventManager.generate(i);
+      if (i > 1) expect(event).toBe(null);
+
+      eventManager.hasEvent() ? j++ : k++;
+      event && event.begin(ml);
       i++;
     }
-    expect(j).toBe(1);
-    expect(k).toBe(numIter - 1);
-    expect(eventManager.hasEvent).toBe(numIter);
+    expect(j).toBe(numIter - 1);
+    expect(k).toBe(1);
+    expect(eventManager.hasEvent()).toBe(true);
   });
 });
