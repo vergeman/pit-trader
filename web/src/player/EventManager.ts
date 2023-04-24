@@ -1,10 +1,10 @@
 import {
   GestureDecisionEvent,
-  NewsEvent,
   Event,
   GestureDecisionEventState,
   EventType,
 } from "./Event";
+import { NewsEvent } from "./NewsEvent";
 import Order from "../engine/Order";
 import { events, bossevents } from "./events.template";
 import Player from "./Player";
@@ -70,9 +70,13 @@ export class EventManager {
     const prob = Math.random();
     if (prob < 0.99) return null;
 
-    //const event = this._createEvent();
-    console.log("[EventManager] generate");
-    const event = bossevents[0];
+    // console.log("[EventManager] generate");
+
+    //newS event
+    const event = this._createEvent();
+
+    //Boss Event
+    // const event = bossevents[0];
     this.event = event;
 
     return event;
@@ -82,22 +86,23 @@ export class EventManager {
 
   //locks with hasEvent to prevent concurrent events for now
   //but there's no hard rule
-  _createEvent(): Event | null {
+  _createEvent(): GestureDecisionEvent | NewsEvent | null {
     if (this.hasEvent) return null;
     //TODO: decide between boss and news (weight)?
+    //TODO: make events indicative its loading from static source
     //create event types: Boss type vs Message Type?
     //are these even in conflict - we need to distinguish, but not necessarily
     // choose between them
 
-    //Boss
-    // let event = bossevents[0];
-    // return event;
-
     //News
-    //TODO: events make indicative its static file
     const i = Math.floor(Math.random() * events.length);
+    const news = events[i];
+    this._event = new NewsEvent({ ...news });
+    //news old
+    //this._event = events[i] as NewsEvent;
 
-    this._event = events[i];
+    //Boss
+    //this._event = bossevents[0];
 
     return this._event;
   }
