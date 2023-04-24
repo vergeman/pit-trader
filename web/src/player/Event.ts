@@ -7,7 +7,7 @@ export enum EventType {
 }
 
 //corresponds to component visuals
-export enum EventState {
+export enum GestureDecisionEventState {
   None,
   Active,  //initial screen
   NoMatch, //submit a miss

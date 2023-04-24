@@ -10,7 +10,7 @@ import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
 import InfoTabs from "./infopanel/InfoTabs.jsx";
 import { useGameContext, GameState } from "./GameContext.jsx";
 import { Message } from "./infopanel/Message";
-import { EventState, EventType } from "./player/Event";
+import { GestureDecisionEventState, EventType } from "./player/Event";
 import EventManager from "./player/EventManager";
 
 export default function CameraGesture(props) {
@@ -72,18 +72,16 @@ export default function CameraGesture(props) {
    */
 
   useEffect(() => {
-
     if (gameContext.state == GameState.LOSE) {
       props.marketLoop.stop();
       return;
-    };
+    }
 
     //console.log("[CameraGesture] EventManager");
     const event = props.eventManager.generate();
 
     //issue: we do need to poll so can't just return
     if (!event) return;
-
 
     //one time init
     if (event && event.type == EventType.GestureDecisionEvent) {
@@ -104,30 +102,32 @@ export default function CameraGesture(props) {
         //NB: this is Message.NewsEvent to temp show on infopanel
         const msg = {
           type: EventType.GestureDecisionEvent,
-          value: props.eventManager.eventState,
+          value: props.eventManager.gestureDecisionEventState,
         };
         console.log(
           "[CameraGesture] EventManager Callback",
           state,
           msg,
-          props.eventManager.eventState
+          props.eventManager.gestureDecisionEventState
         );
 
-        infoPanel.eventStateDispatch(msg);
+        infoPanel.gestureDecisionEventStateDispatch(msg);
       };
 
       event.onEnd = () => {
         console.log("[event] onEnd", event);
-        //props.eventManager.eventState = EventState.None; //TODO: verify handled by reset()
         props.gestureDecision.onSubmitOrder = null;
         event.onEnd = () => {};
-        console.log("[CameraGesture] EventonEnd eventState", props.eventManager.eventState);
+        console.log(
+          "[CameraGesture] EventonEnd gestureDecisionEventState",
+          props.eventManager.gestureDecisionEventState
+        );
         const msg = {
           type: EventType.GestureDecisionEvent,
-          value: props.eventManager.eventState,
+          value: props.eventManager.gestureDecisionEventState,
         };
 
-        infoPanel.eventStateDispatch(msg);
+        infoPanel.gestureDecisionEventStateDispatch(msg);
 
         props.marketLoop.start();
 
@@ -135,20 +135,21 @@ export default function CameraGesture(props) {
         //here we allow marketloop and general execution to run
         //but events are disabled for a brief period
         setTimeout(() => {
-
           props.eventManager.reset();
           props.eventManager._cleanup();
 
-          console.log("[CameraGesture] EventonEndTimeout eventState", props.eventManager.eventState);
+          console.log(
+            "[CameraGesture] EventonEndTimeout gestureDecisionEventState",
+            props.eventManager.gestureDecisionEventState
+          );
 
           const msg = {
             type: EventType.GestureDecisionEvent,
-            value: props.eventManager.eventState //should be None
+            value: props.eventManager.gestureDecisionEventState, //should be None
           };
 
-          infoPanel.eventStateDispatch(msg);
+          infoPanel.gestureDecisionEventStateDispatch(msg);
         }, 3000);
-
       };
 
       //initial active state
@@ -156,17 +157,20 @@ export default function CameraGesture(props) {
       const state = props.eventManager.executeEvent();
       const msg = {
         type: EventType.GestureDecisionEvent,
-        value: props.eventManager.eventState,
+        value: props.eventManager.gestureDecisionEventState,
       };
       console.log(
         "[CameraGesture] EventManager",
         state,
         msg,
-        props.eventManager.eventState
+        props.eventManager.gestureDecisionEventState
       );
 
-      infoPanel.activeTabDispatch({ type: "select", value: "quests" });
-      infoPanel.eventStateDispatch(msg);
+      infoPanel.activeTabDispatch({
+        type: "select",
+        value: "gesture-decision-event",
+      });
+      infoPanel.gestureDecisionEventStateDispatch(msg);
     }
 
     /*
@@ -179,7 +183,7 @@ export default function CameraGesture(props) {
       const msg = { type: Message.NewsEvent, value: event };
       infoPanel.messagesDispatch(msg);
     }
-  }, [gesture, props.eventManager.eventState]);
+  }, [gesture, props.eventManager.gestureDecisionEventState]);
 
   /*
    * calcGesture (gesture poll)

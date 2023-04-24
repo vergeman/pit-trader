@@ -2,7 +2,7 @@ import {
   GestureDecisionEvent,
   NewsEvent,
   Event,
-  EventState,
+  GestureDecisionEventState,
   EventType,
 } from "./Event";
 import Order from "../engine/Order";
@@ -16,7 +16,7 @@ export class EventManager {
   private _gestureDecision: GestureDecision;
   private _hasEvent: number;
   private _event: GestureDecisionEvent | NewsEvent | null;
-  private _eventState: EventState;
+  private _gestureDecisionEventState: GestureDecisionEventState;
   private _timeouts: NodeJS.Timeout[];
 
   constructor(marketLoop: MarketLoop, gestureDecision: GestureDecision) {
@@ -24,7 +24,7 @@ export class EventManager {
     this._gestureDecision = gestureDecision;
     this._hasEvent = 0;
     this._event = null;
-    this._eventState = EventState.None;
+    this._gestureDecisionEventState = GestureDecisionEventState.None;
     this._timeouts = [];
   }
 
@@ -49,11 +49,11 @@ export class EventManager {
   set event(e: GestureDecisionEvent | NewsEvent | null) {
     this._event = e;
   }
-  get eventState(): EventState {
-    return this._eventState;
+  get gestureDecisionEventState(): GestureDecisionEventState {
+    return this._gestureDecisionEventState;
   }
-  set eventState(state: EventState) {
-    this._eventState = state;
+  set gestureDecisionEventState(state: GestureDecisionEventState) {
+    this._gestureDecisionEventState = state;
   }
   get timeouts(): NodeJS.Timeout[] {
     return this._timeouts;
@@ -131,7 +131,7 @@ export class EventManager {
   }
 
   reset() {
-    this.eventState = EventState.None
+    this.gestureDecisionEventState = GestureDecisionEventState.None;
     this.timeouts = [];
   }
 
@@ -163,7 +163,13 @@ export class EventManager {
     //if none, win, lost - event doesn't exist or is over, so no gesture comparison
     //if active/nomatch it's ongoing
     //make sure once a state changes we lock
-    if (![EventState.Active, EventState.NoMatch].includes(this.eventState)) return this.eventState;
+    if (
+      ![
+        GestureDecisionEventState.Active,
+        GestureDecisionEventState.NoMatch,
+      ].includes(this.gestureDecisionEventState)
+    )
+      return this.gestureDecisionEventState;
 
     const event = this.event as GestureDecisionEvent;
 
@@ -173,30 +179,33 @@ export class EventManager {
       event.gesture.price == order.gesturePrice &&
       event.gesture.orderType == order.orderType
     ) {
-      this.eventState = EventState.Win;
+      this.gestureDecisionEventState = GestureDecisionEventState.Win;
       console.log(
-        "[gestureDecisionOrderMatch] eventState MATCH",
-        this.eventState
+        "[gestureDecisionOrderMatch] gestureDecisionEventState MATCH",
+        this.gestureDecisionEventState
       );
     } else {
-      this.eventState = EventState.NoMatch;
+      this.gestureDecisionEventState = GestureDecisionEventState.NoMatch;
       console.log(
-        "[gestureDecisionOrderMatch] eventState NO MATCH",
-        this.eventState
+        "[gestureDecisionOrderMatch] gestureDecisionEventState NO MATCH",
+        this.gestureDecisionEventState
       );
     }
 
     //MATCH
-    if (this.eventState == EventState.Win) {
+    if (this.gestureDecisionEventState == GestureDecisionEventState.Win) {
       console.log("[gestureDecisionOrderMatch] event", this.event);
 
       this.clearTimeouts();
       (this.event as GestureDecisionEvent).reset();
     }
 
-    console.log("[gestureDecisionOrderMatch] eventState", this.eventState);
+    console.log(
+      "[gestureDecisionOrderMatch] gestureDecisionEventState",
+      this.gestureDecisionEventState
+    );
 
-    return this.eventState;
+    return this.gestureDecisionEventState;
   }
 
   /* Boss Event Stub */
@@ -214,7 +223,7 @@ export class EventManager {
     //TODO: stash current timeout intervals for use in setTimeout
     //(e.g. overwritten in generic marketLoop.start)
 
-    this.eventState = EventState.Active;
+    this.gestureDecisionEventState = GestureDecisionEventState.Active;
 
     //TODO: refactor onEnd() / reset() / cleanup() make it clearer
 
@@ -224,8 +233,8 @@ export class EventManager {
       //TODO: restore start with stashed time vars
       console.log("[GestureDecisionOrderEvent] Cleanup");
 
-      if (this.eventState !== EventState.Win) {
-        this.eventState = EventState.Lost;
+      if (this.gestureDecisionEventState !== GestureDecisionEventState.Win) {
+        this.gestureDecisionEventState = GestureDecisionEventState.Lost;
       }
 
       event.onEnd();
@@ -233,9 +242,12 @@ export class EventManager {
       // this._cleanup();
       // this.marketLoop.start();
 
-      console.log("[GestureDecisionOrderEvent] Cleanup hasEvent", this.hasEvent);
+      console.log(
+        "[GestureDecisionOrderEvent] Cleanup hasEvent",
+        this.hasEvent
+      );
 
-      return this.eventState;
+      return this.gestureDecisionEventState;
     };
 
     event.reset = reset;

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
-import Quests from "./Quests.jsx";
+import GestureDecisionEvent from "./GestureDecisionEvent.jsx";
 import OrderTable from "./OrderTable.jsx";
 import Messages from "./Messages.jsx";
 import { useInfoPanel } from "./InfoPanelContext";
@@ -14,16 +14,17 @@ import useTabNums from "./useTabNums.jsx";
 
 const TabMapKey = {
   MESSAGES: "messages",
-  QUESTS: "quests",
+  GESTUREDECISIONEVENT: "gesture-decision-event",
   LIVEORDERS: "live-orders",
   ORDERHISTORY: "order-history",
 };
 
 export default function InfoTabs(props) {
   const defaultActiveKey = "messages";
-  const { activeTab, activeTabDispatch, messages, eventState } = useInfoPanel();
+  const { activeTab, activeTabDispatch, messages, gestureDecisionEventState } =
+    useInfoPanel();
 
-  const quests = []; //TODO: quests
+  const challenges = []; //TODO: challenges / quests
 
   const liveOrders = props.player
     ? []
@@ -40,7 +41,10 @@ export default function InfoTabs(props) {
   //we want to guarantee order as it's used as a useFffect dependency
   const tabMap = new Map([
     [TabMapKey.MESSAGES, { tabTitle: "Messages", values: messages }],
-    [TabMapKey.QUESTS, { tabTitle: "Quests", values: quests }],
+    [
+      TabMapKey.GESTUREDECISIONEVENT,
+      { tabTitle: "Challenges", values: challenges },
+    ],
     [TabMapKey.LIVEORDERS, { tabTitle: "Live Orders", values: liveOrders }],
     [
       TabMapKey.ORDERHISTORY,
@@ -94,10 +98,12 @@ export default function InfoTabs(props) {
         <Messages messages={messages} />
       </Tab>
       <Tab
-        eventKey={TabMapKey.QUESTS}
-        title={tabTitleNew(TabMapKey.QUESTS, tabMap, tabNums)}
+        eventKey={TabMapKey.GESTUREDECISIONEVENT}
+        title={tabTitleNew(TabMapKey.GESTUREDECISIONEVENT, tabMap, tabNums)}
       >
-        <Quests eventState={eventState}/>
+        <GestureDecisionEvent
+          gestureDecisionEventState={gestureDecisionEventState}
+        />
       </Tab>
       <Tab
         eventKey={TabMapKey.LIVEORDERS}
