@@ -141,7 +141,7 @@ export class EventManager {
     }
   }
 
-  _cleanup() {
+  cleanup() {
     this.hasEvent--;
     if (this.hasEvent === 0) {
       this._event = null;
@@ -239,7 +239,7 @@ export class EventManager {
 
       event.onEnd();
 
-      // this._cleanup();
+      // this.cleanup();
       // this.marketLoop.start();
 
       console.log(
@@ -293,7 +293,7 @@ export class EventManager {
         npcPlayerManager.numPlayers
       );
       npcPlayerManager.markRemoveGroup(event.id);
-      this._cleanup();
+      this.cleanup();
     }, event.duration);
   }
 
@@ -316,7 +316,7 @@ export class EventManager {
         marketLoop.defaultSkipTurnThreshold
       );
       marketLoop.skipTurnThreshold = marketLoop.defaultSkipTurnThreshold;
-      this._cleanup();
+      this.cleanup();
     }, event.duration);
   }
 
@@ -351,7 +351,7 @@ export class EventManager {
         marketLoop.defaultMaxTurnDelay
       );
 
-      this._cleanup();
+      this.cleanup();
     }, event.duration);
   }
 }

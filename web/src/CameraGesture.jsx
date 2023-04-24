@@ -116,8 +116,10 @@ export default function CameraGesture(props) {
 
       event.onEnd = () => {
         console.log("[event] onEnd", event);
+        //clear calbacks
         props.gestureDecision.onSubmitOrder = null;
         event.onEnd = () => {};
+
         console.log(
           "[CameraGesture] EventonEnd gestureDecisionEventState",
           props.eventManager.gestureDecisionEventState
@@ -133,10 +135,10 @@ export default function CameraGesture(props) {
 
         //on end, want a slight delay so user can see win/loss
         //here we allow marketloop and general execution to run
-        //but events are disabled for a brief period
+        //but events are disabled for a brie1f period
         setTimeout(() => {
           props.eventManager.reset();
-          props.eventManager._cleanup();
+          props.eventManager.cleanup();
 
           console.log(
             "[CameraGesture] EventonEndTimeout gestureDecisionEventState",
