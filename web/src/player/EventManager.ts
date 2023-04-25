@@ -91,6 +91,11 @@ export class EventManager {
     if (!this.event) return false;
     this.event.begin();
   }
+
+  //on game end
+  reset() {
+    this.event = null;
+  }
 }
 
 export default EventManager;
