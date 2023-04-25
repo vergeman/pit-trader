@@ -1,6 +1,5 @@
 import { Event, IEvent, EventType } from "./Event";
 import { OrderType, Order } from "../engine/Order";
-import { GestureAction } from "../gesture/Gesture";
 import { GestureDecision } from "../gesture/GestureDecision";
 import { MarketLoop } from "./MarketLoop";
 
@@ -151,8 +150,6 @@ export class GestureDecisionEvent
 
     this.dispatchHandler(msg);
 
-    //this.cleanup();
-
     this.marketLoop.start();
 
     //on end, want a slight delay so user can see win/loss
@@ -181,9 +178,6 @@ export class GestureDecisionEvent
   }
 
   gestureDecisionOrderMatch(order: Order, gestureDecision: GestureDecision) {
-    //TODO: move the events / marketLoop to one time  - executeEvent
-    //the match function is the callback
-
     /*
      * Match
      */

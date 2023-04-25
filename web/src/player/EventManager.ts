@@ -1,12 +1,6 @@
-import { Event, EventType } from "./Event";
-import {
-  GestureDecisionEvent,
-  GestureDecisionEventState,
-} from "./GestureDecisionEvent";
+import { GestureDecisionEvent } from "./GestureDecisionEvent";
 import { NewsEvent } from "./NewsEvent";
-import Order from "../engine/Order";
-import { events, bossevents } from "./events.template";
-import Player from "./Player";
+import { events, gestureDecisionEvents } from "./events.template";
 import MarketLoop from "./MarketLoop";
 import GestureDecision from "../gesture/GestureDecision";
 
@@ -50,13 +44,9 @@ export class EventManager {
     const randomProb = Math.random();
     if (randomProb < prob) return null;
 
-    // console.log("[EventManager] generate");
+    console.log("[EventManager] generate");
 
-    //News event
     const event = this._createEvent();
-
-    //Boss Event
-    // const event = bossevents[0];
 
     this.event = event;
 
@@ -64,33 +54,37 @@ export class EventManager {
   }
 
   //generates Event type
-
-  //locks with hasEvent to prevent concurrent events for now
-  //but there's no hard rule
+  //locks with hasEvent to prevent concurrent events but there's no hard rule
   _createEvent(): GestureDecisionEvent | NewsEvent | null {
     if (this.hasEvent()) return null;
-    //TODO: decide between boss and news (weight)?
-    //TODO: make events indicative its loading from static source
-    //create event types: Boss type vs Message Type?
-    //are these even in conflict - we need to distinguish, but not necessarily
-    // choose between them
 
-    //News
-    // const i = Math.floor(Math.random() * events.length);
-    // const news = events[i];
-    //this.event = new NewsEvent({ ...news, marketLoop: this.marketLoop, gestureDecision: this.gestureDecision});
+    const getRandom = (events: any) => {
+      const i = Math.floor(Math.random() * events.length);
+      return events[i];
+    };
 
-    //news old
-    //this._event = events[i] as NewsEvent;
+    //NewsEvent
+    const randomProb = Math.random();
+    if (randomProb > 0.25) {
+      const e = getRandom(events);
+      const event = new NewsEvent({
+        ...e,
+        marketLoop: this.marketLoop,
+        gestureDecision: this.gestureDecision,
+      });
+      return event;
+    }
 
-    //Boss
-    const event = bossevents[0];
-    this.event = new GestureDecisionEvent({
-      ...event,
+    //GestureDecisionEvent
+    //TODO: more challenges
+    const e = getRandom(gestureDecisionEvents);
+    const event = new GestureDecisionEvent({
+      ...e,
       marketLoop: this.marketLoop,
       gestureDecision: this.gestureDecision,
     });
-    return this.event;
+
+    return event;
   }
 
   executeEvent() {

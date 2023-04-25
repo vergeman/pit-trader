@@ -1,4 +1,3 @@
-import { GestureAction } from "../gesture/Gesture";
 import { EventType } from "./Event";
 import { OrderType } from "../engine/Order";
 
@@ -28,7 +27,7 @@ import { OrderType } from "../engine/Order";
 },
 */
 
-export const bossevents = [
+export const gestureDecisionEvents = [
   {
     id: "boss-1",
     type: EventType.GestureDecisionEvent,
