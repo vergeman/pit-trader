@@ -89,83 +89,22 @@ export default function CameraGesture(props) {
         "[CameraGesture] EventManager EventType.GestureDecisionEvent"
       );
 
-      //this is callback on successful gesture
-      //we need access to infoPanel context/reducer
-      //props.gestureDecision.onEvent = (order, gestureDecision) => {
-      props.gestureDecision.onSubmitOrder = (order, gestureDecision) => {
-        const state = props.eventManager.gestureDecisionOrderMatch(
-          order,
-          gestureDecision
-        );
-
-        //state will be checked in boss reducer
-        //NB: this is Message.NewsEvent to temp show on infopanel
-        const msg = {
-          type: EventType.GestureDecisionEvent,
-          value: props.eventManager.gestureDecisionEventState,
-        };
-        console.log(
-          "[CameraGesture] EventManager Callback",
-          state,
-          msg,
-          props.eventManager.gestureDecisionEventState
-        );
-
+      event.dispatchHandler = (msg) => {
         infoPanel.gestureDecisionEventStateDispatch(msg);
-      };
-
-      event.onEnd = () => {
-        console.log("[event] onEnd", event);
-        //clear calbacks
-        props.gestureDecision.onSubmitOrder = null;
-        event.onEnd = () => {};
-
-        console.log(
-          "[CameraGesture] EventonEnd gestureDecisionEventState",
-          props.eventManager.gestureDecisionEventState
-        );
-        const msg = {
-          type: EventType.GestureDecisionEvent,
-          value: props.eventManager.gestureDecisionEventState,
-        };
-
-        infoPanel.gestureDecisionEventStateDispatch(msg);
-
-        props.marketLoop.start();
-
-        //on end, want a slight delay so user can see win/loss
-        //here we allow marketloop and general execution to run
-        //but events are disabled for a brie1f period
-        setTimeout(() => {
-          props.eventManager.reset();
-          props.eventManager.cleanup();
-
-          console.log(
-            "[CameraGesture] EventonEndTimeout gestureDecisionEventState",
-            props.eventManager.gestureDecisionEventState
-          );
-
-          const msg = {
-            type: EventType.GestureDecisionEvent,
-            value: props.eventManager.gestureDecisionEventState, //should be None
-          };
-
-          infoPanel.gestureDecisionEventStateDispatch(msg);
-        }, 3000);
       };
 
       //initial active state
-      console.log("[CameraGesture]", props.eventManager.event);
+      console.log("[CameraGesture]", event);
       const state = props.eventManager.executeEvent();
       const msg = {
         type: EventType.GestureDecisionEvent,
-        value: props.eventManager.gestureDecisionEventState,
+        value: event.gestureDecisionEventState,
       };
       console.log(
         "[CameraGesture] EventManager",
         state,
         msg,
-        props.eventManager.gestureDecisionEventState
+        event.gestureDecisionEventState
       );
 
       infoPanel.activeTabDispatch({

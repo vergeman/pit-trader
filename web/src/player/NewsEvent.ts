@@ -1,4 +1,5 @@
 import { IEvent, Event, EventType } from "./Event";
+import { GestureDecision } from "../gesture/GestureDecision";
 import MarketLoop from "./MarketLoop";
 import Player from "./Player";
 
@@ -28,6 +29,8 @@ export class NewsEvent extends Event implements INewsEvent {
     type,
     msg,
     duration,
+    marketLoop,
+    gestureDecision,
     delta,
     forceDirection,
     addPlayers,
@@ -37,12 +40,14 @@ export class NewsEvent extends Event implements INewsEvent {
     type: EventType;
     msg: string;
     duration: number;
+    marketLoop: MarketLoop;
+    gestureDecision: GestureDecision;
     delta: number;
     forceDirection: INewsEvent["forceDirection"];
     addPlayers: number;
     marketLoopConfig: INewsEvent["marketLoopConfig"];
   }) {
-    super({ id, type, msg, duration });
+    super({ id, type, msg, duration, marketLoop, gestureDecision });
     this._delta = delta;
     this._forceDirection = forceDirection;
     this._addPlayers = addPlayers;
@@ -62,24 +67,20 @@ export class NewsEvent extends Event implements INewsEvent {
     return this._marketLoopConfig;
   }
 
-
-  begin(marketLoop?: MarketLoop): void {
-
-    if (!marketLoop) return;
-
+  begin(): void {
     super.begin();
 
     if (this.addPlayers) {
-      this._addMarketLoopPlayers(marketLoop);
+      this._addMarketLoopPlayers(this.marketLoop);
     }
     if (this.marketLoopConfig.skipTurnThreshold) {
-      this._skipTurnThreshold(marketLoop);
+      this._skipTurnThreshold(this.marketLoop);
     }
     if (
       this.marketLoopConfig.minTurnDelay &&
       this.marketLoopConfig.maxTurnDelay
     ) {
-      this._minMaxTurnDelay(marketLoop);
+      this._minMaxTurnDelay(this.marketLoop);
     }
   }
 
@@ -109,7 +110,7 @@ export class NewsEvent extends Event implements INewsEvent {
       const player = new Player(`${this.id}-${i}`);
       player.group_id = this.id;
       player.delta = this.delta;
-      player.forceDirection = this.forceDirection as (1 | -1 | null);
+      player.forceDirection = this.forceDirection as 1 | -1 | null;
 
       npcPlayerManager.addPlayer(player);
       const orders = player.replenish(price);
@@ -188,7 +189,6 @@ export class NewsEvent extends Event implements INewsEvent {
       this.cleanup();
     }, this.duration);
   }
-
 }
 
 export default NewsEvent;

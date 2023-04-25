@@ -27,7 +27,7 @@ describe("EventManager", () => {
       if (i > 1) expect(event).toBe(null);
 
       eventManager.hasEvent() ? j++ : k++;
-      event && event.begin(ml);
+      event && event.begin();
       i++;
     }
     expect(j).toBe(numIter - 1);

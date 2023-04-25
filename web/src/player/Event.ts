@@ -1,30 +1,9 @@
-import { GestureAction } from "../gesture/Gesture";
-import { OrderType } from "../engine/Order";
+import MarketLoop from "./MarketLoop";
+import GestureDecision from "../gesture/GestureDecision";
 
 export enum EventType {
   NewsEvent,
   GestureDecisionEvent,
-}
-
-//corresponds to component visuals
-export enum GestureDecisionEventState {
-  None,
-  Active, //initial screen
-  NoMatch, //submit a miss
-  Win, //matched event w/ order
-  Lost, //expired
-}
-
-export interface GestureDecisionEvent extends Event {
-  img: string;
-  bonus: number;
-  gesture: {
-    qty: number;
-    price: number;
-    orderType: OrderType;
-  };
-  onEnd: () => void;
-  reset: () => void;
 }
 
 export interface IEvent {
@@ -32,8 +11,10 @@ export interface IEvent {
   type: EventType;
   msg: string;
   duration: number; //ms
+  marketLoop: MarketLoop;
+  gestureDecision: GestureDecision;
   isActive: number;
-
+  timeouts: NodeJS.Timeout[];
   begin(): void;
   end(): void;
   //reset?
@@ -45,24 +26,34 @@ export class Event implements IEvent {
   private _type: EventType;
   private _msg: string;
   private _duration: number;
+  private _marketLoop: MarketLoop;
+  private _gestureDecision: GestureDecision;
   private _isActive: number;
+  private _timeouts: NodeJS.Timeout[];
 
   constructor({
     id,
     type,
     msg,
     duration,
+    marketLoop,
+    gestureDecision,
   }: {
     id: string;
     type: EventType;
     msg: string;
     duration: number;
+    marketLoop: MarketLoop;
+    gestureDecision: GestureDecision;
   }) {
     this._id = id;
     this._type = type;
     this._msg = msg;
     this._duration = duration;
+    this._marketLoop = marketLoop;
+    this._gestureDecision = gestureDecision;
     this._isActive = 0;
+    this._timeouts = [];
   }
 
   get id(): string {
@@ -83,6 +74,18 @@ export class Event implements IEvent {
   set isActive(num: number) {
     this._isActive = num;
   }
+  get marketLoop(): MarketLoop {
+    return this._marketLoop;
+  }
+  get gestureDecision(): GestureDecision {
+    return this._gestureDecision;
+  }
+  get timeouts(): NodeJS.Timeout[] {
+    return this._timeouts;
+  }
+  set timeouts(t: NodeJS.Timeout[]) {
+    this._timeouts = t;
+  }
 
   begin(): void {
     console.log("[Event] begin");
@@ -92,17 +95,21 @@ export class Event implements IEvent {
     console.log("[Event] end");
   }
 
-
   cleanup() {
     this.isActive--;
-    //if (this.isActive === 0) {
+    if (this.isActive === 0) {
       //this._event = null;
-      //this.timeouts = [];
-    //}
+      this._timeouts = [];
+    }
+  }
+  clearTimeouts() {
+    for (const timeout of this._timeouts) {
+      clearTimeout(timeout);
+    }
   }
 
   delay(duration: number): Promise<void> {
-    return new Promise(res => setTimeout(res, duration));
+    return new Promise((res) => setTimeout(res, duration));
   }
 }
 export default Event;
