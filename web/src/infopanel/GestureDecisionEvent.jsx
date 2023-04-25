@@ -1,4 +1,4 @@
-import GestureDecisionEvent, { GestureDecisionEventState } from "../player/GestureDecisionEvent";
+import { GestureDecisionEventState } from "../player/GestureDecisionEvent";
 
 export default function GestureDecisionEvent(props) {
   let text = null;

@@ -22,7 +22,6 @@ export interface IGestureDecisionEvent extends IEvent {
   };
   gestureDecisionEventState: GestureDecisionEventState;
   dispatchHandler: (msg: any) => void;
-  reset: () => void;
 }
 
 export class GestureDecisionEvent
@@ -38,7 +37,6 @@ export class GestureDecisionEvent
   };
   private _gestureDecisionEventState: GestureDecisionEventState;
   dispatchHandler = (msg: any) => {};
-  reset: () => void;
 
   constructor({
     id,
@@ -67,7 +65,6 @@ export class GestureDecisionEvent
     this._gesture = gesture;
     this._gestureDecisionEventState = GestureDecisionEventState.None;
     this.dispatchHandler = () => {};
-    this.reset = () => {};
   }
 
   get img(): string {
@@ -117,7 +114,6 @@ export class GestureDecisionEvent
     //(e.g. overwritten in generic marketLoop.start)
     this.gestureDecisionEventState = GestureDecisionEventState.Active;
 
-    //const timeout = setTimeout(() => reset(), this.duration || 5000);
     const timeout = setTimeout(() => this.end(), this.duration || 5000);
     this.timeouts.push(timeout);
   }
