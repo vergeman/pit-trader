@@ -26,7 +26,7 @@ export class NewsEvent extends Event implements INewsEvent {
 
   constructor({
     id,
-    type,
+    type = EventType.NewsEvent,
     msg,
     duration,
     marketLoop,

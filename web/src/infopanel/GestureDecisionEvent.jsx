@@ -1,13 +1,16 @@
-import { GestureDecisionEventState } from "../player/GestureDecisionEvent";
+import GestureDecisionEvent, { GestureDecisionEventState } from "../player/GestureDecisionEvent";
 
 export default function GestureDecisionEvent(props) {
-
   let text = null;
   let img = null;
   let commentary = null;
 
-  switch (props.gestureDecisionEventState) {
+  const gestureDecisionEvent = props.gestureDecisionEvent || {};
+  const state = gestureDecisionEvent.gestureDecisionEventState;
 
+  //TODO: populate GDEvent value
+
+  switch (state) {
     case GestureDecisionEventState.Active:
       text = "Active";
       img = "./test.png";
@@ -27,15 +30,15 @@ export default function GestureDecisionEvent(props) {
       break;
     case GestureDecisionEventState.None:
     default:
-      text = '';
-      img = '';
-
+      text = "";
+      img = "";
   }
 
   return (
     <div>
-      {`GestureDecisionEventState: ${props.gestureDecisionEventState}`}
+      {`GestureDecisionEventState: ${state}`}
       <h3>{text}</h3>
       <p>{commentary}</p>
-    </div>);
+    </div>
+  );
 }

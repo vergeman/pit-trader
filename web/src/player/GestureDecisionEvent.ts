@@ -42,7 +42,7 @@ export class GestureDecisionEvent
 
   constructor({
     id,
-    type,
+    type = EventType.GestureDecisionEvent,
     msg,
     duration,
     marketLoop,
@@ -88,22 +88,15 @@ export class GestureDecisionEvent
 
   //this is callback on successful gesture
   //we need access to infoPanel context/reducer
-  //props.gestureDecision.onEvent = (order, gestureDecision) => {
-  onSubmitOrder(order: Order, gestureDecision: GestureDecision) {
-    const state = this.gestureDecisionOrderMatch(order, gestureDecision);
+  onSubmitOrder(order: Order) {
+    this.setGestureDecisionOrderMatch(order);
 
     //state will be checked in boss reducer
     //NB: this is Message.NewsEvent to temp show on infopanel
     const msg = {
       type: EventType.GestureDecisionEvent,
-      value: this.gestureDecisionEventState,
+      value: this,
     };
-    console.log(
-      "[CameraGesture] EventManager Callback",
-      state,
-      msg,
-      this.gestureDecisionEventState
-    );
 
     this.dispatchHandler(msg);
   }
@@ -145,7 +138,7 @@ export class GestureDecisionEvent
     );
     const msg = {
       type: EventType.GestureDecisionEvent,
-      value: this.gestureDecisionEventState,
+      value: this,
     };
 
     this.dispatchHandler(msg);
@@ -166,7 +159,7 @@ export class GestureDecisionEvent
 
       const msg = {
         type: EventType.GestureDecisionEvent,
-        value: this.gestureDecisionEventState, //should be None
+        value: this,
       };
 
       this.dispatchHandler(msg);
@@ -177,7 +170,7 @@ export class GestureDecisionEvent
     this.gestureDecisionEventState = GestureDecisionEventState.None;
   }
 
-  gestureDecisionOrderMatch(order: Order, gestureDecision: GestureDecision) {
+  setGestureDecisionOrderMatch(order: Order) {
     /*
      * Match
      */
@@ -192,38 +185,24 @@ export class GestureDecisionEvent
     )
       return this.gestureDecisionEventState;
 
-    console.log("[gestureDecisionOrderMatch] MATCHING", this.gesture, order);
+    //gesture is the "challenge" defined in json. order is generated live by
+    //user in /gesture/GestureDecision.ts. Here we compare the two for match.
     if (
       this.gesture.qty == order.qty &&
       this.gesture.price == order.gesturePrice &&
       this.gesture.orderType == order.orderType
     ) {
       this.gestureDecisionEventState = GestureDecisionEventState.Win;
-      console.log(
-        "[gestureDecisionOrderMatch] gestureDecisionEventState MATCH",
-        this.gestureDecisionEventState
-      );
     } else {
       this.gestureDecisionEventState = GestureDecisionEventState.NoMatch;
-      console.log(
-        "[gestureDecisionOrderMatch] gestureDecisionEventState NO MATCH",
-        this.gestureDecisionEventState
-      );
     }
 
     //MATCH
     if (this.gestureDecisionEventState == GestureDecisionEventState.Win) {
-      console.log("[gestureDecisionOrderMatch] event", this);
-
       //TODO: exit early
       this.clearTimeouts();
       this.end();
     }
-
-    console.log(
-      "[gestureDecisionOrderMatch] gestureDecisionEventState",
-      this.gestureDecisionEventState
-    );
 
     return this.gestureDecisionEventState;
   }

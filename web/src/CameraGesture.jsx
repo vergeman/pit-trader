@@ -10,8 +10,7 @@ import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
 import InfoTabs from "./infopanel/InfoTabs.jsx";
 import { useGameContext, GameState } from "./GameContext.jsx";
 import { Message } from "./infopanel/Message";
-import { GestureDecisionEventState, EventType } from "./player/Event";
-import EventManager from "./player/EventManager";
+import { EventType } from "./player/Event";
 
 export default function CameraGesture(props) {
   /* default bootstrap size */
@@ -90,28 +89,23 @@ export default function CameraGesture(props) {
       );
 
       event.dispatchHandler = (msg) => {
-        infoPanel.gestureDecisionEventStateDispatch(msg);
+        infoPanel.gestureDecisionEventDispatch(msg);
       };
 
       //initial active state
       console.log("[CameraGesture]", event);
-      const state = props.eventManager.executeEvent();
+      props.eventManager.executeEvent();
       const msg = {
         type: EventType.GestureDecisionEvent,
-        value: event.gestureDecisionEventState,
+        value: event,
       };
-      console.log(
-        "[CameraGesture] EventManager",
-        state,
-        msg,
-        event.gestureDecisionEventState
-      );
 
       infoPanel.activeTabDispatch({
         type: "select",
         value: "gesture-decision-event",
       });
-      infoPanel.gestureDecisionEventStateDispatch(msg);
+
+      infoPanel.gestureDecisionEventDispatch(msg);
     }
 
     /*
@@ -124,7 +118,7 @@ export default function CameraGesture(props) {
       const msg = { type: Message.NewsEvent, value: event };
       infoPanel.messagesDispatch(msg);
     }
-  }, [gesture, props.eventManager.gestureDecisionEventState]);
+  }, [gesture]);
 
   /*
    * calcGesture (gesture poll)

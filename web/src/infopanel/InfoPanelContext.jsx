@@ -1,9 +1,10 @@
 import { GestureDecisionEventState } from "../player/GestureDecisionEvent";
 import { createContext, useContext, useReducer } from "react";
+import { EventType } from "../player/Event.ts";
 import {
   messagesReducer,
   activeTabReducer,
-  gestureDecisionEventStateReducer,
+  gestureDecisionEventReducer,
 } from "./InfoPanelReducer.js";
 export const InfoPanelContext = createContext(null);
 
@@ -17,11 +18,13 @@ export function InfoPanelProvider(props) {
     activeTabReducer,
     "messages"
   );
-  const [gestureDecisionEventState, gestureDecisionEventStateDispatch] =
-    useReducer(
-      gestureDecisionEventStateReducer,
-      GestureDecisionEventState.None
-    );
+  const [gestureDecisionEvent, gestureDecisionEventDispatch] = useReducer(
+    gestureDecisionEventReducer,
+    {
+      type: EventType.GestureDecisionEvent,
+      gestureDecisionEventState: GestureDecisionEventState.None,
+    }
+  );
 
   return (
     <InfoPanelContext.Provider
@@ -30,8 +33,8 @@ export function InfoPanelProvider(props) {
         messagesDispatch,
         activeTab,
         activeTabDispatch,
-        gestureDecisionEventState,
-        gestureDecisionEventStateDispatch,
+        gestureDecisionEvent,
+        gestureDecisionEventDispatch,
       }}
     >
       {props.children}

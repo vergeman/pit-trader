@@ -37,9 +37,7 @@ export class GestureDecision {
   private _renderState: RenderState;
   private _renderStateTimeout: number;
   private _messages: any[];
-  private _onSubmitOrder:
-    | null
-    | ((order: Order, gestureDecision: GestureDecision) => void);
+  private _onSubmitOrder: null | ((order: Order) => void);
 
   constructor(
     me: MatchingEngine,
@@ -102,14 +100,10 @@ export class GestureDecision {
   get messages(): any[] {
     return this._messages;
   }
-  get onSubmitOrder():
-    | null
-    | ((order: Order, gestureDecision: GestureDecision) => void) {
+  get onSubmitOrder(): null | ((order: Order) => void) {
     return this._onSubmitOrder;
   }
-  set onSubmitOrder(
-    fn: null | ((order: Order, gestureDecision: GestureDecision) => void)
-  ) {
+  set onSubmitOrder(fn: null | ((order: Order) => void)) {
     this._onSubmitOrder = fn;
   }
 
@@ -141,7 +135,7 @@ export class GestureDecision {
     console.log("[GestureDecision] submitOrder");
 
     if (this.onSubmitOrder) {
-      this.onSubmitOrder(order, this);
+      this.onSubmitOrder(order);
       return;
     }
 

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
 import GestureDecisionEvent from "./GestureDecisionEvent.jsx";
@@ -21,7 +20,7 @@ const TabMapKey = {
 
 export default function InfoTabs(props) {
   const defaultActiveKey = "messages";
-  const { activeTab, activeTabDispatch, messages, gestureDecisionEventState } =
+  const { activeTab, activeTabDispatch, messages, gestureDecisionEvent } =
     useInfoPanel();
 
   const challenges = []; //TODO: challenges / quests
@@ -102,7 +101,7 @@ export default function InfoTabs(props) {
         title={tabTitleNew(TabMapKey.GESTUREDECISIONEVENT, tabMap, tabNums)}
       >
         <GestureDecisionEvent
-          gestureDecisionEventState={gestureDecisionEventState}
+          gestureDecisionEvent={gestureDecisionEvent}
         />
       </Tab>
       <Tab

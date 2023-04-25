@@ -11,7 +11,11 @@ import Message from "./infopanel/Message";
 import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
 import { useGameContext, GameState } from "./GameContext.jsx";
 import { EventManager } from "./player/EventManager.ts";
-import { GestureDecisionEventState } from "./player/GestureDecisionEvent";
+import { EventType } from "./player/Event.ts";
+import {
+  GestureDecisionEvent,
+  GestureDecisionEventState,
+} from "./player/GestureDecisionEvent";
 
 export default function Main(props) {
   const config = {
@@ -48,7 +52,7 @@ export default function Main(props) {
     new EventManager(marketLoop, gestureDecision)
   );
 
-  const { messagesDispatch, gestureDecisionEventStateDispatch } = useInfoPanel();
+  const { messagesDispatch, gestureDecisionEventDispatch } = useInfoPanel();
   const gameContext = useGameContext();
 
   //INIT
@@ -83,7 +87,12 @@ export default function Main(props) {
     console.log("[Main] resetGame()");
     if (player) {
       messagesDispatch({ type: Message.Restart }); //clear infopanel messages
-      gestureDecisionEventStateDispatch({value: GestureDecisionEventState.None});
+      gestureDecisionEventDispatch({
+        type: EventType.GestureDecisionEvent,
+        value: new GestureDecisionEvent({
+          gestureDecisionEventState: GestureDecisionEventState.None,
+        }),
+      });
       gestureDecision.resetRecords();
       player.reset();
       npcPlayerManager.resetAll();
