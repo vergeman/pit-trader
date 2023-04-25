@@ -1,5 +1,6 @@
 import { EventType } from "./Event";
 import { OrderType } from "../engine/Order";
+import { GestureAction } from "../gesture/Gesture";
 
 /* Defaults
  * id 0 - would affect vanilla players, but for most part want to leave vanillas
@@ -27,6 +28,42 @@ import { OrderType } from "../engine/Order";
 },
 */
 
+export const buildGestureDecisionEventParams = (gde: any, price: number) => {
+  const _qty = Math.floor(Math.random() * 10) + 1; //[1,10]
+  const gesturePrice = price.toFixed(1).at(-1) || 0; //100.2 <-- 2
+
+  const gesture = {
+    qty: gde.action == GestureAction.Buy ? _qty : -_qty,
+    price: gesturePrice,
+    orderType: OrderType.Limit,
+  };
+  const duration = 10000; //fixed
+  const bonus = _qty * (1000 / 2); //tuneable: need meaningful size but not overwhelming
+  const msg = gde.tempate_msg
+    .replace("{QTY}", gesture.qty.toString())
+    .replace("{PRICE}", gesture.price.toString());
+
+  return {
+    ...gde,
+    type: EventType.GestureDecisionEvent,
+    msg,
+    duration,
+    bonus,
+    gesture,
+    onEnd: () => {},
+  };
+};
+
+export const gestureDecisionEvents = [
+  {
+    id: "boss-1",
+    img: "boss-1.png",
+    action: GestureAction.Buy,
+    tempate_msg: `Hey, Buy {QTY} for {PRICE}`,
+  },
+];
+
+/*
 export const gestureDecisionEvents = [
   {
     id: "boss-1",
@@ -44,7 +81,7 @@ export const gestureDecisionEvents = [
     reset: () => {}
   },
 ];
-
+*/
 export const events = [
   {
     id: "1",
