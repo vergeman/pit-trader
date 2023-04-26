@@ -36,6 +36,7 @@ export class GestureDecision {
   private _records: GestureDecisionRecord[];
   private _renderState: RenderState;
   private _renderStateTimeout: number;
+  private _enableMessages: boolean;
   private _messages: any[];
   private _onSubmitOrder: null | ((player: Player, order: Order) => void);
 
@@ -72,6 +73,7 @@ export class GestureDecision {
     this._records = [];
     this._renderState = RenderState.GESTURE_DECISION;
     this._renderStateTimeout = renderStateTimeout;
+    this._enableMessages = true;
     this._messages = [];
     this._onSubmitOrder = null;
   }
@@ -96,6 +98,12 @@ export class GestureDecision {
   }
   get renderStateTimeout(): number {
     return this._renderStateTimeout;
+  }
+  get enableMessages(): boolean {
+    return this._enableMessages;
+  }
+  set enableMessages(enable: boolean) {
+    this._enableMessages = enable;
   }
   get messages(): any[] {
     return this._messages;
@@ -306,7 +314,8 @@ export class GestureDecision {
   }
 
   addMessage(type: String, value: any) {
-    console.log("[addMessage]", type, value);
+    console.log("[addMessage]", type, value, this.enableMessages);
+    if (!this.enableMessages) return;
     this._messages.push({ type, value });
   }
 

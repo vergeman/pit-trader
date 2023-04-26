@@ -117,10 +117,10 @@ export class GestureDecisionEvent
   begin() {
     //attach callback
     this.gestureDecision.onSubmitOrder = this.onSubmitOrder.bind(this);
-
+    this.gestureDecision.enableMessages = false;
     //this without bind/arrow function refers to gestureDecision
     //with arrow in CameraGesture, refers to EventManager
-    console.log("[GestureDecisionEvent]", this, this.gestureDecision);
+    console.log("[GestureDecisionEvent]", this, this.gestureDecision, this.gestureDecision.enableMessages);
     this.isActive++;
 
     this.marketLoop.stop();
@@ -128,6 +128,7 @@ export class GestureDecisionEvent
 
     //TODO: stash current timeout intervals for use in setTimeout
     //(e.g. overwritten in generic marketLoop.start)
+    this.gestureDecision.reset();
     this.gestureDecisionEventState = GestureDecisionEventState.Active;
 
     const timeout = setTimeout(() => this.end(), this.duration || 5000);
@@ -163,6 +164,8 @@ export class GestureDecisionEvent
     setTimeout(() => {
       this.resetState();
       this.cleanup();
+      this.gestureDecision.reset();
+      this.gestureDecision.enableMessages = true;
 
       console.log(
         "[CameraGesture] EventonEndTimeout gestureDecisionEventState",
