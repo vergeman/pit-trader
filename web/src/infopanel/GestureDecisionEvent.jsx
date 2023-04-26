@@ -11,8 +11,9 @@ export default function GestureDecisionEvent(props) {
       `${GestureDecisionEventState.Active}-${action}`
     ];
 
-  //TODO: add time countdown
-  //TODO: trigger bonus in Win
+  const countdown = (Math.max(0, gestureDecisionEvent.expiry() - Date.now()) / 1000).toFixed(2);
+
+
 
   //none - empty
   if (state === GestureDecisionEventState.None) {
@@ -23,10 +24,10 @@ export default function GestureDecisionEvent(props) {
   return (
     <div className="d-flex mt-3">
       <div className="px-3">
-        <img src={gestureDecisionEvent.img} alt={gestureDecisionEvent.id} />
+        <img id="gestureDecisionEvent-tab-image" src={gestureDecisionEvent.img} alt={gestureDecisionEvent.id} />
       </div>
 
-      <div className="d-flex flex-column justify-content-evenly px-4">
+      <div className="d-flex flex-column justify-content-between px-4">
         {[
           GestureDecisionEventState.Active,
           GestureDecisionEventState.NoMatch,
@@ -51,7 +52,13 @@ export default function GestureDecisionEvent(props) {
             <h5>Bonus: ${gestureDecisionEvent.bonus}&nbsp;</h5>
           </div>
         )}
+
+        <div>
+          Expires: { countdown }
+        </div>
       </div>
+
+
     </div>
   );
 }

@@ -15,6 +15,7 @@ export interface IEvent {
   gestureDecision: GestureDecision;
   isActive: number;
   timeouts: NodeJS.Timeout[];
+  createdAt: number;
   begin(): void;
   end(): void;
   //reset?
@@ -30,6 +31,7 @@ export class Event implements IEvent {
   private _gestureDecision: GestureDecision;
   private _isActive: number;
   private _timeouts: NodeJS.Timeout[];
+  private _createdAt: number;
 
   constructor({
     id,
@@ -54,6 +56,7 @@ export class Event implements IEvent {
     this._gestureDecision = gestureDecision;
     this._isActive = 0;
     this._timeouts = [];
+    this._createdAt = Date.now();
   }
 
   get id(): string {
@@ -86,7 +89,9 @@ export class Event implements IEvent {
   set timeouts(t: NodeJS.Timeout[]) {
     this._timeouts = t;
   }
-
+  get createdAt(): number {
+    return this._createdAt;
+  }
   begin(): void {
     console.log("[Event] begin");
   }
@@ -110,6 +115,10 @@ export class Event implements IEvent {
 
   delay(duration: number): Promise<void> {
     return new Promise((res) => setTimeout(res, duration));
+  }
+
+  expiry(): number {
+    return this.createdAt + this.duration;
   }
 }
 export default Event;

@@ -314,3 +314,16 @@ table#gestureDecision.table {
 .input_video {
   display: none;
 }
+
+
+/* GestureDecisionEvent InfoPanel Tab */
+
+#gestureDecisionEvent-tab-image {
+  max-height: 8rem;
+}
+
+@media (min-width: 768px) {
+  #gestureDecisionEvent-tab-image {
+    max-height: 12rem;
+  }
+}

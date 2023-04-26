@@ -68,7 +68,6 @@ export const buildGestureDecisionEventParams = (gde: any, price: number) => {
   };
 };
 
-
 export const gestureDecisionEvents = [
   //trickster
   {
