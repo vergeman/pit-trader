@@ -2,43 +2,53 @@ import { GestureDecisionEventState } from "../player/GestureDecisionEvent";
 
 export default function GestureDecisionEvent(props) {
   let text = null;
-  let img = null;
-  let commentary = null;
 
   const gestureDecisionEvent = props.gestureDecisionEvent || {};
   const state = gestureDecisionEvent.gestureDecisionEventState;
+  const action = gestureDecisionEvent.action;
+  const msg = gestureDecisionEvent.state_msg[`${state}-${action}`];
 
-  //TODO: populate GDEvent value
-
+  //TODO: add time countdown
+  //TODO: trigger bonus in Win
   switch (state) {
     case GestureDecisionEventState.Active:
       text = "Active";
-      img = "./test.png";
       break;
     case GestureDecisionEventState.NoMatch:
       text = "Active";
-      img = "./test.png";
-      commentary = "no match!";
       break;
     case GestureDecisionEventState.Lost:
       text = "You Lose!";
-      img = "./test.png";
       break;
     case GestureDecisionEventState.Win:
       text = "You WIN!";
-      img = "./test.png";
       break;
     case GestureDecisionEventState.None:
     default:
       text = "";
-      img = "";
   }
 
+  //none - empty
+  if (state == GestureDecisionEventState.None) {
+    return (
+      <div>-</div>
+    );
+  }
+
+  //active, no match, //lost/win - 'template'
   return (
     <div>
-      {`GestureDecisionEventState: ${state}`}
       <h3>{text}</h3>
-      <p>{commentary}</p>
+
+      <img src={gestureDecisionEvent.img} alt={gestureDecisionEvent.id}/>
+
+      <p>{msg}</p>
+
+      {state == GestureDecisionEventState.NoMatch &&
+        <p>
+          Wrong - try again
+        </p>
+      }
     </div>
   );
 }

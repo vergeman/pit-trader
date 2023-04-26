@@ -2,6 +2,7 @@ import { Event, IEvent, EventType } from "./Event";
 import { OrderType, Order } from "../engine/Order";
 import { GestureDecision } from "../gesture/GestureDecision";
 import { MarketLoop } from "./MarketLoop";
+import { GestureAction } from "../gesture/Gesture";
 
 //corresponds to component visuals
 export enum GestureDecisionEventState {
@@ -15,12 +16,14 @@ export enum GestureDecisionEventState {
 export interface IGestureDecisionEvent extends IEvent {
   img: string;
   bonus: number;
+  action: GestureAction;
   gesture: {
     qty: number;
     price: number;
     orderType: OrderType;
   };
   gestureDecisionEventState: GestureDecisionEventState;
+  state_msg: { [key: string]: string },
   dispatchHandler: (msg: any) => void;
 }
 
@@ -30,12 +33,14 @@ export class GestureDecisionEvent
 {
   private _img: string;
   private _bonus: number;
+  private _action: GestureAction;
   private _gesture: {
     qty: number;
     price: number;
     orderType: OrderType;
   };
   private _gestureDecisionEventState: GestureDecisionEventState;
+  private _state_msg: { [key: string]: string };
   dispatchHandler = (msg: any) => {};
 
   constructor({
@@ -47,7 +52,9 @@ export class GestureDecisionEvent
     gestureDecision,
     img,
     bonus,
+    action,
     gesture,
+    state_msg = {}
   }: {
     id: string;
     type: EventType;
@@ -57,13 +64,17 @@ export class GestureDecisionEvent
     gestureDecision: GestureDecision;
     img: string;
     bonus: number;
+    action: GestureAction;
     gesture: IGestureDecisionEvent["gesture"];
+    state_msg: { [key: string]: string };
   }) {
     super({ id, type, msg, duration, marketLoop, gestureDecision });
     this._img = img;
     this._bonus = bonus;
+    this._action = action;
     this._gesture = gesture;
     this._gestureDecisionEventState = GestureDecisionEventState.None;
+    this._state_msg = state_msg;
     this.dispatchHandler = () => {};
   }
 
@@ -76,13 +87,18 @@ export class GestureDecisionEvent
   get gesture(): IGestureDecisionEvent["gesture"] {
     return this._gesture;
   }
+  get action(): GestureAction {
+    return this._action;
+  }
   get gestureDecisionEventState(): GestureDecisionEventState {
     return this._gestureDecisionEventState;
   }
   set gestureDecisionEventState(state: GestureDecisionEventState) {
     this._gestureDecisionEventState = state;
   }
-
+  get state_msg(): { [key: string]: string } {
+    return this._state_msg;
+  }
   //this is callback on successful gesture
   //we need access to infoPanel context/reducer
   onSubmitOrder(order: Order) {

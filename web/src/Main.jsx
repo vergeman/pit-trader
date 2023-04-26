@@ -87,12 +87,12 @@ export default function Main(props) {
     console.log("[Main] resetGame()");
     if (player) {
       messagesDispatch({ type: Message.Restart }); //clear infopanel messages
+
       gestureDecisionEventDispatch({
         type: EventType.GestureDecisionEvent,
-        value: new GestureDecisionEvent({
-          gestureDecisionEventState: GestureDecisionEventState.None,
-        }),
+        value: new GestureDecisionEvent({}),
       });
+
       gestureDecision.resetRecords();
       player.reset();
       npcPlayerManager.resetAll();

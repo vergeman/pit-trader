@@ -1,6 +1,6 @@
-import { GestureDecisionEventState } from "../player/GestureDecisionEvent";
+import { GestureDecisionEvent } from "../player/GestureDecisionEvent";
 import { createContext, useContext, useReducer } from "react";
-import { EventType } from "../player/Event.ts";
+
 import {
   messagesReducer,
   activeTabReducer,
@@ -18,12 +18,9 @@ export function InfoPanelProvider(props) {
     activeTabReducer,
     "messages"
   );
+
   const [gestureDecisionEvent, gestureDecisionEventDispatch] = useReducer(
-    gestureDecisionEventReducer,
-    {
-      type: EventType.GestureDecisionEvent,
-      gestureDecisionEventState: GestureDecisionEventState.None,
-    }
+    gestureDecisionEventReducer, new GestureDecisionEvent({})
   );
 
   return (

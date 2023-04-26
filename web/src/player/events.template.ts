@@ -1,6 +1,7 @@
 import { EventType } from "./Event";
 import { OrderType } from "../engine/Order";
 import { GestureAction } from "../gesture/Gesture";
+import { GestureDecisionEventState } from "./GestureDecisionEvent";
 
 /* Defaults
  * id 0 - would affect vanilla players, but for most part want to leave vanillas
@@ -31,22 +32,35 @@ import { GestureAction } from "../gesture/Gesture";
 export const buildGestureDecisionEventParams = (gde: any, price: number) => {
   const _qty = Math.floor(Math.random() * 10) + 1; //[1,10]
   const gesturePrice = price.toFixed(1).at(-1) || 0; //100.2 <-- 2
+  const action = Math.random() <= 0.5 ? GestureAction.Buy : GestureAction.Sell;
 
   const gesture = {
-    qty: gde.action == GestureAction.Buy ? _qty : -_qty,
+    qty: action == GestureAction.Buy ? _qty : -_qty,
     price: gesturePrice,
     orderType: OrderType.Limit,
   };
+
   const duration = 10000; //fixed
   const bonus = _qty * (1000 / 2); //tuneable: need meaningful size but not overwhelming
-  const msg = gde.tempate_msg
-    .replace("{QTY}", gesture.qty.toString())
-    .replace("{PRICE}", gesture.price.toString());
+
+  //replace qty price templates with generated values above
+  const state_msg = {
+    ...gde.state_msg,
+  };
+
+  for (const [k, v] of Object.entries(state_msg)) {
+    const val = (v as string)
+      .replace("{QTY}", gesture.qty.toString())
+      .replace("{PRICE}", gesture.price.toString());
+    state_msg[k] = val;
+  }
 
   return {
     ...gde,
+    state_msg,
+    action,
     type: EventType.GestureDecisionEvent,
-    msg,
+    msg: state_msg[`${GestureDecisionEventState.Active}-${action}`],
     duration,
     bonus,
     gesture,
@@ -54,34 +68,41 @@ export const buildGestureDecisionEventParams = (gde: any, price: number) => {
   };
 };
 
+//trickster
+//hipster
+//starwars
+//death
+
 export const gestureDecisionEvents = [
+  //trickster
   {
-    id: "boss-1",
-    img: "boss-1.png",
-    action: GestureAction.Buy,
-    tempate_msg: `Hey, Buy {QTY} for {PRICE}`,
+    id: "trickster-1",
+    img: `${process.env.PUBLIC_URL}/events/trickster.png`,
+    state_msg: {
+      [`${GestureDecisionEventState.Active}-${GestureAction.Buy}`]: `Let's see what happens. Pay {PRICE} for {QTY}`,
+      [`${GestureDecisionEventState.Active}-${GestureAction.Sell}`]:
+        "Sell {QTY} at {PRICE}",
+      [GestureDecisionEventState.NoMatch]: "No Match, try again",
+      [GestureDecisionEventState.Lost]: "You lost",
+      [GestureDecisionEventState.Win]: "You win",
+    },
+  },
+
+  //hipster
+  {
+    id: "hipster-1",
+    img: `${process.env.PUBLIC_URL}/events/hipster.png`,
+    state_msg: {
+      [`${GestureDecisionEventState.Active}-${GestureAction.Buy}`]: `Pay {PRICE} for {QTY} - if you've heard of it.`,
+      [`${GestureDecisionEventState.Active}-${GestureAction.Sell}`]:
+        "Sell {QTY} at {PRICE}",
+      [GestureDecisionEventState.NoMatch]: "hi",
+      [GestureDecisionEventState.Lost]: "You lost",
+      [GestureDecisionEventState.Win]: "You win",
+    },
   },
 ];
 
-/*
-export const gestureDecisionEvents = [
-  {
-    id: "boss-1",
-    type: EventType.GestureDecisionEvent,
-    msg: "Hey, buy 5 for 3",
-    duration: 10000,
-    img: "boss-1.png",
-    bonus: 30000,
-    gesture: {
-      qty: 5,
-      price: 3,
-      orderType: OrderType.Limit // Limit or Market, price market is NaN
-    },
-    onEnd: () => {},
-    reset: () => {}
-  },
-];
-*/
 export const events = [
   {
     id: "1",

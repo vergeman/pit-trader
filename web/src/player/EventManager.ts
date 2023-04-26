@@ -1,6 +1,10 @@
 import { GestureDecisionEvent } from "./GestureDecisionEvent";
 import { NewsEvent } from "./NewsEvent";
-import { events, gestureDecisionEvents, buildGestureDecisionEventParams } from "./events.template";
+import {
+  events,
+  gestureDecisionEvents,
+  buildGestureDecisionEventParams,
+} from "./events.template";
 import MarketLoop from "./MarketLoop";
 import GestureDecision from "../gesture/GestureDecision";
 
@@ -66,9 +70,9 @@ export class EventManager {
     //NewsEvent
     const randomProb = Math.random();
     if (randomProb > 1) {
-      const e = getRandom(events);
+      const params = getRandom(events);
       const event = new NewsEvent({
-        ...e,
+        ...params,
         marketLoop: this.marketLoop,
         gestureDecision: this.gestureDecision,
       });
@@ -76,18 +80,16 @@ export class EventManager {
     }
 
     //GestureDecisionEvent
-    //TODO: more challenges
     const gde = getRandom(gestureDecisionEvents);
     const price = this.marketLoop.getPrice();
-    console.log("GDE", gde, price)
-    const e = buildGestureDecisionEventParams(gde, price)
+
+    const params = buildGestureDecisionEventParams(gde, price);
+
     const event = new GestureDecisionEvent({
-      ...e,
+      ...params,
       marketLoop: this.marketLoop,
       gestureDecision: this.gestureDecision,
     });
-
-    console.log("CHALLENGE", e);
 
     return event;
   }
