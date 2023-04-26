@@ -128,6 +128,7 @@ export class GestureDecisionEvent
 
     //TODO: stash current timeout intervals for use in setTimeout
     //(e.g. overwritten in generic marketLoop.start)
+    this.gestureDecision.reset();
     this.gestureDecisionEventState = GestureDecisionEventState.Active;
 
     const timeout = setTimeout(() => this.end(), this.duration || 5000);
@@ -163,6 +164,7 @@ export class GestureDecisionEvent
     setTimeout(() => {
       this.resetState();
       this.cleanup();
+      this.gestureDecision.reset();
 
       console.log(
         "[CameraGesture] EventonEndTimeout gestureDecisionEventState",
