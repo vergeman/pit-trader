@@ -23,9 +23,6 @@ export default class RiskManager {
     return this._warnPositionLimit;
   }
 
-  //check limits before submitting additional order
-  check(player: Player, order: Order) {}
-
   warnLimit(player: Player, orders?: Order[]): boolean {
     const _calcPositionLimit = this._calcPositions(player, orders);
     return _calcPositionLimit >= this._warnPositionLimit;
