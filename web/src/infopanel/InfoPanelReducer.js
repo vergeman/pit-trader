@@ -1,8 +1,8 @@
 import Message from "./Message.js";
 import { OrderType } from "../engine/Order.ts";
+import { EventType } from "../player/Event.ts";
 
 export function activeTabReducer(activeTab, action) {
-  //console.log("[activeTabReducer]", action);
   switch (action.type) {
     case "select":
       activeTab = action.value;
@@ -23,8 +23,6 @@ const populateTemplateString = (template, vars) => {
 export function messagesReducer(messages, action) {
   console.log("[messagesReducer]", action);
 
-  //TODO: remove demo Button reducer to remove action.text
-  //TODO: add msg type once we get a better idea what's being sent
   let text;
   let transaction;
   let order;
@@ -75,7 +73,6 @@ export function messagesReducer(messages, action) {
       return [{ time: new Date(), text }, ...messages];
 
     case Message.Restart:
-      //resets message array
       return [];
 
     case Message.NewsEvent:
@@ -94,4 +91,18 @@ export function messagesReducer(messages, action) {
 
   console.error("action not detected", action);
   return messages;
+}
+
+
+export function gestureDecisionEventReducer(gestureDecisionEvent, action) {
+
+  //TODO: these should be reducer-specific events, but we don't seem to have any
+  //at the moment
+  if (action.type !== EventType.GestureDecisionEvent) return null;
+
+  console.log("[gestureDecisionEventReducer]", action);
+
+  gestureDecisionEvent = action.value;
+
+  return gestureDecisionEvent;
 }

@@ -1,3 +1,8 @@
+import { EventType } from "./Event";
+import { OrderType } from "../engine/Order";
+import { GestureAction } from "../gesture/Gesture";
+import { GestureDecisionEventState } from "./GestureDecisionEvent";
+
 /* Defaults
  * id 0 - would affect vanilla players, but for most part want to leave vanillas
  * alone because we need entities on the other side to trade against
@@ -23,29 +28,115 @@
   },
 },
 */
-const events2 = [{
-  id: "1",
-  msg: "US Economy Grew at a Faster Pace in Last Quarter Than Previously Estimated",
-  duration: 7000,
-  delta: -.1,
-  forceDirection: 1,
-  addPlayers: 4,
-  marketLoop: {
-    minTurnDelay: 150,
-    maxTurnDelay: 350,
-    skipTurnThreshold: 0,
-  },
-}];
 
-const events = [
+export const buildGestureDecisionEventParams = (gde: any, price: number) => {
+  const _qty = Math.floor(Math.random() * 10) + 1; //[1,10]
+  const gesturePrice = price.toFixed(1).at(-1) || 0; //100.2 <-- 2
+  const action = Math.random() <= 0.5 ? GestureAction.Buy : GestureAction.Sell;
+
+  const gesture = {
+    qty: action == GestureAction.Buy ? _qty : -_qty,
+    price: gesturePrice,
+    orderType: OrderType.Limit,
+  };
+
+  const duration = 10000; //fixed
+  const bonus = _qty * (1000 / 2); //tuneable: need meaningful size but not overwhelming
+
+  //replace qty price templates with generated values above
+  const state_msg = {
+    ...gde.state_msg,
+  };
+
+  for (const [k, v] of Object.entries(state_msg)) {
+    const val = (v as string)
+      .replace("{QTY}", Math.abs(gesture.qty).toString())
+      .replace("{PRICE}", gesture.price.toString());
+    state_msg[k] = val;
+  }
+
+  return {
+    ...gde,
+    state_msg,
+    action,
+    type: EventType.GestureDecisionEvent,
+    msg: state_msg[`${GestureDecisionEventState.Active}-${action}`],
+    duration,
+    bonus,
+    gesture,
+    onEnd: () => {},
+  };
+};
+
+export const gestureDecisionEvents = [
+  //trickster
+  {
+    id: "trickster-1",
+    img: `${process.env.PUBLIC_URL}/events/trickster.png`,
+    state_msg: {
+      [`${GestureDecisionEventState.Active}-${GestureAction.Buy}`]: `Let's see what happens. Pay {PRICE} for {QTY}`,
+      [`${GestureDecisionEventState.Active}-${GestureAction.Sell}`]:
+        "Sell {QTY} at {PRICE}",
+      [GestureDecisionEventState.NoMatch]: "Try again, slick.",
+      [GestureDecisionEventState.Lost]: "Better luck next time.",
+      [GestureDecisionEventState.Win]: "Nice job!",
+    },
+  },
+
+  //hipster
+  {
+    id: "hipster-1",
+    img: `${process.env.PUBLIC_URL}/events/hipster.png`,
+    state_msg: {
+      [`${GestureDecisionEventState.Active}-${GestureAction.Buy}`]: `Pay {PRICE} for {QTY} - if you've heard of it.`,
+      [`${GestureDecisionEventState.Active}-${GestureAction.Sell}`]:
+        "Sell {QTY} at {PRICE} - I was selling before it was cool.",
+      [GestureDecisionEventState.NoMatch]: "Not it, man.",
+      [GestureDecisionEventState.Lost]: "Your loss",
+      [GestureDecisionEventState.Win]: "Way to go, Ace!",
+    },
+  },
+
+  //starwars
+  {
+    id: "starwars-1",
+    img: `${process.env.PUBLIC_URL}/events/starwars.png`,
+    state_msg: {
+      [`${GestureDecisionEventState.Active}-${GestureAction.Buy}`]: `Ootini! Pay {PRICE} for {QTY}.`,
+      [`${GestureDecisionEventState.Active}-${GestureAction.Sell}`]:
+        "Jotadee, Sell {QTY} at {PRICE}.",
+      [GestureDecisionEventState.NoMatch]: "Koo nee tang, no match.",
+      [GestureDecisionEventState.Lost]: "You lose.",
+      [GestureDecisionEventState.Win]: "Suka! Well done!",
+    },
+  },
+
+  //death
+  {
+    id: "death-1",
+    img: `${process.env.PUBLIC_URL}/events/death.png`,
+    state_msg: {
+      [`${GestureDecisionEventState.Active}-${GestureAction.Buy}`]: `Pay {PRICE} for {QTY}. Or else.`,
+      [`${GestureDecisionEventState.Active}-${GestureAction.Sell}`]:
+        "Sell {QTY} at {PRICE}. Or else.",
+      [GestureDecisionEventState.NoMatch]: "Nervous? You keep messing up.",
+      [GestureDecisionEventState.Lost]: "I'll be seeing you soon.",
+      [GestureDecisionEventState.Win]:
+        "Looks like you'll live to trade another day.",
+    },
+  },
+];
+
+export const events = [
   {
     id: "1",
+    type: EventType.NewsEvent,
     msg: "US Economy Grew at a Faster Pace in Last Quarter Than Previously Estimated",
     duration: 7000,
-    delta: -.1,
+    delta: -0.1,
     forceDirection: 1,
     addPlayers: 4,
-    marketLoop: {
+    marketLoopConfig: {
       minTurnDelay: 150,
       maxTurnDelay: 350,
       skipTurnThreshold: 0,
@@ -53,12 +144,13 @@ const events = [
   },
   {
     id: "2",
+    type: EventType.NewsEvent,
     msg: "GDP Growth Shows Robust Economic Recovery",
     duration: 7000,
-    delta: -.1,
+    delta: -0.1,
     forceDirection: 1,
     addPlayers: 4,
-    marketLoop: {
+    marketLoopConfig: {
       minTurnDelay: 150,
       maxTurnDelay: 350,
       skipTurnThreshold: 0,
@@ -66,12 +158,13 @@ const events = [
   },
   {
     id: "3",
+    type: EventType.NewsEvent,
     msg: "US GDP Contracts in Last Quarter, Marking Worst Drop Since 2008 Financial Crisis",
     duration: 7000,
-    delta: -.2,
+    delta: -0.2,
     forceDirection: -1,
     addPlayers: 4,
-    marketLoop: {
+    marketLoopConfig: {
       minTurnDelay: 150,
       maxTurnDelay: 350,
       skipTurnThreshold: 0,
@@ -79,12 +172,13 @@ const events = [
   },
   {
     id: "4",
+    type: EventType.NewsEvent,
     msg: "US Economy Shrank More Than Expected in Last Quarter",
     duration: 7000,
-    delta: -.1,
+    delta: -0.1,
     forceDirection: -1,
     addPlayers: 4,
-    marketLoop: {
+    marketLoopConfig: {
       minTurnDelay: 150,
       maxTurnDelay: 350,
       skipTurnThreshold: 0.125,
@@ -92,12 +186,13 @@ const events = [
   },
   {
     id: "5",
+    type: EventType.NewsEvent,
     msg: "Fed Leaves Interest Rates Unchanged, Signals Future Rate Cuts Possible",
     duration: 7000,
     delta: 0.2,
     forceDirection: 1,
     addPlayers: 4,
-    marketLoop: {
+    marketLoopConfig: {
       minTurnDelay: 150,
       maxTurnDelay: 350,
       skipTurnThreshold: 0.33,
@@ -105,12 +200,13 @@ const events = [
   },
   {
     id: "6",
+    type: EventType.NewsEvent,
     msg: "Low Interest Rates Help Sustain Economic Growth",
     duration: 7000,
     delta: -0.2,
     forceDirection: 1,
     addPlayers: 4,
-    marketLoop: {
+    marketLoopConfig: {
       minTurnDelay: 150,
       maxTurnDelay: 300,
       skipTurnThreshold: 0,
@@ -118,13 +214,13 @@ const events = [
   },
   {
     id: "7",
+    type: EventType.NewsEvent,
     msg: "Federal Reserve Raises Interest Rates, Causing Stock Market to Plunge",
-
     duration: 9000,
-    delta: -.25,
+    delta: -0.25,
     forceDirection: -1,
     addPlayers: 8,
-    marketLoop: {
+    marketLoopConfig: {
       minTurnDelay: 150,
       maxTurnDelay: 350,
       skipTurnThreshold: 0,
@@ -132,13 +228,13 @@ const events = [
   },
   {
     id: "8",
+    type: EventType.NewsEvent,
     msg: "Interest Rates Hike Adds to Market Volatility, Raises Worries of Slowdown",
-
     duration: 9000,
     delta: -0.5,
     forceDirection: null,
     addPlayers: 8,
-    marketLoop: {
+    marketLoopConfig: {
       minTurnDelay: 150,
       maxTurnDelay: 350,
       skipTurnThreshold: 0.25,
@@ -146,13 +242,13 @@ const events = [
   },
   {
     id: "9",
+    type: EventType.NewsEvent,
     msg: "Inflation Rate Hits Highest Level in Years, Fueling Concerns About Rising Prices",
-
     duration: 9000,
-    delta: .2,
+    delta: 0.2,
     forceDirection: -1,
     addPlayers: 6,
-    marketLoop: {
+    marketLoopConfig: {
       minTurnDelay: 150,
       maxTurnDelay: 350,
       skipTurnThreshold: 0.25,
@@ -160,12 +256,13 @@ const events = [
   },
   {
     id: "10",
+    type: EventType.NewsEvent,
     msg: "Unemployment Rate Drops to Record Low, Boosting Confidence in Economy",
     duration: 3500,
-    delta: -.2,
+    delta: -0.2,
     forceDirection: 1,
     addPlayers: 6,
-    marketLoop: {
+    marketLoopConfig: {
       minTurnDelay: 150,
       maxTurnDelay: 350,
       skipTurnThreshold: 0.1,
@@ -173,12 +270,13 @@ const events = [
   },
   {
     id: "11",
+    type: EventType.NewsEvent,
     msg: "Unemployment Rate Rises Unexpectedly, Raising Concerns of Economic Slowdown",
     duration: 3500,
     delta: 0.2,
     forceDirection: -1,
     addPlayers: 4,
-    marketLoop: {
+    marketLoopConfig: {
       minTurnDelay: 150,
       maxTurnDelay: 350,
       skipTurnThreshold: 0.33,
@@ -187,13 +285,14 @@ const events = [
 
   {
     id: "12",
+    type: EventType.NewsEvent,
     msg: "Political Stability and Government Action Boosts Investor Confidence",
     sentiment: "bullish",
     duration: 7000,
-    delta: -.2,
+    delta: -0.2,
     forceDirection: 1,
     addPlayers: 6,
-    marketLoop: {
+    marketLoopConfig: {
       minTurnDelay: 150,
       maxTurnDelay: 350,
       skipTurnThreshold: 0.125,
@@ -201,13 +300,13 @@ const events = [
   },
   {
     id: "13",
+    type: EventType.NewsEvent,
     msg: "Political Turmoil and Uncertainty Leads to Market Sell-Off",
-
     duration: 7000,
-    delta: -.2,
+    delta: -0.2,
     forceDirection: -1,
     addPlayers: 6,
-    marketLoop: {
+    marketLoopConfig: {
       minTurnDelay: 150,
       maxTurnDelay: 350,
       skipTurnThreshold: 0.125,

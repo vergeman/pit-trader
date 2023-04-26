@@ -10,6 +10,7 @@ import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
 import InfoTabs from "./infopanel/InfoTabs.jsx";
 import { useGameContext, GameState } from "./GameContext.jsx";
 import { Message } from "./infopanel/Message";
+import { EventType } from "./player/Event";
 
 export default function CameraGesture(props) {
   /* default bootstrap size */
@@ -66,18 +67,62 @@ export default function CameraGesture(props) {
   }, [gesture]);
 
   /*
-   * NewsManager
+   * EventManager
    */
 
   useEffect(() => {
-    //console.log("[CameraGesture] newsManager");
+    if (gameContext.state == GameState.LOSE) {
+      props.marketLoop.stop();
+      return;
+    }
 
-    const event = props.marketLoop.calcEvent();
-    if (event) {
+    //console.log("[CameraGesture] EventManager");
+    const event = props.eventManager.generate();
+
+    //issue: we do need to poll so can't just return
+    if (!event) return;
+
+    //one time init
+    if (event && event.type == EventType.GestureDecisionEvent) {
+      console.log(
+        "[CameraGesture] EventManager EventType.GestureDecisionEvent"
+      );
+
+      event.dispatchHandler = (msg) => {
+        infoPanel.gestureDecisionEventDispatch(msg);
+      };
+
+      //initial active state
+      console.log("[CameraGesture]", event);
+      props.eventManager.executeEvent();
+      const msg = {
+        type: EventType.GestureDecisionEvent,
+        value: event,
+      };
+
+      infoPanel.activeTabDispatch({
+        type: "select",
+        value: "gesture-decision-event",
+      });
+
+      infoPanel.gestureDecisionEventDispatch(msg);
+    }
+
+    /*
+     * News
+     */
+
+    if (event && event.type == EventType.NewsEvent) {
+      props.eventManager.executeEvent();
+      //news
       const msg = { type: Message.NewsEvent, value: event };
       infoPanel.messagesDispatch(msg);
     }
   }, [gesture]);
+
+  /*
+   * calcGesture (gesture poll)
+   */
 
   //useCallback to cache rerender of Camera by calcGesture (due to setGesture)
   const calcGesture = useCallback(

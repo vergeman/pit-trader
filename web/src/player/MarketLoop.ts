@@ -3,12 +3,10 @@ import Player from "./Player";
 import MatchingEngine from "../engine/MatchingEngine";
 import { Order } from "../engine/Order";
 import { TransactionReport } from "../engine/Order";
-import { NewsManager, Event } from "./NewsManager";
 
 class MarketLoop {
   private _npcPlayerManager: NPCPlayerManager;
   private _me: MatchingEngine;
-  private _newsManager: NewsManager;
   private _priceSeed: number;
   private _qtySeed: number;
   private readonly _defaultMinTurnDelay: number;
@@ -30,7 +28,6 @@ class MarketLoop {
   }) {
     this._npcPlayerManager = npcPlayerManager;
     this._me = npcPlayerManager.me;
-    this._newsManager = new NewsManager();
     this._priceSeed = priceSeed;
     this._qtySeed = qtySeed || 1;
     this._defaultMinTurnDelay = 150;
@@ -59,9 +56,6 @@ class MarketLoop {
 
   get npcPlayerManager(): NPCPlayerManager {
     return this._npcPlayerManager;
-  }
-  get newsManager(): NewsManager {
-    return this._newsManager;
   }
   get me(): MatchingEngine {
     return this._me;
@@ -98,6 +92,9 @@ class MarketLoop {
     minTurnDelay: number = this._defaultMinTurnDelay,
     maxTurnDelay: number = this._defaultMaxTurnDelay
   ): number {
+
+    if (this._isActive) return this._loopInterval;
+
     const numPlayers = this.npcPlayerManager.numPlayers;
     console.log(
       "[marketLoop] start()",
@@ -185,27 +182,6 @@ class MarketLoop {
     return this.priceSeed;
   }
 
-  calcEvent() {
-    //console.log("[marketLoop] calcEvent");
-
-    const prob = Math.random();
-
-    //TODO: tie into fps somehow, this gets polled
-    //there are a lot of calcEvents even 99% happens fairly often
-    if (prob > 0.99) {
-      //each event has some combinations of effects
-      const event = this.newsManager.createEvent();
-
-      if (!event) return false;
-
-      this.newsManager.executeEvent(event, this);
-
-      return event;
-    }
-
-    return false;
-  }
-
   //run()
   //each player takes a turn() - undergoes a series of actions
   //each player's turn takes maxTurnDelay
@@ -228,12 +204,7 @@ class MarketLoop {
     for (const player of players) {
       if (player.markRemoved) continue;
 
-      console.log(
-        "TURN:",
-        player.name,
-        players.length,
-        this.newsManager.hasEvent
-      );
+      console.log("TURN:", player.name, players.length);
       //delay = [minTurnDelay, maxTurnDelay] each turn takes total of
       //maxTurnDelay, but action done randomly in that period
       const delay =
