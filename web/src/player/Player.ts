@@ -22,6 +22,7 @@ export class Player {
   private _forceDirection: 1 | -1 | null;
   private _maxPnL: number;
   private _lostPnL: number | null;
+  private _bonus: number;
   private _orders: Order[];
   private readonly _config: PlayerConfig;
 
@@ -42,6 +43,7 @@ export class Player {
     this._forceDirection = null;
     this._maxPnL = 0;
     this._lostPnL = null;
+    this._bonus = 0;
     this._orders = [];
 
     this._config = config;
@@ -98,10 +100,21 @@ export class Player {
   set lostPnL(val) {
     this._lostPnL = val;
   }
+  get bonus(): number {
+    return this._bonus;
+  }
+  set bonus(num: number) {
+    this._bonus = num;
+  }
+  addBonus(bonus: number): number {
+    this.bonus += bonus;
+    return this.bonus;
+  }
   reset(): void {
     this.orders = [];
     this.maxPnL = 0;
     this.lostPnL = null;
+    this.bonus = 0;
   }
 
   hasLiveBids(): boolean {
@@ -147,8 +160,8 @@ export class Player {
         //console.log("MTM", mtm, price, fillPrice, transaction)
       }
     }
-    this.maxPnL = Math.max(pnl, this.maxPnL);
-    return pnl;
+    this.maxPnL = Math.max(pnl, this.maxPnL) + this.bonus;
+    return pnl + this.bonus;
   }
 
   //avgPrice of executed trades

@@ -45,6 +45,12 @@ export default function GestureDecisionEvent(props) {
             <h4>{gestureDecisionEvent.state_msg[state]}&nbsp;</h4>
           </div>
         )}
+
+        {state === GestureDecisionEventState.Win && (
+          <div>
+            <h5>Bonus: ${gestureDecisionEvent.bonus}&nbsp;</h5>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import { OrderType, Order } from "../engine/Order";
 import { GestureDecision } from "../gesture/GestureDecision";
 import { MarketLoop } from "./MarketLoop";
 import { GestureAction } from "../gesture/Gesture";
-
+import Player from "../player/Player";
 //corresponds to component visuals
 export enum GestureDecisionEventState {
   None,
@@ -23,7 +23,7 @@ export interface IGestureDecisionEvent extends IEvent {
     orderType: OrderType;
   };
   gestureDecisionEventState: GestureDecisionEventState;
-  state_msg: { [key: string]: string },
+  state_msg: { [key: string]: string };
   dispatchHandler: (msg: any) => void;
 }
 
@@ -54,7 +54,7 @@ export class GestureDecisionEvent
     bonus,
     action,
     gesture,
-    state_msg = {}
+    state_msg = {},
   }: {
     id: string;
     type: EventType;
@@ -101,8 +101,8 @@ export class GestureDecisionEvent
   }
   //this is callback on successful gesture
   //we need access to infoPanel context/reducer
-  onSubmitOrder(order: Order) {
-    this.setGestureDecisionOrderMatch(order);
+  onSubmitOrder(player: Player, order: Order) {
+    this.setGestureDecisionOrderMatch(player, order);
 
     //state will be checked in boss reducer
     //NB: this is Message.NewsEvent to temp show on infopanel
@@ -182,7 +182,7 @@ export class GestureDecisionEvent
     this.gestureDecisionEventState = GestureDecisionEventState.None;
   }
 
-  setGestureDecisionOrderMatch(order: Order) {
+  setGestureDecisionOrderMatch(player: Player, order: Order) {
     /*
      * Match
      */
@@ -212,6 +212,7 @@ export class GestureDecisionEvent
     //MATCH
     if (this.gestureDecisionEventState == GestureDecisionEventState.Win) {
       //TODO: exit early
+      player.addBonus(this.bonus);
       this.clearTimeouts();
       this.end();
     }
