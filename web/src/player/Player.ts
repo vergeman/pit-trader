@@ -160,7 +160,7 @@ export class Player {
         //console.log("MTM", mtm, price, fillPrice, transaction)
       }
     }
-    this.maxPnL = Math.max(pnl, this.maxPnL) + this.bonus;
+    this.maxPnL = Math.max(pnl + this.bonus, this.maxPnL);
     return pnl + this.bonus;
   }
 

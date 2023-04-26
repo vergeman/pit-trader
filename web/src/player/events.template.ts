@@ -50,7 +50,7 @@ export const buildGestureDecisionEventParams = (gde: any, price: number) => {
 
   for (const [k, v] of Object.entries(state_msg)) {
     const val = (v as string)
-      .replace("{QTY}", gesture.qty.toString())
+      .replace("{QTY}", Math.abs(gesture.qty).toString())
       .replace("{PRICE}", gesture.price.toString());
     state_msg[k] = val;
   }
