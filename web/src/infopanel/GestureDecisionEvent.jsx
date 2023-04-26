@@ -6,49 +6,46 @@ export default function GestureDecisionEvent(props) {
   const gestureDecisionEvent = props.gestureDecisionEvent || {};
   const state = gestureDecisionEvent.gestureDecisionEventState;
   const action = gestureDecisionEvent.action;
-  const msg = gestureDecisionEvent.state_msg[`${state}-${action}`];
+  const market_msg =
+    gestureDecisionEvent.state_msg[
+      `${GestureDecisionEventState.Active}-${action}`
+    ];
 
   //TODO: add time countdown
   //TODO: trigger bonus in Win
-  switch (state) {
-    case GestureDecisionEventState.Active:
-      text = "Active";
-      break;
-    case GestureDecisionEventState.NoMatch:
-      text = "Active";
-      break;
-    case GestureDecisionEventState.Lost:
-      text = "You Lose!";
-      break;
-    case GestureDecisionEventState.Win:
-      text = "You WIN!";
-      break;
-    case GestureDecisionEventState.None:
-    default:
-      text = "";
-  }
 
   //none - empty
-  if (state == GestureDecisionEventState.None) {
-    return (
-      <div>-</div>
-    );
+  if (state === GestureDecisionEventState.None) {
+    return <div>No Challenges</div>;
   }
 
   //active, no match, //lost/win - 'template'
   return (
-    <div>
-      <h3>{text}</h3>
+    <div className="d-flex mt-3">
+      <div className="px-3">
+        <img src={gestureDecisionEvent.img} alt={gestureDecisionEvent.id} />
+      </div>
 
-      <img src={gestureDecisionEvent.img} alt={gestureDecisionEvent.id}/>
+      <div className="d-flex flex-column justify-content-evenly px-4">
+        {[
+          GestureDecisionEventState.Active,
+          GestureDecisionEventState.NoMatch,
+        ].includes(state) && (
+          <div>
+            <h4>{market_msg}</h4>
+          </div>
+        )}
 
-      <p>{msg}</p>
-
-      {state == GestureDecisionEventState.NoMatch &&
-        <p>
-          Wrong - try again
-        </p>
-      }
+        {[
+          GestureDecisionEventState.NoMatch,
+          GestureDecisionEventState.Win,
+          GestureDecisionEventState.Lost,
+        ].includes(state) && (
+          <div>
+            <h4>{gestureDecisionEvent.state_msg[state]}&nbsp;</h4>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

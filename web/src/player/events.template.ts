@@ -68,10 +68,6 @@ export const buildGestureDecisionEventParams = (gde: any, price: number) => {
   };
 };
 
-//trickster
-//hipster
-//starwars
-//death
 
 export const gestureDecisionEvents = [
   //trickster
@@ -82,9 +78,9 @@ export const gestureDecisionEvents = [
       [`${GestureDecisionEventState.Active}-${GestureAction.Buy}`]: `Let's see what happens. Pay {PRICE} for {QTY}`,
       [`${GestureDecisionEventState.Active}-${GestureAction.Sell}`]:
         "Sell {QTY} at {PRICE}",
-      [GestureDecisionEventState.NoMatch]: "No Match, try again",
-      [GestureDecisionEventState.Lost]: "You lost",
-      [GestureDecisionEventState.Win]: "You win",
+      [GestureDecisionEventState.NoMatch]: "Try again, slick.",
+      [GestureDecisionEventState.Lost]: "Better luck next time.",
+      [GestureDecisionEventState.Win]: "Nice job!",
     },
   },
 
@@ -95,10 +91,39 @@ export const gestureDecisionEvents = [
     state_msg: {
       [`${GestureDecisionEventState.Active}-${GestureAction.Buy}`]: `Pay {PRICE} for {QTY} - if you've heard of it.`,
       [`${GestureDecisionEventState.Active}-${GestureAction.Sell}`]:
-        "Sell {QTY} at {PRICE}",
-      [GestureDecisionEventState.NoMatch]: "hi",
-      [GestureDecisionEventState.Lost]: "You lost",
-      [GestureDecisionEventState.Win]: "You win",
+        "Sell {QTY} at {PRICE} - I was selling before it was cool.",
+      [GestureDecisionEventState.NoMatch]: "Not it, man.",
+      [GestureDecisionEventState.Lost]: "Your loss",
+      [GestureDecisionEventState.Win]: "Way to go, Ace!",
+    },
+  },
+
+  //starwars
+  {
+    id: "starwars-1",
+    img: `${process.env.PUBLIC_URL}/events/starwars.png`,
+    state_msg: {
+      [`${GestureDecisionEventState.Active}-${GestureAction.Buy}`]: `Ootini! Pay {PRICE} for {QTY}.`,
+      [`${GestureDecisionEventState.Active}-${GestureAction.Sell}`]:
+        "Jotadee, Sell {QTY} at {PRICE}.",
+      [GestureDecisionEventState.NoMatch]: "Koo nee tang, no match.",
+      [GestureDecisionEventState.Lost]: "You lose.",
+      [GestureDecisionEventState.Win]: "Suka! Well done!",
+    },
+  },
+
+  //death
+  {
+    id: "death-1",
+    img: `${process.env.PUBLIC_URL}/events/death.png`,
+    state_msg: {
+      [`${GestureDecisionEventState.Active}-${GestureAction.Buy}`]: `Pay {PRICE} for {QTY}. Or else.`,
+      [`${GestureDecisionEventState.Active}-${GestureAction.Sell}`]:
+        "Sell {QTY} at {PRICE}. Or else.",
+      [GestureDecisionEventState.NoMatch]: "Nervous? You keep messing up.",
+      [GestureDecisionEventState.Lost]: "I'll be seeing you soon.",
+      [GestureDecisionEventState.Win]:
+        "Looks like you'll live to trade another day.",
     },
   },
 ];
