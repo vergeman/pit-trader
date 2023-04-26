@@ -6,6 +6,7 @@ import MarketLoop from "../player/MarketLoop";
 import Player from "../player/Player";
 import { OrderType, OrderStatus, Order } from "../engine/Order";
 import Message from "../infopanel/Message.js";
+import RiskManager from "../player/RiskManager";
 
 export enum RenderState {
   GESTURE_DECISION, //vanilla gesture decision (partial order build)
@@ -26,6 +27,7 @@ export class GestureDecision {
   public me: MatchingEngine;
   public marketLoop: MarketLoop;
   public player: Player;
+  public riskManager: RiskManager;
 
   private qtySM: NumberSM;
   private priceSM: NumberSM;
@@ -44,12 +46,14 @@ export class GestureDecision {
     me: MatchingEngine,
     marketLoop: MarketLoop,
     player: Player,
+    riskManager: RiskManager,
     timeout: number = 750,
     renderStateTimeout: number = 1000
   ) {
     this.me = me;
     this.marketLoop = marketLoop;
     this.player = player;
+    this.riskManager = riskManager;
 
     this.qtySM = new NumberSM(
       GestureType.Qty,

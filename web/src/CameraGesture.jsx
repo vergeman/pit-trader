@@ -189,6 +189,7 @@ export default function CameraGesture(props) {
               <PlayerStatus
                 player={props.player}
                 marketLoop={props.marketLoop}
+                riskManager={props.riskManager}
               />
               <MatchingEngineView
                 me={props.me}
