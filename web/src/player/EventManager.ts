@@ -69,7 +69,7 @@ export class EventManager {
 
     //NewsEvent
     const randomProb = Math.random();
-    if (randomProb > 1) {
+    if (randomProb > 0.25) {
       const params = getRandom(events);
       const event = new NewsEvent({
         ...params,
