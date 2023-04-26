@@ -26,9 +26,29 @@ export default class RiskManager {
   //check limits before submitting additional order
   check(player: Player, order: Order) {}
 
-  isWarn(player: Player) {}
+  warnLimit(player: Player, orders?: Order[]): boolean {
+    const _calcPositionLimit = this._calcPositions(player, orders);
+    return _calcPositionLimit >= this._warnPositionLimit;
+  }
 
-  calcLimit(player: Player, orders: Order[]) {}
+  exceedsLimit(player: Player, orders?: Order[]): boolean {
+    const _calcPositionLimit = this._calcPositions(player, orders);
+    return _calcPositionLimit > this._positionLimit;
+  }
 
-  _calcPositions(player: Player, orders: Order[]) {}
+  //returns sum: current executed position + current working orders position + any
+  //potential orders
+  _calcPositions(player: Player, potentialOrders?: Order[]): number {
+    //calc potential orders - these have not been submitted to engine or
+    //attached to player; so no notion of partial fills
+    const potentialPosition = (potentialOrders || []).reduce(
+      (acc: number, order: Order) => {
+        return acc + order.qty;
+      },
+      0
+    );
+
+    //calc player executed, orders submitted but not filled, and potential order total
+    return player.openPosition() + player.workingPosition() + potentialPosition;
+  }
 }
