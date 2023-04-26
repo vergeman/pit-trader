@@ -26,7 +26,12 @@ describe("RiskManager", () => {
     const riskManager = new RiskManager({ ...config });
     const player = new Player("Test");
 
-    expect(riskManager._calcPositions(player)).toBe(0);
+    expect(riskManager._calcPositions(player)).toEqual({
+      total: 0,
+      open: 0,
+      working: 0,
+      orders: 0,
+    });
 
     const o1 = new Order("test", OrderType.Limit, 15, 100);
     const o2 = new Order("test2", OrderType.Limit, -10, 100);
@@ -35,17 +40,32 @@ describe("RiskManager", () => {
     me.process(o2);
 
     //me.process() -> position 10 lots, working 5, 0 pre-submit
-    expect(riskManager._calcPositions(player)).toBe(15);
+    expect(riskManager._calcPositions(player)).toEqual({
+      total: 15,
+      open: 10,
+      working: 5,
+      orders: 0,
+    }); //15
 
     //no prospective orders
-    expect(riskManager._calcPositions(player, [])).toBe(15);
+    expect(riskManager._calcPositions(player, [])).toEqual({
+      total: 15,
+      open: 10,
+      working: 5,
+      orders: 0,
+    }); //15
 
     //prospective orders
     const orders = [
       new Order("test", OrderType.Limit, 5, 100),
       new Order("test", OrderType.Limit, 25, 100),
     ];
-    expect(riskManager._calcPositions(player, orders)).toBe(15 + 30);
+    expect(riskManager._calcPositions(player, orders)).toEqual({
+      total: 45,
+      open: 10,
+      working: 5,
+      orders: 30,
+    }); //15 + 30
   });
 
   it("exceedsLimit: takes _calcPositions value, and tests against positionLimit threshold(used in GGEvent: submitOrder", () => {
@@ -58,7 +78,7 @@ describe("RiskManager", () => {
     const riskManager = new RiskManager({ ...config });
     const player = new Player("Test");
 
-    expect(riskManager.exceedsLimit(player)).toBeFalsy();
+    expect(riskManager.exceedsLimit(player).exceedsLimit).toBeFalsy();
 
     const o1 = new Order("test", OrderType.Limit, 15, 100);
     const o2 = new Order("test2", OrderType.Limit, -10, 100);
@@ -68,10 +88,10 @@ describe("RiskManager", () => {
     me.process(o2);
 
     //me.process execute 10 lots
-    expect(riskManager.exceedsLimit(player)).toBeFalsy(); //10
+    expect(riskManager.exceedsLimit(player).exceedsLimit).toBeFalsy(); //10
 
     const o3 = new Order("test", OrderType.Limit, 20, 100);
-    expect(riskManager.exceedsLimit(player, [o3])).toBeTruthy(); //30 > 25
+    expect(riskManager.exceedsLimit(player, [o3]).exceedsLimit).toBeTruthy(); //30 > 25
   });
 
   it("warnLimit: takes _calcPositions value and tests against warnPositionLimit (used in playerStatus)", () => {
@@ -84,7 +104,7 @@ describe("RiskManager", () => {
     const riskManager = new RiskManager({ ...config });
     const player = new Player("Test");
 
-    expect(riskManager.exceedsLimit(player)).toBeFalsy();
+    expect(riskManager.exceedsLimit(player).warnLimit).toBeFalsy();
 
     const o1 = new Order("test", OrderType.Limit, 15, 100);
     const o2 = new Order("test2", OrderType.Limit, -10, 100);
@@ -94,11 +114,10 @@ describe("RiskManager", () => {
     me.process(o2);
 
     //me.process execute 10 lots, working 5
-    expect(riskManager.exceedsLimit(player)).toBeFalsy(); //15
+    expect(riskManager.exceedsLimit(player).warnLimit).toBeFalsy(); //15
 
     const o3 = new Order("test", OrderType.Limit, 6, 100);
-    expect(riskManager.warnLimit(player, [o3])).toBeTruthy(); //21 > 20 warn
-    expect(riskManager.exceedsLimit(player, [o3])).toBeFalsy(); //21 !> 25
+    expect(riskManager.warnLimit(player, [o3]).warnLimit).toBeTruthy(); //21 > 20 warn
+    expect(riskManager.exceedsLimit(player, [o3]).exceedsLimit).toBeFalsy(); //21 !> 25
   });
-
 });
