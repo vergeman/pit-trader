@@ -72,7 +72,9 @@ export default function Main(props) {
   useEffect(() => {
     switch (gameContext.state) {
       case GameState.INIT:
-      //any pre stuff?
+        //any pre stuff?
+        gameContext.setState(GameState.RUN);
+      break;
       case GameState.RUN:
         marketLoop.start();
         break;
@@ -110,7 +112,7 @@ export default function Main(props) {
       marketLoop.init();
 
       gameContext.setGameID(gameContext.gameID + 1);
-      gameContext.setState(GameState.RUN);
+      gameContext.setState(GameState.INIT);
     }
   };
 
