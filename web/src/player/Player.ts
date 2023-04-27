@@ -229,12 +229,23 @@ export class Player {
     return false;
   }
 
-  //TODO: augment order.execute to have player carry a netPosition equivalent
-  //variable vs this calcuation function
   openPosition(): number {
     return this.orders.reduce((acc: number, order: Order) => {
       return acc + order.qtyFilled;
     }, 0);
+  }
+
+
+  //abs: false net number position submitted as orders
+  //abs: true - want to avoid laddering e.g. +10/-10, +10/10 to that would
+  //otherwise allow infinite position as long as both sides net avoid sum position detection
+  workingPosition(abs: boolean = false): number {
+    return this.orders
+      .filter((order) => order.status == OrderStatus.Live)
+      .reduce((acc: number, order: Order) => {
+        const qty = abs ? Math.abs(order.qty) : order.qty;
+        return acc + qty;
+      }, 0);
   }
 
   /*

@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { Container } from "react-bootstrap";
 import CameraGesture from "./CameraGesture.jsx";
+import RiskManager from "./player/RiskManager";
 import MatchingEngine from "./engine/MatchingEngine";
 import NPCPlayerManager from "./player/NPCPlayerManager";
 import Player from "./player/Player";
@@ -19,10 +20,16 @@ import {
 
 export default function Main(props) {
   const config = {
+    positionLimit: 25,
+    warnPositionLimit: 20,
+    maxOrderLimit: 40,
     tick: 1000,
     limitPL: -1000,
   };
 
+  const [riskManager, setRiskManager] = useState(
+    new RiskManager({ ...config })
+  );
   const [me, setMe] = useState(new MatchingEngine());
   const [npcPlayerManager, setNPCPlayerManager] = useState(
     new NPCPlayerManager(me, [
@@ -44,6 +51,7 @@ export default function Main(props) {
       me,
       marketLoop,
       player,
+      riskManager,
       750, //gesture Timeout
       1000 //gestureDecision view timeout
     )
@@ -123,6 +131,7 @@ export default function Main(props) {
         player={player}
         marketLoop={marketLoop}
         eventManager={eventManager}
+        riskManager={riskManager}
         gestureDecision={gestureDecision}
       />
     </Container>

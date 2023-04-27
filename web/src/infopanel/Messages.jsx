@@ -12,14 +12,21 @@ export default function Messages(props) {
       </thead>
       <tbody>
         {props.messages.map((message, i) => {
+
           // highlight while event is active
-          let isActive = false;
-          if (message.type == Message.NewsEvent) {
-            isActive = message.endTime > Date.now();
+          let colorClass = "";
+          if (message.type == Message.NewsEvent &&
+            message.endTime > Date.now()) {
+            colorClass = "text-warning";
+          }
+
+          //position limits error
+          if (message.type == Message.ErrorSubmitOrder) {
+            colorClass = "text-danger";
           }
 
           return (
-            <tr className={isActive ? "text-warning" : ""} key={`message-${i}`}>
+            <tr className={colorClass} key={`message-${i}`}>
               <td>
                 {message.time &&
                   message.time.toLocaleTimeString([], {

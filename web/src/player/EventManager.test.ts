@@ -3,6 +3,7 @@ import Player from "./Player";
 import NPCPlayerManager from "./NPCPlayerManager";
 import MarketLoop from "./MarketLoop";
 import EventManager from "./EventManager";
+import RiskManager from "../player/RiskManager";
 import GestureDecision from "../gesture/GestureDecision";
 
 describe("EventManager", () => {
@@ -15,7 +16,9 @@ describe("EventManager", () => {
     ];
     const npcPlayerManager = new NPCPlayerManager(me, initPlayers);
     const ml = new MarketLoop({ npcPlayerManager, priceSeed: 100, qtySeed: 4 });
-    const gd = {} as GestureDecision;
+    const p = new Player("test");
+    const riskManager = new RiskManager({});
+    const gd = new GestureDecision(me, ml, p, riskManager);
     const eventManager = new EventManager(ml, gd);
     const numIter = 5;
     let i = 0;

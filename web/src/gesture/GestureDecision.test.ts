@@ -5,7 +5,7 @@ import MatchingEngine from "../engine/MatchingEngine";
 import Player from "../player/Player";
 import NPCPlayerManager from "../player/NPCPlayerManager";
 import MarketLoop from "../player/MarketLoop";
-import { isNonNullChain } from "typescript";
+import RiskManager from "../player/RiskManager";
 
 const TIMEOUT = 50; //speed this up for tests. Typically 750 seems human-like.
 
@@ -13,10 +13,11 @@ describe("GestureDecision", () => {
   it("calc() gesture updates GestureType.Qty after Timeout via NumberSM", async () => {
     const me = new MatchingEngine();
     const npcPlayerManager = new NPCPlayerManager(me, []);
-    const marketLoop = new MarketLoop({npcPlayerManager, priceSeed: 100, qtySeed: 10});
+    const marketLoop = new MarketLoop({ npcPlayerManager, priceSeed: 100, qtySeed: 10 });
     const p = new Player("test");
+    const riskManager = new RiskManager({});
 
-    const gestureDecision = new GestureDecision(me, marketLoop, p, TIMEOUT);
+    const gestureDecision = new GestureDecision(me, marketLoop, p, riskManager, TIMEOUT);
     const gesture = new Gesture(GestureType.Qty, GestureAction.Buy, 3, 1);
     gestureDecision.triggerValidOrder = jest.fn();
     gestureDecision.calc(gesture);
@@ -34,8 +35,9 @@ describe("GestureDecision", () => {
     const npcPlayerManager = new NPCPlayerManager(me, []);
     const marketLoop = new MarketLoop({npcPlayerManager, priceSeed: 100, qtySeed: 10});
     const p = new Player("test");
+    const riskManager = new RiskManager({});
 
-    const gestureDecision = new GestureDecision(me, marketLoop, p, TIMEOUT);
+    const gestureDecision = new GestureDecision(me, marketLoop, p, riskManager, TIMEOUT);
     const gesture = new Gesture(GestureType.Price, GestureAction.Sell, 2, 1);
     gestureDecision.triggerValidOrder = jest.fn();
     gestureDecision.calc(gesture);
@@ -55,8 +57,9 @@ describe("GestureDecision", () => {
     const marketLoop = new MarketLoop({npcPlayerManager, priceSeed: 100, qtySeed: 10});
     marketLoop.getPrice = jest.fn(() => 100);
     const p = new Player("test");
+    const riskManager = new RiskManager({});
 
-    const gestureDecision = new GestureDecision(me, marketLoop, p, TIMEOUT);
+    const gestureDecision = new GestureDecision(me, marketLoop, p, riskManager, TIMEOUT);
     const gestureQty = new Gesture(GestureType.Qty, GestureAction.Sell, -2, 1);
     const gesturePrice = new Gesture(GestureType.Price, GestureAction.Sell, 8, 1);
 
@@ -79,8 +82,9 @@ describe("GestureDecision", () => {
     const npcPlayerManager = new NPCPlayerManager(me, []);
     const marketLoop = new MarketLoop({npcPlayerManager, priceSeed: 100, qtySeed: 10});
     const p = new Player("test");
+    const riskManager = new RiskManager({});
 
-    const gestureDecision = new GestureDecision(me, marketLoop, p, TIMEOUT);
+    const gestureDecision = new GestureDecision(me, marketLoop, p, riskManager, TIMEOUT);
     const gestureQtyL = new Gesture(GestureType.Qty, GestureAction.Buy, 2, 1);
     const gesturePriceL = new Gesture(GestureType.Price, GestureAction.Buy, 2, 1);
     const gestureQtyM = new Gesture(GestureType.Qty, GestureAction.Sell, -1, 1);
@@ -122,8 +126,9 @@ describe("GestureDecision", () => {
     const npcPlayerManager = new NPCPlayerManager(me, []);
     const marketLoop = new MarketLoop({npcPlayerManager, priceSeed: 100, qtySeed: 10});
     const p = new Player("test");
+    const riskManager = new RiskManager({});
 
-    const gestureDecision = new GestureDecision(me, marketLoop, p, TIMEOUT);
+    const gestureDecision = new GestureDecision(me, marketLoop, p, riskManager, TIMEOUT);
     const gestureQtyL = new Gesture(GestureType.Qty, GestureAction.Buy, 2, 1);
     const gesturePriceL = new Gesture(GestureType.Price, GestureAction.Buy, 2, 1);
     const gesturePriceM = new Gesture(
@@ -158,8 +163,9 @@ describe("GestureDecision", () => {
     const npcPlayerManager = new NPCPlayerManager(me, []);
     const marketLoop = new MarketLoop({npcPlayerManager, priceSeed: 100, qtySeed: 10});
     const p = new Player("test");
+    const riskManager = new RiskManager({});
 
-    const gestureDecision = new GestureDecision(me, marketLoop, p, TIMEOUT);
+    const gestureDecision = new GestureDecision(me, marketLoop, p, riskManager, TIMEOUT);
     const gestureQtyL = new Gesture(GestureType.Qty, GestureAction.Buy, 2, 1);
     const gestureCancel = new Gesture(
       GestureType.Action,
@@ -185,8 +191,9 @@ describe("GestureDecision", () => {
     const npcPlayerManager = new NPCPlayerManager(me, []);
     const marketLoop = new MarketLoop({npcPlayerManager, priceSeed: 100, qtySeed: 10});
     const p = new Player("test");
+    const riskManager = new RiskManager({});
 
-    const gestureDecision = new GestureDecision(me, marketLoop, p, TIMEOUT);
+    const gestureDecision = new GestureDecision(me, marketLoop, p, riskManager, TIMEOUT);
     const gestureQtyL = new Gesture(GestureType.Qty, GestureAction.Buy, 2, 1);
     const gesturePriceL = new Gesture(GestureType.Price, GestureAction.Buy, 2, 1);
     const gestureCancel = new Gesture(
@@ -224,7 +231,8 @@ describe("GestureDecision calcOrderPrice scenarios", () => {
     const npcPlayerManager = new NPCPlayerManager(me, []);
     const marketLoop = new MarketLoop({npcPlayerManager, priceSeed: 100, qtySeed: 10});
     const p = new Player("test");
-    const gd = new GestureDecision(me, marketLoop, p, TIMEOUT);
+    const riskManager = new RiskManager({});
+    const gd = new GestureDecision(me, marketLoop, p, riskManager, TIMEOUT);
     expect(gd.minDistancePrice([99, 100, 101], 1, 100)).toBe(100);
     expect(gd.minDistancePrice([], 1, 10)).toBe(NaN);
     expect(gd.minDistancePrice([0, 1, 2, -1], 1, 3)).toBe(2);
@@ -235,7 +243,8 @@ describe("GestureDecision calcOrderPrice scenarios", () => {
     const npcPlayerManager = new NPCPlayerManager(me, []);
     const marketLoop = new MarketLoop({npcPlayerManager, priceSeed: 100, qtySeed: 10});
     const p = new Player("test");
-    const gestureDecision = new GestureDecision(me, marketLoop, p, TIMEOUT);
+    const riskManager = new RiskManager({});
+    const gestureDecision = new GestureDecision(me, marketLoop, p, riskManager, TIMEOUT);
     marketLoop.getPrice = jest.fn(() => 100.8); //distance 100.8
 
     expect(gestureDecision.calcOrderPrice(1, 0)).toBe(101); //.8 | .2

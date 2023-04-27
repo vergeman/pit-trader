@@ -13,12 +13,6 @@ export interface OrderMap {
 }
 
 export class MatchingEngine {
-  //Possible classes:
-  //* Order, Transaction (composed of multiple order(s) on each side)
-  //*  Trader/Player class
-  //* RiskCheck(Player, Order)
-  //* Reporter - could just expose Matching Engine bits?
-
   private _bids: Heap<Order>;
   private _offers: Heap<Order>;
   private _transactionReports: TransactionReport[];
@@ -181,7 +175,9 @@ export class MatchingEngine {
   process(order: Order) {
     //choose opposing queue to execute against
     if (order.qty === 0)
-      throw new Error(`Order rejected: bad quantity - ${order.qty}`);
+      throw new Error(`Order rejected: bad quantity: ${order.qty}}`, {
+        cause: { qty: order.qty },
+      });
     let queue = this.offers;
     let oppQueue = this.bids;
     if (order.qty > 0) {
@@ -191,8 +187,20 @@ export class MatchingEngine {
 
     //choose opposing order
     let oppOrder = oppQueue.peek();
-    order.status = OrderStatus.Live;
+    //check if self-executing
+    //quietly allow it for NPC's, but not for live player
+    if (
+      oppOrder &&
+      order.player_isLive &&
+      order.player_id == oppOrder.player_id
+    ) {
+      order.reject();
+      throw new Error(`Wash Trade Restriction: cannot trade with yourself.`, {
+        cause: order,
+      });
+    }
 
+    order.status = OrderStatus.Live;
     let transactionReport: TransactionReport | null = null;
 
     // MARKET

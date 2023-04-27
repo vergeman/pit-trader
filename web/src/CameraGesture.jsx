@@ -58,6 +58,7 @@ export default function CameraGesture(props) {
 
     if (props.player && props.player.hasLost(price)) {
       props.marketLoop.stop();
+      props.gestureDecision.enable = false;
       gameContext.setState(GameState.LOSE);
       console.log("You Lose", props.player.lostPnL);
     } else if (gesture !== null) {
@@ -88,8 +89,15 @@ export default function CameraGesture(props) {
         "[CameraGesture] EventManager EventType.GestureDecisionEvent"
       );
 
-      event.dispatchHandler = (msg) => {
+      event.dispatchHandler = (msg, tabName = null) => {
         infoPanel.gestureDecisionEventDispatch(msg);
+
+        if (tabName) {
+          infoPanel.activeTabDispatch({
+            type: "select",
+            value: tabName,
+          });
+        }
       };
 
       //initial active state
@@ -129,7 +137,6 @@ export default function CameraGesture(props) {
     async (landmarks) => {
       //NB: useCallback ensures React.memo works (execute signature will regen on this
       //comonent render)
-
       if (!classifier) return null;
 
       const probsArgMax = await classifier.classify(landmarks);
@@ -189,6 +196,7 @@ export default function CameraGesture(props) {
               <PlayerStatus
                 player={props.player}
                 marketLoop={props.marketLoop}
+                riskManager={props.riskManager}
               />
               <MatchingEngineView
                 me={props.me}

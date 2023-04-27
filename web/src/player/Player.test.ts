@@ -63,6 +63,36 @@ describe("Player", () => {
       expect(p.openPosition()).toBe(-10);
     });
 
+    it("workingPosition() returns net position of submitted but not filled orders", () => {
+      const p = new Player("test");
+      const me = new MatchingEngine();
+      const o1 = new Order(p.id, OrderType.Limit, 10, 100);
+      const o2 = new Order("123", OrderType.Limit, -3, 100);
+
+      p.addOrder(o1);
+      //submit order: nothing filled
+      me.process(o1);
+      expect(p.openPosition()).toBe(0);
+
+      //bought 3
+      me.process(o2);
+      expect(p.openPosition()).toBe(3);
+      expect(p.workingPosition()).toBe(7);
+
+      //work 3 more bid and 3 more offer
+      //workingPosition and openPosition are net values
+      const o3 = new Order(p.id, OrderType.Limit, 3, 102);
+      const o4 = new Order(p.id, OrderType.Limit, -3, 105);
+      p.addOrder(o3);
+      me.process(o3);
+      p.addOrder(o4);
+      me.process(o4);
+
+      expect(p.openPosition()).toBe(3);
+      expect(p.workingPosition()).toBe(7);
+      expect(p.openPosition() + p.workingPosition()).toBe(3 + 7);
+    });
+
     it("calcPnL() returns MTM value of player's transactions", () => {
       //working orders has no mtm effect
       const p = new Player("test", true, { tick: 1000, limitPL: -1000000 });
@@ -228,7 +258,7 @@ describe("Player", () => {
     expect(p.maxPnL).toBe(30000);
     expect(p.calcPnL(102)).toBe(20000);
     expect(p.maxPnL).toBe(30000);
-  })
+  });
   //pending:
   //needs last traded or best price; market info
   //need to determine if bid or offer order

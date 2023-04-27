@@ -40,6 +40,7 @@ export class Order {
   private _transactions: Transaction[];
   private _price: number;
   private _gesturePrice: number | undefined;
+  private _player_isLive: boolean;
   private _status: OrderStatus;
   private _timestamp: number; //createdAt
   private _updatedAt: number; //updatedAt
@@ -52,7 +53,8 @@ export class Order {
     orderType: OrderType,
     qty: number,
     price: number,
-    gesturePrice?: number
+    gesturePrice?: number,
+    player_isLive?: boolean,
   ) {
     this._player_id = player_id;
     this._orderType = orderType;
@@ -62,6 +64,7 @@ export class Order {
       orderType === OrderType.Limit ? price : Number.NaN
     );
     this._gesturePrice = gesturePrice;
+    this._player_isLive = player_isLive || false;
 
     this._id = uuidv4();
     this._qtyFilled = 0;
@@ -74,6 +77,9 @@ export class Order {
 
   get gesturePrice(): number | undefined {
     return this._gesturePrice;
+  }
+  get player_isLive(): boolean {
+    return this._player_isLive;
   }
 
   execute(oppOrder: Order): TransactionReport {

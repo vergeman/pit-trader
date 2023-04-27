@@ -6,6 +6,7 @@ import MarketLoop from "../player/MarketLoop";
 import Player from "../player/Player";
 import { OrderType, OrderStatus, Order } from "../engine/Order";
 import Message from "../infopanel/Message.js";
+import RiskManager from "../player/RiskManager";
 
 export enum RenderState {
   GESTURE_DECISION, //vanilla gesture decision (partial order build)
@@ -26,6 +27,7 @@ export class GestureDecision {
   public me: MatchingEngine;
   public marketLoop: MarketLoop;
   public player: Player;
+  public riskManager: RiskManager;
 
   private qtySM: NumberSM;
   private priceSM: NumberSM;
@@ -39,17 +41,20 @@ export class GestureDecision {
   private _enableMessages: boolean;
   private _messages: any[];
   private _onSubmitOrder: null | ((player: Player, order: Order) => void);
+  private _enable: boolean; //toggle gesture recognition on/off - lock game on loss
 
   constructor(
     me: MatchingEngine,
     marketLoop: MarketLoop,
     player: Player,
+    riskManager: RiskManager,
     timeout: number = 750,
     renderStateTimeout: number = 1000
   ) {
     this.me = me;
     this.marketLoop = marketLoop;
     this.player = player;
+    this.riskManager = riskManager;
 
     this.qtySM = new NumberSM(
       GestureType.Qty,
@@ -76,6 +81,7 @@ export class GestureDecision {
     this._enableMessages = true;
     this._messages = [];
     this._onSubmitOrder = null;
+    this._enable = true;
   }
 
   get qty(): number | null {
@@ -114,7 +120,12 @@ export class GestureDecision {
   set onSubmitOrder(fn: null | ((player: Player, order: Order) => void)) {
     this._onSubmitOrder = fn;
   }
-
+  get enable(): boolean {
+    return this._enable;
+  }
+  set enable(e: boolean) {
+    this._enable = e;
+  }
   resetMessages(): void {
     this._messages = [];
   }
@@ -147,8 +158,40 @@ export class GestureDecision {
       return;
     }
 
+    const positionLimits = this.riskManager.exceedsLimit(
+      this.player,
+      this.riskManager.positionLimit,
+      [order]
+    );
+    const maxOrderLimits = this.riskManager.exceedsMaxOrder(
+      this.player,
+      this.riskManager.maxOrderLimit,
+      [order]
+    );
+
+    //Position Limit Exceed: [Current: 8, Working: 12]
+    if (positionLimits.exceedsLimit) {
+      const errMsg = `Position Limit Restriction: \
+[Current: ${positionLimits.open}, Working: ${positionLimits.working}]. \
+Order exceeds limit of ${this.riskManager.positionLimit}`;
+      throw new Error(errMsg, { cause: positionLimits });
+    }
+
+    if (maxOrderLimits.exceedsMaxOrder) {
+      const errMsg = `Order Limit Restriction: \
+[Working: ${maxOrderLimits.working}, Submitted: ${maxOrderLimits.orders}]. \
+Order exceeds limit of ${this.riskManager.maxOrderLimit}`;
+      throw new Error(errMsg, { cause: positionLimits });
+    }
+
     this.me.process(order);
     this.player.addOrder(order);
+  }
+
+  handleError(e: Error) {
+    console.error(e.message, e.cause);
+    this.addMessage(Message.ErrorSubmitOrder, e);
+    this.reset();
   }
 
   //NB: distinction between gesturePrice (this.price) and orderPrice (base price + gesturePrice / 10)
@@ -200,7 +243,14 @@ export class GestureDecision {
 
     // MARKET ORDER
     if (this._action === GestureAction.Market && this.qty !== null) {
-      order = new Order(this.player.id, OrderType.Market, this.qty, NaN);
+      order = new Order(
+        this.player.id,
+        OrderType.Market,
+        this.qty,
+        NaN,
+        NaN,
+        this.player.isLive
+      );
       console.log("MARKET", order);
       try {
         this.submitOrder(order);
@@ -223,11 +273,7 @@ export class GestureDecision {
 
         this.addMessage(Message.OrderSubmitted, order);
       } catch (e: any) {
-        //TODO: notify user mechanic with message
-        //1. store in matchingEngine, have it detect change in MatchingView
-        //2. pass a function / setState
-        console.error(e.message);
-        this.reset();
+        this.handleError(e);
       }
 
       this.reset();
@@ -247,7 +293,8 @@ export class GestureDecision {
         OrderType.Limit,
         this.qty,
         orderPrice,
-        this.price
+        this.price,
+        this.player.isLive
       );
       console.log("LIMIT", order);
       try {
@@ -271,8 +318,7 @@ export class GestureDecision {
 
         this.addMessage(Message.OrderSubmitted, order);
       } catch (e: any) {
-        console.error(e.message);
-        this.reset();
+        this.handleError(e);
       }
     }
 
@@ -369,6 +415,7 @@ export class GestureDecision {
   }
 
   reset() {
+    this.enable = true;
     this._qty = null;
     this._price = null;
     this._action = GestureAction.None;
@@ -387,7 +434,7 @@ export class GestureDecision {
    */
   calc(gesture: Gesture) {
     if (!gesture) return;
-
+    if (!this.enable) return;
     //conditionals based on gesture and prior
     //console.log(gesture);
 
