@@ -22,6 +22,7 @@ export default function Main(props) {
   const config = {
     positionLimit: 25,
     warnPositionLimit: 20,
+    maxOrderLimit: 40,
     tick: 1000,
     limitPL: -1000,
   };

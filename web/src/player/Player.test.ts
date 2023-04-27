@@ -80,6 +80,7 @@ describe("Player", () => {
       expect(p.workingPosition()).toBe(7);
 
       //work 3 more bid and 3 more offer
+      //workingPosition and openPosition are net values
       const o3 = new Order(p.id, OrderType.Limit, 3, 102);
       const o4 = new Order(p.id, OrderType.Limit, -3, 105);
       p.addOrder(o3);
@@ -88,8 +89,8 @@ describe("Player", () => {
       me.process(o4);
 
       expect(p.openPosition()).toBe(3);
-      expect(p.workingPosition()).toBe(13);
-      expect(p.openPosition() + p.workingPosition()).toBe(3 + 13);
+      expect(p.workingPosition()).toBe(7);
+      expect(p.openPosition() + p.workingPosition()).toBe(3 + 7);
     });
 
     it("calcPnL() returns MTM value of player's transactions", () => {

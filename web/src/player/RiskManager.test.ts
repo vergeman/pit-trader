@@ -19,7 +19,7 @@ describe("RiskManager", () => {
   it("_calcPositions calculates player positions + those of any to-be submitted orders", () => {
     const config = {
       positionLimit: 25,
-      warnPositionLimit: 5,
+      warnPositionLimit: 20,
     };
 
     const me = new MatchingEngine();
@@ -78,7 +78,7 @@ describe("RiskManager", () => {
     const riskManager = new RiskManager({ ...config });
     const player = new Player("Test");
 
-    expect(riskManager.exceedsLimit(player).exceedsLimit).toBeFalsy();
+    expect(riskManager.exceedsLimit(player, config.positionLimit).exceedsLimit).toBeFalsy();
 
     const o1 = new Order("test", OrderType.Limit, 15, 100);
     const o2 = new Order("test2", OrderType.Limit, -10, 100);
@@ -88,10 +88,10 @@ describe("RiskManager", () => {
     me.process(o2);
 
     //me.process execute 10 lots
-    expect(riskManager.exceedsLimit(player).exceedsLimit).toBeFalsy(); //10
+    expect(riskManager.exceedsLimit(player, config.positionLimit).exceedsLimit).toBeFalsy(); //10
 
     const o3 = new Order("test", OrderType.Limit, 20, 100);
-    expect(riskManager.exceedsLimit(player, [o3]).exceedsLimit).toBeTruthy(); //30 > 25
+    expect(riskManager.exceedsLimit(player, config.positionLimit, [o3]).exceedsLimit).toBeTruthy(); //30 > 25
   });
 
   it("warnLimit: takes _calcPositions value and tests against warnPositionLimit (used in playerStatus)", () => {
@@ -104,7 +104,7 @@ describe("RiskManager", () => {
     const riskManager = new RiskManager({ ...config });
     const player = new Player("Test");
 
-    expect(riskManager.exceedsLimit(player).warnLimit).toBeFalsy();
+    expect(riskManager.exceedsLimit(player, config.warnPositionLimit).exceedsLimit).toBeFalsy();
 
     const o1 = new Order("test", OrderType.Limit, 15, 100);
     const o2 = new Order("test2", OrderType.Limit, -10, 100);
@@ -114,10 +114,40 @@ describe("RiskManager", () => {
     me.process(o2);
 
     //me.process execute 10 lots, working 5
-    expect(riskManager.exceedsLimit(player).warnLimit).toBeFalsy(); //15
+    expect(riskManager.exceedsLimit(player, config.positionLimit).exceedsLimit).toBeFalsy(); //15
 
     const o3 = new Order("test", OrderType.Limit, 6, 100);
-    expect(riskManager.warnLimit(player, [o3]).warnLimit).toBeTruthy(); //21 > 20 warn
-    expect(riskManager.exceedsLimit(player, [o3]).exceedsLimit).toBeFalsy(); //21 !> 25
+    expect(riskManager.exceedsLimit(player, config.warnPositionLimit, [o3]).exceedsLimit).toBeTruthy(); //21 > 20 warn
+    expect(riskManager.exceedsLimit(player, config.positionLimit, [o3]).exceedsLimit).toBeFalsy(); //21 !> 25
   });
+
+
+  it("exceedsMaxOrder returns absolute value of submitted (working) orders and to-be-submitted orders", () => {
+    const config = {
+      positionLimit: 25,
+      warnPositionLimit: 20,
+      maxOrderLimit: 40
+    };
+
+    const me = new MatchingEngine();
+    const riskManager = new RiskManager({ ...config });
+    const player = new Player("Test");
+
+    const o1 = new Order("test", OrderType.Limit, 15, 100);
+    const o2 = new Order("test", OrderType.Limit, -15, 102);
+
+    player.addOrder(o1);
+    player.addOrder(o2);
+    me.process(o1);
+    me.process(o2);
+
+    expect(riskManager.exceedsMaxOrder(player, config.maxOrderLimit).exceedsMaxOrder).toBeFalsy();
+    const o3 = new Order("test", OrderType.Limit, -15, 102);
+    const o4 = new Order("test", OrderType.Limit, 15, 102);
+    const o5 = new Order("test", OrderType.Limit, 5, 102);
+    expect(riskManager.exceedsMaxOrder(player, config.maxOrderLimit, [o3]).exceedsMaxOrder).toBeTruthy();
+    expect(riskManager.exceedsMaxOrder(player, config.maxOrderLimit, [o4]).exceedsMaxOrder).toBeTruthy();
+    expect(riskManager.exceedsMaxOrder(player, config.maxOrderLimit, [o5]).exceedsMaxOrder).toBeFalsy();
+  });
+
 });

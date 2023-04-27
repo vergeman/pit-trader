@@ -235,14 +235,16 @@ export class Player {
     }, 0);
   }
 
-  //absolute number position submitted as orders
-  //want to avoid laddering e.g. +10/-10, +10/10 to that would otherwise allow
-  //infinite position as long as both sides net avoid sum position detection
-  workingPosition(): number {
+
+  //abs: false net number position submitted as orders
+  //abs: true - want to avoid laddering e.g. +10/-10, +10/10 to that would
+  //otherwise allow infinite position as long as both sides net avoid sum position detection
+  workingPosition(abs: boolean = false): number {
     return this.orders
       .filter((order) => order.status == OrderStatus.Live)
       .reduce((acc: number, order: Order) => {
-        return acc + Math.abs(order.qty);
+        const qty = abs ? Math.abs(order.qty) : order.qty;
+        return acc + qty;
       }, 0);
   }
 
