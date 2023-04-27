@@ -236,7 +236,7 @@ Order exceeds limit of ${this.riskManager.maxOrderLimit}`;
 
     // MARKET ORDER
     if (this._action === GestureAction.Market && this.qty !== null) {
-      order = new Order(this.player.id, OrderType.Market, this.qty, NaN);
+      order = new Order(this.player.id, OrderType.Market, this.qty, NaN, NaN, this.player.isLive);
       console.log("MARKET", order);
       try {
         this.submitOrder(order);
@@ -279,7 +279,8 @@ Order exceeds limit of ${this.riskManager.maxOrderLimit}`;
         OrderType.Limit,
         this.qty,
         orderPrice,
-        this.price
+        this.price,
+        this.player.isLive
       );
       console.log("LIMIT", order);
       try {
