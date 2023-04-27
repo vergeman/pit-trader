@@ -151,8 +151,40 @@ export class GestureDecision {
       return;
     }
 
+    const positionLimits = this.riskManager.exceedsLimit(
+      this.player,
+      this.riskManager.positionLimit,
+      [order]
+    );
+    const maxOrderLimits = this.riskManager.exceedsMaxOrder(
+      this.player,
+      this.riskManager.maxOrderLimit,
+      [order]
+    );
+
+    //Position Limit Exceed: [Current: 8, Working: 12]
+    if (positionLimits.exceedsLimit) {
+      const errMsg = `Position Limit Restriction: \
+[Current: ${positionLimits.open}, Working: ${positionLimits.working}]. \
+Order exceeds limit of ${this.riskManager.positionLimit}`;
+      throw new Error(errMsg, { cause: positionLimits });
+    }
+
+    if (maxOrderLimits.exceedsMaxOrder) {
+      const errMsg = `Order Limit Restriction: \
+[Working: ${maxOrderLimits.working}, Submitted: ${maxOrderLimits.orders}]. \
+Order exceeds limit of ${this.riskManager.maxOrderLimit}`;
+      throw new Error(errMsg, { cause: positionLimits });
+    }
+
     this.me.process(order);
     this.player.addOrder(order);
+  }
+
+  handleError(e: Error) {
+    console.error(e.message, e.cause);
+    this.addMessage(Message.ErrorSubmitOrder, e);
+    this.reset();
   }
 
   //NB: distinction between gesturePrice (this.price) and orderPrice (base price + gesturePrice / 10)
@@ -227,11 +259,7 @@ export class GestureDecision {
 
         this.addMessage(Message.OrderSubmitted, order);
       } catch (e: any) {
-        //TODO: notify user mechanic with message
-        //1. store in matchingEngine, have it detect change in MatchingView
-        //2. pass a function / setState
-        console.error(e.message);
-        this.reset();
+        this.handleError(e);
       }
 
       this.reset();
@@ -275,8 +303,7 @@ export class GestureDecision {
 
         this.addMessage(Message.OrderSubmitted, order);
       } catch (e: any) {
-        console.error(e.message);
-        this.reset();
+        this.handleError(e);
       }
     }
 

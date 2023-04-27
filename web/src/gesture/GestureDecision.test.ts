@@ -13,7 +13,7 @@ describe("GestureDecision", () => {
   it("calc() gesture updates GestureType.Qty after Timeout via NumberSM", async () => {
     const me = new MatchingEngine();
     const npcPlayerManager = new NPCPlayerManager(me, []);
-    const marketLoop = new MarketLoop({npcPlayerManager, priceSeed: 100, qtySeed: 10});
+    const marketLoop = new MarketLoop({ npcPlayerManager, priceSeed: 100, qtySeed: 10 });
     const p = new Player("test");
     const riskManager = new RiskManager({});
 
