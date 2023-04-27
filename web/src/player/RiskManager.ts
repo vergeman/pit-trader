@@ -35,11 +35,12 @@ export default class RiskManager {
     return this._warnPositionLimit;
   }
 
+  //TODO: pass limit as param, create single limit function
   warnLimit(player: Player, orders?: Order[]): PositionsLimit {
     const positions = this._calcPositions(player, orders);
     return {
       ...positions,
-      warnLimit: positions.total >= this._warnPositionLimit,
+      warnLimit: Math.abs(positions.total) >= this._warnPositionLimit,
     };
   }
 
@@ -47,7 +48,7 @@ export default class RiskManager {
     const positions = this._calcPositions(player, orders);
     return {
       ...positions,
-      exceedsLimit: positions.total > this._positionLimit,
+      exceedsLimit: Math.abs(positions.total) > this._positionLimit,
     };
   }
 

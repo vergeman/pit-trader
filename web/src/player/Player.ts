@@ -239,9 +239,11 @@ export class Player {
   //want to avoid laddering e.g. +10/-10, +10/10 to that would otherwise allow
   //infinite position as long as both sides net avoid sum position detection
   workingPosition(): number {
-    return this.orders.reduce((acc: number, order: Order) => {
-      return acc + Math.abs(order.qty);
-    }, 0);
+    return this.orders
+      .filter((order) => order.status == OrderStatus.Live)
+      .reduce((acc: number, order: Order) => {
+        return acc + Math.abs(order.qty);
+      }, 0);
   }
 
   /*
