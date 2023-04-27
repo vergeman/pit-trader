@@ -25,6 +25,7 @@ export interface Transaction {
   orderType: OrderType;
   player_id: string;
   qty: number;
+  orderQty: number,  //tracks remaining qty in Order counterpart
   price: number;
   timestamp: number;
   status: OrderStatus;
@@ -115,6 +116,7 @@ export class Order {
           : OrderStatus.Fill,
       player_id: oppOrder.player_id,
       qty: qtyFilled,
+      orderQty: Math.abs(this.qty),  //NB: qty already deducted in order
       price,
       timestamp,
     });
@@ -128,6 +130,7 @@ export class Order {
           : OrderStatus.Fill,
       player_id: this.player_id,
       qty: oppQtyFilled,
+      orderQty: Math.abs(oppOrder.qty), //NB: qty already deducted in order
       price,
       timestamp,
     });

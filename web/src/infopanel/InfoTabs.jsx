@@ -23,7 +23,7 @@ export default function InfoTabs(props) {
   const { activeTab, activeTabDispatch, messages, gestureDecisionEvent } =
     useInfoPanel();
 
-  const challenges = []; //TODO: challenges / quests
+  const challenges = [];
 
   const liveOrders = props.player
     ? []
@@ -37,7 +37,15 @@ export default function InfoTabs(props) {
         .sort((a, b) => Number(a.timestamp < b.timestamp))
     : [];
 
-  //we want to guarantee order as it's used as a useFffect dependency
+  /*
+   * Tab Value sources
+   *
+   * messages: context
+   * challenges: defined here, not used
+   * liveOrders: filtered here
+   * orderHistories: filtered here
+   */
+
   const tabMap = new Map([
     [TabMapKey.MESSAGES, { tabTitle: "Messages", values: messages }],
     [
@@ -51,17 +59,33 @@ export default function InfoTabs(props) {
     ],
   ]);
 
-  const { tabNums, resetTabNum } = useTabNums(activeTab, tabMap);
+  //on selecting active tab, setTabs as seen by setting
+  //tabNums count to equal the tabMap values' length
+  const { tabNums, setTabNumsSeen } = useTabNums(activeTab, tabMap);
+
+  const calcTabNum = (key, tabMap, tabNums) => {
+    const num = tabMap.get(key).values.length - tabNums[key];
+    if (num >= 0) return num;
+
+    // negative values are possible:
+    // .e.g working live orders are filled, so no longer live (liveOrders.length - 1)
+    // even if filtering by dates, if order is no longer live, the order simply "disappears"
+    // from the tab, as it no longer exists to be seen.
+    //
+    // Returning 0 covers up the temporary negative count until it reconciles by
+    // being marked as seen.
+    setTabNumsSeen(key);
+    return 0;
+  };
 
   const selectTabHandler = (eventKey) => {
-    resetTabNum(eventKey);
+    setTabNumsSeen(eventKey);
     activeTabDispatch({ type: "select", value: eventKey });
   };
 
   const tabTitleNew = (key, tabMap, tabNums) => {
     const titleText = tabMap.get(key).tabTitle;
-    const num =
-      key === activeTab ? 0 : tabMap.get(key).values.length - tabNums[key];
+    const num = key === activeTab ? 0 : calcTabNum(key, tabMap, tabNums);
 
     const styleNum = {
       color: "red",
@@ -75,12 +99,6 @@ export default function InfoTabs(props) {
       </span>
     );
   };
-
-  {
-    /* NB: pass setActiveKey to programmatically change Tab
-     * TODO: expand to reducer? pass into InfoPanel?
-     */
-  }
 
   if (!props.player) return null;
 
@@ -100,9 +118,7 @@ export default function InfoTabs(props) {
         eventKey={TabMapKey.GESTUREDECISIONEVENT}
         title={tabTitleNew(TabMapKey.GESTUREDECISIONEVENT, tabMap, tabNums)}
       >
-        <GestureDecisionEvent
-          gestureDecisionEvent={gestureDecisionEvent}
-        />
+        <GestureDecisionEvent gestureDecisionEvent={gestureDecisionEvent} />
       </Tab>
       <Tab
         eventKey={TabMapKey.LIVEORDERS}

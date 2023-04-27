@@ -193,7 +193,7 @@ export class Player {
     for (const order of this.orders) {
       for (let transaction of order.transactions) {
         //NB: flip qty as qty is compliment to order
-        const t = { ...transaction, qty: -transaction.qty };
+        const t = { ...transaction, qty: -transaction.qty, orderQty: transaction.orderQty };
         histories.push(t);
       }
 
@@ -205,6 +205,7 @@ export class Player {
           orderType: order.orderType,
           player_id: order.player_id,
           qty: order.qty,
+          orderQty: order.qty,
           price: order.price,
           status: OrderStatus.Cancelled,
           timestamp: order.updatedAt,
