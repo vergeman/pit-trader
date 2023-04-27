@@ -19,6 +19,7 @@ export const Message = {
   NewsEvent: "NewsEvent",
 
   Restart: "Restart",
+  ErrorSubmitOrder: "ErrorSubmitOrder"
 };
 
 export default Message;

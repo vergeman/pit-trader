@@ -75,6 +75,12 @@ export function messagesReducer(messages, action) {
     case Message.Restart:
       return [];
 
+    case Message.ErrorSubmitOrder:
+      const errObj = action.value;
+      const errCause = JSON.stringify(errObj.cause);
+      text = `${errObj.message}`;
+    return [{ time: new Date(), text, type: Message.ErrorSubmitOrder }, ...messages];
+
     case Message.NewsEvent:
       const event = action.value;
       text = event.msg;
