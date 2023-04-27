@@ -24,7 +24,7 @@ export interface IGestureDecisionEvent extends IEvent {
   };
   gestureDecisionEventState: GestureDecisionEventState;
   state_msg: { [key: string]: string };
-  dispatchHandler: (msg: any) => void;
+  dispatchHandler: (msg: any, tabName?: string) => void;
 }
 
 export class GestureDecisionEvent
@@ -41,7 +41,7 @@ export class GestureDecisionEvent
   };
   private _gestureDecisionEventState: GestureDecisionEventState;
   private _state_msg: { [key: string]: string };
-  dispatchHandler = (msg: any) => {};
+  dispatchHandler = (msg: any, tabName?: string) => {};
 
   constructor({
     id,
@@ -177,7 +177,7 @@ export class GestureDecisionEvent
         value: this,
       };
 
-      this.dispatchHandler(msg);
+      this.dispatchHandler(msg, "messages");
     }, 3000);
   }
 

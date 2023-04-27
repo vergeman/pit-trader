@@ -88,8 +88,15 @@ export default function CameraGesture(props) {
         "[CameraGesture] EventManager EventType.GestureDecisionEvent"
       );
 
-      event.dispatchHandler = (msg) => {
+      event.dispatchHandler = (msg, tabName = null) => {
         infoPanel.gestureDecisionEventDispatch(msg);
+
+        if (tabName) {
+          infoPanel.activeTabDispatch({
+            type: "select",
+            value: tabName,
+          });
+        }
       };
 
       //initial active state
