@@ -41,6 +41,7 @@ export class GestureDecision {
   private _enableMessages: boolean;
   private _messages: any[];
   private _onSubmitOrder: null | ((player: Player, order: Order) => void);
+  private _enable: boolean; //toggle gesture recognition on/off - lock game on loss
 
   constructor(
     me: MatchingEngine,
@@ -80,6 +81,7 @@ export class GestureDecision {
     this._enableMessages = true;
     this._messages = [];
     this._onSubmitOrder = null;
+    this._enable = true;
   }
 
   get qty(): number | null {
@@ -118,7 +120,12 @@ export class GestureDecision {
   set onSubmitOrder(fn: null | ((player: Player, order: Order) => void)) {
     this._onSubmitOrder = fn;
   }
-
+  get enable(): boolean {
+    return this._enable;
+  }
+  set enable(e: boolean) {
+    this._enable = e;
+  }
   resetMessages(): void {
     this._messages = [];
   }
@@ -236,7 +243,14 @@ Order exceeds limit of ${this.riskManager.maxOrderLimit}`;
 
     // MARKET ORDER
     if (this._action === GestureAction.Market && this.qty !== null) {
-      order = new Order(this.player.id, OrderType.Market, this.qty, NaN, NaN, this.player.isLive);
+      order = new Order(
+        this.player.id,
+        OrderType.Market,
+        this.qty,
+        NaN,
+        NaN,
+        this.player.isLive
+      );
       console.log("MARKET", order);
       try {
         this.submitOrder(order);
@@ -401,6 +415,7 @@ Order exceeds limit of ${this.riskManager.maxOrderLimit}`;
   }
 
   reset() {
+    this.enable = true;
     this._qty = null;
     this._price = null;
     this._action = GestureAction.None;
@@ -419,7 +434,7 @@ Order exceeds limit of ${this.riskManager.maxOrderLimit}`;
    */
   calc(gesture: Gesture) {
     if (!gesture) return;
-
+    if (!this.enable) return;
     //conditionals based on gesture and prior
     //console.log(gesture);
 

@@ -27,7 +27,9 @@ export default function Main(props) {
     limitPL: -1000,
   };
 
-  const [riskManager, setRiskManager] = useState(new RiskManager({...config}));
+  const [riskManager, setRiskManager] = useState(
+    new RiskManager({ ...config })
+  );
   const [me, setMe] = useState(new MatchingEngine());
   const [npcPlayerManager, setNPCPlayerManager] = useState(
     new NPCPlayerManager(me, [
