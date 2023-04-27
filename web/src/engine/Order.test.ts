@@ -1,4 +1,4 @@
-import { OrderStatus, OrderType, Order, TransactionReport } from "./Order";
+import { OrderStatus, OrderType, Order, TransactionReport, Transaction } from "./Order";
 import MatchingEngine from "./MatchingEngine";
 
 describe("Order", () => {
@@ -36,13 +36,6 @@ describe("Order", () => {
     const o2 = new Order("123", OrderType.Market, -50, 100);
 
     expect(o2.timestamp > o1.timestamp).toBeTruthy();
-  });
-
-  it("fill operates as an array of Order types", () => {
-    const o1 = new Order("123", OrderType.Market, 50, 100);
-    const o2 = new Order("123", OrderType.Market, -50, 100);
-    o1.transactions.push(o2);
-    expect(o1.transactions.length).toEqual(1);
   });
 
   it("creates an internal _id", () => {

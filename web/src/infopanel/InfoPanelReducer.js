@@ -55,12 +55,12 @@ export function messagesReducer(messages, action) {
     case Message.FillLimit:
     case Message.FillMarket:
       transaction = action.value.transaction;
-      order = action.value.order;
+      //order = action.value.order;
 
       text = populateTemplateString(action.type, [
         -transaction.qty,
         transaction.price,
-        order.qty,
+        transaction.orderQty,
       ]);
       return [{ time: new Date(), text }, ...messages];
 
@@ -68,7 +68,7 @@ export function messagesReducer(messages, action) {
       order = action.value;
       text = populateTemplateString(action.type, [
         order.qtyFilled,
-        order.priceFilled().toFixed(1),
+        order.priceFilled().toFixed(1)
       ]);
       return [{ time: new Date(), text }, ...messages];
 
