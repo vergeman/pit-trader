@@ -10,6 +10,7 @@ import MarketLoop from "./player/MarketLoop";
 import LoseModal from "./LoseModal";
 import Message from "./infopanel/Message";
 import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
+import { useGlobalContext } from "./GlobalContext.jsx";
 import { useGameContext, GameState } from "./GameContext.jsx";
 import { EventManager } from "./player/EventManager.ts";
 import { EventType } from "./player/Event.ts";
@@ -62,10 +63,22 @@ export default function Main(props) {
 
   const { messagesDispatch, gestureDecisionEventDispatch } = useInfoPanel();
   const gameContext = useGameContext();
+  const { isDebug } = useGlobalContext();
 
   //INIT
   useEffect(() => {
     marketLoop.init();
+
+    //for debug mode, attach instances to window for console access
+    if (isDebug) {
+      Object.assign(window, {
+        marketLoop,
+        riskManager,
+        npcPlayerManager,
+        player,
+        gestureDecision,
+      });
+    }
   }, []);
 
   //GAMESTATE
@@ -74,7 +87,7 @@ export default function Main(props) {
       case GameState.INIT:
         //any pre stuff?
         gameContext.setState(GameState.RUN);
-      break;
+        break;
       case GameState.RUN:
         marketLoop.start();
         break;

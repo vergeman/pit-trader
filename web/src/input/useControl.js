@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useGlobalContext } from "../GlobalContext.jsx";
 
 export default function useControl(controlRef) {
-  const {isDebug} = useGlobalContext();
+  const { isDebug } = useGlobalContext();
   const [control, setControl] = useState(null);
   const [fpsControl, setFPSControl] = useState(null);
 
