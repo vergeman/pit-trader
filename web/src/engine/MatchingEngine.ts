@@ -175,7 +175,7 @@ export class MatchingEngine {
   process(order: Order) {
     //choose opposing queue to execute against
     if (order.qty === 0)
-      throw new Error(`Order rejected: bad quantity: ${order.qty}}`, {
+      throw new Error(`Order rejected: bad quantity: ${order.qty}`, {
         cause: { qty: order.qty },
       });
     let queue = this.offers;

@@ -29,11 +29,13 @@ export function messagesReducer(messages, action) {
   switch (action.type) {
     case Message.SetPrice:
     case Message.SetQty:
-    case Message.CancelOrder:
     case Message.CancelGesture:
       text = populateTemplateString(action.type, [action.value]);
       return [{ time: new Date(), text }, ...messages];
-
+    case Message.CancelOrder:
+      order = action.value;
+      text = populateTemplateString(action.type, [order.qty, order.price]);
+      return [{ time: new Date(), text }, ...messages];
     case Message.OrderSubmitted:
       order = action.value;
       const orderType = order.orderType;

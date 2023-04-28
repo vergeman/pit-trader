@@ -228,7 +228,7 @@ Order exceeds limit of ${this.riskManager.maxOrderLimit}`;
 
         this._records.unshift(record);
 
-        this.addMessage(Message.CancelOrder, order.id);
+        this.addMessage(Message.CancelOrder, order);
       } else {
         //if no orders just reset gesture
         this.addMessage(Message.CancelGesture, null);
