@@ -24,7 +24,9 @@ export default function GestureDecisionEvent(props) {
   return (
     <div className="d-flex mt-3">
       <div className="px-3">
-        <img id="gestureDecisionEvent-tab-image" src={gestureDecisionEvent.img} alt={gestureDecisionEvent.id} />
+        <a href = "https://ttdevelopers.github.io/EverySingleAvatar.html" target="_blank">
+          <img id="gestureDecisionEvent-tab-image" src={gestureDecisionEvent.img} alt={gestureDecisionEvent.id} />
+        </a>
       </div>
 
       <div className="d-flex flex-column justify-content-between px-4">

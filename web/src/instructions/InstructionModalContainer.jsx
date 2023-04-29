@@ -28,11 +28,25 @@ export default function InstructionModalContainer(props) {
             {props.children}
 
             <div className="mt-2 text-dark">
-              Detailed Instructions and images courtesy of the{" "}
-              <a href="https://tradepractices.files.wordpress.com/2012/07/commodity-and-futures-handsignals.pdf">
-                CME
-              </a>
-              .
+              <div>
+                Detailed Instructions and images courtesy of the{" "}
+                <a
+                  href="https://tradepractices.files.wordpress.com/2012/07/commodity-and-futures-handsignals.pdf"
+                  target="_blank"
+                >
+                  CME
+                </a>
+                .
+              </div>
+              <div>
+                Challenge Avatars designed by{" "}
+                <a
+                  href="https://ttdevelopers.github.io/EverySingleAvatar.html"
+                  target="_blank"
+                >
+                  Turntable.fm
+                </a>
+              </div>
             </div>
           </Modal.Body>
         </Modal>
