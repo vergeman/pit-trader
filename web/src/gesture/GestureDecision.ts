@@ -57,24 +57,24 @@ export class GestureDecision {
     this.riskManager = riskManager;
 
     this.qtySM = new NumberSM(
-      GestureType.Qty,
+      GestureType.QTY,
       this.setQtyFn.bind(this),
       timeout
     );
     this.priceSM = new NumberSM(
-      GestureType.Price,
+      GestureType.PRICE,
       this.setPriceFn.bind(this),
       timeout
     );
     this.actionSM = new ActionSM(
-      GestureType.Action,
+      GestureType.ACTION,
       this.setActionFn.bind(this),
       timeout
     );
 
     this._qty = null;
     this._price = null;
-    this._action = GestureAction.None;
+    this._action = GestureAction.NONE;
     this._records = [];
     this._renderState = RenderState.GESTURE_DECISION;
     this._renderStateTimeout = renderStateTimeout;
@@ -205,11 +205,11 @@ Order exceeds limit of ${this.riskManager.maxOrderLimit}`;
     );
 
     // CANCEL
-    if (this._action === GestureAction.Cancel) {
+    if (this._action === GestureAction.CANCEL) {
       console.log("[GestureDecision] triggerValidOrder: Cancel");
 
       const liveOrders = this.player.orders.filter(
-        (order) => order.status === OrderStatus.Live
+        (order) => order.status === OrderStatus.LIVE
       );
 
       if (liveOrders.length) {
@@ -220,7 +220,7 @@ Order exceeds limit of ${this.riskManager.maxOrderLimit}`;
         const record: GestureDecisionRecord = {
           related_id: order.id,
           timestamp: Date.now(),
-          action: GestureAction.Cancel,
+          action: GestureAction.CANCEL,
           qty: null,
           price: null,
           gesturePrice: null,
@@ -228,7 +228,7 @@ Order exceeds limit of ${this.riskManager.maxOrderLimit}`;
 
         this._records.unshift(record);
 
-        this.addMessage(Message.CancelOrder, order.id);
+        this.addMessage(Message.CancelOrder, order);
       } else {
         //if no orders just reset gesture
         this.addMessage(Message.CancelGesture, null);
@@ -242,10 +242,10 @@ Order exceeds limit of ${this.riskManager.maxOrderLimit}`;
     }
 
     // MARKET ORDER
-    if (this._action === GestureAction.Market && this.qty !== null) {
+    if (this._action === GestureAction.MARKET && this.qty !== null) {
       order = new Order(
         this.player.id,
-        OrderType.Market,
+        OrderType.MARKET,
         this.qty,
         NaN,
         NaN,
@@ -258,7 +258,7 @@ Order exceeds limit of ${this.riskManager.maxOrderLimit}`;
         const record: GestureDecisionRecord = {
           related_id: order.id,
           timestamp: Date.now(),
-          action: GestureAction.Market,
+          action: GestureAction.MARKET,
           qty: this.qty,
           price: null,
           gesturePrice: null,
@@ -277,7 +277,7 @@ Order exceeds limit of ${this.riskManager.maxOrderLimit}`;
       }
 
       this.reset();
-    } else if (this._action === GestureAction.Market && this.qty === null) {
+    } else if (this._action === GestureAction.MARKET && this.qty === null) {
       console.log(
         "[GestureDecision] Market order submitted but missing qty",
         this.qty
@@ -290,7 +290,7 @@ Order exceeds limit of ${this.riskManager.maxOrderLimit}`;
       const orderPrice = this.calcOrderPrice(this.qty, this.price);
       order = new Order(
         this.player.id,
-        OrderType.Limit,
+        OrderType.LIMIT,
         this.qty,
         orderPrice,
         this.price,
@@ -303,7 +303,7 @@ Order exceeds limit of ${this.riskManager.maxOrderLimit}`;
         const record: GestureDecisionRecord = {
           related_id: order.id,
           timestamp: Date.now(),
-          action: this.qty > 0 ? GestureAction.Buy : GestureAction.Sell,
+          action: this.qty > 0 ? GestureAction.BUY : GestureAction.SELL,
           qty: this.qty,
           price: orderPrice,
           gesturePrice: this.price,
@@ -339,7 +339,7 @@ Order exceeds limit of ${this.riskManager.maxOrderLimit}`;
     for (let order of this.player.orders) {
       for (let transaction of order.getNewTransactions()) {
         const type =
-          order.orderType == OrderType.Limit
+          order.orderType == OrderType.LIMIT
             ? Message.FillLimit
             : Message.FillMarket;
         transactionMsgs.push({
@@ -347,7 +347,7 @@ Order exceeds limit of ${this.riskManager.maxOrderLimit}`;
           value: { order, transaction },
         });
 
-        if (transaction.status == OrderStatus.Complete) {
+        if (transaction.status == OrderStatus.COMPLETE) {
           transactionMsgs.push({
             type: Message.OrderFilled,
             value: order,
@@ -418,7 +418,7 @@ Order exceeds limit of ${this.riskManager.maxOrderLimit}`;
     this.enable = true;
     this._qty = null;
     this._price = null;
-    this._action = GestureAction.None;
+    this._action = GestureAction.NONE;
 
     this.qtySM.resetAll();
     this.priceSM.resetAll();
@@ -444,7 +444,7 @@ Order exceeds limit of ${this.riskManager.maxOrderLimit}`;
 
     //post successful order submit we lock the SMs since tend to have "lingering" gesture
     //if we then get garbage, assume a "reset" and unlock for new gestures
-    if (gesture.action === GestureAction.Garbage) {
+    if (gesture.action === GestureAction.GARBAGE) {
       this.actionSM.unlock();
       this.qtySM.unlock();
       this.priceSM.unlock();

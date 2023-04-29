@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Container, Row, Col, Button, Card} from "react-bootstrap";
-import { LoadingInstructions } from "./instructions";
+import { Button } from "react-bootstrap";
 
 export default function Home() {
   const defaultBadgeBuilder = () => {
@@ -43,7 +42,7 @@ export default function Home() {
           />
         </div>
 
-        <Link to={`/demo?badge=${badge || defaultBadge}`}>
+        <Link to={`/pit?badge=${badge || defaultBadge}`}>
           <Button id="home-hero-cta" size="lg" variant="dark">
             Enter
           </Button>

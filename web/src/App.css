@@ -25,6 +25,9 @@
 /*
  * HOME
  */
+#nav-home-logo {
+  font-family: "Overpass", sans-serif;
+}
 
 #home-background-image {
   position: fixed;
@@ -275,7 +278,7 @@ table#gestureDecision.table {
   --bs-nav-link-padding-y: 0.5rem;
   --bs-nav-link-font-weight: ;
   --bs-nav-link-color: var(--bs-link-color);
-  --bs-nav-link-hover-color: #e9ecef;
+  --bs-nav-link-hover-color: var(--bs-nav-link-hover-color);
   --bs-nav-link-disabled-color: #6c757d;
   list-style: none;
 }
@@ -315,11 +318,21 @@ table#gestureDecision.table {
   display: none;
 }
 
+/* InfoPanel */
+
+/* time table column */
+.td-time {
+  width: 0.1%;
+  min-width: 100px;
+  white-space: nowrap;
+}
+
 
 /* GestureDecisionEvent InfoPanel Tab */
 
 #gestureDecisionEvent-tab-image {
   max-height: 8rem;
+  filter: drop-shadow(4px 4px 8px #666666);
 }
 
 @media (min-width: 768px) {

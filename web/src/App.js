@@ -15,7 +15,7 @@ function App() {
         <Routes>
           <Route exact path="/" element={<Home />} />
           <Route
-            path="/demo"
+            path="/pit"
             element={
               <GameContextProvider>
                 <InfoPanelProvider>

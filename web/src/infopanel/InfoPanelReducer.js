@@ -29,20 +29,22 @@ export function messagesReducer(messages, action) {
   switch (action.type) {
     case Message.SetPrice:
     case Message.SetQty:
-    case Message.CancelOrder:
     case Message.CancelGesture:
       text = populateTemplateString(action.type, [action.value]);
       return [{ time: new Date(), text }, ...messages];
-
+    case Message.CancelOrder:
+      order = action.value;
+      text = populateTemplateString(action.type, [order.qty, order.price]);
+      return [{ time: new Date(), text }, ...messages];
     case Message.OrderSubmitted:
       order = action.value;
       const orderType = order.orderType;
       const qty =
-        order.orderType === OrderType.Limit
+        order.orderType === OrderType.LIMIT
           ? order.qty + order.qtyFilled
           : order.qtyFilled;
       const messageType =
-        orderType === OrderType.Limit
+        orderType === OrderType.LIMIT
           ? qty > 0
             ? Message.BuyLimitOrder
             : Message.SellLimitOrder
@@ -104,7 +106,7 @@ export function gestureDecisionEventReducer(gestureDecisionEvent, action) {
 
   //TODO: these should be reducer-specific events, but we don't seem to have any
   //at the moment
-  if (action.type !== EventType.GestureDecisionEvent) return null;
+  if (action.type !== EventType.GESTUREDECISION) return null;
 
   console.log("[gestureDecisionEventReducer]", action);
 

@@ -15,18 +15,18 @@ export default function GesturesDecisionDisplay(props) {
     if (!gestureDecision) return null;
 
     switch (gestureDecision.action) {
-      case GestureAction.Buy:
-      case GestureAction.Sell:
-      case GestureAction.Cancel:
+      case GestureAction.BUY:
+      case GestureAction.SELL:
+      case GestureAction.CANCEL:
         return gestureDecision.action;
 
-      case GestureAction.None:
-      case GestureAction.Market:
+      case GestureAction.NONE:
+      case GestureAction.MARKET:
         if (gestureDecision.qty > 0) {
-          return GestureAction.Buy;
+          return GestureAction.BUY;
         }
         if (gestureDecision.qty < 0) {
-          return GestureAction.Sell;
+          return GestureAction.SELL;
         }
 
       default:
@@ -37,8 +37,8 @@ export default function GesturesDecisionDisplay(props) {
   const getPrice = (gestureDecision) => {
     if (!gestureDecision) return null;
 
-    if (gestureDecision.action == GestureAction.Market) {
-      return GestureAction.Market;
+    if (gestureDecision.action == GestureAction.MARKET) {
+      return GestureAction.MARKET;
     }
     return gestureDecision.price;
   };
@@ -63,7 +63,7 @@ export default function GesturesDecisionDisplay(props) {
           action={getAction(gestureDecisionRecord)}
           qty={gestureDecisionRecord.qty}
           price={getPrice(gestureDecisionRecord)}
-          actionOnly={getAction(gestureDecisionRecord) == GestureAction.Cancel}
+          actionOnly={getAction(gestureDecisionRecord) == GestureAction.CANCEL}
         />
       )}
 

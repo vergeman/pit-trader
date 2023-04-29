@@ -10,7 +10,7 @@ import RiskManager from "../player/RiskManager";
 const TIMEOUT = 50; //speed this up for tests. Typically 750 seems human-like.
 
 describe("GestureDecision", () => {
-  it("calc() gesture updates GestureType.Qty after Timeout via NumberSM", async () => {
+  it("calc() gesture updates GestureType.QTY after Timeout via NumberSM", async () => {
     const me = new MatchingEngine();
     const npcPlayerManager = new NPCPlayerManager(me, []);
     const marketLoop = new MarketLoop({ npcPlayerManager, priceSeed: 100, qtySeed: 10 });
@@ -18,7 +18,7 @@ describe("GestureDecision", () => {
     const riskManager = new RiskManager({});
 
     const gestureDecision = new GestureDecision(me, marketLoop, p, riskManager, TIMEOUT);
-    const gesture = new Gesture(GestureType.Qty, GestureAction.Buy, 3, 1);
+    const gesture = new Gesture(GestureType.QTY, GestureAction.BUY, 3, 1);
     gestureDecision.triggerValidOrder = jest.fn();
     gestureDecision.calc(gesture);
 
@@ -30,7 +30,7 @@ describe("GestureDecision", () => {
     expect(gestureDecision.triggerValidOrder).toHaveBeenCalled();
   });
 
-  it("calc() gesture updates GestureType.Price after Timeout via NumberSM", async () => {
+  it("calc() gesture updates GestureType.PRICE after Timeout via NumberSM", async () => {
     const me = new MatchingEngine();
     const npcPlayerManager = new NPCPlayerManager(me, []);
     const marketLoop = new MarketLoop({npcPlayerManager, priceSeed: 100, qtySeed: 10});
@@ -38,7 +38,7 @@ describe("GestureDecision", () => {
     const riskManager = new RiskManager({});
 
     const gestureDecision = new GestureDecision(me, marketLoop, p, riskManager, TIMEOUT);
-    const gesture = new Gesture(GestureType.Price, GestureAction.Sell, 2, 1);
+    const gesture = new Gesture(GestureType.PRICE, GestureAction.SELL, 2, 1);
     gestureDecision.triggerValidOrder = jest.fn();
     gestureDecision.calc(gesture);
 
@@ -60,8 +60,8 @@ describe("GestureDecision", () => {
     const riskManager = new RiskManager({});
 
     const gestureDecision = new GestureDecision(me, marketLoop, p, riskManager, TIMEOUT);
-    const gestureQty = new Gesture(GestureType.Qty, GestureAction.Sell, -2, 1);
-    const gesturePrice = new Gesture(GestureType.Price, GestureAction.Sell, 8, 1);
+    const gestureQty = new Gesture(GestureType.QTY, GestureAction.SELL, -2, 1);
+    const gesturePrice = new Gesture(GestureType.PRICE, GestureAction.SELL, 8, 1);
 
     expect(me.offers.size()).toBe(0);
 
@@ -85,12 +85,12 @@ describe("GestureDecision", () => {
     const riskManager = new RiskManager({});
 
     const gestureDecision = new GestureDecision(me, marketLoop, p, riskManager, TIMEOUT);
-    const gestureQtyL = new Gesture(GestureType.Qty, GestureAction.Buy, 2, 1);
-    const gesturePriceL = new Gesture(GestureType.Price, GestureAction.Buy, 2, 1);
-    const gestureQtyM = new Gesture(GestureType.Qty, GestureAction.Sell, -1, 1);
+    const gestureQtyL = new Gesture(GestureType.QTY, GestureAction.BUY, 2, 1);
+    const gesturePriceL = new Gesture(GestureType.PRICE, GestureAction.BUY, 2, 1);
+    const gestureQtyM = new Gesture(GestureType.QTY, GestureAction.SELL, -1, 1);
     const gesturePriceM = new Gesture(
-      GestureType.Price,
-      GestureAction.Market,
+      GestureType.PRICE,
+      GestureAction.MARKET,
       NaN,
       null
     );
@@ -109,7 +109,7 @@ describe("GestureDecision", () => {
 
     //garbage to unlock
     gestureDecision.calc(
-      new Gesture(GestureType.Action, GestureAction.Garbage, NaN, null)
+      new Gesture(GestureType.ACTION, GestureAction.GARBAGE, NaN, null)
     );
     gestureDecision.calc(gestureQtyM);
     await new Promise((res) => setTimeout(res, TIMEOUT));
@@ -129,11 +129,11 @@ describe("GestureDecision", () => {
     const riskManager = new RiskManager({});
 
     const gestureDecision = new GestureDecision(me, marketLoop, p, riskManager, TIMEOUT);
-    const gestureQtyL = new Gesture(GestureType.Qty, GestureAction.Buy, 2, 1);
-    const gesturePriceL = new Gesture(GestureType.Price, GestureAction.Buy, 2, 1);
+    const gestureQtyL = new Gesture(GestureType.QTY, GestureAction.BUY, 2, 1);
+    const gesturePriceL = new Gesture(GestureType.PRICE, GestureAction.BUY, 2, 1);
     const gesturePriceM = new Gesture(
-      GestureType.Price,
-      GestureAction.Market,
+      GestureType.PRICE,
+      GestureAction.MARKET,
       NaN,
       null
     );
@@ -148,7 +148,7 @@ describe("GestureDecision", () => {
 
     //no change
     gestureDecision.calc(
-      new Gesture(GestureType.Action, GestureAction.Garbage, NaN, null)
+      new Gesture(GestureType.ACTION, GestureAction.GARBAGE, NaN, null)
     );
     gestureDecision.calc(gesturePriceM);
     await new Promise((res) => setTimeout(res, TIMEOUT));
@@ -166,10 +166,10 @@ describe("GestureDecision", () => {
     const riskManager = new RiskManager({});
 
     const gestureDecision = new GestureDecision(me, marketLoop, p, riskManager, TIMEOUT);
-    const gestureQtyL = new Gesture(GestureType.Qty, GestureAction.Buy, 2, 1);
+    const gestureQtyL = new Gesture(GestureType.QTY, GestureAction.BUY, 2, 1);
     const gestureCancel = new Gesture(
-      GestureType.Action,
-      GestureAction.Cancel,
+      GestureType.ACTION,
+      GestureAction.CANCEL,
       NaN,
       null
     );
@@ -194,11 +194,11 @@ describe("GestureDecision", () => {
     const riskManager = new RiskManager({});
 
     const gestureDecision = new GestureDecision(me, marketLoop, p, riskManager, TIMEOUT);
-    const gestureQtyL = new Gesture(GestureType.Qty, GestureAction.Buy, 2, 1);
-    const gesturePriceL = new Gesture(GestureType.Price, GestureAction.Buy, 2, 1);
+    const gestureQtyL = new Gesture(GestureType.QTY, GestureAction.BUY, 2, 1);
+    const gesturePriceL = new Gesture(GestureType.PRICE, GestureAction.BUY, 2, 1);
     const gestureCancel = new Gesture(
-      GestureType.Action,
-      GestureAction.Cancel,
+      GestureType.ACTION,
+      GestureAction.CANCEL,
       NaN,
       null
     );
@@ -215,13 +215,13 @@ describe("GestureDecision", () => {
     const order = me.bids.peek();
     expect(me.bids.length).toBe(1);
     expect(p.orders.length).toBe(1);
-    expect(order && order.status).toBe(OrderStatus.Live);
+    expect(order && order.status).toBe(OrderStatus.LIVE);
 
     gestureDecision.calc(gestureCancel);
     await new Promise((res) => setTimeout(res, TIMEOUT));
     expect(me.bids.length).toBe(0); //removed from queue
     expect(p.orders.length).toBe(1); //maintained in player queue
-    expect(order && order.status).toBe(OrderStatus.Cancelled);
+    expect(order && order.status).toBe(OrderStatus.CANCELLED);
   });
 });
 

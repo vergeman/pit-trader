@@ -32,16 +32,13 @@ import { GestureDecisionEventState } from "./GestureDecisionEvent";
 export const buildGestureDecisionEventParams = (gde: any, price: number) => {
   const _qty = Math.floor(Math.random() * 10) + 1; //[1,10]
   const gesturePrice = price.toFixed(1).at(-1) || 0; //100.2 <-- 2
-  const action = Math.random() <= 0.5 ? GestureAction.Buy : GestureAction.Sell;
+  const action = Math.random() <= 0.5 ? GestureAction.BUY : GestureAction.SELL;
 
   const gesture = {
-    qty: action == GestureAction.Buy ? _qty : -_qty,
+    qty: action == GestureAction.BUY ? _qty : -_qty,
     price: gesturePrice,
-    orderType: OrderType.Limit,
+    orderType: OrderType.LIMIT,
   };
-
-  const duration = 10000; //fixed
-  const bonus = _qty * (1000 / 2); //tuneable: need meaningful size but not overwhelming
 
   //replace qty price templates with generated values above
   const state_msg = {
@@ -59,10 +56,8 @@ export const buildGestureDecisionEventParams = (gde: any, price: number) => {
     ...gde,
     state_msg,
     action,
-    type: EventType.GestureDecisionEvent,
-    msg: state_msg[`${GestureDecisionEventState.Active}-${action}`],
-    duration,
-    bonus,
+    type: EventType.GESTUREDECISION,
+    msg: state_msg[`${GestureDecisionEventState.ACTIVE}-${action}`],
     gesture,
     onEnd: () => {},
   };
@@ -74,12 +69,12 @@ export const gestureDecisionEvents = [
     id: "trickster-1",
     img: `${process.env.PUBLIC_URL}/events/trickster.png`,
     state_msg: {
-      [`${GestureDecisionEventState.Active}-${GestureAction.Buy}`]: `Let's see what happens. Pay {PRICE} for {QTY}`,
-      [`${GestureDecisionEventState.Active}-${GestureAction.Sell}`]:
-        "Sell {QTY} at {PRICE}",
-      [GestureDecisionEventState.NoMatch]: "Try again, slick.",
-      [GestureDecisionEventState.Lost]: "Better luck next time.",
-      [GestureDecisionEventState.Win]: "Nice job!",
+      [`${GestureDecisionEventState.ACTIVE}-${GestureAction.BUY}`]: `Let's see what happens. Pay {PRICE} for {QTY}`,
+      [`${GestureDecisionEventState.ACTIVE}-${GestureAction.SELL}`]:
+        "Let's see what happens. Sell {QTY} at {PRICE}",
+      [GestureDecisionEventState.NOMATCH]: "Try again, slick.",
+      [GestureDecisionEventState.LOST]: "Better luck next time.",
+      [GestureDecisionEventState.WIN]: "Nice job!",
     },
   },
 
@@ -88,12 +83,12 @@ export const gestureDecisionEvents = [
     id: "hipster-1",
     img: `${process.env.PUBLIC_URL}/events/hipster.png`,
     state_msg: {
-      [`${GestureDecisionEventState.Active}-${GestureAction.Buy}`]: `Pay {PRICE} for {QTY} - if you've heard of it.`,
-      [`${GestureDecisionEventState.Active}-${GestureAction.Sell}`]:
-        "Sell {QTY} at {PRICE} - I was selling before it was cool.",
-      [GestureDecisionEventState.NoMatch]: "Not it, man.",
-      [GestureDecisionEventState.Lost]: "Your loss",
-      [GestureDecisionEventState.Win]: "Way to go, Ace!",
+      [`${GestureDecisionEventState.ACTIVE}-${GestureAction.BUY}`]: `Pay {PRICE} for {QTY}, dude.`,
+      [`${GestureDecisionEventState.ACTIVE}-${GestureAction.SELL}`]:
+        "Sell {QTY} at {PRICE}, dude",
+      [GestureDecisionEventState.NOMATCH]: "That's not it, amigo.",
+      [GestureDecisionEventState.LOST]: "Too bad, your loss",
+      [GestureDecisionEventState.WIN]: "Way to go, Ace!",
     },
   },
 
@@ -102,12 +97,12 @@ export const gestureDecisionEvents = [
     id: "starwars-1",
     img: `${process.env.PUBLIC_URL}/events/starwars.png`,
     state_msg: {
-      [`${GestureDecisionEventState.Active}-${GestureAction.Buy}`]: `Ootini! Pay {PRICE} for {QTY}.`,
-      [`${GestureDecisionEventState.Active}-${GestureAction.Sell}`]:
+      [`${GestureDecisionEventState.ACTIVE}-${GestureAction.BUY}`]: `Ootini! Pay {PRICE} for {QTY}.`,
+      [`${GestureDecisionEventState.ACTIVE}-${GestureAction.SELL}`]:
         "Jotadee, Sell {QTY} at {PRICE}.",
-      [GestureDecisionEventState.NoMatch]: "Koo nee tang, no match.",
-      [GestureDecisionEventState.Lost]: "You lose.",
-      [GestureDecisionEventState.Win]: "Suka! Well done!",
+      [GestureDecisionEventState.NOMATCH]: "Koo nee tang, no match.",
+      [GestureDecisionEventState.LOST]: "You lose!",
+      [GestureDecisionEventState.WIN]: "Suka! Well done!",
     },
   },
 
@@ -116,13 +111,12 @@ export const gestureDecisionEvents = [
     id: "death-1",
     img: `${process.env.PUBLIC_URL}/events/death.png`,
     state_msg: {
-      [`${GestureDecisionEventState.Active}-${GestureAction.Buy}`]: `Pay {PRICE} for {QTY}. Or else.`,
-      [`${GestureDecisionEventState.Active}-${GestureAction.Sell}`]:
+      [`${GestureDecisionEventState.ACTIVE}-${GestureAction.BUY}`]: `Pay {PRICE} for {QTY}. Or else.`,
+      [`${GestureDecisionEventState.ACTIVE}-${GestureAction.SELL}`]:
         "Sell {QTY} at {PRICE}. Or else.",
-      [GestureDecisionEventState.NoMatch]: "Nervous? You keep messing up.",
-      [GestureDecisionEventState.Lost]: "I'll be seeing you soon.",
-      [GestureDecisionEventState.Win]:
-        "Looks like you'll live to trade another day.",
+      [GestureDecisionEventState.NOMATCH]: "Nervous? You keep messing up.",
+      [GestureDecisionEventState.LOST]: "Loss comes in many forms . . .",
+      [GestureDecisionEventState.WIN]: "Well done. But I will return . . .",
     },
   },
 ];
@@ -130,7 +124,7 @@ export const gestureDecisionEvents = [
 export const events = [
   {
     id: "1",
-    type: EventType.NewsEvent,
+    type: EventType.NEWS,
     msg: "US Economy Grew at a Faster Pace in Last Quarter Than Previously Estimated",
     duration: 7000,
     delta: -0.1,
@@ -144,7 +138,7 @@ export const events = [
   },
   {
     id: "2",
-    type: EventType.NewsEvent,
+    type: EventType.NEWS,
     msg: "GDP Growth Shows Robust Economic Recovery",
     duration: 7000,
     delta: -0.1,
@@ -158,7 +152,7 @@ export const events = [
   },
   {
     id: "3",
-    type: EventType.NewsEvent,
+    type: EventType.NEWS,
     msg: "US GDP Contracts in Last Quarter, Marking Worst Drop Since 2008 Financial Crisis",
     duration: 7000,
     delta: -0.2,
@@ -172,7 +166,7 @@ export const events = [
   },
   {
     id: "4",
-    type: EventType.NewsEvent,
+    type: EventType.NEWS,
     msg: "US Economy Shrank More Than Expected in Last Quarter",
     duration: 7000,
     delta: -0.1,
@@ -186,7 +180,7 @@ export const events = [
   },
   {
     id: "5",
-    type: EventType.NewsEvent,
+    type: EventType.NEWS,
     msg: "Fed Leaves Interest Rates Unchanged, Signals Future Rate Cuts Possible",
     duration: 7000,
     delta: 0.2,
@@ -200,7 +194,7 @@ export const events = [
   },
   {
     id: "6",
-    type: EventType.NewsEvent,
+    type: EventType.NEWS,
     msg: "Low Interest Rates Help Sustain Economic Growth",
     duration: 7000,
     delta: -0.2,
@@ -214,7 +208,7 @@ export const events = [
   },
   {
     id: "7",
-    type: EventType.NewsEvent,
+    type: EventType.NEWS,
     msg: "Federal Reserve Raises Interest Rates, Causing Stock Market to Plunge",
     duration: 9000,
     delta: -0.25,
@@ -228,7 +222,7 @@ export const events = [
   },
   {
     id: "8",
-    type: EventType.NewsEvent,
+    type: EventType.NEWS,
     msg: "Interest Rates Hike Adds to Market Volatility, Raises Worries of Slowdown",
     duration: 9000,
     delta: -0.5,
@@ -242,7 +236,7 @@ export const events = [
   },
   {
     id: "9",
-    type: EventType.NewsEvent,
+    type: EventType.NEWS,
     msg: "Inflation Rate Hits Highest Level in Years, Fueling Concerns About Rising Prices",
     duration: 9000,
     delta: 0.2,
@@ -256,7 +250,7 @@ export const events = [
   },
   {
     id: "10",
-    type: EventType.NewsEvent,
+    type: EventType.NEWS,
     msg: "Unemployment Rate Drops to Record Low, Boosting Confidence in Economy",
     duration: 3500,
     delta: -0.2,
@@ -270,7 +264,7 @@ export const events = [
   },
   {
     id: "11",
-    type: EventType.NewsEvent,
+    type: EventType.NEWS,
     msg: "Unemployment Rate Rises Unexpectedly, Raising Concerns of Economic Slowdown",
     duration: 3500,
     delta: 0.2,
@@ -285,7 +279,7 @@ export const events = [
 
   {
     id: "12",
-    type: EventType.NewsEvent,
+    type: EventType.NEWS,
     msg: "Political Stability and Government Action Boosts Investor Confidence",
     sentiment: "bullish",
     duration: 7000,
@@ -300,7 +294,7 @@ export const events = [
   },
   {
     id: "13",
-    type: EventType.NewsEvent,
+    type: EventType.NEWS,
     msg: "Political Turmoil and Uncertainty Leads to Market Sell-Off",
     duration: 7000,
     delta: -0.2,

@@ -2,8 +2,8 @@ export const Message = {
   //GestureDecision.ts:
   SetPrice: "Set price: ${1}",
   SetQty: "Set qty: ${1}",
-  CancelOrder: "Order ${1} cancelled",
-  CancelGesture: "Clearing Order",
+  CancelOrder: "Order cancelled [qty: ${1}, price: ${2}]",
+  CancelGesture: "Clearing Order Builder",
   OrderSubmitted: "Order Submitted",
 
   //handled together, extracted

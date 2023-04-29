@@ -7,7 +7,7 @@ export default function OrderTable(props) {
     <Table bordered size="sm" className="w-100">
       <thead>
         <tr>
-          <th>Time</th>
+          <th className="td-time">Time</th>
           <th>Status</th>
           <th>Type</th>
           <th>Qty&nbsp;&nbsp;</th>
@@ -19,7 +19,7 @@ export default function OrderTable(props) {
           const timeStamp = new Date(order.timestamp).toLocaleTimeString();
           return (
             <tr key={`${props.type}-${order.id}`}>
-              <td>{timeStamp}</td>
+              <td className="td-time">{timeStamp}</td>
               <td>{OrderStatus[order.status]}</td>
               <td>{OrderType[order.orderType]}</td>
               <td>{order.qty}</td>

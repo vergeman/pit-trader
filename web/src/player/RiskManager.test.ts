@@ -33,8 +33,8 @@ describe("RiskManager", () => {
       orders: 0,
     });
 
-    const o1 = new Order("test", OrderType.Limit, 15, 100);
-    const o2 = new Order("test2", OrderType.Limit, -10, 100);
+    const o1 = new Order("test", OrderType.LIMIT, 15, 100);
+    const o2 = new Order("test2", OrderType.LIMIT, -10, 100);
     player.addOrder(o1);
     me.process(o1);
     me.process(o2);
@@ -57,8 +57,8 @@ describe("RiskManager", () => {
 
     //prospective orders
     const orders = [
-      new Order("test", OrderType.Limit, 5, 100),
-      new Order("test", OrderType.Limit, 25, 100),
+      new Order("test", OrderType.LIMIT, 5, 100),
+      new Order("test", OrderType.LIMIT, 25, 100),
     ];
     expect(riskManager._calcPositions(player, orders)).toEqual({
       total: 45,
@@ -80,8 +80,8 @@ describe("RiskManager", () => {
 
     expect(riskManager.exceedsLimit(player, config.positionLimit).exceedsLimit).toBeFalsy();
 
-    const o1 = new Order("test", OrderType.Limit, 15, 100);
-    const o2 = new Order("test2", OrderType.Limit, -10, 100);
+    const o1 = new Order("test", OrderType.LIMIT, 15, 100);
+    const o2 = new Order("test2", OrderType.LIMIT, -10, 100);
 
     player.addOrder(o1);
     me.process(o1);
@@ -90,7 +90,7 @@ describe("RiskManager", () => {
     //me.process execute 10 lots
     expect(riskManager.exceedsLimit(player, config.positionLimit).exceedsLimit).toBeFalsy(); //10
 
-    const o3 = new Order("test", OrderType.Limit, 20, 100);
+    const o3 = new Order("test", OrderType.LIMIT, 20, 100);
     expect(riskManager.exceedsLimit(player, config.positionLimit, [o3]).exceedsLimit).toBeTruthy(); //30 > 25
   });
 
@@ -106,8 +106,8 @@ describe("RiskManager", () => {
 
     expect(riskManager.exceedsLimit(player, config.warnPositionLimit).exceedsLimit).toBeFalsy();
 
-    const o1 = new Order("test", OrderType.Limit, 15, 100);
-    const o2 = new Order("test2", OrderType.Limit, -10, 100);
+    const o1 = new Order("test", OrderType.LIMIT, 15, 100);
+    const o2 = new Order("test2", OrderType.LIMIT, -10, 100);
 
     player.addOrder(o1);
     me.process(o1);
@@ -116,7 +116,7 @@ describe("RiskManager", () => {
     //me.process execute 10 lots, working 5
     expect(riskManager.exceedsLimit(player, config.positionLimit).exceedsLimit).toBeFalsy(); //15
 
-    const o3 = new Order("test", OrderType.Limit, 6, 100);
+    const o3 = new Order("test", OrderType.LIMIT, 6, 100);
     expect(riskManager.exceedsLimit(player, config.warnPositionLimit, [o3]).exceedsLimit).toBeTruthy(); //21 > 20 warn
     expect(riskManager.exceedsLimit(player, config.positionLimit, [o3]).exceedsLimit).toBeFalsy(); //21 !> 25
   });
@@ -133,8 +133,8 @@ describe("RiskManager", () => {
     const riskManager = new RiskManager({ ...config });
     const player = new Player("Test");
 
-    const o1 = new Order("test", OrderType.Limit, 15, 100);
-    const o2 = new Order("test", OrderType.Limit, -15, 102);
+    const o1 = new Order("test", OrderType.LIMIT, 15, 100);
+    const o2 = new Order("test", OrderType.LIMIT, -15, 102);
 
     player.addOrder(o1);
     player.addOrder(o2);
@@ -142,9 +142,9 @@ describe("RiskManager", () => {
     me.process(o2);
 
     expect(riskManager.exceedsMaxOrder(player, config.maxOrderLimit).exceedsMaxOrder).toBeFalsy();
-    const o3 = new Order("test", OrderType.Limit, -15, 102);
-    const o4 = new Order("test", OrderType.Limit, 15, 102);
-    const o5 = new Order("test", OrderType.Limit, 5, 102);
+    const o3 = new Order("test", OrderType.LIMIT, -15, 102);
+    const o4 = new Order("test", OrderType.LIMIT, 15, 102);
+    const o5 = new Order("test", OrderType.LIMIT, 5, 102);
     expect(riskManager.exceedsMaxOrder(player, config.maxOrderLimit, [o3]).exceedsMaxOrder).toBeTruthy();
     expect(riskManager.exceedsMaxOrder(player, config.maxOrderLimit, [o4]).exceedsMaxOrder).toBeTruthy();
     expect(riskManager.exceedsMaxOrder(player, config.maxOrderLimit, [o5]).exceedsMaxOrder).toBeFalsy();

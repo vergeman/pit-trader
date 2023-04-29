@@ -189,7 +189,7 @@ describe("MarketLoop", () => {
       //check me
       const liveOrders = players
         .map((player) =>
-          player.orders.filter((order) => order.status === OrderStatus.Live)
+          player.orders.filter((order) => order.status === OrderStatus.LIVE)
         )
         .flat();
 
@@ -239,8 +239,8 @@ describe("MarketLoop", () => {
         qtySeed: 4,
       });
 
-      const order1 = new Order(players[0].id, OrderType.Limit, 1, 100);
-      const order2 = new Order(players[0].id, OrderType.Limit, -1, 102);
+      const order1 = new Order(players[0].id, OrderType.LIMIT, 1, 100);
+      const order2 = new Order(players[0].id, OrderType.LIMIT, -1, 102);
       me.process(order1);
       me.process(order2);
       const price = marketLoop.getPrice();
@@ -259,7 +259,7 @@ describe("MarketLoop", () => {
       });
       marketLoop.init();
 
-      const order = new Order(players[0].id, OrderType.Market, 1, NaN);
+      const order = new Order(players[0].id, OrderType.MARKET, 1, NaN);
       const bestOffer = me.offers.peek();
       const tradePrice = bestOffer && bestOffer.price;
 

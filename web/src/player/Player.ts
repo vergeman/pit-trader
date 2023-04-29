@@ -127,13 +127,13 @@ export class Player {
 
   getLiveBids(): Order[] {
     return this.orders.filter(
-      (order) => order.qty > 0 && order.status === OrderStatus.Live
+      (order) => order.qty > 0 && order.status === OrderStatus.LIVE
     );
   }
 
   getLiveOffers(): Order[] {
     return this.orders.filter(
-      (order) => order.qty < 0 && order.status === OrderStatus.Live
+      (order) => order.qty < 0 && order.status === OrderStatus.LIVE
     );
   }
 
@@ -142,7 +142,7 @@ export class Player {
   }
 
   buildOrder(qty: number, price: number): Order {
-    const order = new Order(this.id, OrderType.Limit, qty, price);
+    const order = new Order(this.id, OrderType.LIMIT, qty, price);
     return order;
   }
 
@@ -199,7 +199,7 @@ export class Player {
 
       // fake a transaction to display a Cancelled Order
       // (we show completes and partials, it's strange not to show a cancel)
-      if (order.status == OrderStatus.Cancelled) {
+      if (order.status == OrderStatus.CANCELLED) {
         const t: Transaction = {
           id: order.id,
           orderType: order.orderType,
@@ -207,7 +207,7 @@ export class Player {
           qty: order.qty,
           orderQty: order.qty,
           price: order.price,
-          status: OrderStatus.Cancelled,
+          status: OrderStatus.CANCELLED,
           timestamp: order.updatedAt,
         };
 
@@ -242,7 +242,7 @@ export class Player {
   //otherwise allow infinite position as long as both sides net avoid sum position detection
   workingPosition(abs: boolean = false): number {
     return this.orders
-      .filter((order) => order.status == OrderStatus.Live)
+      .filter((order) => order.status == OrderStatus.LIVE)
       .reduce((acc: number, order: Order) => {
         const qty = abs ? Math.abs(order.qty) : order.qty;
         return acc + qty;

@@ -10,12 +10,12 @@ import MarketLoop from "./player/MarketLoop";
 import LoseModal from "./LoseModal";
 import Message from "./infopanel/Message";
 import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
+import { useGlobalContext } from "./GlobalContext.jsx";
 import { useGameContext, GameState } from "./GameContext.jsx";
 import { EventManager } from "./player/EventManager.ts";
 import { EventType } from "./player/Event.ts";
 import {
   GestureDecisionEvent,
-  GestureDecisionEventState,
 } from "./player/GestureDecisionEvent";
 
 export default function Main(props) {
@@ -25,6 +25,11 @@ export default function Main(props) {
     maxOrderLimit: 40,
     tick: 1000,
     limitPL: -1000,
+    gestureDecisionEvent: {
+      bonus: 1000 / 2,   //coefficient multiplied by event qty
+      duration: 10000,
+      probability: 0.25
+    }
   };
 
   const [riskManager, setRiskManager] = useState(
@@ -57,15 +62,27 @@ export default function Main(props) {
     )
   );
   const [eventManager, setEventManager] = useState(
-    new EventManager(marketLoop, gestureDecision)
+    new EventManager(marketLoop, gestureDecision, config.gestureDecisionEvent)
   );
 
   const { messagesDispatch, gestureDecisionEventDispatch } = useInfoPanel();
   const gameContext = useGameContext();
+  const { isDebug } = useGlobalContext();
 
   //INIT
   useEffect(() => {
     marketLoop.init();
+
+    //for debug mode, attach instances to window for console access
+    if (isDebug) {
+      Object.assign(window, {
+        marketLoop,
+        riskManager,
+        npcPlayerManager,
+        player,
+        gestureDecision,
+      });
+    }
   }, []);
 
   //GAMESTATE
@@ -74,7 +91,7 @@ export default function Main(props) {
       case GameState.INIT:
         //any pre stuff?
         gameContext.setState(GameState.RUN);
-      break;
+        break;
       case GameState.RUN:
         marketLoop.start();
         break;
@@ -99,7 +116,7 @@ export default function Main(props) {
       messagesDispatch({ type: Message.Restart }); //clear infopanel messages
 
       gestureDecisionEventDispatch({
-        type: EventType.GestureDecisionEvent,
+        type: EventType.GESTUREDECISION,
         value: new GestureDecisionEvent({}),
       });
 
