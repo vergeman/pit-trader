@@ -315,6 +315,15 @@ table#gestureDecision.table {
   display: none;
 }
 
+/* InfoPanel */
+
+/* time table column */
+.td-time {
+  width: 0.1%;
+  min-width: 100px;
+  white-space: nowrap;
+}
+
 
 /* GestureDecisionEvent InfoPanel Tab */
 

@@ -6,7 +6,7 @@ export default function Messages(props) {
     <Table bordered size="sm" className="w-100">
       <thead>
         <tr>
-          <th>Time</th>
+          <th className="td-time">Time</th>
           <th>Message</th>
         </tr>
       </thead>
@@ -27,15 +27,9 @@ export default function Messages(props) {
 
           return (
             <tr className={colorClass} key={`message-${i}`}>
-              <td>
+              <td className="td-time">
                 {message.time &&
-                  message.time.toLocaleTimeString([], {
-                    hour12: false,
-                    hour: "numeric",
-                    minute: "numeric",
-                    second: "numeric",
-                    fractionalSecondDigits: 3,
-                  })}
+                  message.time.toLocaleTimeString()}
               </td>
               <td className="w-100">{message.text}</td>
             </tr>
