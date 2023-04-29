@@ -45,7 +45,7 @@ export class GestureDecisionEvent
 
   constructor({
     id,
-    type = EventType.GestureDecisionEvent,
+    type = EventType.GESTUREDECISION,
     msg,
     duration,
     marketLoop,
@@ -107,7 +107,7 @@ export class GestureDecisionEvent
     //state will be checked in boss reducer
     //NB: this is Message.NewsEvent to temp show on infopanel
     const msg = {
-      type: EventType.GestureDecisionEvent,
+      type: EventType.GESTUREDECISION,
       value: this,
     };
 
@@ -150,7 +150,7 @@ export class GestureDecisionEvent
       this.gestureDecisionEventState
     );
     const msg = {
-      type: EventType.GestureDecisionEvent,
+      type: EventType.GESTUREDECISION,
       value: this,
     };
 
@@ -173,7 +173,7 @@ export class GestureDecisionEvent
       );
 
       const msg = {
-        type: EventType.GestureDecisionEvent,
+        type: EventType.GESTUREDECISION,
         value: this,
       };
 

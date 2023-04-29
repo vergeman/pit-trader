@@ -56,7 +56,7 @@ export const buildGestureDecisionEventParams = (gde: any, price: number) => {
     ...gde,
     state_msg,
     action,
-    type: EventType.GestureDecisionEvent,
+    type: EventType.GESTUREDECISION,
     msg: state_msg[`${GestureDecisionEventState.Active}-${action}`],
     gesture,
     onEnd: () => {},
@@ -124,7 +124,7 @@ export const gestureDecisionEvents = [
 export const events = [
   {
     id: "1",
-    type: EventType.NewsEvent,
+    type: EventType.NEWS,
     msg: "US Economy Grew at a Faster Pace in Last Quarter Than Previously Estimated",
     duration: 7000,
     delta: -0.1,
@@ -138,7 +138,7 @@ export const events = [
   },
   {
     id: "2",
-    type: EventType.NewsEvent,
+    type: EventType.NEWS,
     msg: "GDP Growth Shows Robust Economic Recovery",
     duration: 7000,
     delta: -0.1,
@@ -152,7 +152,7 @@ export const events = [
   },
   {
     id: "3",
-    type: EventType.NewsEvent,
+    type: EventType.NEWS,
     msg: "US GDP Contracts in Last Quarter, Marking Worst Drop Since 2008 Financial Crisis",
     duration: 7000,
     delta: -0.2,
@@ -166,7 +166,7 @@ export const events = [
   },
   {
     id: "4",
-    type: EventType.NewsEvent,
+    type: EventType.NEWS,
     msg: "US Economy Shrank More Than Expected in Last Quarter",
     duration: 7000,
     delta: -0.1,
@@ -180,7 +180,7 @@ export const events = [
   },
   {
     id: "5",
-    type: EventType.NewsEvent,
+    type: EventType.NEWS,
     msg: "Fed Leaves Interest Rates Unchanged, Signals Future Rate Cuts Possible",
     duration: 7000,
     delta: 0.2,
@@ -194,7 +194,7 @@ export const events = [
   },
   {
     id: "6",
-    type: EventType.NewsEvent,
+    type: EventType.NEWS,
     msg: "Low Interest Rates Help Sustain Economic Growth",
     duration: 7000,
     delta: -0.2,
@@ -208,7 +208,7 @@ export const events = [
   },
   {
     id: "7",
-    type: EventType.NewsEvent,
+    type: EventType.NEWS,
     msg: "Federal Reserve Raises Interest Rates, Causing Stock Market to Plunge",
     duration: 9000,
     delta: -0.25,
@@ -222,7 +222,7 @@ export const events = [
   },
   {
     id: "8",
-    type: EventType.NewsEvent,
+    type: EventType.NEWS,
     msg: "Interest Rates Hike Adds to Market Volatility, Raises Worries of Slowdown",
     duration: 9000,
     delta: -0.5,
@@ -236,7 +236,7 @@ export const events = [
   },
   {
     id: "9",
-    type: EventType.NewsEvent,
+    type: EventType.NEWS,
     msg: "Inflation Rate Hits Highest Level in Years, Fueling Concerns About Rising Prices",
     duration: 9000,
     delta: 0.2,
@@ -250,7 +250,7 @@ export const events = [
   },
   {
     id: "10",
-    type: EventType.NewsEvent,
+    type: EventType.NEWS,
     msg: "Unemployment Rate Drops to Record Low, Boosting Confidence in Economy",
     duration: 3500,
     delta: -0.2,
@@ -264,7 +264,7 @@ export const events = [
   },
   {
     id: "11",
-    type: EventType.NewsEvent,
+    type: EventType.NEWS,
     msg: "Unemployment Rate Rises Unexpectedly, Raising Concerns of Economic Slowdown",
     duration: 3500,
     delta: 0.2,
@@ -279,7 +279,7 @@ export const events = [
 
   {
     id: "12",
-    type: EventType.NewsEvent,
+    type: EventType.NEWS,
     msg: "Political Stability and Government Action Boosts Investor Confidence",
     sentiment: "bullish",
     duration: 7000,
@@ -294,7 +294,7 @@ export const events = [
   },
   {
     id: "13",
-    type: EventType.NewsEvent,
+    type: EventType.NEWS,
     msg: "Political Turmoil and Uncertainty Leads to Market Sell-Off",
     duration: 7000,
     delta: -0.2,

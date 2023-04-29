@@ -117,7 +117,7 @@ export default function Main(props) {
       messagesDispatch({ type: Message.Restart }); //clear infopanel messages
 
       gestureDecisionEventDispatch({
-        type: EventType.GestureDecisionEvent,
+        type: EventType.GESTUREDECISION,
         value: new GestureDecisionEvent({}),
       });
 

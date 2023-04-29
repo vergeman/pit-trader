@@ -84,9 +84,9 @@ export default function CameraGesture(props) {
     if (!event) return;
 
     //one time init
-    if (event && event.type == EventType.GestureDecisionEvent) {
+    if (event && event.type == EventType.GESTUREDECISION) {
       console.log(
-        "[CameraGesture] EventManager EventType.GestureDecisionEvent"
+        "[CameraGesture] EventManager EventType.GESTUREDECISION"
       );
 
       event.dispatchHandler = (msg, tabName = null) => {
@@ -104,7 +104,7 @@ export default function CameraGesture(props) {
       console.log("[CameraGesture]", event);
       props.eventManager.executeEvent();
       const msg = {
-        type: EventType.GestureDecisionEvent,
+        type: EventType.GESTUREDECISION,
         value: event,
       };
 
@@ -120,7 +120,7 @@ export default function CameraGesture(props) {
      * News
      */
 
-    if (event && event.type == EventType.NewsEvent) {
+    if (event && event.type == EventType.NEWS) {
       props.eventManager.executeEvent();
       //news
       const msg = { type: Message.NewsEvent, value: event };

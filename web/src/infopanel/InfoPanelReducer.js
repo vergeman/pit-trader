@@ -106,7 +106,7 @@ export function gestureDecisionEventReducer(gestureDecisionEvent, action) {
 
   //TODO: these should be reducer-specific events, but we don't seem to have any
   //at the moment
-  if (action.type !== EventType.GestureDecisionEvent) return null;
+  if (action.type !== EventType.GESTUREDECISION) return null;
 
   console.log("[gestureDecisionEventReducer]", action);
 

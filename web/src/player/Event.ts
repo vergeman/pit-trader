@@ -2,8 +2,8 @@ import MarketLoop from "./MarketLoop";
 import GestureDecision from "../gesture/GestureDecision";
 
 export enum EventType {
-  NewsEvent,
-  GestureDecisionEvent,
+  NEWS,
+  GESTUREDECISION,
 }
 
 export interface IEvent {
