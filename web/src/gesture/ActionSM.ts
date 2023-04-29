@@ -1,12 +1,12 @@
 import { Gesture, GestureAction, GestureType } from "./Gesture";
-import INPUT_STATE from "./Input_State";
+import InputState from "./InputState";
 
 class ActionSM {
   //arg, probs
   public onFinalTimeout: (action: GestureAction) => void;
   public gestureType: GestureType;
   private timeout: number;
-  public inputState: INPUT_STATE;
+  public inputState: InputState;
   private timer: NodeJS.Timeout | undefined;
   public action: GestureAction;
 
@@ -18,7 +18,7 @@ class ActionSM {
     this.onFinalTimeout = onFinalTimeout; //cb function when 'final' value is determined
     this.gestureType = gestureType;
     this.timeout = timeout;
-    this.inputState = INPUT_STATE.IDLE; // or class
+    this.inputState = InputState.IDLE; // or class
     this.action = GestureAction.NONE;
 
   }
@@ -30,7 +30,7 @@ class ActionSM {
       //console.log("[ActionSM] FINAL", this);
       this.onFinalTimeout(this.action);
       this.resetValues();
-      this.inputState = INPUT_STATE.LOCKED;
+      this.inputState = InputState.LOCKED;
     }, this.timeout);
   }
 
@@ -48,8 +48,8 @@ class ActionSM {
   }
 
   unlock() {
-    if (this.inputState === INPUT_STATE.LOCKED) {
-      this.inputState = INPUT_STATE.IDLE;
+    if (this.inputState === InputState.LOCKED) {
+      this.inputState = InputState.IDLE;
     }
   }
 
@@ -73,14 +73,14 @@ class ActionSM {
     //Garbage: type: Action, Action: Garbage, value = null
 
     //"start"
-    if (this.inputState === INPUT_STATE.IDLE) {
+    if (this.inputState === InputState.IDLE) {
       if (action !== null) {
-        this.inputState = INPUT_STATE.PENDING;
+        this.inputState = InputState.PENDING;
       }
     }
 
     //action:
-    if (this.inputState === INPUT_STATE.PENDING &&
+    if (this.inputState === InputState.PENDING &&
       this.action !== null) {
 
       if ([GestureAction.CANCEL, GestureAction.MARKET].includes(action)) {
@@ -92,5 +92,5 @@ class ActionSM {
   }
 }
 
-export { INPUT_STATE, ActionSM };
+export { InputState, ActionSM };
 export { ActionSM as default };

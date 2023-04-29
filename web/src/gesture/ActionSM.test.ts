@@ -1,6 +1,6 @@
 import ActionSM from "./ActionSM";
 import { Gesture, GestureType, GestureAction } from "./Gesture";
-import INPUT_STATE from "./Input_State";
+import InputState from "./InputState";
 
 describe("ActionSM", () => {
   it("update() excludes calls to Garbage action", async () => {
@@ -9,11 +9,11 @@ describe("ActionSM", () => {
     const onFinalTimeout = jest.fn();
     const actionSM = new ActionSM(GestureType.ACTION, onFinalTimeout, TIMEOUT);
 
-    expect(actionSM.inputState).toBe(INPUT_STATE.IDLE);
+    expect(actionSM.inputState).toBe(InputState.IDLE);
     actionSM.update(gesture);
     await new Promise((resolve) => setTimeout(resolve, TIMEOUT + 1));
 
-    expect(actionSM.inputState).toBe(INPUT_STATE.IDLE);
+    expect(actionSM.inputState).toBe(InputState.IDLE);
     expect(actionSM.action).toBe(GestureAction.NONE);
     expect(onFinalTimeout).toBeCalledTimes(0);
   });
@@ -25,7 +25,7 @@ describe("ActionSM", () => {
     const actionSM = new ActionSM(GestureType.ACTION, onFinalTimeout, TIMEOUT);
     actionSM.update(gesture);
     await new Promise((resolve) => setTimeout(resolve, TIMEOUT + 1));
-    expect(actionSM.inputState).toBe(INPUT_STATE.LOCKED);
+    expect(actionSM.inputState).toBe(InputState.LOCKED);
     expect(onFinalTimeout).toBeCalledTimes(1);
     expect(onFinalTimeout).toBeCalledWith(GestureAction.CANCEL);
     //resets
@@ -42,7 +42,7 @@ describe("ActionSM", () => {
     await new Promise((resolve) => setTimeout(resolve, TIMEOUT + 1));
     //NB: resets
     expect(actionSM.action).toBe(GestureAction.NONE);
-    expect(actionSM.inputState).toBe(INPUT_STATE.LOCKED);
+    expect(actionSM.inputState).toBe(InputState.LOCKED);
     expect(onFinalTimeout).toBeCalledTimes(1);
     expect(onFinalTimeout).toBeCalledWith(GestureAction.MARKET);
   });

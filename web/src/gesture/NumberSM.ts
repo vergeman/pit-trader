@@ -1,5 +1,5 @@
 import { Gesture, GestureType } from "./Gesture";
-import INPUT_STATE from "./Input_State";
+import InputState from "./InputState";
 
 class NumberSM {
   //arg, probs
@@ -7,7 +7,7 @@ class NumberSM {
   public onFinalTimeout: (value: number) => void;
   public gestureType: GestureType;
   private timeout: number;
-  public inputState: INPUT_STATE;
+  public inputState: InputState;
   private timer: NodeJS.Timeout | undefined;
   public digit_length: number;
   private _gestureValue: number; //previous gestureValue
@@ -22,7 +22,7 @@ class NumberSM {
     this.gestureType = gestureType;
     this.timeout = timeout;
 
-    this.inputState = INPUT_STATE.IDLE; // or class
+    this.inputState = InputState.IDLE; // or class
     this.timer = undefined;
     this.digit_length = 0;
     this._gestureValue = 0;
@@ -36,7 +36,7 @@ class NumberSM {
       //console.log("[NumberSM] FINAL", this);
       this.onFinalTimeout(this.value);
       this.resetValues();
-      this.inputState = INPUT_STATE.LOCKED;
+      this.inputState = InputState.LOCKED;
     }, this.timeout);
   }
 
@@ -56,8 +56,8 @@ class NumberSM {
   }
 
   unlock() {
-    if (this.inputState === INPUT_STATE.LOCKED) {
-      this.inputState = INPUT_STATE.IDLE;
+    if (this.inputState === InputState.LOCKED) {
+      this.inputState = InputState.IDLE;
     }
   }
 
@@ -78,13 +78,13 @@ class NumberSM {
     // );
 
     //"start"
-    if (this.inputState === INPUT_STATE.IDLE) {
+    if (this.inputState === InputState.IDLE) {
       if (gestureValue !== null) {
-        this.inputState = INPUT_STATE.PENDING;
+        this.inputState = InputState.PENDING;
       }
     }
 
-    if (this.inputState === INPUT_STATE.PENDING && gestureValue !== null) {
+    if (this.inputState === InputState.PENDING && gestureValue !== null) {
       //replace
       if (digit_length === this.digit_length) {
         if (this.value !== gestureValue) {
@@ -114,5 +114,5 @@ class NumberSM {
   }
 }
 
-export { INPUT_STATE, NumberSM };
+export { InputState, NumberSM };
 export { NumberSM as default };

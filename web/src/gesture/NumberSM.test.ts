@@ -1,6 +1,6 @@
 import NumberSM from "./NumberSM";
 import { Gesture, GestureType, GestureAction } from "./Gesture";
-import INPUT_STATE from "./Input_State";
+import InputState from "./InputState";
 
 describe("NumberSM", () => {
   it("update() after time out executes callback with resulting value", async () => {
@@ -21,15 +21,15 @@ describe("NumberSM", () => {
     const onFinalTimeout = jest.fn();
     const qtySM = new NumberSM(GestureType.QTY, onFinalTimeout, TIMEOUT);
     qtySM.update(gesture100);
-    expect(qtySM.inputState).toBe(INPUT_STATE.PENDING);
+    expect(qtySM.inputState).toBe(InputState.PENDING);
     qtySM.update(gesture70);
-    expect(qtySM.inputState).toBe(INPUT_STATE.PENDING);
+    expect(qtySM.inputState).toBe(InputState.PENDING);
     qtySM.update(gesture3);
-    expect(qtySM.inputState).toBe(INPUT_STATE.PENDING);
+    expect(qtySM.inputState).toBe(InputState.PENDING);
     await new Promise((resolve) => setTimeout(resolve, TIMEOUT + 1));
     expect(onFinalTimeout).toBeCalledTimes(1);
     expect(onFinalTimeout).toBeCalledWith(173);
-    expect(qtySM.inputState).toBe(INPUT_STATE.LOCKED);
+    expect(qtySM.inputState).toBe(InputState.LOCKED);
   });
 
   //replace value behavior
@@ -42,16 +42,16 @@ describe("NumberSM", () => {
     const qtySM = new NumberSM(GestureType.QTY, onFinalTimeout, TIMEOUT);
 
     qtySM.update(gesture100);
-    expect(qtySM.inputState).toBe(INPUT_STATE.PENDING);
+    expect(qtySM.inputState).toBe(InputState.PENDING);
     qtySM.update(gesture70);
-    expect(qtySM.inputState).toBe(INPUT_STATE.PENDING);
+    expect(qtySM.inputState).toBe(InputState.PENDING);
     await new Promise((resolve) => setTimeout(resolve, TIMEOUT / 2));
     qtySM.update(gesture80);
-    expect(qtySM.inputState).toBe(INPUT_STATE.PENDING);
+    expect(qtySM.inputState).toBe(InputState.PENDING);
     await new Promise((resolve) => setTimeout(resolve, TIMEOUT + 1));
     expect(onFinalTimeout).toBeCalledTimes(1);
     expect(onFinalTimeout).toBeCalledWith(180);
-    expect(qtySM.inputState).toBe(INPUT_STATE.LOCKED);
+    expect(qtySM.inputState).toBe(InputState.LOCKED);
   });
 
   //reset value behavior
@@ -63,14 +63,14 @@ describe("NumberSM", () => {
     const qtySM = new NumberSM(GestureType.QTY, onFinalTimeout, TIMEOUT);
 
     qtySM.update(gesture70);
-    expect(qtySM.inputState).toBe(INPUT_STATE.PENDING);
+    expect(qtySM.inputState).toBe(InputState.PENDING);
     await new Promise((resolve) => setTimeout(resolve, TIMEOUT / 2));
     qtySM.update(gesture100);
-    expect(qtySM.inputState).toBe(INPUT_STATE.PENDING);
+    expect(qtySM.inputState).toBe(InputState.PENDING);
     await new Promise((resolve) => setTimeout(resolve, TIMEOUT + 1));
 
     expect(onFinalTimeout).toBeCalledTimes(1);
     expect(onFinalTimeout).toBeCalledWith(100);
-    expect(qtySM.inputState).toBe(INPUT_STATE.LOCKED);
+    expect(qtySM.inputState).toBe(InputState.LOCKED);
   });
 });
