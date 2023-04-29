@@ -28,14 +28,10 @@ export default function NavbarComponent() {
             Home
           </Nav.Link>
 
-          <Nav.Link as={Link} to="/demo">
-            Demo
-          </Nav.Link>
+          <InstructionModalContainer title="Instructions">
+            <Instructions />
+          </InstructionModalContainer>
         </Nav>
-
-        <InstructionModalContainer title="Instructions">
-          <Instructions />
-        </InstructionModalContainer>
       </Container>
     </Navbar>
   );
