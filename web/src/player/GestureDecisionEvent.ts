@@ -6,11 +6,11 @@ import { GestureAction } from "../gesture/Gesture";
 import Player from "../player/Player";
 //corresponds to component visuals
 export enum GestureDecisionEventState {
-  None,
-  Active, //initial screen
-  NoMatch, //submit a miss
-  Win, //matched event w/ order
-  Lost, //expired
+  NONE,
+  ACTIVE, //initial screen
+  NOMATCH, //submit a miss
+  WIN, //ematched event w/ order
+  LOST, //expired
 }
 
 export interface IGestureDecisionEvent extends IEvent {
@@ -73,7 +73,7 @@ export class GestureDecisionEvent
     this._bonus = bonus;
     this._action = action;
     this._gesture = gesture;
-    this._gestureDecisionEventState = GestureDecisionEventState.None;
+    this._gestureDecisionEventState = GestureDecisionEventState.NONE;
     this._state_msg = state_msg;
     this.dispatchHandler = () => {};
   }
@@ -129,7 +129,7 @@ export class GestureDecisionEvent
     //TODO: stash current timeout intervals for use in setTimeout
     //(e.g. overwritten in generic marketLoop.start)
     this.gestureDecision.reset();
-    this.gestureDecisionEventState = GestureDecisionEventState.Active;
+    this.gestureDecisionEventState = GestureDecisionEventState.ACTIVE;
 
     const timeout = setTimeout(() => this.end(), this.duration || 5000);
     this.timeouts.push(timeout);
@@ -138,8 +138,8 @@ export class GestureDecisionEvent
   end() {
     console.log("[GestureDecisionEvent] End");
 
-    if (this.gestureDecisionEventState !== GestureDecisionEventState.Win) {
-      this.gestureDecisionEventState = GestureDecisionEventState.Lost;
+    if (this.gestureDecisionEventState !== GestureDecisionEventState.WIN) {
+      this.gestureDecisionEventState = GestureDecisionEventState.LOST;
     }
 
     //clear callbacks
@@ -182,7 +182,7 @@ export class GestureDecisionEvent
   }
 
   resetState() {
-    this.gestureDecisionEventState = GestureDecisionEventState.None;
+    this.gestureDecisionEventState = GestureDecisionEventState.NONE;
   }
 
   setGestureDecisionOrderMatch(player: Player, order: Order) {
@@ -194,8 +194,8 @@ export class GestureDecisionEvent
     //make sure once a state changes we lock
     if (
       ![
-        GestureDecisionEventState.Active,
-        GestureDecisionEventState.NoMatch,
+        GestureDecisionEventState.ACTIVE,
+        GestureDecisionEventState.NOMATCH,
       ].includes(this.gestureDecisionEventState)
     )
       return this.gestureDecisionEventState;
@@ -207,13 +207,13 @@ export class GestureDecisionEvent
       this.gesture.price == order.gesturePrice &&
       this.gesture.orderType == order.orderType
     ) {
-      this.gestureDecisionEventState = GestureDecisionEventState.Win;
+      this.gestureDecisionEventState = GestureDecisionEventState.WIN;
     } else {
-      this.gestureDecisionEventState = GestureDecisionEventState.NoMatch;
+      this.gestureDecisionEventState = GestureDecisionEventState.NOMATCH;
     }
 
     //MATCH
-    if (this.gestureDecisionEventState == GestureDecisionEventState.Win) {
+    if (this.gestureDecisionEventState == GestureDecisionEventState.WIN) {
       //TODO: exit early
       player.addBonus(this.bonus);
       this.clearTimeouts();

@@ -57,7 +57,7 @@ export const buildGestureDecisionEventParams = (gde: any, price: number) => {
     state_msg,
     action,
     type: EventType.GESTUREDECISION,
-    msg: state_msg[`${GestureDecisionEventState.Active}-${action}`],
+    msg: state_msg[`${GestureDecisionEventState.ACTIVE}-${action}`],
     gesture,
     onEnd: () => {},
   };
@@ -69,12 +69,12 @@ export const gestureDecisionEvents = [
     id: "trickster-1",
     img: `${process.env.PUBLIC_URL}/events/trickster.png`,
     state_msg: {
-      [`${GestureDecisionEventState.Active}-${GestureAction.Buy}`]: `Let's see what happens. Pay {PRICE} for {QTY}`,
-      [`${GestureDecisionEventState.Active}-${GestureAction.Sell}`]:
+      [`${GestureDecisionEventState.ACTIVE}-${GestureAction.Buy}`]: `Let's see what happens. Pay {PRICE} for {QTY}`,
+      [`${GestureDecisionEventState.ACTIVE}-${GestureAction.Sell}`]:
         "Let's see what happens. Sell {QTY} at {PRICE}",
-      [GestureDecisionEventState.NoMatch]: "Try again, slick.",
-      [GestureDecisionEventState.Lost]: "Better luck next time.",
-      [GestureDecisionEventState.Win]: "Nice job!",
+      [GestureDecisionEventState.NOMATCH]: "Try again, slick.",
+      [GestureDecisionEventState.LOST]: "Better luck next time.",
+      [GestureDecisionEventState.WIN]: "Nice job!",
     },
   },
 
@@ -83,12 +83,12 @@ export const gestureDecisionEvents = [
     id: "hipster-1",
     img: `${process.env.PUBLIC_URL}/events/hipster.png`,
     state_msg: {
-      [`${GestureDecisionEventState.Active}-${GestureAction.Buy}`]: `Pay {PRICE} for {QTY}, dude.`,
-      [`${GestureDecisionEventState.Active}-${GestureAction.Sell}`]:
+      [`${GestureDecisionEventState.ACTIVE}-${GestureAction.Buy}`]: `Pay {PRICE} for {QTY}, dude.`,
+      [`${GestureDecisionEventState.ACTIVE}-${GestureAction.Sell}`]:
         "Sell {QTY} at {PRICE}, dude",
-      [GestureDecisionEventState.NoMatch]: "That's not it, amigo.",
-      [GestureDecisionEventState.Lost]: "Too bad, your loss",
-      [GestureDecisionEventState.Win]: "Way to go, Ace!",
+      [GestureDecisionEventState.NOMATCH]: "That's not it, amigo.",
+      [GestureDecisionEventState.LOST]: "Too bad, your loss",
+      [GestureDecisionEventState.WIN]: "Way to go, Ace!",
     },
   },
 
@@ -97,12 +97,12 @@ export const gestureDecisionEvents = [
     id: "starwars-1",
     img: `${process.env.PUBLIC_URL}/events/starwars.png`,
     state_msg: {
-      [`${GestureDecisionEventState.Active}-${GestureAction.Buy}`]: `Ootini! Pay {PRICE} for {QTY}.`,
-      [`${GestureDecisionEventState.Active}-${GestureAction.Sell}`]:
+      [`${GestureDecisionEventState.ACTIVE}-${GestureAction.Buy}`]: `Ootini! Pay {PRICE} for {QTY}.`,
+      [`${GestureDecisionEventState.ACTIVE}-${GestureAction.Sell}`]:
         "Jotadee, Sell {QTY} at {PRICE}.",
-      [GestureDecisionEventState.NoMatch]: "Koo nee tang, no match.",
-      [GestureDecisionEventState.Lost]: "You lose!",
-      [GestureDecisionEventState.Win]: "Suka! Well done!",
+      [GestureDecisionEventState.NOMATCH]: "Koo nee tang, no match.",
+      [GestureDecisionEventState.LOST]: "You lose!",
+      [GestureDecisionEventState.WIN]: "Suka! Well done!",
     },
   },
 
@@ -111,12 +111,12 @@ export const gestureDecisionEvents = [
     id: "death-1",
     img: `${process.env.PUBLIC_URL}/events/death.png`,
     state_msg: {
-      [`${GestureDecisionEventState.Active}-${GestureAction.Buy}`]: `Pay {PRICE} for {QTY}. Or else.`,
-      [`${GestureDecisionEventState.Active}-${GestureAction.Sell}`]:
+      [`${GestureDecisionEventState.ACTIVE}-${GestureAction.Buy}`]: `Pay {PRICE} for {QTY}. Or else.`,
+      [`${GestureDecisionEventState.ACTIVE}-${GestureAction.Sell}`]:
         "Sell {QTY} at {PRICE}. Or else.",
-      [GestureDecisionEventState.NoMatch]: "Nervous? You keep messing up.",
-      [GestureDecisionEventState.Lost]: "Loss comes in many forms . . .",
-      [GestureDecisionEventState.Win]: "Well done. But I will return . . .",
+      [GestureDecisionEventState.NOMATCH]: "Nervous? You keep messing up.",
+      [GestureDecisionEventState.LOST]: "Loss comes in many forms . . .",
+      [GestureDecisionEventState.WIN]: "Well done. But I will return . . .",
     },
   },
 ];

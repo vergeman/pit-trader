@@ -8,7 +8,7 @@ export default function GestureDecisionEvent(props) {
   const action = gestureDecisionEvent.action;
   const market_msg =
     gestureDecisionEvent.state_msg[
-      `${GestureDecisionEventState.Active}-${action}`
+      `${GestureDecisionEventState.ACTIVE}-${action}`
     ];
 
   const countdown = (Math.max(0, gestureDecisionEvent.expiry() - Date.now()) / 1000).toFixed(2);
@@ -16,7 +16,7 @@ export default function GestureDecisionEvent(props) {
 
 
   //none - empty
-  if (state === GestureDecisionEventState.None) {
+  if (state === GestureDecisionEventState.NONE) {
     return <div>No Challenges</div>;
   }
 
@@ -31,8 +31,8 @@ export default function GestureDecisionEvent(props) {
 
       <div className="d-flex flex-column justify-content-between px-4">
         {[
-          GestureDecisionEventState.Active,
-          GestureDecisionEventState.NoMatch,
+          GestureDecisionEventState.ACTIVE,
+          GestureDecisionEventState.NOMATCH,
         ].includes(state) && (
           <div>
             <h4>{market_msg}</h4>
@@ -40,16 +40,16 @@ export default function GestureDecisionEvent(props) {
         )}
 
         {[
-          GestureDecisionEventState.NoMatch,
-          GestureDecisionEventState.Win,
-          GestureDecisionEventState.Lost,
+          GestureDecisionEventState.NOMATCH,
+          GestureDecisionEventState.WIN,
+          GestureDecisionEventState.LOST,
         ].includes(state) && (
           <div>
             <h4>{gestureDecisionEvent.state_msg[state]}&nbsp;</h4>
           </div>
         )}
 
-        {state === GestureDecisionEventState.Win && (
+        {state === GestureDecisionEventState.WIN && (
           <div>
             <h5>Bonus: ${gestureDecisionEvent.bonus}&nbsp;</h5>
           </div>

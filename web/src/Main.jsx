@@ -16,7 +16,6 @@ import { EventManager } from "./player/EventManager.ts";
 import { EventType } from "./player/Event.ts";
 import {
   GestureDecisionEvent,
-  GestureDecisionEventState,
 } from "./player/GestureDecisionEvent";
 
 export default function Main(props) {
