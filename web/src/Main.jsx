@@ -26,6 +26,11 @@ export default function Main(props) {
     maxOrderLimit: 40,
     tick: 1000,
     limitPL: -1000,
+    gestureDecisionEvent: {
+      bonus: 1000 / 2,   //coefficient multiplied by event qty
+      duration: 10000,
+      probability: 0.25
+    }
   };
 
   const [riskManager, setRiskManager] = useState(
@@ -58,7 +63,7 @@ export default function Main(props) {
     )
   );
   const [eventManager, setEventManager] = useState(
-    new EventManager(marketLoop, gestureDecision)
+    new EventManager(marketLoop, gestureDecision, config.gestureDecisionEvent)
   );
 
   const { messagesDispatch, gestureDecisionEventDispatch } = useInfoPanel();

@@ -40,9 +40,6 @@ export const buildGestureDecisionEventParams = (gde: any, price: number) => {
     orderType: OrderType.Limit,
   };
 
-  const duration = 10000; //fixed
-  const bonus = _qty * (1000 / 2); //tuneable: need meaningful size but not overwhelming
-
   //replace qty price templates with generated values above
   const state_msg = {
     ...gde.state_msg,
@@ -61,8 +58,6 @@ export const buildGestureDecisionEventParams = (gde: any, price: number) => {
     action,
     type: EventType.GestureDecisionEvent,
     msg: state_msg[`${GestureDecisionEventState.Active}-${action}`],
-    duration,
-    bonus,
     gesture,
     onEnd: () => {},
   };

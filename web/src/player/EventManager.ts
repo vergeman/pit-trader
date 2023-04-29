@@ -8,15 +8,27 @@ import {
 import MarketLoop from "./MarketLoop";
 import GestureDecision from "../gesture/GestureDecision";
 
+export interface GestureDecisionEventConfig {
+  bonus: number;
+  duration: number;
+  probability: number;
+}
+
 export class EventManager {
   private _marketLoop: MarketLoop;
   private _gestureDecision: GestureDecision;
   private _event: GestureDecisionEvent | NewsEvent | null;
+  private _config: GestureDecisionEventConfig;
 
-  constructor(marketLoop: MarketLoop, gestureDecision: GestureDecision) {
+  constructor(
+    marketLoop: MarketLoop,
+    gestureDecision: GestureDecision,
+    config: GestureDecisionEventConfig
+  ) {
     this._marketLoop = marketLoop;
     this._gestureDecision = gestureDecision;
     this._event = null;
+    this._config = config;
   }
 
   get marketLoop(): MarketLoop {
@@ -34,7 +46,9 @@ export class EventManager {
   set event(e: GestureDecisionEvent | NewsEvent | null) {
     this._event = e;
   }
-
+  get config(): GestureDecisionEventConfig {
+    return this._config;
+  }
   hasEvent(): boolean {
     return !!(this._event && this._event.isActive);
   }
@@ -69,7 +83,7 @@ export class EventManager {
 
     //NewsEvent
     const randomProb = Math.random();
-    if (randomProb > 0.25) {
+    if (randomProb > this.config.probability) {
       const params = getRandom(events);
       const event = new NewsEvent({
         ...params,
@@ -87,6 +101,8 @@ export class EventManager {
 
     const event = new GestureDecisionEvent({
       ...params,
+      bonus: this.config.bonus * Math.abs(params.gesture.qty),
+      duration: this.config.duration,
       marketLoop: this.marketLoop,
       gestureDecision: this.gestureDecision,
     });
