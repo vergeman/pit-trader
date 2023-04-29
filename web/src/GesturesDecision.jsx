@@ -32,12 +32,12 @@ export default function GesturesDecision(props) {
   const calcStyleClass = (props) => {
     if (
       props.renderState === RenderState.GESTURE_CANCEL &&
-      props.action === GestureAction.Cancel
+      props.action === GestureAction.CANCEL
     ) {
       return StyleClass.CancelGesture;
     }
 
-    if (props.action === GestureAction.Cancel) {
+    if (props.action === GestureAction.CANCEL) {
       return StyleClass.CancelOrder;
     }
 

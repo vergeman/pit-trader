@@ -18,8 +18,8 @@ export default class Landmarks {
 
   setRecognizedGesture(gesture) {
     this.recognizedGesture = ![
-      GestureAction.None,
-      GestureAction.Garbage,
+      GestureAction.NONE,
+      GestureAction.GARBAGE,
     ].includes(gesture.action);
   }
 

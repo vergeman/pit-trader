@@ -16,7 +16,7 @@ describe("Gesture", () => {
     );
 
     expect(g.type).toEqual(GestureType.PRICE);
-    expect(g.action).toEqual(GestureAction.Buy);
+    expect(g.action).toEqual(GestureAction.BUY);
     expect(g.value).toEqual(100);
     expect(g.prob).toEqual(1);
     expect(g.digit_length()).toEqual(3);

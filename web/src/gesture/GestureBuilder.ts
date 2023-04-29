@@ -37,7 +37,7 @@ export default class GestureBuilder {
     //Find Garbage class
     //TODO: enumify
     const class_meta = Object.values(this.meta).find(
-      (m) => (m as any).action === GestureAction.Garbage
+      (m) => (m as any).action === GestureAction.GARBAGE
     );
 
     this._garbage_idx = (class_meta as any).index;
@@ -56,7 +56,7 @@ export default class GestureBuilder {
     //console.log("META", meta);
 
     if (!meta) {
-      return new Gesture(GestureType.ACTION, GestureAction.None, null, null);
+      return new Gesture(GestureType.ACTION, GestureAction.NONE, null, null);
     }
 
     return new Gesture(

@@ -5,12 +5,12 @@ export enum GestureType {
 }
 
 export enum GestureAction {
-  None = "None",
-  Buy = "Buy",
-  Sell = "Sell",
-  Market = "Market",
-  Garbage = "Garbage",
-  Cancel = "Cancel",
+  NONE = "None",
+  BUY = "Buy",
+  SELL = "Sell",
+  MARKET = "Market",
+  GARBAGE = "Garbage",
+  CANCEL = "Cancel",
 }
 
 /*

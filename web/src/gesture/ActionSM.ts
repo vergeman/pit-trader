@@ -19,7 +19,7 @@ class ActionSM {
     this.gestureType = gestureType;
     this.timeout = timeout;
     this.inputState = INPUT_STATE.IDLE; // or class
-    this.action = GestureAction.None;
+    this.action = GestureAction.NONE;
 
   }
 
@@ -40,7 +40,7 @@ class ActionSM {
   }
 
   resetValues() {
-    this.action = GestureAction.None;
+    this.action = GestureAction.NONE;
   }
 
   resetTimer() {
@@ -60,13 +60,13 @@ class ActionSM {
     //allow actions and isMarket
     const isMarket =
       gesture.type === GestureType.PRICE &&
-      gesture.action === GestureAction.Market;
+      gesture.action === GestureAction.MARKET;
 
     if (!(isMarket || gesture.type === GestureType.ACTION)) {
       return null;
     }
 
-    if (action === GestureAction.Garbage) return null;
+    if (action === GestureAction.GARBAGE) return null;
 
     //Cancel: type: Action, Action: Cancel, value = null
     //Market: type: Price, Action: Market, value = null
@@ -83,7 +83,7 @@ class ActionSM {
     if (this.inputState === INPUT_STATE.PENDING &&
       this.action !== null) {
 
-      if ([GestureAction.Cancel, GestureAction.Market].includes(action)) {
+      if ([GestureAction.CANCEL, GestureAction.MARKET].includes(action)) {
         this.action = action;
         this.resetTimer();
         this.setTimer(); //timer for Cancel action, onFinalTimeout cb

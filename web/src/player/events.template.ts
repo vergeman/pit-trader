@@ -32,10 +32,10 @@ import { GestureDecisionEventState } from "./GestureDecisionEvent";
 export const buildGestureDecisionEventParams = (gde: any, price: number) => {
   const _qty = Math.floor(Math.random() * 10) + 1; //[1,10]
   const gesturePrice = price.toFixed(1).at(-1) || 0; //100.2 <-- 2
-  const action = Math.random() <= 0.5 ? GestureAction.Buy : GestureAction.Sell;
+  const action = Math.random() <= 0.5 ? GestureAction.BUY : GestureAction.SELL;
 
   const gesture = {
-    qty: action == GestureAction.Buy ? _qty : -_qty,
+    qty: action == GestureAction.BUY ? _qty : -_qty,
     price: gesturePrice,
     orderType: OrderType.Limit,
   };
@@ -69,8 +69,8 @@ export const gestureDecisionEvents = [
     id: "trickster-1",
     img: `${process.env.PUBLIC_URL}/events/trickster.png`,
     state_msg: {
-      [`${GestureDecisionEventState.ACTIVE}-${GestureAction.Buy}`]: `Let's see what happens. Pay {PRICE} for {QTY}`,
-      [`${GestureDecisionEventState.ACTIVE}-${GestureAction.Sell}`]:
+      [`${GestureDecisionEventState.ACTIVE}-${GestureAction.BUY}`]: `Let's see what happens. Pay {PRICE} for {QTY}`,
+      [`${GestureDecisionEventState.ACTIVE}-${GestureAction.SELL}`]:
         "Let's see what happens. Sell {QTY} at {PRICE}",
       [GestureDecisionEventState.NOMATCH]: "Try again, slick.",
       [GestureDecisionEventState.LOST]: "Better luck next time.",
@@ -83,8 +83,8 @@ export const gestureDecisionEvents = [
     id: "hipster-1",
     img: `${process.env.PUBLIC_URL}/events/hipster.png`,
     state_msg: {
-      [`${GestureDecisionEventState.ACTIVE}-${GestureAction.Buy}`]: `Pay {PRICE} for {QTY}, dude.`,
-      [`${GestureDecisionEventState.ACTIVE}-${GestureAction.Sell}`]:
+      [`${GestureDecisionEventState.ACTIVE}-${GestureAction.BUY}`]: `Pay {PRICE} for {QTY}, dude.`,
+      [`${GestureDecisionEventState.ACTIVE}-${GestureAction.SELL}`]:
         "Sell {QTY} at {PRICE}, dude",
       [GestureDecisionEventState.NOMATCH]: "That's not it, amigo.",
       [GestureDecisionEventState.LOST]: "Too bad, your loss",
@@ -97,8 +97,8 @@ export const gestureDecisionEvents = [
     id: "starwars-1",
     img: `${process.env.PUBLIC_URL}/events/starwars.png`,
     state_msg: {
-      [`${GestureDecisionEventState.ACTIVE}-${GestureAction.Buy}`]: `Ootini! Pay {PRICE} for {QTY}.`,
-      [`${GestureDecisionEventState.ACTIVE}-${GestureAction.Sell}`]:
+      [`${GestureDecisionEventState.ACTIVE}-${GestureAction.BUY}`]: `Ootini! Pay {PRICE} for {QTY}.`,
+      [`${GestureDecisionEventState.ACTIVE}-${GestureAction.SELL}`]:
         "Jotadee, Sell {QTY} at {PRICE}.",
       [GestureDecisionEventState.NOMATCH]: "Koo nee tang, no match.",
       [GestureDecisionEventState.LOST]: "You lose!",
@@ -111,8 +111,8 @@ export const gestureDecisionEvents = [
     id: "death-1",
     img: `${process.env.PUBLIC_URL}/events/death.png`,
     state_msg: {
-      [`${GestureDecisionEventState.ACTIVE}-${GestureAction.Buy}`]: `Pay {PRICE} for {QTY}. Or else.`,
-      [`${GestureDecisionEventState.ACTIVE}-${GestureAction.Sell}`]:
+      [`${GestureDecisionEventState.ACTIVE}-${GestureAction.BUY}`]: `Pay {PRICE} for {QTY}. Or else.`,
+      [`${GestureDecisionEventState.ACTIVE}-${GestureAction.SELL}`]:
         "Sell {QTY} at {PRICE}. Or else.",
       [GestureDecisionEventState.NOMATCH]: "Nervous? You keep messing up.",
       [GestureDecisionEventState.LOST]: "Loss comes in many forms . . .",
