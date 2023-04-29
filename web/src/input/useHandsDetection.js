@@ -15,19 +15,29 @@ export default function useHandsDetection(canvasRef, landmarks) {
         hand_idx,
         _landmarks,
       ] of results.multiHandLandmarks.entries()) {
-        //canvasCtx.save();
+        if (landmarks.recognizedGesture) {
+          canvasCtx.shadowColor = "#00FF00";
+          canvasCtx.shadowBlur = 16;
 
-        if (landmarks.recognizedGesture){
-          window.drawConnectors(canvasCtx, _landmarks, window.HAND_CONNECTIONS, {
-            color: "#00FF00",
-            lineWidth: 5,
-          });
+          //"connectors" -> Lines
+          //params: color, lineWidth
+          window.drawConnectors(
+            canvasCtx,
+            _landmarks,
+            window.HAND_CONNECTIONS,
+            {
+              color: "#00FF00",
+              lineWidth: 2,
+            }
+          );
+
+          //"landmarks" -> dots
+          //params: fillColor, color, lineWidth, radius: 3 default
           window.drawLandmarks(canvasCtx, _landmarks, {
-            color: "#FF0000",
-            lineWidth: 2,
+            color: "#FF3300",
+            radius: 1,
           });
         }
-        //canvasCtx.restore();
 
         //multiHandedness[0,1].label "Left / Right"
         //multiHandLandmarks[ {x,y,z..}] //30 * 21 * 2 hands -> 126
@@ -43,7 +53,6 @@ export default function useHandsDetection(canvasRef, landmarks) {
         landmarks.setFingersOpen(hand.label, palmOrientations, _landmarks);
       }
     }
-    //canvasCtx.restore();
   };
 
   useEffect(() => {
