@@ -25,6 +25,9 @@
 /*
  * HOME
  */
+#nav-home-logo {
+  font-family: "Overpass", sans-serif;
+}
 
 #home-background-image {
   position: fixed;
