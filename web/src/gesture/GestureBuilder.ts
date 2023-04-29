@@ -56,7 +56,7 @@ export default class GestureBuilder {
     //console.log("META", meta);
 
     if (!meta) {
-      return new Gesture(GestureType.Action, GestureAction.None, null, null);
+      return new Gesture(GestureType.ACTION, GestureAction.None, null, null);
     }
 
     return new Gesture(

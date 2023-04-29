@@ -1,7 +1,7 @@
 export enum GestureType {
-  Qty = "Qty", //+/- number
-  Price = "Price", //number
-  Action = "Action", //Cancel, Garbage
+  QTY = "Qty", //+/- number
+  PRICE = "Price", //number
+  ACTION = "Action", //Cancel, Garbage
 }
 
 export enum GestureAction {

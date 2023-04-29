@@ -59,10 +59,10 @@ class ActionSM {
 
     //allow actions and isMarket
     const isMarket =
-      gesture.type === GestureType.Price &&
+      gesture.type === GestureType.PRICE &&
       gesture.action === GestureAction.Market;
 
-    if (!(isMarket || gesture.type === GestureType.Action)) {
+    if (!(isMarket || gesture.type === GestureType.ACTION)) {
       return null;
     }
 

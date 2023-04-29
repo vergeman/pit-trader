@@ -4,10 +4,10 @@ import INPUT_STATE from "./Input_State";
 
 describe("ActionSM", () => {
   it("update() excludes calls to Garbage action", async () => {
-    const gesture = new Gesture(GestureType.Action, GestureAction.Garbage, NaN, null);
+    const gesture = new Gesture(GestureType.ACTION, GestureAction.Garbage, NaN, null);
     const TIMEOUT = 100;
     const onFinalTimeout = jest.fn();
-    const actionSM = new ActionSM(GestureType.Action, onFinalTimeout, TIMEOUT);
+    const actionSM = new ActionSM(GestureType.ACTION, onFinalTimeout, TIMEOUT);
 
     expect(actionSM.inputState).toBe(INPUT_STATE.IDLE);
     actionSM.update(gesture);
@@ -19,10 +19,10 @@ describe("ActionSM", () => {
   });
 
   it("update() handles cancel action", async () => {
-    const gesture = new Gesture(GestureType.Action, GestureAction.Cancel, NaN, null);
+    const gesture = new Gesture(GestureType.ACTION, GestureAction.Cancel, NaN, null);
     const TIMEOUT = 100;
     const onFinalTimeout = jest.fn();
-    const actionSM = new ActionSM(GestureType.Action, onFinalTimeout, TIMEOUT);
+    const actionSM = new ActionSM(GestureType.ACTION, onFinalTimeout, TIMEOUT);
     actionSM.update(gesture);
     await new Promise((resolve) => setTimeout(resolve, TIMEOUT + 1));
     expect(actionSM.inputState).toBe(INPUT_STATE.LOCKED);
@@ -33,10 +33,10 @@ describe("ActionSM", () => {
   });
 
   it("update() triggers market order", async () => {
-    const gesture = new Gesture(GestureType.Price, GestureAction.Market, NaN, null);
+    const gesture = new Gesture(GestureType.PRICE, GestureAction.Market, NaN, null);
     const TIMEOUT = 100;
     const onFinalTimeout = jest.fn();
-    const actionSM = new ActionSM(GestureType.Action, onFinalTimeout, TIMEOUT);
+    const actionSM = new ActionSM(GestureType.ACTION, onFinalTimeout, TIMEOUT);
     actionSM.update(gesture);
     expect(actionSM.action).toBe(GestureAction.Market);
     await new Promise((resolve) => setTimeout(resolve, TIMEOUT + 1));

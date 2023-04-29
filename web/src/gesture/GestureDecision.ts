@@ -57,17 +57,17 @@ export class GestureDecision {
     this.riskManager = riskManager;
 
     this.qtySM = new NumberSM(
-      GestureType.Qty,
+      GestureType.QTY,
       this.setQtyFn.bind(this),
       timeout
     );
     this.priceSM = new NumberSM(
-      GestureType.Price,
+      GestureType.PRICE,
       this.setPriceFn.bind(this),
       timeout
     );
     this.actionSM = new ActionSM(
-      GestureType.Action,
+      GestureType.ACTION,
       this.setActionFn.bind(this),
       timeout
     );
