@@ -6,12 +6,12 @@ export enum OrderType {
 }
 
 export enum OrderStatus {
-  New,
-  Live,
-  Fill, //Partial fill
-  Complete,
-  Cancelled,
-  Rejected,
+  NEW,
+  LIVE,
+  FILL, //Partial fill
+  COMPLETE,
+  CANCELLED,
+  REJECTED,
 }
 
 export interface TransactionReport {
@@ -70,7 +70,7 @@ export class Order {
     this._id = uuidv4();
     this._qtyFilled = 0;
     this._transactions = [];
-    this._status = OrderStatus.New;
+    this._status = OrderStatus.NEW;
     this._timestamp = Date.now();
     this._updatedAt = Date.now();
     this._lastReported = 0;
@@ -111,9 +111,9 @@ export class Order {
       id: uuidv4(),
       orderType: this.orderType,
       status:
-        this.status === OrderStatus.Complete
-          ? OrderStatus.Complete
-          : OrderStatus.Fill,
+        this.status === OrderStatus.COMPLETE
+          ? OrderStatus.COMPLETE
+          : OrderStatus.FILL,
       player_id: oppOrder.player_id,
       qty: qtyFilled,
       orderQty: Math.abs(this.qty),  //NB: qty already deducted in order
@@ -125,9 +125,9 @@ export class Order {
       id: uuidv4(),
       orderType: oppOrder.orderType,
       status:
-        oppOrder.status === OrderStatus.Complete
-          ? OrderStatus.Complete
-          : OrderStatus.Fill,
+        oppOrder.status === OrderStatus.COMPLETE
+          ? OrderStatus.COMPLETE
+          : OrderStatus.FILL,
       player_id: this.player_id,
       qty: oppQtyFilled,
       orderQty: Math.abs(oppOrder.qty), //NB: qty already deducted in order
@@ -166,7 +166,7 @@ export class Order {
 
   _checkSetComplete(): void {
     if (this.qty === 0) {
-      this._status = OrderStatus.Complete;
+      this._status = OrderStatus.COMPLETE;
       this.updatedAt = Date.now();
     }
   }
@@ -189,11 +189,11 @@ export class Order {
   }
 
   cancelled() {
-    this._status = OrderStatus.Cancelled;
+    this._status = OrderStatus.CANCELLED;
     this.updatedAt = Date.now();
   }
   reject() {
-    this._status = OrderStatus.Rejected;
+    this._status = OrderStatus.REJECTED;
     this.updatedAt = Date.now();
   }
 

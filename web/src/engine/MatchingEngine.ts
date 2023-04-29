@@ -200,7 +200,7 @@ export class MatchingEngine {
       });
     }
 
-    order.status = OrderStatus.Live;
+    order.status = OrderStatus.LIVE;
     let transactionReport: TransactionReport | null = null;
 
     // MARKET
@@ -228,7 +228,7 @@ export class MatchingEngine {
       //TODO: unsure policy - no more limit orders but active market order qty remains
       //marking as complete with partial fill, doesn't join queue
       if (order.qty !== 0) {
-        order.status = OrderStatus.Complete;
+        order.status = OrderStatus.COMPLETE;
       }
     }
 

@@ -215,9 +215,9 @@ describe("Player", () => {
     const order1 = new Order(p.id, OrderType.LIMIT, 1, 100.4);
     const order2 = new Order(p.id, OrderType.LIMIT, -1, 101.3);
     const order3 = new Order(p.id, OrderType.LIMIT, 1, 101);
-    order1.status = OrderStatus.Live;
-    order2.status = OrderStatus.Live;
-    order3.status = OrderStatus.Live;
+    order1.status = OrderStatus.LIVE;
+    order2.status = OrderStatus.LIVE;
+    order3.status = OrderStatus.LIVE;
     p.addOrder(order1);
     p.addOrder(order2);
     expect(p.calcMaxBidOfferDelta()).toBe(0.8);

@@ -209,7 +209,7 @@ Order exceeds limit of ${this.riskManager.maxOrderLimit}`;
       console.log("[GestureDecision] triggerValidOrder: Cancel");
 
       const liveOrders = this.player.orders.filter(
-        (order) => order.status === OrderStatus.Live
+        (order) => order.status === OrderStatus.LIVE
       );
 
       if (liveOrders.length) {
@@ -347,7 +347,7 @@ Order exceeds limit of ${this.riskManager.maxOrderLimit}`;
           value: { order, transaction },
         });
 
-        if (transaction.status == OrderStatus.Complete) {
+        if (transaction.status == OrderStatus.COMPLETE) {
           transactionMsgs.push({
             type: Message.OrderFilled,
             value: order,

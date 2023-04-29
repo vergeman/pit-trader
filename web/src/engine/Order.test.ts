@@ -56,7 +56,7 @@ describe("Order", () => {
   it("cancelled() sets status to Cancelled", () => {
     const o1 = new Order("123", OrderType.LIMIT, 50, 100);
     o1.cancelled();
-    expect(o1.status).toBe(OrderStatus.Cancelled);
+    expect(o1.status).toBe(OrderStatus.CANCELLED);
   });
 
   it("execute() returns a TransactionReport", async () => {

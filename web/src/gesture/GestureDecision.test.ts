@@ -215,13 +215,13 @@ describe("GestureDecision", () => {
     const order = me.bids.peek();
     expect(me.bids.length).toBe(1);
     expect(p.orders.length).toBe(1);
-    expect(order && order.status).toBe(OrderStatus.Live);
+    expect(order && order.status).toBe(OrderStatus.LIVE);
 
     gestureDecision.calc(gestureCancel);
     await new Promise((res) => setTimeout(res, TIMEOUT));
     expect(me.bids.length).toBe(0); //removed from queue
     expect(p.orders.length).toBe(1); //maintained in player queue
-    expect(order && order.status).toBe(OrderStatus.Cancelled);
+    expect(order && order.status).toBe(OrderStatus.CANCELLED);
   });
 });
 

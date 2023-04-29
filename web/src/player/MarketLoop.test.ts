@@ -189,7 +189,7 @@ describe("MarketLoop", () => {
       //check me
       const liveOrders = players
         .map((player) =>
-          player.orders.filter((order) => order.status === OrderStatus.Live)
+          player.orders.filter((order) => order.status === OrderStatus.LIVE)
         )
         .flat();
 

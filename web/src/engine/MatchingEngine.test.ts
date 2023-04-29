@@ -46,7 +46,7 @@ describe("process() basic operations", () => {
     const me = new MatchingEngine();
     const o1 = new Order("Player 1", OrderType.MARKET, 50, 100);
     expect(() => me.process(o1)).toThrow("rejected");
-    expect(o1.status).toBe(OrderStatus.Rejected);
+    expect(o1.status).toBe(OrderStatus.REJECTED);
   });
 
   it("market order on larger qty limit order: market order filled, partial fill on limit", () => {
@@ -93,7 +93,7 @@ describe("process() orders fill on multiple orders", () => {
     me.process(o3);
     expect(me.bids.size()).toEqual(1);
     expect(me.offers.size()).toEqual(0);
-    expect(o1.status).toBe(OrderStatus.Complete);
+    expect(o1.status).toBe(OrderStatus.COMPLETE);
 
     //note order of transactions
     expect(me.transactionReports[1].qty).toBe(50);
@@ -105,7 +105,7 @@ describe("process() orders fill on multiple orders", () => {
     const bid = me.bids.peek();
     expect(bid && bid.qty).toEqual(25);
     expect(bid && bid.price).toEqual(99);
-    expect(bid && bid.status).toBe(OrderStatus.Live);
+    expect(bid && bid.status).toBe(OrderStatus.LIVE);
   });
 
   it("limit order sweep - remainder becomes working limit order", () => {
@@ -121,8 +121,8 @@ describe("process() orders fill on multiple orders", () => {
     //fills
     expect(o1.qtyFilled).toEqual(50);
     expect(o2.qtyFilled).toEqual(50);
-    expect(o1.status).toBe(OrderStatus.Complete);
-    expect(o2.status).toBe(OrderStatus.Complete);
+    expect(o1.status).toBe(OrderStatus.COMPLETE);
+    expect(o2.status).toBe(OrderStatus.COMPLETE);
 
     expect(me.transactionReports[1].qty).toBe(50);
     expect(me.transactionReports[1].price).toBe(100);
@@ -135,7 +135,7 @@ describe("process() orders fill on multiple orders", () => {
     expect(offer).toBe(o3);
     expect(offer && offer.qty).toEqual(-75);
     expect(offer && offer.price).toEqual(97);
-    expect(offer && offer.status).toBe(OrderStatus.Live);
+    expect(offer && offer.status).toBe(OrderStatus.LIVE);
   });
 
   //TODO: unsure policy depending on game dynamcis
@@ -155,9 +155,9 @@ describe("process() orders fill on multiple orders", () => {
 
     //remainder for market order isn't worked
     expect(me.offers.size()).toEqual(0);
-    expect(o1.status).toBe(OrderStatus.Complete);
-    expect(o2.status).toBe(OrderStatus.Complete);
-    expect(o3.status).toBe(OrderStatus.Complete);
+    expect(o1.status).toBe(OrderStatus.COMPLETE);
+    expect(o2.status).toBe(OrderStatus.COMPLETE);
+    expect(o3.status).toBe(OrderStatus.COMPLETE);
   });
 });
 
@@ -235,12 +235,12 @@ describe("cancel() mechanics", () => {
     me.cancel(o3);
     expect(me.bids.size()).toEqual(2);
     expect(me.bids.peek()).toEqual(o2);
-    expect(o3.status).toBe(OrderStatus.Cancelled);
+    expect(o3.status).toBe(OrderStatus.CANCELLED);
 
     me.cancel(o1);
     expect(me.bids.size()).toEqual(1);
     expect(me.bids.peek()).toEqual(o2);
-    expect(o1.status).toBe(OrderStatus.Cancelled);
+    expect(o1.status).toBe(OrderStatus.CANCELLED);
   });
 
   it("verify cancelled limit order can have partial fill", () => {
@@ -257,12 +257,12 @@ describe("cancel() mechanics", () => {
     expect(me.transactionReports[0].price).toBe(100);
 
     expect(me.bids.size()).toEqual(2);
-    expect(o3.status).toBe(OrderStatus.Complete);
+    expect(o3.status).toBe(OrderStatus.COMPLETE);
     me.cancel(o2);
     expect(me.bids.size()).toEqual(1);
     expect(o2.qtyFilled).toEqual(25);
     expect(o2.qty).toEqual(25);
-    expect(o2.status).toBe(OrderStatus.Cancelled);
+    expect(o2.status).toBe(OrderStatus.CANCELLED);
   });
 
   it("verify cancels proper order by ref", () => {
@@ -284,7 +284,7 @@ describe("cancel() mechanics", () => {
 
     me.cancel(o3);
     expect(me.bids.contains(o3)).not.toBeTruthy();
-    expect(o3.status).toBe(OrderStatus.Cancelled);
+    expect(o3.status).toBe(OrderStatus.CANCELLED);
   });
 });
 
