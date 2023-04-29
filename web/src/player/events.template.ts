@@ -83,11 +83,11 @@ export const gestureDecisionEvents = [
     id: "hipster-1",
     img: `${process.env.PUBLIC_URL}/events/hipster.png`,
     state_msg: {
-      [`${GestureDecisionEventState.Active}-${GestureAction.Buy}`]: `Pay {PRICE} for {QTY} - if you've heard of it.`,
+      [`${GestureDecisionEventState.Active}-${GestureAction.Buy}`]: `Pay {PRICE} for {QTY}, dude.`,
       [`${GestureDecisionEventState.Active}-${GestureAction.Sell}`]:
         "Sell {QTY} at {PRICE} - I was selling before it was cool.",
-      [GestureDecisionEventState.NoMatch]: "Not it, man.",
-      [GestureDecisionEventState.Lost]: "Your loss",
+      [GestureDecisionEventState.NoMatch]: "That's not it, amigo.",
+      [GestureDecisionEventState.Lost]: "Too bad, your loss",
       [GestureDecisionEventState.Win]: "Way to go, Ace!",
     },
   },
@@ -101,7 +101,7 @@ export const gestureDecisionEvents = [
       [`${GestureDecisionEventState.Active}-${GestureAction.Sell}`]:
         "Jotadee, Sell {QTY} at {PRICE}.",
       [GestureDecisionEventState.NoMatch]: "Koo nee tang, no match.",
-      [GestureDecisionEventState.Lost]: "You lose.",
+      [GestureDecisionEventState.Lost]: "You lose!",
       [GestureDecisionEventState.Win]: "Suka! Well done!",
     },
   },
@@ -115,9 +115,9 @@ export const gestureDecisionEvents = [
       [`${GestureDecisionEventState.Active}-${GestureAction.Sell}`]:
         "Sell {QTY} at {PRICE}. Or else.",
       [GestureDecisionEventState.NoMatch]: "Nervous? You keep messing up.",
-      [GestureDecisionEventState.Lost]: "I'll be seeing you soon.",
+      [GestureDecisionEventState.Lost]: "Loss comes in many forms . . .",
       [GestureDecisionEventState.Win]:
-        "Looks like you'll live to trade another day.",
+        "Well done. But I will return . . .",
     },
   },
 ];
