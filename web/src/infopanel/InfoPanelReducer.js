@@ -40,11 +40,11 @@ export function messagesReducer(messages, action) {
       order = action.value;
       const orderType = order.orderType;
       const qty =
-        order.orderType === OrderType.Limit
+        order.orderType === OrderType.LIMIT
           ? order.qty + order.qtyFilled
           : order.qtyFilled;
       const messageType =
-        orderType === OrderType.Limit
+        orderType === OrderType.LIMIT
           ? qty > 0
             ? Message.BuyLimitOrder
             : Message.SellLimitOrder

@@ -142,7 +142,7 @@ export class Player {
   }
 
   buildOrder(qty: number, price: number): Order {
-    const order = new Order(this.id, OrderType.Limit, qty, price);
+    const order = new Order(this.id, OrderType.LIMIT, qty, price);
     return order;
   }
 

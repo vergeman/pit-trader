@@ -140,7 +140,7 @@ export class MatchingEngine {
   cancel(order: Order): void {
     //NB: disallow market order cancel()
     //in case gesture results in weird submission / timing
-    if (order.orderType === OrderType.Market) return;
+    if (order.orderType === OrderType.MARKET) return;
 
     //remove from bid or offer queue
     if (order.qty > 0 || order.qtyFilled > 0) {
@@ -204,7 +204,7 @@ export class MatchingEngine {
     let transactionReport: TransactionReport | null = null;
 
     // MARKET
-    if (order.orderType === OrderType.Market) {
+    if (order.orderType === OrderType.MARKET) {
       //no opposite orders exist
       if (oppOrder === undefined) {
         order.reject();
@@ -234,7 +234,7 @@ export class MatchingEngine {
 
     //LIMIT
 
-    if (order.orderType === OrderType.Limit) {
+    if (order.orderType === OrderType.LIMIT) {
       while (order.qty && oppOrder && order.canTransact(oppOrder)) {
         transactionReport = order.execute(oppOrder);
 

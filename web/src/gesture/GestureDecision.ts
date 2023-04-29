@@ -245,7 +245,7 @@ Order exceeds limit of ${this.riskManager.maxOrderLimit}`;
     if (this._action === GestureAction.MARKET && this.qty !== null) {
       order = new Order(
         this.player.id,
-        OrderType.Market,
+        OrderType.MARKET,
         this.qty,
         NaN,
         NaN,
@@ -290,7 +290,7 @@ Order exceeds limit of ${this.riskManager.maxOrderLimit}`;
       const orderPrice = this.calcOrderPrice(this.qty, this.price);
       order = new Order(
         this.player.id,
-        OrderType.Limit,
+        OrderType.LIMIT,
         this.qty,
         orderPrice,
         this.price,
@@ -339,7 +339,7 @@ Order exceeds limit of ${this.riskManager.maxOrderLimit}`;
     for (let order of this.player.orders) {
       for (let transaction of order.getNewTransactions()) {
         const type =
-          order.orderType == OrderType.Limit
+          order.orderType == OrderType.LIMIT
             ? Message.FillLimit
             : Message.FillMarket;
         transactionMsgs.push({

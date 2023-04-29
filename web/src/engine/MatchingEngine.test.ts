@@ -6,8 +6,8 @@ import { OrderStatus, OrderType, Order } from "./Order";
 describe("process() basic operations", () => {
   it("adds a limit order to each empty queue", () => {
     const me = new MatchingEngine();
-    const o1 = new Order("Player 1", OrderType.Limit, 50, 100);
-    const o2 = new Order("Player 2", OrderType.Limit, -50, 101);
+    const o1 = new Order("Player 1", OrderType.LIMIT, 50, 100);
+    const o2 = new Order("Player 2", OrderType.LIMIT, -50, 101);
     me.process(o1);
     me.process(o2);
     expect(me.bids.size()).toEqual(1);
@@ -16,8 +16,8 @@ describe("process() basic operations", () => {
 
   it("limit orders execute against each other and are removed from queue", () => {
     const me = new MatchingEngine();
-    const o1 = new Order("Player 1", OrderType.Limit, 50, 100);
-    const o2 = new Order("Player 2", OrderType.Limit, -50, 100); //note: price
+    const o1 = new Order("Player 1", OrderType.LIMIT, 50, 100);
+    const o2 = new Order("Player 2", OrderType.LIMIT, -50, 100); //note: price
     me.process(o1);
     me.process(o2);
     expect(me.bids.size()).toEqual(0);
@@ -28,10 +28,10 @@ describe("process() basic operations", () => {
 
   it("heap behavior for queues - self orders so Orders execute at best price", () => {
     const me = new MatchingEngine();
-    const o1 = new Order("Player 1", OrderType.Limit, -50, 103);
-    const o2 = new Order("Player 2", OrderType.Limit, -50, 102);
+    const o1 = new Order("Player 1", OrderType.LIMIT, -50, 103);
+    const o2 = new Order("Player 2", OrderType.LIMIT, -50, 102);
     //pay 103 will lift the 102 offer
-    const o3 = new Order("Player 2", OrderType.Limit, 50, 102);
+    const o3 = new Order("Player 2", OrderType.LIMIT, 50, 102);
     me.process(o1);
     me.process(o2);
     me.process(o3);
@@ -44,15 +44,15 @@ describe("process() basic operations", () => {
 
   it("market order submitted to empty queues are rejected", () => {
     const me = new MatchingEngine();
-    const o1 = new Order("Player 1", OrderType.Market, 50, 100);
+    const o1 = new Order("Player 1", OrderType.MARKET, 50, 100);
     expect(() => me.process(o1)).toThrow("rejected");
     expect(o1.status).toBe(OrderStatus.Rejected);
   });
 
   it("market order on larger qty limit order: market order filled, partial fill on limit", () => {
     const me = new MatchingEngine();
-    const o1 = new Order("Player 1", OrderType.Limit, 500, 100);
-    const o2 = new Order("Player 2", OrderType.Market, -50, -1);
+    const o1 = new Order("Player 1", OrderType.LIMIT, 500, 100);
+    const o2 = new Order("Player 2", OrderType.MARKET, -50, -1);
     me.process(o1);
     me.process(o2);
     expect(me.bids.size()).toEqual(1);
@@ -67,8 +67,8 @@ describe("process() basic operations", () => {
 
   it("limit order on larger qty limit order: limit order filled, partial fill on existing order", () => {
     const me = new MatchingEngine();
-    const o1 = new Order("Player 1", OrderType.Limit, 500, 100);
-    const o2 = new Order("Player 2", OrderType.Limit, -50, 100);
+    const o1 = new Order("Player 1", OrderType.LIMIT, 500, 100);
+    const o2 = new Order("Player 2", OrderType.LIMIT, -50, 100);
     me.process(o1);
     me.process(o2);
     expect(me.bids.size()).toEqual(1);
@@ -85,9 +85,9 @@ describe("process() basic operations", () => {
 describe("process() orders fill on multiple orders", () => {
   it("market order on smaller qty limit order - sweeps multiple orders", () => {
     const me = new MatchingEngine();
-    const o1 = new Order("Player 1", OrderType.Limit, 50, 100);
-    const o2 = new Order("Player 2", OrderType.Limit, 50, 99);
-    const o3 = new Order("Player 3", OrderType.Market, -75, -1);
+    const o1 = new Order("Player 1", OrderType.LIMIT, 50, 100);
+    const o2 = new Order("Player 2", OrderType.LIMIT, 50, 99);
+    const o3 = new Order("Player 3", OrderType.MARKET, -75, -1);
     me.process(o1);
     me.process(o2);
     me.process(o3);
@@ -110,9 +110,9 @@ describe("process() orders fill on multiple orders", () => {
 
   it("limit order sweep - remainder becomes working limit order", () => {
     const me = new MatchingEngine();
-    const o1 = new Order("Player 1", OrderType.Limit, 50, 100);
-    const o2 = new Order("Player 2", OrderType.Limit, 50, 99);
-    const o3 = new Order("Player 3", OrderType.Limit, -175, 97);
+    const o1 = new Order("Player 1", OrderType.LIMIT, 50, 100);
+    const o2 = new Order("Player 2", OrderType.LIMIT, 50, 99);
+    const o3 = new Order("Player 3", OrderType.LIMIT, -175, 97);
     me.process(o1);
     me.process(o2);
     me.process(o3);
@@ -141,9 +141,9 @@ describe("process() orders fill on multiple orders", () => {
   //TODO: unsure policy depending on game dynamcis
   it("market order sweep with remainder - no more markets leaves partial fill but is marked as complete", () => {
     const me = new MatchingEngine();
-    const o1 = new Order("Player 1", OrderType.Limit, 50, 100);
-    const o2 = new Order("Player 2", OrderType.Limit, 50, 99);
-    const o3 = new Order("Player 3", OrderType.Market, -175, 97);
+    const o1 = new Order("Player 1", OrderType.LIMIT, 50, 100);
+    const o2 = new Order("Player 2", OrderType.LIMIT, 50, 99);
+    const o3 = new Order("Player 3", OrderType.MARKET, -175, 97);
     me.process(o1);
     me.process(o2);
     me.process(o3);
@@ -164,12 +164,12 @@ describe("process() orders fill on multiple orders", () => {
 describe("getSums() display qty summarized bid offers", () => {
   it("getBidMaps() / getOfferMaps() returns summed orders from specified collection", () => {
     const me = new MatchingEngine();
-    const o1 = new Order("Player 1", OrderType.Limit, 50, 100);
-    const o2 = new Order("Player 2", OrderType.Limit, 25, 100);
-    const o3 = new Order("Player 3", OrderType.Limit, 10, 100);
-    const o4 = new Order("Player 4", OrderType.Limit, 10, 101);
-    const o5 = new Order("Player 5", OrderType.Limit, 10, 101);
-    const o6 = new Order("Player 6", OrderType.Limit, -10, 102);
+    const o1 = new Order("Player 1", OrderType.LIMIT, 50, 100);
+    const o2 = new Order("Player 2", OrderType.LIMIT, 25, 100);
+    const o3 = new Order("Player 3", OrderType.LIMIT, 10, 100);
+    const o4 = new Order("Player 4", OrderType.LIMIT, 10, 101);
+    const o5 = new Order("Player 5", OrderType.LIMIT, 10, 101);
+    const o6 = new Order("Player 6", OrderType.LIMIT, -10, 102);
 
     for (let order of [o1, o2, o3, o4, o5, o6]) {
       me.process(order);
@@ -200,9 +200,9 @@ describe("getSums() display qty summarized bid offers", () => {
 describe("TransactionReports", () => {
   it("lastTraded() reflect last trade", () => {
     const me = new MatchingEngine();
-    const o1 = new Order("Player 1", OrderType.Limit, 100, 100);
-    const o2 = new Order("Player 2", OrderType.Limit, -150, 99);
-    const o3 = new Order("Player 3", OrderType.Limit, 50, 99);
+    const o1 = new Order("Player 1", OrderType.LIMIT, 100, 100);
+    const o2 = new Order("Player 2", OrderType.LIMIT, -150, 99);
+    const o3 = new Order("Player 3", OrderType.LIMIT, 50, 99);
 
     me.process(o1);
     expect(me.transactionReports.length).toBe(0);
@@ -223,9 +223,9 @@ describe("TransactionReports", () => {
 describe("cancel() mechanics", () => {
   it("limit order is removed from queue, promotion of next best bid/offer", () => {
     const me = new MatchingEngine();
-    const o1 = new Order("123", OrderType.Limit, 50, 99);
-    const o2 = new Order("123", OrderType.Limit, 50, 100);
-    const o3 = new Order("123", OrderType.Limit, 50, 101);
+    const o1 = new Order("123", OrderType.LIMIT, 50, 99);
+    const o2 = new Order("123", OrderType.LIMIT, 50, 100);
+    const o3 = new Order("123", OrderType.LIMIT, 50, 101);
 
     me.process(o1);
     me.process(o2);
@@ -245,9 +245,9 @@ describe("cancel() mechanics", () => {
 
   it("verify cancelled limit order can have partial fill", () => {
     const me = new MatchingEngine();
-    const o1 = new Order("1", OrderType.Limit, 50, 99);
-    const o2 = new Order("2", OrderType.Limit, 50, 100);
-    const o3 = new Order("3", OrderType.Limit, -25, 100);
+    const o1 = new Order("1", OrderType.LIMIT, 50, 99);
+    const o2 = new Order("2", OrderType.LIMIT, 50, 100);
+    const o3 = new Order("3", OrderType.LIMIT, -25, 100);
 
     me.process(o1);
     me.process(o2);
@@ -267,13 +267,13 @@ describe("cancel() mechanics", () => {
 
   it("verify cancels proper order by ref", () => {
     const me = new MatchingEngine();
-    const o1 = new Order("1", OrderType.Limit, 50, 100);
-    const o2 = new Order("1", OrderType.Limit, 50, 100);
-    const o3 = new Order("1", OrderType.Limit, 50, 100);
-    const o4 = new Order("1", OrderType.Limit, 50, 100);
-    const o5 = new Order("1", OrderType.Limit, 50, 100);
-    const o6 = new Order("1", OrderType.Limit, -50, 101);
-    const o7 = new Order("1", OrderType.Limit, -50, 101);
+    const o1 = new Order("1", OrderType.LIMIT, 50, 100);
+    const o2 = new Order("1", OrderType.LIMIT, 50, 100);
+    const o3 = new Order("1", OrderType.LIMIT, 50, 100);
+    const o4 = new Order("1", OrderType.LIMIT, 50, 100);
+    const o5 = new Order("1", OrderType.LIMIT, 50, 100);
+    const o6 = new Order("1", OrderType.LIMIT, -50, 101);
+    const o7 = new Order("1", OrderType.LIMIT, -50, 101);
     me.process(o1);
     me.process(o2);
     me.process(o3);
@@ -292,12 +292,12 @@ describe("maxComparator / minComparator", () => {
   it("ensure maxComparator orders priority queue by max price then timestamp", async () => {
     const me = new MatchingEngine();
 
-    const o1 = new Order("123", OrderType.Limit, 50, 100);
+    const o1 = new Order("123", OrderType.LIMIT, 50, 100);
     await new Promise((resolve) => setTimeout(resolve, 100));
 
-    const o2 = new Order("123", OrderType.Limit, 50, 101);
+    const o2 = new Order("123", OrderType.LIMIT, 50, 101);
 
-    const o3 = new Order("123", OrderType.Limit, 50, 100);
+    const o3 = new Order("123", OrderType.LIMIT, 50, 100);
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     me.addBid(o1);
@@ -314,12 +314,12 @@ describe("maxComparator / minComparator", () => {
   it("ensure minComparator orders priority queue by max price then timestamp", async () => {
     const me = new MatchingEngine();
 
-    const o1 = new Order("123", OrderType.Limit, -50, 100);
+    const o1 = new Order("123", OrderType.LIMIT, -50, 100);
     await new Promise((resolve) => setTimeout(resolve, 100));
 
-    const o2 = new Order("123", OrderType.Limit, -50, 101);
+    const o2 = new Order("123", OrderType.LIMIT, -50, 101);
 
-    const o3 = new Order("123", OrderType.Limit, -50, 100);
+    const o3 = new Order("123", OrderType.LIMIT, -50, 100);
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     me.addOffer(o1);
@@ -335,9 +335,9 @@ describe("maxComparator / minComparator", () => {
 
   it("supports removal of element from queue if needed (e.g. canceled)", () => {
     const me = new MatchingEngine();
-    const o1 = new Order("123", OrderType.Market, -50, 100);
-    const o2 = new Order("123", OrderType.Market, -50, 101);
-    const o3 = new Order("123", OrderType.Market, -50, 102);
+    const o1 = new Order("123", OrderType.MARKET, -50, 100);
+    const o2 = new Order("123", OrderType.MARKET, -50, 101);
+    const o3 = new Order("123", OrderType.MARKET, -50, 102);
 
     me.addOffer(o1);
     me.addOffer(o2);
@@ -353,9 +353,9 @@ describe("maxComparator / minComparator", () => {
   describe("heap behaviors", () => {
     it("updateOrder() will remove/add order and maintain heap property", () => {
       const me = new MatchingEngine();
-      const o1 = new Order("123", OrderType.Limit, -50, 100);
-      const o2 = new Order("123", OrderType.Limit, -50, 101);
-      const o3 = new Order("123", OrderType.Limit, -50, 102);
+      const o1 = new Order("123", OrderType.LIMIT, -50, 100);
+      const o2 = new Order("123", OrderType.LIMIT, -50, 101);
+      const o3 = new Order("123", OrderType.LIMIT, -50, 102);
 
       me.addOffer(o1);
       me.addOffer(o2);

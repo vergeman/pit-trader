@@ -37,7 +37,7 @@ export const buildGestureDecisionEventParams = (gde: any, price: number) => {
   const gesture = {
     qty: action == GestureAction.BUY ? _qty : -_qty,
     price: gesturePrice,
-    orderType: OrderType.Limit,
+    orderType: OrderType.LIMIT,
   };
 
   //replace qty price templates with generated values above

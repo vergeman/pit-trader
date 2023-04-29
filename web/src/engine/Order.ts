@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from "uuid";
 
 export enum OrderType {
-  Market,
-  Limit,
+  MARKET,
+  LIMIT,
 }
 
 export enum OrderStatus {
@@ -62,7 +62,7 @@ export class Order {
     this._initialQty = this._toFixedNum(qty);
     this._qty = this._toFixedNum(qty);
     this._price = this._toFixedNum(
-      orderType === OrderType.Limit ? price : Number.NaN
+      orderType === OrderType.LIMIT ? price : Number.NaN
     );
     this._gesturePrice = gesturePrice;
     this._player_isLive = player_isLive || false;
@@ -148,7 +148,7 @@ export class Order {
 
   //TODO: update when decide price "decimals"
   priceFilled(): number {
-    if (this.orderType === OrderType.Market) {
+    if (this.orderType === OrderType.MARKET) {
       //wAvg
       let qtyPrice = 0;
       let totalQty = 0;
