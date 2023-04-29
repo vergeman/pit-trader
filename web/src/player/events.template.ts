@@ -71,7 +71,7 @@ export const gestureDecisionEvents = [
     state_msg: {
       [`${GestureDecisionEventState.Active}-${GestureAction.Buy}`]: `Let's see what happens. Pay {PRICE} for {QTY}`,
       [`${GestureDecisionEventState.Active}-${GestureAction.Sell}`]:
-        "Sell {QTY} at {PRICE}",
+        "Let's see what happens. Sell {QTY} at {PRICE}",
       [GestureDecisionEventState.NoMatch]: "Try again, slick.",
       [GestureDecisionEventState.Lost]: "Better luck next time.",
       [GestureDecisionEventState.Win]: "Nice job!",
@@ -85,7 +85,7 @@ export const gestureDecisionEvents = [
     state_msg: {
       [`${GestureDecisionEventState.Active}-${GestureAction.Buy}`]: `Pay {PRICE} for {QTY}, dude.`,
       [`${GestureDecisionEventState.Active}-${GestureAction.Sell}`]:
-        "Sell {QTY} at {PRICE} - I was selling before it was cool.",
+        "Sell {QTY} at {PRICE}, dude",
       [GestureDecisionEventState.NoMatch]: "That's not it, amigo.",
       [GestureDecisionEventState.Lost]: "Too bad, your loss",
       [GestureDecisionEventState.Win]: "Way to go, Ace!",
@@ -116,8 +116,7 @@ export const gestureDecisionEvents = [
         "Sell {QTY} at {PRICE}. Or else.",
       [GestureDecisionEventState.NoMatch]: "Nervous? You keep messing up.",
       [GestureDecisionEventState.Lost]: "Loss comes in many forms . . .",
-      [GestureDecisionEventState.Win]:
-        "Well done. But I will return . . .",
+      [GestureDecisionEventState.Win]: "Well done. But I will return . . .",
     },
   },
 ];
