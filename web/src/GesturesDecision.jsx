@@ -22,11 +22,11 @@ export default function GesturesDecision(props) {
    */
 
   const StyleClass = {
-    CancelGesture: "is-cancel-gesture",
-    CancelOrder: "is-cancel-order",
-    Submitted: "is-submitted",
-    Locked: "is-locked",
-    Needed: "is-needed",
+    CANCELGESTURE: "is-cancel-gesture",
+    CANCELORDER: "is-cancel-order",
+    SUBMITTED: "is-submitted",
+    LOCKED: "is-locked",
+    NEEDED: "is-needed",
   };
 
   const calcStyleClass = (props) => {
@@ -34,15 +34,15 @@ export default function GesturesDecision(props) {
       props.renderState === RenderState.GESTURE_CANCEL &&
       props.action === GestureAction.CANCEL
     ) {
-      return StyleClass.CancelGesture;
+      return StyleClass.CANCELGESTURE;
     }
 
     if (props.action === GestureAction.CANCEL) {
-      return StyleClass.CancelOrder;
+      return StyleClass.CANCELORDER;
     }
 
     if (props.qty && props.price && props.value) {
-      return StyleClass.Submitted;
+      return StyleClass.SUBMITTED;
     }
 
     if (
@@ -50,10 +50,10 @@ export default function GesturesDecision(props) {
       (props.qty && props.action === props.value) ||
       (props.price && props.price === props.value)
     ) {
-      return StyleClass.Locked;
+      return StyleClass.LOCKED;
     }
     if ((!props.qty && props.price) || (!props.price && props.qty)) {
-      return StyleClass.Needed;
+      return StyleClass.NEEDED;
     }
 
     return "";
