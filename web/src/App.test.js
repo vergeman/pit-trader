@@ -10,6 +10,6 @@ test("renders title link", () => {
       <App />
     </BrowserRouter>
   );
-  const linkElement = screen.getByText(TITLE);
+  const linkElement = screen.getAllByText(TITLE)[0];
   expect(linkElement).toBeInTheDocument();
 });
