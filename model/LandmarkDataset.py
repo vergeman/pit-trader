@@ -59,13 +59,6 @@ class LandmarkDataset(Dataset):
     def __len__(self):
         return len(self.landmark_frames)
 
-    # len of landmark points
-    def input_size(self):
-      r = random.randint(0, len(self) )
-      _, landmarks = self[r]
-      return len(landmarks)
-
-
     def __getitem__(self, idx):
 
         if torch.is_tensor(idx):
@@ -80,6 +73,33 @@ class LandmarkDataset(Dataset):
             label = self.target_transform(label)
 
         return label, landmarks
+
+    # len of landmark points
+    def input_size(self):
+      r = random.randint(0, len(self) )
+      _, landmarks = self[r]
+      return len(landmarks)
+
+
+    def train_validation_indices(self, split_p = .2, field =  'class_idx'):
+
+        training_indices = []
+        validation_indices = []
+        for class_idx in range(0, self.num_class):
+            f = self.landmark_frames[field] == class_idx
+            indices = np.flatnonzero(f).tolist()
+            split = int( np.floor( split_p * len(indices) ) )
+
+            # randomly choose the train/validation split
+            val_indices = np.random.choice(indices, split, replace=False).tolist()
+            train_indices = [idx for idx in indices if not idx in val_indices]
+
+            # for consistent data - split at same point
+            # train_indices, val_indices = indices[split:], indices[:split]
+            training_indices += train_indices
+            validation_indices += val_indices
+
+        return training_indices, validation_indices
 
 #
 # ~/python -i LandmarkDataset.py
@@ -97,18 +117,15 @@ if __name__ == "__main__":
     # Splitting
     # https://stackoverflow.com/questions/50544730/how-do-i-split-a-custom-dataset-into-training-and-test-datasets/50544887#50544887
     # https://pytorch.org/docs/stable/data.html#torch.utils.data.Sampler
-    # NB: subset is taken within indices
-    # TODO: not only need to randomize 'indices', but also fair split across classes
-    # might be easier to filter csv to train.csv, valid.csv
     #
+    # Stratified Sample
+    # ensure we take split_p of each class (class sizes can vary) vs split_p of entire dataset (unbalanced distribution)
+    # filter for each class, collect train/val split, and sample from those respective collections
+    #
+    training_indices, validation_indices = dataset.train_validation_indices()
 
-    split_p = .2
-    split = int( np.floor( .2 * len(dataset) ) )
-    indices = list( range(len(dataset)) )
-    train_indices, val_indices = indices[split:], indices[:split]
-
-    train_sampler = SubsetRandomSampler(train_indices)
-    valid_sampler = SubsetRandomSampler(val_indices)
+    train_sampler = SubsetRandomSampler(training_indices)
+    valid_sampler = SubsetRandomSampler(validation_indices)
 
     train_dataloader = DataLoader(dataset, batch_size=4, sampler=train_sampler)
     valid_dataloader = DataLoader(dataset, batch_size=4, sampler=valid_sampler)
