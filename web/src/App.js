@@ -6,6 +6,7 @@ import Home from "./Home.jsx";
 import Navbar from "./Navbar.jsx";
 import { GameContextProvider } from "./GameContext.jsx";
 import InfoPanelProvider from "./infopanel/InfoPanelContext.jsx";
+import Scratch from "./Scratch.jsx";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
 
             }
           />
+          <Route exact path="/scratch" element={<Scratch />} />
         </Routes>
       }
     </div>
