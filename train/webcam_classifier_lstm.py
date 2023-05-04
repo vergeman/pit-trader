@@ -96,7 +96,7 @@ with mp_hands.Hands(
         mp_face_detection.FaceDetection(
             model_selection=0, min_detection_confidence=0.5) as face_detection:
 
-    MAXCOUNT = 30
+    MAXCOUNT = 1
     count = 0
     inputs = deque(np.zeros((MAXCOUNT, 150)), MAXCOUNT)
     numInput = 0
