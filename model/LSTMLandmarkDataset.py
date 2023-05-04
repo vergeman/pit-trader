@@ -23,83 +23,51 @@ class LSTMLandmarkDataset(Dataset):
 
 
 
-    def __init__(self, data_dir, model_dir, transform = None, target_transform = None):
+    def __init__(self, data_dir, model_dir, seq_len, transform = None, target_transform = None):
 
       self.file_list = []
       self.landmark_frames = pd.DataFrame()
       self.class_map = {}
       self.num_class = 0
-
-      #self.meta = Meta(f"{data_dir}/meta.json")
-      #self.meta.load()
+      self.seq_len = seq_len
 
       # concatenate directory, assign class index
       self.file_list = sorted( glob.glob(data_dir + "/*.csv") )
       for class_idx, filename in enumerate(self.file_list):
-        class_name = filename.replace('.csv', '').split('/')[-1]
-        self.class_map[class_idx] = class_name
+          class_name = filename.replace('.csv', '').split('/')[-1]
+          self.class_map[class_idx] = class_name
 
-        landmark_frame = pd.read_csv(filename, header=None)
+          landmark_frame = pd.read_csv(filename, header=None)
 
-        # add class label to dataframe and meta.json
-        landmark_frame.insert(0, "class_idx", class_idx)
-        #_f = filename.split('/')[-1]
-        #self.meta.update_index(_f, class_idx) if _f else None
+          # add class label to dataframe
+          landmark_frame.insert(0, "class_idx", class_idx)
 
-        # concat each datafile into mem
-        self.landmark_frames = pd.concat([self.landmark_frames, landmark_frame])
-        self.num_class += 1
+          # concatenate dataframes into memory
+          self.landmark_frames = pd.concat([self.landmark_frames, landmark_frame])
+
+
+      self.num_class = len(self.class_map)
+      self.num_sequence = len(self.landmark_frames) // self.seq_len
 
       self.transform = transform
       self.target_transform = target_transform
-      #self.meta.build_index_meta_map()
-      #self.meta.save(filename = f"{model_dir}/meta.json", obj = self.meta.index_meta_map)
 
 
     def __len__(self):
-        return len(self.landmark_frames)
+        return int(len(self.landmark_frames) / self.seq_len)
 
     def __getitem__(self, idx):
-
-        if torch.is_tensor(idx):
-            idx = idx.tolist()
-
-        label = self.landmark_frames.iloc[idx, 0]
-        landmarks = self.landmark_frames.iloc[idx, 1:]
-
-        if self.transform:
-            landmarks = self.transform(landmarks)
-        if self.target_transform:
-            label = self.target_transform(label)
-
-        return label, landmarks
+        seq_start_idx = idx * self.seq_len
+        seq_end_idx = (idx + 1) * self.seq_len
+        sequence = self.landmark_frames[seq_start_idx:seq_end_idx]
+        return int(sequence.iloc[0]["class_idx"]), sequence.values[:, 1:]
 
     # len of landmark points
     def input_size(self):
-      r = random.randint(0, len(self) )
-      _, landmarks = self[r]
-      return len(landmarks)
+        r = random.randint(0, int(len(self) / self.seq_len) )
+        _, landmarks = self[r]
+        return len(landmarks[0])
 
-
-    def train_validation_indices(self, split_p = .2, field =  'class_idx'):
-
-        training_indices = []
-        validation_indices = []
-        for class_idx in range(0, self.num_class):
-            f = self.landmark_frames[field] == class_idx
-            indices = np.flatnonzero(f).tolist()
-            split = int( np.floor( split_p * len(indices) ) )
-
-            # randomly choose the train/validation split
-            val_indices = np.random.choice(indices, split, replace=False).tolist()
-            train_indices = [idx for idx in indices if not idx in val_indices]
-
-            # for consistent data - split at same point
-            # train_indices, val_indices = indices[split:], indices[:split]
-            training_indices += train_indices
-            validation_indices += val_indices
-
-        return training_indices, validation_indices
 
 #
 # ~/python -i LandmarkDataset.py
@@ -110,8 +78,9 @@ if __name__ == "__main__":
         Lambda(lambda x: torch.tensor(x.values))
     ])
 
-    dataset = LandmarkDataset("/home/jovyan/train/lstm_data",
+    dataset = LSTMLandmarkDataset("/home/jovyan/train/lstm_data",
                               "/home/jovyan/model",
+                              30,
                               transform=transformations)
 
     # Splitting
@@ -122,19 +91,25 @@ if __name__ == "__main__":
     # ensure we take split_p of each class (class sizes can vary) vs split_p of entire dataset (unbalanced distribution)
     # filter for each class, collect train/val split, and sample from those respective collections
     #
-    training_indices, validation_indices = dataset.train_validation_indices()
+    # Split your dataset into train and test indices
+    num_samples = len(dataset)
+    indices = list(range(num_samples))
+    split = int(np.floor(0.2 * num_samples)) # 20% test set
+    np.random.shuffle(indices)
+    train_indices, test_indices = indices[split:], indices[:split]
 
-    train_sampler = SubsetRandomSampler(training_indices)
-    valid_sampler = SubsetRandomSampler(validation_indices)
+    # Define samplers for each split
+    train_sampler = SubsetRandomSampler(train_indices)
+    test_sampler = SubsetRandomSampler(test_indices)
 
-    train_dataloader = DataLoader(dataset, batch_size=4, sampler=train_sampler)
-    valid_dataloader = DataLoader(dataset, batch_size=4, sampler=valid_sampler)
-
-    # label_batch, train_batch = next( iter(train_dataloader) )
+    # Define dataloaders for each split
+    batch_size = 1
+    train_dataloader = DataLoader(dataset, batch_size=batch_size, sampler=train_sampler)
+    valid_dataloader = DataLoader(dataset, batch_size=batch_size, sampler=test_sampler)
 
     def print_dataloader(dataloader):
-        for batch_idx, sample in enumerate(dataloader):
-            print(batch_idx, sample[0])
+       for batch_idx, sample in enumerate(dataloader):
+          print(batch_idx, sample[0])
 
     print("TRAIN")
     print_dataloader(train_dataloader)
