@@ -1,8 +1,14 @@
-# Model Notes
+# /Model
 
-`/model`:
+Three notebooks with respective classifiers:
 
-  * `onnx_model_20230110.onnx`: basic numbers for compound qty build: [1,2,3, 70, 100, garbage]
+* `classifier.ipynb`: vanilla 2 layer NN, takes gesture snapshot
+* `LSTM.ipynb`: 1 layer LSTM, 1 layer NN; data is assumed to be a sequence of 30.
+* `scikit_models.ipynb`: Logistic and SVC from scikit-learn.
 
-`/data`:
-  * landmarks_reset_class_20230110.csv: modified for class indexed (0-6) landmarks
+PyTorch Dataset classes:
+
+* LandmarkDataset.py: used by `classifier.ipynb`, and `scikit_models.ipynb`
+* LSTMLandmarkDataset: used by `LSTM.ipynb` - groups by seq len.
+
+Models (onnx, picked pytorch) are written to `/export`.
