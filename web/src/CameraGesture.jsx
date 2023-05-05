@@ -142,6 +142,7 @@ export default function CameraGesture(props) {
       const probsArgMax = await classifier.classify(landmarks);
       const probMax = probsArgMax.probs[probsArgMax.argMax];
       const gesture = gestureBuilder.build(probsArgMax.argMax, probMax);
+      const hasHands = landmarks.handLandmarks.some(l => l != -1);
 
       //calculates gesture and if order is built
       props.gestureDecision.calc(gesture);
@@ -156,7 +157,7 @@ export default function CameraGesture(props) {
       //NB: local gestureDecision msgQueue (not context)
       props.gestureDecision.resetMessages();
 
-      setGestureData({ ...probsArgMax, gesture });
+      setGestureData({ ...probsArgMax, gesture, hasHands });
       setGesture(gesture);
     },
     [classifier, gestureBuilder]
