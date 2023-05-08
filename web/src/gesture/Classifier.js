@@ -7,11 +7,11 @@ export default class Classifier {
     this.garbage_idx = null;
     console.log("CLASSIFIER");
 
-    this.model_index = 0;
+    this.model_index = 1;
     this.MODELS = [
       "./onnx_model.onnx",
-      "./onnx_model_LogisticRegression.onnx",
-      "./onnx_model_SVC.onnx",
+      "./model_onnx_LogisticRegression.onnx",
+      "./model_onnx_SVC.onnx",
     ];
   }
 
@@ -87,7 +87,7 @@ export default class Classifier {
         argMax = this.argMax(probs);
 
         //lower tolerance
-        argMax = this.checkGarbageThreshold(probs, argMax, 0.5);
+        argMax = this.checkGarbageThreshold(probs, argMax, 0.7);
       }
 
       //POST-PROCESS
