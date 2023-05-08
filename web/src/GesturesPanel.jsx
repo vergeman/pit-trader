@@ -28,10 +28,11 @@ export default function GesturesPanel(props) {
         />
       </div>
 
-      {/* Past Gestures */}
+      {/* Live Debug Probs & Past Gestures */}
       <div className="gestures-records">
         <GesturesLive
           isDebug={isDebug}
+          hasHands={props.gestureData.hasHands}
           probs={probs}
           gestureBuilder={props.gestureBuilder}
         />

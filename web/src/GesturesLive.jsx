@@ -24,7 +24,12 @@ export default function GesturesLive(props) {
 
   return (
     <table className="table caption-top table-borderless w-100">
-      <caption>Gesture Probabilities</caption>
+      <caption>
+        Gesture Probabilities
+          {props.hasHands &&
+          <span className="ms-5">HasHands</span>
+          }
+      </caption>
       <thead>
         <tr>
           <th>Index&nbsp;</th>
@@ -47,6 +52,6 @@ export default function GesturesLive(props) {
           );
         })}
       </tbody>
-    </table>
+    </table >
   );
 }
