@@ -7,9 +7,9 @@ export default class Classifier {
     this.garbage_idx = null;
     console.log("CLASSIFIER");
 
-    this.model_index = 1;
+    this.model_index = 0;
     this.MODELS = [
-      "./onnx_model.onnx",
+      "./model_onnx_NN.onnx",
       "./model_onnx_LogisticRegression.onnx",
       "./model_onnx_SVC.onnx",
     ];
