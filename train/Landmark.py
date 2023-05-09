@@ -63,7 +63,7 @@ class Landmark:
             #yes if classifier labels as two left's will overwrite
             handedness = resultsHands.multi_handedness[i].classification[
                 0].label  #Left, Right
-
+            print("HANDEDNESS", handedness)
             _hand_landmarks = self.left_hand_landmarks if handedness == "Left" else \
                 self.right_hand_landmarks
 
