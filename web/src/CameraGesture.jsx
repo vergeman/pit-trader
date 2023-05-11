@@ -67,13 +67,12 @@ export default function CameraGesture(props) {
 
       //level up configs
       if (props.player && props.player.hasNextLevel(price)) {
-        console.log("Level Up", props.player.configLevel);
         props.player.incrementLevel();
         props.npcPlayerManager.incrementLevel();
         props.eventManager.incrementLevel();
         props.riskManager.incrementLevel();
+        console.log("Level Up", props.player.configLevel);
       }
-
     }
   }, [gesture]);
 
@@ -95,9 +94,7 @@ export default function CameraGesture(props) {
 
     //one time init
     if (event && event.type == EventType.GESTUREDECISION) {
-      console.log(
-        "[CameraGesture] EventManager EventType.GESTUREDECISION"
-      );
+      console.log("[CameraGesture] EventManager EventType.GESTUREDECISION");
 
       event.dispatchHandler = (msg, tabName = null) => {
         infoPanel.gestureDecisionEventDispatch(msg);
@@ -152,7 +149,7 @@ export default function CameraGesture(props) {
       const probsArgMax = await classifier.classify(landmarks);
       const probMax = probsArgMax.probs[probsArgMax.argMax];
       const gesture = gestureBuilder.build(probsArgMax.argMax, probMax);
-      const hasHands = landmarks.handLandmarks.some(l => l != -1);
+      const hasHands = landmarks.handLandmarks.some((l) => l != -1);
 
       //calculates gesture and if order is built
       props.gestureDecision.calc(gesture);
