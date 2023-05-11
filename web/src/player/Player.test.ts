@@ -1,7 +1,7 @@
 import { Player } from "./Player";
 import { Order, OrderType, OrderStatus } from "../engine/Order";
 import MatchingEngine from "../engine/MatchingEngine";
-import configs from "../Configs";
+import configs, {Configs} from "../Configs";
 
 describe("Player", () => {
   it("generates an id on instance", () => {
@@ -30,6 +30,35 @@ describe("Player", () => {
     expect(p.hasLiveOffers()).toBeTruthy();
     expect(p.hasLiveBids()).toBeFalsy();
   });
+
+  it("hasNextLevel returns boolean indicating p&l exceeds configured levelPnl", () => {
+    const c = [{ levelPnL: 50 }, { levelPnL: 500 }, { levelPnL: "Infinity" }] as Configs;
+    const p = new Player("test", true, c);
+    //pass any price, trigger calcPnL via bonus
+
+    //level 0
+    p.bonus = 25;
+    expect(p.hasNextLevel(1)).toBeFalsy()
+    p.bonus = 100;
+    expect(p.hasNextLevel(1)).toBeTruthy()
+    p.incrementLevel();
+
+    //level 1
+    expect(p.hasNextLevel(1)).toBeFalsy()
+    p.bonus = 600;
+    expect(p.hasNextLevel(1)).toBeTruthy()
+    p.incrementLevel();
+
+    //level 2  - max level
+    expect(p.hasNextLevel(1)).toBeFalsy()
+    p.bonus = 1000000;
+    expect(p.hasNextLevel(1)).toBeFalsy()
+
+    //also does not exceed max index
+    const configLevel = p.configLevel;
+    p.incrementLevel();
+    expect(p.configLevel).toBe(configLevel)
+  })
 
   describe("position & pl calculations", () => {
     it("openPosition() returns net position of executed orders", () => {
@@ -96,7 +125,7 @@ describe("Player", () => {
 
     it("calcPnL() returns MTM value of player's transactions", () => {
       //working orders has no mtm effect
-      const config = { tick: 1000, limitPnL: -1000000 };
+      const config = { tick: 1000, levelPnL: -1000000 };
       configs[0] = { ...configs[0], ...config };
 
       const p = new Player("test", true, configs);
@@ -159,8 +188,8 @@ describe("Player", () => {
       expect(p.calcPnL(103.5)).toBe(10000 + 30000 - 10000);
     });
 
-    it("hasLost() returns true if player exceeds limitPnL", () => {
-      const config = { tick: 1000, limitPnL: -1000000 }
+    it("hasLost() returns true if player exceeds levelPnL", () => {
+      const config = { tick: 1000, levelPnL: -1000000 }
       configs[0] = { ...configs[0], ...config };
       const p = new Player("test", true, configs);
       const me = new MatchingEngine();
@@ -179,7 +208,7 @@ describe("Player", () => {
 
   it("calcDisplayAvgPrice() returns weighted average price of fills formatted for display", () => {
     //working orders has no mtm effect
-    const config = { tick: 1000, limitPnL: -1000000 }
+    const config = { tick: 1000, levelPnL: -1000000 }
     configs[0] = { ...configs[0], ...config };
     const p = new Player("test", true, configs);
     const me = new MatchingEngine();
@@ -250,7 +279,7 @@ describe("Player", () => {
   });
 
   it("calcPnL sets maxPnL member variable", () => {
-    const config = { tick: 1000, limitPnL: -1000000 }
+    const config = { tick: 1000, levelPnL: -1000000 }
     configs[0] = { ...configs[0], ...config };
     const p = new Player("test", true, configs);
 
@@ -270,6 +299,7 @@ describe("Player", () => {
     expect(p.calcPnL(102)).toBe(20000);
     expect(p.maxPnL).toBe(30000);
   });
+
   //pending:
   //needs last traded or best price; market info
   //need to determine if bid or offer order

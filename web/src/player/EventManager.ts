@@ -9,25 +9,17 @@ import MarketLoop from "./MarketLoop";
 import GestureDecision from "../gesture/GestureDecision";
 import { Configs } from "../Configs";
 
-// export interface GestureDecisionEventConfig {
-//   bonus: number;
-//   duration: number;
-//   probability: number;
-// }
-
 export class EventManager {
   private _marketLoop: MarketLoop;
   private _gestureDecision: GestureDecision;
   private _event: GestureDecisionEvent | NewsEvent | null;
-  private _configs: Configs;
+  private readonly _configs: Configs;
   private _configLevel: number;
-  //private _config: GestureDecisionEventConfig;
 
   constructor(
     marketLoop: MarketLoop,
     gestureDecision: GestureDecision,
     configs: Configs
-    //configs: GestureDecisionEventConfig
   ) {
     this._marketLoop = marketLoop;
     this._gestureDecision = gestureDecision;
@@ -51,11 +43,13 @@ export class EventManager {
   set event(e: GestureDecisionEvent | NewsEvent | null) {
     this._event = e;
   }
-  // get config(): GestureDecisionEventConfig {
-  //   return this._config;
-  // }
+
   hasEvent(): boolean {
     return !!(this._event && this._event.isActive);
+  }
+
+  incrementLevel() {
+    this._configLevel = Math.min(this._configLevel + 1, this._configs.length - 1);
   }
 
   //TODO: tie into fps somehow, this gets polled
@@ -88,7 +82,10 @@ export class EventManager {
 
     //NewsEvent
     const randomProb = Math.random();
-    if (randomProb > this._configs[this._configLevel].gestureDecisionEvent.probability) {
+    if (
+      randomProb >
+      this._configs[this._configLevel].gestureDecisionEvent.probability
+    ) {
       const params = getRandom(events);
       const event = new NewsEvent({
         ...params,
@@ -105,7 +102,8 @@ export class EventManager {
     const params = buildGestureDecisionEventParams(gde, price);
 
     const bonus = this._configs[this._configLevel].gestureDecisionEvent.bonus;
-    const duration = this._configs[this._configLevel].gestureDecisionEvent.duration;
+    const duration =
+      this._configs[this._configLevel].gestureDecisionEvent.duration;
 
     const event = new GestureDecisionEvent({
       ...params,

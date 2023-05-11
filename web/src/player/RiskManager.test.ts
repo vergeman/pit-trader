@@ -16,8 +16,8 @@ describe("RiskManager", () => {
     configs[0] = { ...configs[0], ...config };
 
     const riskManager = new RiskManager(configs);
-    expect(riskManager.positionLimit).toBe(configs[0].positionLimit);
-    expect(riskManager.warnPositionLimit).toBe(configs[0].warnPositionLimit);
+    expect(riskManager.positionLimit()).toBe(configs[0].positionLimit);
+    expect(riskManager.warnPositionLimit()).toBe(configs[0].warnPositionLimit);
   });
 
   it("_calcPositions calculates player positions + those of any to-be submitted orders", () => {

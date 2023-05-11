@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import { Order, Transaction, OrderStatus, OrderType } from "../engine/Order";
-import {Configs} from "../Configs";
+import { Configs } from "../Configs";
 
 export class Player {
   private _id: string;
@@ -23,11 +23,7 @@ export class Player {
   private readonly _configs: Configs;
   private _configLevel: number;
 
-  constructor(
-    name: string,
-    isLive: boolean = false,
-    configs: Configs
-  ) {
+  constructor(name: string, isLive: boolean = false, configs: Configs) {
     this._id = uuidv4();
     this._group_id = "0";
     this._name = name;
@@ -95,6 +91,9 @@ export class Player {
   set lostPnL(val) {
     this._lostPnL = val;
   }
+  get configLevel(): number {
+    return this._configLevel;
+  }
   get bonus(): number {
     return this._bonus;
   }
@@ -151,7 +150,10 @@ export class Player {
         //for opposite market orders, NaN so use order price
         const fillPrice = transaction.price || order.price;
 
-        pnl += -transaction.qty * (price - fillPrice) * this._configs[this._configLevel].tick;
+        pnl +=
+          -transaction.qty *
+          (price - fillPrice) *
+          this._configs[this._configLevel].tick;
         //console.log("MTM", mtm, price, fillPrice, transaction)
       }
     }
@@ -188,7 +190,11 @@ export class Player {
     for (const order of this.orders) {
       for (let transaction of order.transactions) {
         //NB: flip qty as qty is compliment to order
-        const t = { ...transaction, qty: -transaction.qty, orderQty: transaction.orderQty };
+        const t = {
+          ...transaction,
+          qty: -transaction.qty,
+          orderQty: transaction.orderQty,
+        };
         histories.push(t);
       }
 
@@ -225,12 +231,21 @@ export class Player {
     return false;
   }
 
+  hasNextLevel(price: number) {
+    const pnl = this.calcPnL(price);
+    const config = this._configs[this._configLevel];
+    return pnl >= Number(config.levelPnL);
+  }
+
+  incrementLevel() {
+    this._configLevel = Math.min(this._configLevel + 1, this._configs.length - 1);
+  }
+
   openPosition(): number {
     return this.orders.reduce((acc: number, order: Order) => {
       return acc + order.qtyFilled;
     }, 0);
   }
-
 
   //abs: false net number position submitted as orders
   //abs: true - want to avoid laddering e.g. +10/-10, +10/10 to that would

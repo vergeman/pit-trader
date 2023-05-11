@@ -1,6 +1,6 @@
 import Order from "../engine/Order";
 import Player from "./Player";
-import { Configs} from "../Configs";
+import { Configs } from "../Configs";
 
 export interface Positions {
   total: number;
@@ -22,28 +22,22 @@ export interface OrdersLimit {
 }
 
 export default class RiskManager {
-  private _configs: Configs;
+  private readonly _configs: Configs;
   private _configLevel: number;
-  private _positionLimit: number;
-  private _warnPositionLimit: number;
-  private _maxOrderLimit: number;
 
   constructor(configs: Configs) {
     this._configs = configs;
     this._configLevel = 0;
-    this._positionLimit = configs[this._configLevel ].positionLimit || 25;
-    this._warnPositionLimit = configs[this._configLevel].warnPositionLimit || 5;
-    this._maxOrderLimit = configs[this._configLevel].maxOrderLimit || 40;
   }
 
-  get positionLimit(): number {
-    return this._positionLimit;
+  positionLimit(): number {
+    return this._configs[this._configLevel].positionLimit || 25;
   }
-  get warnPositionLimit(): number {
-    return this._warnPositionLimit;
+  warnPositionLimit(): number {
+    return this._configs[this._configLevel].warnPositionLimit || 5;
   }
-  get maxOrderLimit(): number {
-    return this._maxOrderLimit;
+  maxOrderLimit(): number {
+    return this._configs[this._configLevel].maxOrderLimit || 40;
   }
 
   //maxOrder: absolute values
@@ -63,6 +57,10 @@ export default class RiskManager {
       orders,
       exceedsMaxOrder,
     };
+  }
+
+  incrementLevel() {
+    this._configLevel = Math.min(this._configLevel + 1, this._configs.length - 1);
   }
 
   //this._positionLimit or this._warnPositionLimit;

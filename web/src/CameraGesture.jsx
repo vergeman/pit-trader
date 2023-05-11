@@ -64,6 +64,16 @@ export default function CameraGesture(props) {
     } else if (gesture !== null) {
       //init -> run
       gameContext.setState(GameState.RUN);
+
+      //level up configs
+      if (props.player && props.player.hasNextLevel(price)) {
+        console.log("Level Up", props.player.configLevel);
+        props.player.incrementLevel();
+        props.npcPlayerManager.incrementLevel();
+        props.eventManager.incrementLevel();
+        props.riskManager.incrementLevel();
+      }
+
     }
   }, [gesture]);
 
