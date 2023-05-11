@@ -160,12 +160,12 @@ export class GestureDecision {
 
     const positionLimits = this.riskManager.exceedsLimit(
       this.player,
-      this.riskManager.positionLimit,
+      this.riskManager.positionLimit(),
       [order]
     );
     const maxOrderLimits = this.riskManager.exceedsMaxOrder(
       this.player,
-      this.riskManager.maxOrderLimit,
+      this.riskManager.maxOrderLimit(),
       [order]
     );
 
