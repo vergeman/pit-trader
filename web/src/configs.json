@@ -1,10 +1,10 @@
 [
   {
-    "positionLimit": 25,
-    "warnPositionLimit": 20,
+    "positionLimit": 20,
+    "warnPositionLimit": 15,
     "maxOrderLimit": 40,
     "tick": 1000,
-    "limitPnL": -1000,
+    "limitPnL": -3000,
     "levelPnL": 10000,
     "gestureDecisionEvent": {
       "bonus": 500,
@@ -13,27 +13,27 @@
     }
   },
   {
-    "positionLimit": 1,
-    "warnPositionLimit": 20,
-    "maxOrderLimit": 40,
+    "positionLimit": 50,
+    "warnPositionLimit": 40,
+    "maxOrderLimit": 75,
     "tick": 1000,
-    "limitPnL": -1000,
+    "limitPnL": -10000,
     "levelPnL": 50000,
     "gestureDecisionEvent": {
-      "bonus": 500,
+      "bonus": 750,
       "duration": 10000,
       "probability": 0.25
     }
   },
   {
-    "positionLimit": 25,
-    "warnPositionLimit": 20,
-    "maxOrderLimit": 40,
+    "positionLimit": 100,
+    "warnPositionLimit": 90,
+    "maxOrderLimit": 150,
     "tick": 1000,
-    "limitPnL": -1000,
+    "limitPnL": -50000,
     "levelPnL": "Infinity",
     "gestureDecisionEvent": {
-      "bonus": 500,
+      "bonus": 1000,
       "duration": 10000,
       "probability": 0.25
     }
