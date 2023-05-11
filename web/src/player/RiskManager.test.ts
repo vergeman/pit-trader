@@ -11,7 +11,7 @@ describe("RiskManager", () => {
       positionLimit: 30,
       warnPositionLimit: 10,
       tick: 1000,
-      limitPL: -1000,
+      limitPnL: -1000,
     }
     configs[0] = { ...configs[0], ...config };
 

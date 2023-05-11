@@ -218,7 +218,7 @@ export class Player {
   // marketLoop setTimeout can cause sight drift before marketLoop stop
   hasLost(price: number): boolean {
     const pnl = this.calcPnL(price);
-    if (pnl < this._configs[this._configLevel].limitPL) {
+    if (pnl < this._configs[this._configLevel].limitPnL) {
       if (this.lostPnL === null) this.lostPnL = pnl;
       return true;
     }

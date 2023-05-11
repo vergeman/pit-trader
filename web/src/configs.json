@@ -4,7 +4,8 @@
     "warnPositionLimit": 20,
     "maxOrderLimit": 40,
     "tick": 1000,
-    "limitPL": -1000,
+    "limitPnL": -1000,
+    "levelPnL": 10000,
     "gestureDecisionEvent": {
       "bonus": 500,
       "duration": 10000,
@@ -16,7 +17,8 @@
     "warnPositionLimit": 20,
     "maxOrderLimit": 40,
     "tick": 1000,
-    "limitPL": -1000,
+    "limitPnL": -1000,
+    "levelPnL": 50000,
     "gestureDecisionEvent": {
       "bonus": 500,
       "duration": 10000,
@@ -28,7 +30,8 @@
     "warnPositionLimit": 20,
     "maxOrderLimit": 40,
     "tick": 1000,
-    "limitPL": -1000,
+    "limitPnL": -1000,
+    "levelPnL": "Infinity",
     "gestureDecisionEvent": {
       "bonus": 500,
       "duration": 10000,

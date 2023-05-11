@@ -6,7 +6,8 @@ export interface Config {
   warnPositionLimit: number,
   maxOrderLimit: number,
   tick: number,
-  limitPL: number,
+  limitPnL: number, //game over PnL
+  levelPnL: number | string, //next level PnL
   gestureDecisionEvent: {
     bonus: number,
     duration: number,

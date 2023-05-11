@@ -96,7 +96,7 @@ describe("Player", () => {
 
     it("calcPnL() returns MTM value of player's transactions", () => {
       //working orders has no mtm effect
-      const config = { tick: 1000, limitPL: -1000000 };
+      const config = { tick: 1000, limitPnL: -1000000 };
       configs[0] = { ...configs[0], ...config };
 
       const p = new Player("test", true, configs);
@@ -159,8 +159,8 @@ describe("Player", () => {
       expect(p.calcPnL(103.5)).toBe(10000 + 30000 - 10000);
     });
 
-    it("hasLost() returns true if player exceeds limitPL", () => {
-      const config = { tick: 1000, limitPL: -1000000 }
+    it("hasLost() returns true if player exceeds limitPnL", () => {
+      const config = { tick: 1000, limitPnL: -1000000 }
       configs[0] = { ...configs[0], ...config };
       const p = new Player("test", true, configs);
       const me = new MatchingEngine();
@@ -179,7 +179,7 @@ describe("Player", () => {
 
   it("calcDisplayAvgPrice() returns weighted average price of fills formatted for display", () => {
     //working orders has no mtm effect
-    const config = { tick: 1000, limitPL: -1000000 }
+    const config = { tick: 1000, limitPnL: -1000000 }
     configs[0] = { ...configs[0], ...config };
     const p = new Player("test", true, configs);
     const me = new MatchingEngine();
@@ -250,7 +250,7 @@ describe("Player", () => {
   });
 
   it("calcPnL sets maxPnL member variable", () => {
-    const config = { tick: 1000, limitPL: -1000000 }
+    const config = { tick: 1000, limitPnL: -1000000 }
     configs[0] = { ...configs[0], ...config };
     const p = new Player("test", true, configs);
 
