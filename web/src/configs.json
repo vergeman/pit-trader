@@ -1,0 +1,38 @@
+[
+  {
+    "positionLimit": 25,
+    "warnPositionLimit": 20,
+    "maxOrderLimit": 40,
+    "tick": 1000,
+    "limitPL": -1000,
+    "gestureDecisionEvent": {
+      "bonus": 500,
+      "duration": 10000,
+      "probability": 0.25
+    }
+  },
+  {
+    "positionLimit": 1,
+    "warnPositionLimit": 20,
+    "maxOrderLimit": 40,
+    "tick": 1000,
+    "limitPL": -1000,
+    "gestureDecisionEvent": {
+      "bonus": 500,
+      "duration": 10000,
+      "probability": 0.25
+    }
+  },
+  {
+    "positionLimit": 25,
+    "warnPositionLimit": 20,
+    "maxOrderLimit": 40,
+    "tick": 1000,
+    "limitPL": -1000,
+    "gestureDecisionEvent": {
+      "bonus": 500,
+      "duration": 10000,
+      "probability": 0.25
+    }
+  }
+]
