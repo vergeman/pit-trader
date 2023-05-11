@@ -61,9 +61,6 @@ class LandmarkDataset(Dataset):
 
     def __getitem__(self, idx):
 
-        if torch.is_tensor(idx):
-            idx = idx.tolist()
-
         label = self.landmark_frames.iloc[idx, 0]
         landmarks = self.landmark_frames.iloc[idx, 1:]
 

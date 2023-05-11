@@ -44,17 +44,32 @@ class KeyClassMapping():
   #
   # PRICE
   #
-  # [1..9, 0]
+  # BIDS ONES:  [1..9, 0] -> 1 ,2, 3 . .  . 0
+  # OFFER ONES: ALT (toggle), then [1..9, 0] -> -1, -2, -3 . . . -0
   PRICE_BID_ONES = list(range(1, 10)) + [0]
   PRICE_OFFER_ONES = list(range(1, 10)) + [0]
 
   #
   # QUANTITY
   #
-  # Offers concatenated with OFFER_TOGGLE
+  # Offers concatenated with OFFER_TOGGLE:
+  #
+  # QTY BID ONES:   [a,s,d,f..., ;] -> 1, 2 ,3, 4 . . . 0
+  # QTY OFFER ONES: ALT + [a,s,d,f..., ;] -> -1, -2, -3, -4. . . -0
+  #
+  # QTY BID TENS:   [z,x,c..../] -> 10, 20, 30 . . . 100
+  # QTY OFFER TENS: ALT + [z,x,c.../] -> -10, -20, -30 . . . -100
   QTY_BID_ONES = ["a", "s", "d", "f", "g", "h", "j", "k", "l", ";"]
   QTY_BID_TENS = ["z", "x", "c", "v", "b", "n", "m", ",", ".", "/"]
 
+  #
+  # ACTION
+  # works with or without offer toggle enabled (no difference)
+  #
+  # MARKET:  ' ' (spacebar)
+  # CANCEL:  '-' (minus)
+  # GARBAGE: '`' (tilde)
+  #
   def __init__(self, OFFER_TOGGLE_NAME = "ALT", OFFER_TOGGLE_KEYCODE=233):
 
     # OFFER_TOGGLE
@@ -141,7 +156,7 @@ class KeyClassMapping():
     for i, keyPress in enumerate(self.QTY_BID_ONES, 1):
       key = f"{self.OFFER_TOGGLE_NAME}+{keyPress}"
       value = -(i % 10)
-      filename = f"QTY_OFFER_{value:03d}.csv"
+      filename = f"QTY_OFFER_{-value:03d}.csv"
       self._generateMapping(self.mapping, key, key, gestureType, "Sell", value, f"{value} at", filename)
 
     # qty bid tens
@@ -155,7 +170,7 @@ class KeyClassMapping():
     for i, keyPress in enumerate(self.QTY_BID_TENS, 1):
       key = f"{self.OFFER_TOGGLE_NAME}+{keyPress}"
       value = -(i * 10)
-      filename = f"QTY_OFFER_{value:03d}.csv"
+      filename = f"QTY_OFFER_{-value:03d}.csv"
       self._generateMapping(self.mapping, key, key, gestureType, "Sell", value, f"{value} at", filename)
 
   #
