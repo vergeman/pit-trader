@@ -109,6 +109,7 @@ export class Player {
     this.maxPnL = 0;
     this.lostPnL = null;
     this.bonus = 0;
+    this._configLevel = 0;
   }
 
   hasLiveBids(): boolean {

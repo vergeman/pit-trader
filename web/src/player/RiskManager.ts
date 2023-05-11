@@ -30,6 +30,10 @@ export default class RiskManager {
     this._configLevel = 0;
   }
 
+  reset() {
+    this._configLevel = 0;
+  }
+
   positionLimit(): number {
     return this._configs[this._configLevel].positionLimit || 25;
   }

@@ -124,6 +124,7 @@ export class EventManager {
   //on game end
   reset() {
     this.event = null;
+    this._configLevel = 0;
   }
 }
 
