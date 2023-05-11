@@ -1,12 +1,13 @@
 import Player from "./Player";
 import NPCPlayerManager from "./NPCPlayerManager";
 import MatchingEngine from "../engine/MatchingEngine";
+import configs from "../Configs";
 
 describe("NPCPlayerManager", () => {
   it("sets initial players in object of id-player", () => {
     const me = new MatchingEngine();
-    const player_a = new Player("a");
-    const player_b = new Player("b");
+    const player_a = new Player("a", false, configs);
+    const player_b = new Player("b", false, configs);
     const pm = new NPCPlayerManager(me, [player_a, player_b]);
 
     expect(Object.keys(pm.players).includes(player_a.id)).toBeTruthy();
@@ -15,8 +16,8 @@ describe("NPCPlayerManager", () => {
 
   it("addPlayer() adds to players obj", () => {
     const me = new MatchingEngine();
-    const player_a = new Player("a");
-    const player_b = new Player("b");
+    const player_a = new Player("a", false, configs);
+    const player_b = new Player("b", false, configs);
     const pm = new NPCPlayerManager(me, [player_a]);
     pm.addPlayer(player_b);
 
@@ -26,10 +27,10 @@ describe("NPCPlayerManager", () => {
 
   it("randomzedPlayerList() returns randomly ordered list of players", () => {
     const me = new MatchingEngine();
-    const player_a = new Player("a");
-    const player_b = new Player("b");
-    const player_c = new Player("c");
-    const player_d = new Player("d");
+    const player_a = new Player("a", false, configs);
+    const player_b = new Player("b", false, configs);
+    const player_c = new Player("c", false, configs);
+    const player_d = new Player("d", false, configs);
 
     let ordered = [player_a, player_b, player_c, player_d];
     const pm = new NPCPlayerManager(me, ordered);
@@ -50,10 +51,10 @@ describe("NPCPlayerManager", () => {
 
   it("removes Player by id", () => {
     const me = new MatchingEngine();
-    const player_a = new Player("a");
-    const player_b = new Player("b");
-    const player_c = new Player("c");
-    const player_d = new Player("d");
+    const player_a = new Player("a", false, configs);
+    const player_b = new Player("b", false, configs);
+    const player_c = new Player("c", false, configs);
+    const player_d = new Player("d", false, configs);
 
     let ordered = [player_a, player_b, player_c, player_d];
     const pm = new NPCPlayerManager(me, ordered);
@@ -74,10 +75,10 @@ describe("NPCPlayerManager", () => {
 
   it("removes players by group_id", () => {
     const me = new MatchingEngine();
-    const player_a = new Player("a");
-    const player_b = new Player("b");
-    const player_c = new Player("c");
-    const player_d = new Player("d");
+    const player_a = new Player("a", false, configs);
+    const player_b = new Player("b", false, configs);
+    const player_c = new Player("c", false, configs);
+    const player_d = new Player("d", false, configs);
 
     player_b.group_id = "test";
     player_d.group_id = "test";

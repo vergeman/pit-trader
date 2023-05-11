@@ -97,7 +97,7 @@ describe("Player", () => {
     it("calcPnL() returns MTM value of player's transactions", () => {
       //working orders has no mtm effect
       const config = { tick: 1000, limitPL: -1000000 };
-      configs[0] = { ...config[0], ...config };
+      configs[0] = { ...configs[0], ...config };
 
       const p = new Player("test", true, configs);
       const me = new MatchingEngine();

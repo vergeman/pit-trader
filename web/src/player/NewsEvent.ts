@@ -2,6 +2,7 @@ import { IEvent, Event, EventType } from "./Event";
 import { GestureDecision } from "../gesture/GestureDecision";
 import MarketLoop from "./MarketLoop";
 import Player from "./Player";
+import configs from "../Configs";
 
 export interface INewsEvent extends IEvent {
   delta: number;
@@ -107,7 +108,7 @@ export class NewsEvent extends Event implements INewsEvent {
 
     //add Players
     for (let i = 0; i < this.addPlayers; i++) {
-      const player = new Player(`${this.id}-${i}`);
+      const player = new Player(`${this.id}-${i}`, false, configs);
       player.group_id = this.id;
       player.delta = this.delta;
       player.forceDirection = this.forceDirection as 1 | -1 | null;
