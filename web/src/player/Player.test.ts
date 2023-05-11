@@ -1,15 +1,16 @@
 import { Player } from "./Player";
 import { Order, OrderType, OrderStatus } from "../engine/Order";
 import MatchingEngine from "../engine/MatchingEngine";
+import configs from "../Configs";
 
 describe("Player", () => {
   it("generates an id on instance", () => {
-    const p = new Player("test");
+    const p = new Player("test", false, configs);
     expect(typeof p.id).toBeTruthy();
   });
 
   it("hasLiveBids() filters for live bids", () => {
-    const p = new Player("test");
+    const p = new Player("test", false, configs);
     const me = new MatchingEngine();
     const order = new Order(p.id, OrderType.LIMIT, 1, 100);
     me.process(order); //Sets to Status to live
@@ -20,7 +21,7 @@ describe("Player", () => {
   });
 
   it("hasLiveOffers() filters for live offers", () => {
-    const p = new Player("test");
+    const p = new Player("test", false, configs);
     const me = new MatchingEngine();
     const order = new Order(p.id, OrderType.LIMIT, -1, 100);
     me.process(order); //Sets to Status to live
@@ -32,7 +33,7 @@ describe("Player", () => {
 
   describe("position & pl calculations", () => {
     it("openPosition() returns net position of executed orders", () => {
-      const p = new Player("test");
+      const p = new Player("test", false, configs);
       const me = new MatchingEngine();
       const o1 = new Order(p.id, OrderType.LIMIT, 10, 100);
       const o2 = new Order("123", OrderType.LIMIT, -3, 100);
@@ -64,7 +65,7 @@ describe("Player", () => {
     });
 
     it("workingPosition() returns net position of submitted but not filled orders", () => {
-      const p = new Player("test");
+      const p = new Player("test", false, configs);
       const me = new MatchingEngine();
       const o1 = new Order(p.id, OrderType.LIMIT, 10, 100);
       const o2 = new Order("123", OrderType.LIMIT, -3, 100);
@@ -95,7 +96,10 @@ describe("Player", () => {
 
     it("calcPnL() returns MTM value of player's transactions", () => {
       //working orders has no mtm effect
-      const p = new Player("test", true, { tick: 1000, limitPL: -1000000 });
+      const config = { tick: 1000, limitPL: -1000000 };
+      configs[0] = { ...config[0], ...config };
+
+      const p = new Player("test", true, configs);
       const me = new MatchingEngine();
       const o1b = new Order(p.id, OrderType.LIMIT, 10, 100);
       const o1s = new Order(p.id, OrderType.LIMIT, -10, 101);
@@ -156,7 +160,9 @@ describe("Player", () => {
     });
 
     it("hasLost() returns true if player exceeds limitPL", () => {
-      const p = new Player("test", true, { tick: 1000, limitPL: -1000000 });
+      const config = { tick: 1000, limitPL: -1000000 }
+      configs[0] = { ...configs[0], ...config };
+      const p = new Player("test", true, configs);
       const me = new MatchingEngine();
       const o1 = new Order(p.id, OrderType.LIMIT, 100, 100);
       const o2 = new Order(p.id, OrderType.LIMIT, -100, 100);
@@ -173,7 +179,9 @@ describe("Player", () => {
 
   it("calcDisplayAvgPrice() returns weighted average price of fills formatted for display", () => {
     //working orders has no mtm effect
-    const p = new Player("test", true, { tick: 1000, limitPL: -1000000 });
+    const config = { tick: 1000, limitPL: -1000000 }
+    configs[0] = { ...configs[0], ...config };
+    const p = new Player("test", true, configs);
     const me = new MatchingEngine();
     const o1b = new Order(p.id, OrderType.LIMIT, 10, 100);
     const o1b2 = new Order(p.id, OrderType.LIMIT, 1000, 80);
@@ -193,7 +201,7 @@ describe("Player", () => {
   });
 
   it("generateRandomMax() default generates a number from 1 to 5", () => {
-    const p = new Player("test");
+    const p = new Player("test", false, configs);
     let i = 10;
 
     while (i) {
@@ -205,13 +213,13 @@ describe("Player", () => {
   });
 
   it("calcSkipTurn() returns boolean if player should skip turn", () => {
-    const p = new Player("test");
+    const p = new Player("test", false, configs);
     expect(p.calcSkipTurn(1.01)).toBeTruthy();
     expect(p.calcSkipTurn(-0.01)).toBeFalsy();
   });
 
   it("calcMaxBidOfferDelta() ensures own bids/offers are not exceeded", () => {
-    const p = new Player("test");
+    const p = new Player("test", false, configs);
     const order1 = new Order(p.id, OrderType.LIMIT, 1, 100.4);
     const order2 = new Order(p.id, OrderType.LIMIT, -1, 101.3);
     const order3 = new Order(p.id, OrderType.LIMIT, 1, 101);
@@ -227,14 +235,14 @@ describe("Player", () => {
   });
 
   it("calcMaxBidOfferDelta() works with no bids/offers", () => {
-    const p = new Player("test");
+    const p = new Player("test", false, configs);
     const _default = 0.4;
     expect(p.calcMaxBidOfferDelta(_default)).toBe(_default);
     expect(p.calcMaxBidOfferDelta()).toBe(0.5);
   });
 
   it("replenish(): generates new Live orders and adds to players own queue", () => {
-    const p = new Player("test");
+    const p = new Player("test", false, configs);
     const me = new MatchingEngine();
     expect(p.orders.length).toBe(0);
     p.replenish(100, 4);
@@ -242,7 +250,10 @@ describe("Player", () => {
   });
 
   it("calcPnL sets maxPnL member variable", () => {
-    const p = new Player("test", true, { tick: 1000, limitPL: -1000000 });
+    const config = { tick: 1000, limitPL: -1000000 }
+    configs[0] = { ...configs[0], ...config };
+    const p = new Player("test", true, configs);
+
     const me = new MatchingEngine();
     const o1b = new Order(p.id, OrderType.LIMIT, 10, 100);
     const o1s = new Order(p.id, OrderType.LIMIT, -10, 101);

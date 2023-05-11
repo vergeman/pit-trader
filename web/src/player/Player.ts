@@ -1,10 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import { Order, Transaction, OrderStatus, OrderType } from "../engine/Order";
-
-interface PlayerConfig {
-  readonly tick: number;
-  readonly limitPL: number;
-}
+import {Configs} from "../Configs";
 
 export class Player {
   private _id: string;
@@ -24,15 +20,13 @@ export class Player {
   private _lostPnL: number | null;
   private _bonus: number;
   private _orders: Order[];
-  private readonly _config: PlayerConfig;
+  private readonly _configs: Configs;
+  private _configLevel: number;
 
   constructor(
     name: string,
     isLive: boolean = false,
-    config: PlayerConfig = {
-      tick: 1000,
-      limitPL: -1000000,
-    }
+    configs: Configs
   ) {
     this._id = uuidv4();
     this._group_id = "0";
@@ -46,7 +40,8 @@ export class Player {
     this._bonus = 0;
     this._orders = [];
 
-    this._config = config;
+    this._configs = configs;
+    this._configLevel = 0;
   }
 
   get id(): string {
@@ -156,7 +151,7 @@ export class Player {
         //for opposite market orders, NaN so use order price
         const fillPrice = transaction.price || order.price;
 
-        pnl += -transaction.qty * (price - fillPrice) * this._config.tick;
+        pnl += -transaction.qty * (price - fillPrice) * this._configs[this._configLevel].tick;
         //console.log("MTM", mtm, price, fillPrice, transaction)
       }
     }
@@ -223,7 +218,7 @@ export class Player {
   // marketLoop setTimeout can cause sight drift before marketLoop stop
   hasLost(price: number): boolean {
     const pnl = this.calcPnL(price);
-    if (pnl < this._config.limitPL) {
+    if (pnl < this._configs[this._configLevel].limitPL) {
       if (this.lostPnL === null) this.lostPnL = pnl;
       return true;
     }
