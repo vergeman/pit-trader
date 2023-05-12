@@ -66,12 +66,29 @@ export default function CameraGesture(props) {
       gameContext.setState(GameState.RUN);
 
       //level up configs
+      //see configs.json for details; level corresponds to array index.
       if (props.player && props.player.hasNextLevel(price)) {
+        const levelPnL =
+          props.player.configs[props.player.configLevel].levelPnL
+              .toLocaleString();
+
         props.player.incrementLevel();
         props.npcPlayerManager.incrementLevel();
         props.eventManager.incrementLevel();
         props.riskManager.incrementLevel();
-        console.log("Level Up", props.player.configLevel);
+
+        const positionLimit = props.player.configs[props.player.configLevel].positionLimit;
+
+        const msg = {
+          type: Message.Notice,
+          value: {
+            msg: `Level ${props.player.configLevel + 1} achieved! P&L exceeds ${levelPnL}.
+Position limit increased to ${positionLimit}.`
+          },
+        };
+
+        console.log("Level Up", props.player.configLevel, msg);
+        infoPanel.messagesDispatch(msg);
       }
     }
   }, [gesture]);

@@ -25,6 +25,11 @@ export default function Messages(props) {
             colorClass = "text-danger";
           }
 
+          //level up
+          if (message.type == Message.Notice) {
+            colorClass = "text-success";
+          }
+
           return (
             <tr className={colorClass} key={`message-${i}`}>
               <td className="td-time">
