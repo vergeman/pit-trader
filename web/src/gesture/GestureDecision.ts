@@ -38,6 +38,7 @@ export class GestureDecision {
   private _records: GestureDecisionRecord[];
   private _renderState: RenderState;
   private _renderStateTimeout: number;
+  private _isDebug: boolean;
   private _enableMessages: boolean;
   private _messages: any[];
   private _onSubmitOrder: null | ((player: Player, order: Order) => void);
@@ -49,7 +50,8 @@ export class GestureDecision {
     player: Player,
     riskManager: RiskManager,
     timeout: number = 750,
-    renderStateTimeout: number = 1000
+    renderStateTimeout: number = 1000,
+    isDebug: boolean = false
   ) {
     this.me = me;
     this.marketLoop = marketLoop;
@@ -78,6 +80,7 @@ export class GestureDecision {
     this._records = [];
     this._renderState = RenderState.GESTURE_DECISION;
     this._renderStateTimeout = renderStateTimeout;
+    this._isDebug = isDebug;
     this._enableMessages = true;
     this._messages = [];
     this._onSubmitOrder = null;
@@ -104,6 +107,9 @@ export class GestureDecision {
   }
   get renderStateTimeout(): number {
     return this._renderStateTimeout;
+  }
+  get isDebug(): boolean {
+    return this._isDebug;
   }
   get enableMessages(): boolean {
     return this._enableMessages;
@@ -133,14 +139,18 @@ export class GestureDecision {
   setQtyFn(value: number) {
     console.log("[setQtyFn] FINAL", value);
     this._qty = value;
-    this.addMessage(Message.SetQty, this._qty);
+    if (this.isDebug) {
+      this.addMessage(Message.SetQty, this._qty);
+    }
     this.triggerValidOrder();
   }
 
   setPriceFn(value: number) {
     console.log("[setPriceFn] FINAL", value);
     this._price = value;
-    this.addMessage(Message.SetPrice, this._price);
+    if (this.isDebug) {
+      this.addMessage(Message.SetPrice, this._price);
+    }
     this.triggerValidOrder();
   }
 

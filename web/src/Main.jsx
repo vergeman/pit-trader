@@ -14,24 +14,23 @@ import { useGlobalContext } from "./GlobalContext.jsx";
 import { useGameContext, GameState } from "./GameContext.jsx";
 import { EventManager } from "./player/EventManager.ts";
 import { EventType } from "./player/Event.ts";
-import {
-  GestureDecisionEvent,
-} from "./player/GestureDecisionEvent";
+import { GestureDecisionEvent } from "./player/GestureDecisionEvent";
 
 import configs from "./Configs.ts";
 
 export default function Main(props) {
+  const { isDebug } = useGlobalContext();
+  const gameContext = useGameContext();
+  const { messagesDispatch, gestureDecisionEventDispatch } = useInfoPanel();
 
-  const [riskManager, setRiskManager] = useState(
-    new RiskManager(configs)
-  );
+  const [riskManager, setRiskManager] = useState(new RiskManager(configs));
   const [me, setMe] = useState(new MatchingEngine());
   const [npcPlayerManager, setNPCPlayerManager] = useState(
     new NPCPlayerManager(me, [
       new Player("npc-A", false, configs),
       new Player("npc-B", false, configs),
       new Player("npc-C", false, configs),
-      new Player("npc-D", false, configs)
+      new Player("npc-D", false, configs),
     ])
   );
   const badge = new URLSearchParams(window.location.search).get("badge");
@@ -48,16 +47,13 @@ export default function Main(props) {
       player,
       riskManager,
       750, //gesture Timeout
-      1000 //gestureDecision view timeout
+      1000, //gestureDecision view timeout,
+      isDebug
     )
   );
   const [eventManager, setEventManager] = useState(
     new EventManager(marketLoop, gestureDecision, configs)
   );
-
-  const { messagesDispatch, gestureDecisionEventDispatch } = useInfoPanel();
-  const gameContext = useGameContext();
-  const { isDebug } = useGlobalContext();
 
   //INIT
   useEffect(() => {
