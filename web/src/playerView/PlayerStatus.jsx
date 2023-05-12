@@ -13,7 +13,7 @@ export default function PlayerStatus(props) {
   const price = props.marketLoop.getPrice();
   const pnl = Number(
     props.player.lostPnL || props.player.calcPnL(price)
-  ).toFixed(2);
+  ).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})
   const avgPrice = props.player.calcDisplayAvgPrice();
   const lastPrice = props.marketLoop.getDisplayLastPrice();
 
@@ -21,6 +21,8 @@ export default function PlayerStatus(props) {
   const positions = props.riskManager._calcPositions(props.player);
   const limitClass =
     positions.open >= props.riskManager.warnPositionLimit ? "text-danger" : "";
+
+  const levelPnL = props.player.configs[props.player.configLevel].levelPnL;
 
   const positionDisplay = (openPosition) => {
     const positionLimit =
@@ -64,10 +66,18 @@ export default function PlayerStatus(props) {
             <Tooltip id={`tooltip-level`}>
               <table className="table table-sm table-borderless w-100 mb-0">
                 <tbody>
+                { levelPnL !== "Infinity" &&
                   <tr>
-                    <th className="text-start p-2">Next Level P&L</th>
-                    <td className="text-end p-2">
-                      {props.player.configs[props.player.configLevel].levelPnL}
+                    <th className="text-start">Next Level P&L</th>
+                    <td className="text-end">
+                      {levelPnL}
+                    </td>
+                  </tr>
+                }
+                  <tr>
+                    <th className="text-start">Max Loss P&L</th>
+                    <td className="text-end">
+                      {props.player.configs[props.player.configLevel].limitPnL}
                     </td>
                   </tr>
                 </tbody>

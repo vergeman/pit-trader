@@ -5,6 +5,7 @@ export interface Config {
   positionLimit: number,
   warnPositionLimit: number,
   maxOrderLimit: number,
+  qtyMax: number,
   tick: number,
   limitPnL: number, //game over PnL
   levelPnL: number | string, //next level PnL

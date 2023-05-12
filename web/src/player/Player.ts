@@ -314,6 +314,11 @@ export class Player {
   buildReplenishOrder(bidOffer: -1 | 1, price: number, qtyMax?: number): Order {
     // add player's delta to shift depending on event; but default is 0
     const randomMax_delta = this.delta + this.generateRandomMax() / 10;
+
+    //bring in qtyMax from config if not specified
+    if (!qtyMax) {
+      qtyMax = this.configs[this.configLevel].qtyMax;
+    }
     const randomQty = bidOffer * this.generateRandomMax(qtyMax);
 
     //NB: when replenishing, new orders built "around" an initial price
