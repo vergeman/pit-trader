@@ -17,6 +17,7 @@ export const Message = {
   OrderFilled: "Order Filled: Qty: ${1}, Price: ${2}", //total qty / price
 
   NewsEvent: "NewsEvent",
+  Notice: "Notice",
 
   Restart: "Restart",
   ErrorSubmitOrder: "ErrorSubmitOrder"

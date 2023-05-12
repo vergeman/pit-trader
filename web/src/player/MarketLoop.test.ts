@@ -3,14 +3,15 @@ import { Order, OrderType, OrderStatus } from "../engine/Order";
 import { Player } from "./Player";
 import NPCPlayerManager from "./NPCPlayerManager";
 import { MarketLoop } from "./MarketLoop";
+import configs from "../Configs";
 
 describe("MarketLoop", () => {
   it("startLoop() calls run() which takes a duration of numPlayers * maxTurnDelay", async () => {
     const me = new MatchingEngine();
     const initPlayers = [
-      new Player("test1"),
-      new Player("test2"),
-      new Player("test3"),
+      new Player("test1", false, configs),
+      new Player("test2", false, configs),
+      new Player("test3", false, configs),
     ];
     const npcPlayerManager = new NPCPlayerManager(me, initPlayers);
     const ml = new MarketLoop({ npcPlayerManager, priceSeed: 100, qtySeed: 4 });
@@ -38,9 +39,9 @@ describe("MarketLoop", () => {
   it("run() calls replenishAll() to replenish any executed orders", async () => {
     const me = new MatchingEngine();
     const initPlayers = [
-      new Player("test1"),
-      new Player("test2"),
-      new Player("test3"),
+      new Player("test1", false, configs),
+      new Player("test2", false, configs),
+      new Player("test3", false, configs),
     ];
     const npcPlayerManager = new NPCPlayerManager(me, initPlayers);
     const ml = new MarketLoop({ npcPlayerManager, priceSeed: 100, qtySeed: 4 });
@@ -57,7 +58,7 @@ describe("MarketLoop", () => {
   describe("init()", () => {
     it("init() populates respective players orders in player's and matching engine queues", () => {
       const me = new MatchingEngine();
-      const ordered = [new Player("a"), new Player("b"), new Player("c")];
+      const ordered = [new Player("a", false, configs), new Player("b", false, configs), new Player("c", false, configs)];
       const npcPlayerManager = new NPCPlayerManager(me, ordered);
       const ml = new MarketLoop({
         npcPlayerManager,
@@ -83,7 +84,7 @@ describe("MarketLoop", () => {
 
     it("init() creates list of players and with submitted bid/offer orders between midpoint price and qtySeed limits", () => {
       const me = new MatchingEngine();
-      const ordered = [new Player("a"), new Player("b"), new Player("c")];
+      const ordered = [new Player("a", false, configs), new Player("b", false, configs), new Player("c", false, configs)];
       const qtySeed = 4;
       const npcPlayerManager = new NPCPlayerManager(me, ordered);
       const ml = new MarketLoop({
@@ -119,9 +120,9 @@ describe("MarketLoop", () => {
     it("players update order each turn and eventually execute", () => {
       const me = new MatchingEngine();
       const players = [
-        new Player("test1"),
-        new Player("test2"),
-        new Player("test3"),
+        new Player("test1", false, configs),
+        new Player("test2", false, configs),
+        new Player("test3", false, configs),
       ];
       const npcPlayerManager = new NPCPlayerManager(me, players);
       const ml = new MarketLoop({
@@ -151,11 +152,11 @@ describe("MarketLoop", () => {
     it("replenishes all executed bid/offers in players queue, and submitted to ME via me.process()", () => {
       const me = new MatchingEngine();
       const players = [
-        new Player("test1"),
-        new Player("test2"),
-        new Player("test3"),
-        new Player("test4"),
-        new Player("test5"),
+        new Player("test1", false, configs),
+        new Player("test2", false, configs),
+        new Player("test3", false, configs),
+        new Player("test4", false, configs),
+        new Player("test5", false, configs),
       ];
 
       const npcPlayerManager = new NPCPlayerManager(me, players);
@@ -208,7 +209,7 @@ describe("MarketLoop", () => {
     it("getPrice() returns midpoint based on seed (nothing traded)", () => {
       const priceSeed = 100;
       const me = new MatchingEngine();
-      const players = [new Player("a"), new Player("b"), new Player("c")];
+      const players = [new Player("a", false, configs), new Player("b", false, configs), new Player("c", false, configs)];
       const npcPlayerManager = new NPCPlayerManager(me, players);
       const marketLoop = new MarketLoop({
         npcPlayerManager,
@@ -231,7 +232,7 @@ describe("MarketLoop", () => {
     it("getPrice() returns midpoint of live markets when nothing traded", () => {
       const priceSeed = 100;
       const me = new MatchingEngine();
-      const players = [new Player("a")];
+      const players = [new Player("a", false, configs)];
       const npcPlayerManager = new NPCPlayerManager(me, players);
       const marketLoop = new MarketLoop({
         npcPlayerManager,
@@ -250,7 +251,7 @@ describe("MarketLoop", () => {
     it("getPrice() returns last trade for subsequent bid/offer", () => {
       const priceSeed = 100;
       const me = new MatchingEngine();
-      const players = [new Player("a"), new Player("b"), new Player("c")];
+      const players = [new Player("a", false, configs), new Player("b", false, configs), new Player("c", false, configs)];
       const npcPlayerManager = new NPCPlayerManager(me, players);
       const marketLoop = new MarketLoop({
         npcPlayerManager,

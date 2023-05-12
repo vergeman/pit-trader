@@ -160,12 +160,12 @@ export class GestureDecision {
 
     const positionLimits = this.riskManager.exceedsLimit(
       this.player,
-      this.riskManager.positionLimit,
+      this.riskManager.positionLimit(),
       [order]
     );
     const maxOrderLimits = this.riskManager.exceedsMaxOrder(
       this.player,
-      this.riskManager.maxOrderLimit,
+      this.riskManager.maxOrderLimit(),
       [order]
     );
 
@@ -173,14 +173,14 @@ export class GestureDecision {
     if (positionLimits.exceedsLimit) {
       const errMsg = `Position Limit Restriction: \
 [Current: ${positionLimits.open}, Working: ${positionLimits.working}]. \
-Order exceeds limit of ${this.riskManager.positionLimit}`;
+Order exceeds limit of ${this.riskManager.positionLimit()}`;
       throw new Error(errMsg, { cause: positionLimits });
     }
 
     if (maxOrderLimits.exceedsMaxOrder) {
       const errMsg = `Order Limit Restriction: \
 [Working: ${maxOrderLimits.working}, Submitted: ${maxOrderLimits.orders}]. \
-Order exceeds limit of ${this.riskManager.maxOrderLimit}`;
+Order exceeds limit of ${this.riskManager.maxOrderLimit()}`;
       throw new Error(errMsg, { cause: positionLimits });
     }
 

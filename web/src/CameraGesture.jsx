@@ -64,6 +64,32 @@ export default function CameraGesture(props) {
     } else if (gesture !== null) {
       //init -> run
       gameContext.setState(GameState.RUN);
+
+      //level up configs
+      //see configs.json for details; level corresponds to array index.
+      if (props.player && props.player.hasNextLevel(price)) {
+        const levelPnL =
+          props.player.configs[props.player.configLevel].levelPnL
+              .toLocaleString();
+
+        props.player.incrementLevel();
+        props.npcPlayerManager.incrementLevel();
+        props.eventManager.incrementLevel();
+        props.riskManager.incrementLevel();
+
+        const positionLimit = props.player.configs[props.player.configLevel].positionLimit;
+
+        const msg = {
+          type: Message.Notice,
+          value: {
+            msg: `Level ${props.player.configLevel + 1} achieved! P&L exceeds ${levelPnL}.
+Position limit increased to ${positionLimit}.`
+          },
+        };
+
+        console.log("Level Up", props.player.configLevel, msg);
+        infoPanel.messagesDispatch(msg);
+      }
     }
   }, [gesture]);
 
@@ -85,9 +111,7 @@ export default function CameraGesture(props) {
 
     //one time init
     if (event && event.type == EventType.GESTUREDECISION) {
-      console.log(
-        "[CameraGesture] EventManager EventType.GESTUREDECISION"
-      );
+      console.log("[CameraGesture] EventManager EventType.GESTUREDECISION");
 
       event.dispatchHandler = (msg, tabName = null) => {
         infoPanel.gestureDecisionEventDispatch(msg);
@@ -142,7 +166,7 @@ export default function CameraGesture(props) {
       const probsArgMax = await classifier.classify(landmarks);
       const probMax = probsArgMax.probs[probsArgMax.argMax];
       const gesture = gestureBuilder.build(probsArgMax.argMax, probMax);
-      const hasHands = landmarks.handLandmarks.some(l => l != -1);
+      const hasHands = landmarks.handLandmarks.some((l) => l != -1);
 
       //calculates gesture and if order is built
       props.gestureDecision.calc(gesture);

@@ -1,4 +1,5 @@
 import PlayerStatusHeaderElement from "./PlayerStatusHeaderElement.jsx";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 export default function PlayerStatus(props) {
   if (!props.player || !props.marketLoop || !props.riskManager) return null;
@@ -12,14 +13,33 @@ export default function PlayerStatus(props) {
   const price = props.marketLoop.getPrice();
   const pnl = Number(
     props.player.lostPnL || props.player.calcPnL(price)
-  ).toFixed(2);
+  ).toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
   const avgPrice = props.player.calcDisplayAvgPrice();
   const lastPrice = props.marketLoop.getDisplayLastPrice();
 
   //calc warning indicator
   const positions = props.riskManager._calcPositions(props.player);
   const limitClass =
-    positions.open >= props.riskManager.warnPositionLimit ? "text-danger" : "";
+    positions.open >= props.riskManager.warnPositionLimit()
+      ? "text-danger"
+      : "";
+
+  const limitPnL = props.player.configs[props.player.configLevel].limitPnL;
+  const levelPnL = props.player.configs[props.player.configLevel].levelPnL;
+  const positionLimit =
+    props.player.configs[props.player.configLevel].positionLimit;
+
+  const positionDisplay = (openPosition, positionLimit) => {
+    return (
+      <div>
+        <span>{openPosition}</span>
+        <span className="fs-7"> / {positionLimit}</span>
+      </div>
+    );
+  };
 
   //open, avgPrice -> pnl, price, last
   return (
@@ -34,7 +54,7 @@ export default function PlayerStatus(props) {
           labelClassName={limitClass}
           valueClassName={limitClass}
           label="Position"
-          value={openPosition}
+          value={positionDisplay(openPosition, positionLimit)}
         />
         <PlayerStatusHeaderElement label="P&L" value={pnl} />
         <PlayerStatusHeaderElement label="Avg Price" value={avgPrice} />
@@ -43,6 +63,48 @@ export default function PlayerStatus(props) {
           value={lastPrice && lastPrice.toFixed(1)}
           className="d-none d-md-flex"
         />
+
+        {/* Level */}
+        <OverlayTrigger
+          key="tooltip-level"
+          placement="top"
+          overlay={
+            <Tooltip id={`tooltip-level`}>
+              <table className="table table-sm table-borderless w-100 mb-0">
+                <tbody>
+                  {levelPnL !== "Infinity" && (
+                    <tr>
+                      <th className="text-start">Next Level P&L</th>
+                      <td className="text-end">{levelPnL}</td>
+                    </tr>
+                  )}
+                  <tr>
+                    <th className="text-start">Max Loss P&L</th>
+                    <td className="text-end">{limitPnL}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </Tooltip>
+          }
+        >
+          <div
+            className={`d-flex flex-column align-items-center`.trim()}
+            role="button"
+          >
+            <span
+              className={`player-status-label`}
+              style={{
+                textDecoration: "underline",
+                textDecorationStyle: "dashed",
+              }}
+            >
+              Level
+            </span>
+            <span className={`player-status-value fs-4`}>
+              {props.player.configLevel + 1}
+            </span>
+          </div>
+        </OverlayTrigger>
       </div>
     </div>
   );

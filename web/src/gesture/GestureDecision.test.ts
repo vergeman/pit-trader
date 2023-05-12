@@ -6,6 +6,7 @@ import Player from "../player/Player";
 import NPCPlayerManager from "../player/NPCPlayerManager";
 import MarketLoop from "../player/MarketLoop";
 import RiskManager from "../player/RiskManager";
+import configs from "../Configs";
 
 const TIMEOUT = 50; //speed this up for tests. Typically 750 seems human-like.
 
@@ -14,8 +15,8 @@ describe("GestureDecision", () => {
     const me = new MatchingEngine();
     const npcPlayerManager = new NPCPlayerManager(me, []);
     const marketLoop = new MarketLoop({ npcPlayerManager, priceSeed: 100, qtySeed: 10 });
-    const p = new Player("test");
-    const riskManager = new RiskManager({});
+    const p = new Player("test", false, configs)
+    const riskManager = new RiskManager(configs);
 
     const gestureDecision = new GestureDecision(me, marketLoop, p, riskManager, TIMEOUT);
     const gesture = new Gesture(GestureType.QTY, GestureAction.BUY, 3, 1);
@@ -34,8 +35,8 @@ describe("GestureDecision", () => {
     const me = new MatchingEngine();
     const npcPlayerManager = new NPCPlayerManager(me, []);
     const marketLoop = new MarketLoop({npcPlayerManager, priceSeed: 100, qtySeed: 10});
-    const p = new Player("test");
-    const riskManager = new RiskManager({});
+    const p = new Player("test", false, configs)
+    const riskManager = new RiskManager(configs);
 
     const gestureDecision = new GestureDecision(me, marketLoop, p, riskManager, TIMEOUT);
     const gesture = new Gesture(GestureType.PRICE, GestureAction.SELL, 2, 1);
@@ -56,8 +57,8 @@ describe("GestureDecision", () => {
     const npcPlayerManager = new NPCPlayerManager(me, []);
     const marketLoop = new MarketLoop({npcPlayerManager, priceSeed: 100, qtySeed: 10});
     marketLoop.getPrice = jest.fn(() => 100);
-    const p = new Player("test");
-    const riskManager = new RiskManager({});
+    const p = new Player("test", false, configs)
+    const riskManager = new RiskManager(configs);
 
     const gestureDecision = new GestureDecision(me, marketLoop, p, riskManager, TIMEOUT);
     const gestureQty = new Gesture(GestureType.QTY, GestureAction.SELL, -2, 1);
@@ -81,8 +82,8 @@ describe("GestureDecision", () => {
     const me = new MatchingEngine();
     const npcPlayerManager = new NPCPlayerManager(me, []);
     const marketLoop = new MarketLoop({npcPlayerManager, priceSeed: 100, qtySeed: 10});
-    const p = new Player("test");
-    const riskManager = new RiskManager({});
+    const p = new Player("test", false, configs)
+    const riskManager = new RiskManager(configs);
 
     const gestureDecision = new GestureDecision(me, marketLoop, p, riskManager, TIMEOUT);
     const gestureQtyL = new Gesture(GestureType.QTY, GestureAction.BUY, 2, 1);
@@ -125,8 +126,8 @@ describe("GestureDecision", () => {
     const me = new MatchingEngine();
     const npcPlayerManager = new NPCPlayerManager(me, []);
     const marketLoop = new MarketLoop({npcPlayerManager, priceSeed: 100, qtySeed: 10});
-    const p = new Player("test");
-    const riskManager = new RiskManager({});
+    const p = new Player("test", false, configs)
+    const riskManager = new RiskManager(configs);
 
     const gestureDecision = new GestureDecision(me, marketLoop, p, riskManager, TIMEOUT);
     const gestureQtyL = new Gesture(GestureType.QTY, GestureAction.BUY, 2, 1);
@@ -162,8 +163,8 @@ describe("GestureDecision", () => {
     const me = new MatchingEngine();
     const npcPlayerManager = new NPCPlayerManager(me, []);
     const marketLoop = new MarketLoop({npcPlayerManager, priceSeed: 100, qtySeed: 10});
-    const p = new Player("test");
-    const riskManager = new RiskManager({});
+    const p = new Player("test", false, configs)
+    const riskManager = new RiskManager(configs);
 
     const gestureDecision = new GestureDecision(me, marketLoop, p, riskManager, TIMEOUT);
     const gestureQtyL = new Gesture(GestureType.QTY, GestureAction.BUY, 2, 1);
@@ -190,8 +191,8 @@ describe("GestureDecision", () => {
     const me = new MatchingEngine();
     const npcPlayerManager = new NPCPlayerManager(me, []);
     const marketLoop = new MarketLoop({npcPlayerManager, priceSeed: 100, qtySeed: 10});
-    const p = new Player("test");
-    const riskManager = new RiskManager({});
+    const p = new Player("test", false, configs)
+    const riskManager = new RiskManager(configs);
 
     const gestureDecision = new GestureDecision(me, marketLoop, p, riskManager, TIMEOUT);
     const gestureQtyL = new Gesture(GestureType.QTY, GestureAction.BUY, 2, 1);
@@ -230,8 +231,8 @@ describe("GestureDecision calcOrderPrice scenarios", () => {
     const me = new MatchingEngine();
     const npcPlayerManager = new NPCPlayerManager(me, []);
     const marketLoop = new MarketLoop({npcPlayerManager, priceSeed: 100, qtySeed: 10});
-    const p = new Player("test");
-    const riskManager = new RiskManager({});
+    const p = new Player("test", false, configs)
+    const riskManager = new RiskManager(configs);
     const gd = new GestureDecision(me, marketLoop, p, riskManager, TIMEOUT);
     expect(gd.minDistancePrice([99, 100, 101], 1, 100)).toBe(100);
     expect(gd.minDistancePrice([], 1, 10)).toBe(NaN);
@@ -242,8 +243,8 @@ describe("GestureDecision calcOrderPrice scenarios", () => {
     const me = new MatchingEngine();
     const npcPlayerManager = new NPCPlayerManager(me, []);
     const marketLoop = new MarketLoop({npcPlayerManager, priceSeed: 100, qtySeed: 10});
-    const p = new Player("test");
-    const riskManager = new RiskManager({});
+    const p = new Player("test", false, configs)
+    const riskManager = new RiskManager(configs);
     const gestureDecision = new GestureDecision(me, marketLoop, p, riskManager, TIMEOUT);
     marketLoop.getPrice = jest.fn(() => 100.8); //distance 100.8
 

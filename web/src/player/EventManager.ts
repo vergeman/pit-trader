@@ -7,28 +7,25 @@ import {
 } from "./events.template";
 import MarketLoop from "./MarketLoop";
 import GestureDecision from "../gesture/GestureDecision";
-
-export interface GestureDecisionEventConfig {
-  bonus: number;
-  duration: number;
-  probability: number;
-}
+import { Configs } from "../Configs";
 
 export class EventManager {
   private _marketLoop: MarketLoop;
   private _gestureDecision: GestureDecision;
   private _event: GestureDecisionEvent | NewsEvent | null;
-  private _config: GestureDecisionEventConfig;
+  private readonly _configs: Configs;
+  private _configLevel: number;
 
   constructor(
     marketLoop: MarketLoop,
     gestureDecision: GestureDecision,
-    config: GestureDecisionEventConfig
+    configs: Configs
   ) {
     this._marketLoop = marketLoop;
     this._gestureDecision = gestureDecision;
     this._event = null;
-    this._config = config;
+    this._configs = configs;
+    this._configLevel = 0;
   }
 
   get marketLoop(): MarketLoop {
@@ -46,11 +43,13 @@ export class EventManager {
   set event(e: GestureDecisionEvent | NewsEvent | null) {
     this._event = e;
   }
-  get config(): GestureDecisionEventConfig {
-    return this._config;
-  }
+
   hasEvent(): boolean {
     return !!(this._event && this._event.isActive);
+  }
+
+  incrementLevel() {
+    this._configLevel = Math.min(this._configLevel + 1, this._configs.length - 1);
   }
 
   //TODO: tie into fps somehow, this gets polled
@@ -83,7 +82,10 @@ export class EventManager {
 
     //NewsEvent
     const randomProb = Math.random();
-    if (randomProb > this.config.probability) {
+    if (
+      randomProb >
+      this._configs[this._configLevel].gestureDecisionEvent.probability
+    ) {
       const params = getRandom(events);
       const event = new NewsEvent({
         ...params,
@@ -99,10 +101,14 @@ export class EventManager {
 
     const params = buildGestureDecisionEventParams(gde, price);
 
+    const bonus = this._configs[this._configLevel].gestureDecisionEvent.bonus;
+    const duration =
+      this._configs[this._configLevel].gestureDecisionEvent.duration;
+
     const event = new GestureDecisionEvent({
       ...params,
-      bonus: this.config.bonus * Math.abs(params.gesture.qty),
-      duration: this.config.duration,
+      bonus: bonus * Math.abs(params.gesture.qty),
+      duration,
       marketLoop: this.marketLoop,
       gestureDecision: this.gestureDecision,
     });
@@ -118,6 +124,7 @@ export class EventManager {
   //on game end
   reset() {
     this.event = null;
+    this._configLevel = 0;
   }
 }
 

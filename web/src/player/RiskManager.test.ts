@@ -2,18 +2,22 @@ import MatchingEngine from "../engine/MatchingEngine";
 import Order, { OrderType } from "../engine/Order";
 import Player from "./Player";
 import RiskManager from "./RiskManager";
+import configs from "../Configs";
 
 describe("RiskManager", () => {
   it("sets positionLimit and warnPositionLimit from named params via constructor", () => {
+
     const config = {
       positionLimit: 30,
       warnPositionLimit: 10,
       tick: 1000,
-      limitPL: -1000,
-    };
-    const riskManager = new RiskManager({ ...config });
-    expect(riskManager.positionLimit).toBe(config.positionLimit);
-    expect(riskManager.warnPositionLimit).toBe(config.warnPositionLimit);
+      limitPnL: -1000,
+    }
+    configs[0] = { ...configs[0], ...config };
+
+    const riskManager = new RiskManager(configs);
+    expect(riskManager.positionLimit()).toBe(configs[0].positionLimit);
+    expect(riskManager.warnPositionLimit()).toBe(configs[0].warnPositionLimit);
   });
 
   it("_calcPositions calculates player positions + those of any to-be submitted orders", () => {
@@ -21,10 +25,11 @@ describe("RiskManager", () => {
       positionLimit: 25,
       warnPositionLimit: 20,
     };
+    configs[0] = { ...configs[0], ...config };
 
     const me = new MatchingEngine();
-    const riskManager = new RiskManager({ ...config });
-    const player = new Player("Test");
+    const riskManager = new RiskManager(configs);
+    const player = new Player("Test", false, configs);
 
     expect(riskManager._calcPositions(player)).toEqual({
       total: 0,
@@ -73,10 +78,11 @@ describe("RiskManager", () => {
       positionLimit: 25,
       warnPositionLimit: 20,
     };
+    configs[0] = { ...configs[0], ...config };
 
     const me = new MatchingEngine();
-    const riskManager = new RiskManager({ ...config });
-    const player = new Player("Test");
+    const riskManager = new RiskManager(configs);
+    const player = new Player("Test", false, configs);
 
     expect(riskManager.exceedsLimit(player, config.positionLimit).exceedsLimit).toBeFalsy();
 
@@ -99,10 +105,11 @@ describe("RiskManager", () => {
       positionLimit: 25,
       warnPositionLimit: 20,
     };
+    configs[0] = { ...configs[0], ...config };
 
     const me = new MatchingEngine();
-    const riskManager = new RiskManager({ ...config });
-    const player = new Player("Test");
+    const riskManager = new RiskManager(configs);
+    const player = new Player("Test", false, configs);
 
     expect(riskManager.exceedsLimit(player, config.warnPositionLimit).exceedsLimit).toBeFalsy();
 
@@ -128,10 +135,11 @@ describe("RiskManager", () => {
       warnPositionLimit: 20,
       maxOrderLimit: 40
     };
+    configs[0] = { ...configs[0], ...config };
 
     const me = new MatchingEngine();
-    const riskManager = new RiskManager({ ...config });
-    const player = new Player("Test");
+    const riskManager = new RiskManager(configs);
+    const player = new Player("Test", false, configs);
 
     const o1 = new Order("test", OrderType.LIMIT, 15, 100);
     const o2 = new Order("test", OrderType.LIMIT, -15, 102);

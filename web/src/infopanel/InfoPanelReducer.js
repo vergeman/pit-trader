@@ -70,7 +70,7 @@ export function messagesReducer(messages, action) {
       order = action.value;
       text = populateTemplateString(action.type, [
         order.qtyFilled,
-        order.priceFilled().toFixed(1)
+        order.priceFilled().toFixed(1),
       ]);
       return [{ time: new Date(), text }, ...messages];
 
@@ -81,7 +81,10 @@ export function messagesReducer(messages, action) {
       const errObj = action.value;
       const errCause = JSON.stringify(errObj.cause);
       text = `${errObj.message}`;
-    return [{ time: new Date(), text, type: Message.ErrorSubmitOrder }, ...messages];
+      return [
+        { time: new Date(), text, type: Message.ErrorSubmitOrder },
+        ...messages,
+      ];
 
     case Message.NewsEvent:
       const event = action.value;
@@ -92,6 +95,14 @@ export function messagesReducer(messages, action) {
 
       return [{ time, endTime, text, type: Message.NewsEvent }, ...messages];
 
+    case Message.Notice:
+      const e = action.value;
+      text = e.msg;
+      return [
+        { time: new Date(), text, type: Message.Notice },
+        ...messages,
+      ];
+
     case "test":
       text = "Message";
       return [{ time: new Date(), text }, ...messages];
@@ -101,9 +112,7 @@ export function messagesReducer(messages, action) {
   return messages;
 }
 
-
 export function gestureDecisionEventReducer(gestureDecisionEvent, action) {
-
   //TODO: these should be reducer-specific events, but we don't seem to have any
   //at the moment
   if (action.type !== EventType.GESTUREDECISION) return null;

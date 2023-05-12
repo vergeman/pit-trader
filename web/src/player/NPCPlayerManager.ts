@@ -34,6 +34,13 @@ export default class NPCPlayerManager {
     return this._me;
   }
 
+  incrementLevel() {
+    const players = Object.values(this._players);
+    for (let player of players) {
+      player.incrementLevel();
+    }
+  }
+
   deletePlayer(id: string): boolean {
     const d = delete this._players[id];
     return d;

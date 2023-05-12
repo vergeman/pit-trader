@@ -1,10 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import { Order, Transaction, OrderStatus, OrderType } from "../engine/Order";
-
-interface PlayerConfig {
-  readonly tick: number;
-  readonly limitPL: number;
-}
+import { Configs } from "../Configs";
 
 export class Player {
   private _id: string;
@@ -24,16 +20,10 @@ export class Player {
   private _lostPnL: number | null;
   private _bonus: number;
   private _orders: Order[];
-  private readonly _config: PlayerConfig;
+  private readonly _configs: Configs;
+  private _configLevel: number;
 
-  constructor(
-    name: string,
-    isLive: boolean = false,
-    config: PlayerConfig = {
-      tick: 1000,
-      limitPL: -1000000,
-    }
-  ) {
+  constructor(name: string, isLive: boolean = false, configs: Configs) {
     this._id = uuidv4();
     this._group_id = "0";
     this._name = name;
@@ -46,7 +36,8 @@ export class Player {
     this._bonus = 0;
     this._orders = [];
 
-    this._config = config;
+    this._configs = configs;
+    this._configLevel = 0;
   }
 
   get id(): string {
@@ -100,6 +91,12 @@ export class Player {
   set lostPnL(val) {
     this._lostPnL = val;
   }
+  get configs(): Configs {
+    return this._configs;
+  }
+  get configLevel(): number {
+    return this._configLevel;
+  }
   get bonus(): number {
     return this._bonus;
   }
@@ -115,6 +112,7 @@ export class Player {
     this.maxPnL = 0;
     this.lostPnL = null;
     this.bonus = 0;
+    this._configLevel = 0;
   }
 
   hasLiveBids(): boolean {
@@ -156,7 +154,10 @@ export class Player {
         //for opposite market orders, NaN so use order price
         const fillPrice = transaction.price || order.price;
 
-        pnl += -transaction.qty * (price - fillPrice) * this._config.tick;
+        pnl +=
+          -transaction.qty *
+          (price - fillPrice) *
+          this._configs[this._configLevel].tick;
         //console.log("MTM", mtm, price, fillPrice, transaction)
       }
     }
@@ -193,7 +194,11 @@ export class Player {
     for (const order of this.orders) {
       for (let transaction of order.transactions) {
         //NB: flip qty as qty is compliment to order
-        const t = { ...transaction, qty: -transaction.qty, orderQty: transaction.orderQty };
+        const t = {
+          ...transaction,
+          qty: -transaction.qty,
+          orderQty: transaction.orderQty,
+        };
         histories.push(t);
       }
 
@@ -223,11 +228,24 @@ export class Player {
   // marketLoop setTimeout can cause sight drift before marketLoop stop
   hasLost(price: number): boolean {
     const pnl = this.calcPnL(price);
-    if (pnl < this._config.limitPL) {
+    if (pnl < this._configs[this._configLevel].limitPnL) {
       if (this.lostPnL === null) this.lostPnL = pnl;
       return true;
     }
     return false;
+  }
+
+  hasNextLevel(price: number) {
+    const pnl = this.calcPnL(price);
+    const config = this._configs[this._configLevel];
+    return pnl >= Number(config.levelPnL);
+  }
+
+  incrementLevel() {
+    this._configLevel = Math.min(
+      this._configLevel + 1,
+      this._configs.length - 1
+    );
   }
 
   openPosition(): number {
@@ -235,7 +253,6 @@ export class Player {
       return acc + order.qtyFilled;
     }, 0);
   }
-
 
   //abs: false net number position submitted as orders
   //abs: true - want to avoid laddering e.g. +10/-10, +10/10 to that would
@@ -297,6 +314,11 @@ export class Player {
   buildReplenishOrder(bidOffer: -1 | 1, price: number, qtyMax?: number): Order {
     // add player's delta to shift depending on event; but default is 0
     const randomMax_delta = this.delta + this.generateRandomMax() / 10;
+
+    //bring in qtyMax from config if not specified
+    if (!qtyMax) {
+      qtyMax = this.configs[this.configLevel].qtyMax;
+    }
     const randomQty = bidOffer * this.generateRandomMax(qtyMax);
 
     //NB: when replenishing, new orders built "around" an initial price

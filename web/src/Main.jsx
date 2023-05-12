@@ -18,35 +18,25 @@ import {
   GestureDecisionEvent,
 } from "./player/GestureDecisionEvent";
 
+import configs from "./Configs.ts";
+
 export default function Main(props) {
-  const config = {
-    positionLimit: 25,
-    warnPositionLimit: 20,
-    maxOrderLimit: 40,
-    tick: 1000,
-    limitPL: -1000,
-    gestureDecisionEvent: {
-      bonus: 1000 / 2,   //coefficient multiplied by event qty
-      duration: 10000,
-      probability: 0.25
-    }
-  };
 
   const [riskManager, setRiskManager] = useState(
-    new RiskManager({ ...config })
+    new RiskManager(configs)
   );
   const [me, setMe] = useState(new MatchingEngine());
   const [npcPlayerManager, setNPCPlayerManager] = useState(
     new NPCPlayerManager(me, [
-      new Player("npc-A"),
-      new Player("npc-B"),
-      new Player("npc-C"),
-      new Player("npc-D"),
+      new Player("npc-A", false, configs),
+      new Player("npc-B", false, configs),
+      new Player("npc-C", false, configs),
+      new Player("npc-D", false, configs)
     ])
   );
   const badge = new URLSearchParams(window.location.search).get("badge");
   const [player, setPlayer] = useState(
-    new Player(badge || "Trader", true, config)
+    new Player(badge || "Trader", true, configs)
   );
   const [marketLoop, setMarketLoop] = useState(
     new MarketLoop({ npcPlayerManager, priceSeed: 100 })
@@ -62,7 +52,7 @@ export default function Main(props) {
     )
   );
   const [eventManager, setEventManager] = useState(
-    new EventManager(marketLoop, gestureDecision, config.gestureDecisionEvent)
+    new EventManager(marketLoop, gestureDecision, configs)
   );
 
   const { messagesDispatch, gestureDecisionEventDispatch } = useInfoPanel();
@@ -126,6 +116,7 @@ export default function Main(props) {
       me.reset();
       eventManager.reset();
       marketLoop.stop();
+      riskManager.reset();
       marketLoop.init();
 
       gameContext.setGameID(gameContext.gameID + 1);
@@ -148,6 +139,7 @@ export default function Main(props) {
       <CameraGesture
         me={me}
         player={player}
+        npcPlayerManager={npcPlayerManager}
         marketLoop={marketLoop}
         eventManager={eventManager}
         riskManager={riskManager}
