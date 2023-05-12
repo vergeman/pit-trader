@@ -54,12 +54,13 @@ class KeyClassMapping():
   #
   # Offers concatenated with OFFER_TOGGLE:
   #
-  # QTY BID ONES:   [a,s,d,f..., ;] -> 1, 2 ,3, 4 . . . 0
-  # QTY OFFER ONES: ALT + [a,s,d,f..., ;] -> -1, -2, -3, -4. . . -0
+  # QTY BID ONES:   [a,s,d,f..., ;] -> 1, 2 ,3, 4 . . . 9
+  # QTY OFFER ONES: ALT + [a,s,d,f..., ;] -> -1, -2, -3, -4. . . -9
+  # NB: there is no qty 0
   #
   # QTY BID TENS:   [z,x,c..../] -> 10, 20, 30 . . . 100
   # QTY OFFER TENS: ALT + [z,x,c.../] -> -10, -20, -30 . . . -100
-  QTY_BID_ONES = ["a", "s", "d", "f", "g", "h", "j", "k", "l", ";"]
+  QTY_BID_ONES = ["a", "s", "d", "f", "g", "h", "j", "k", "l"]
   QTY_BID_TENS = ["z", "x", "c", "v", "b", "n", "m", ",", ".", "/"]
 
   #
