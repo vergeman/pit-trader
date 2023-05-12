@@ -13,20 +13,26 @@ export default function PlayerStatus(props) {
   const price = props.marketLoop.getPrice();
   const pnl = Number(
     props.player.lostPnL || props.player.calcPnL(price)
-  ).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})
+  ).toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
   const avgPrice = props.player.calcDisplayAvgPrice();
   const lastPrice = props.marketLoop.getDisplayLastPrice();
 
   //calc warning indicator
   const positions = props.riskManager._calcPositions(props.player);
   const limitClass =
-    positions.open >= props.riskManager.warnPositionLimit ? "text-danger" : "";
+    positions.open >= props.riskManager.warnPositionLimit()
+      ? "text-danger"
+      : "";
 
+  const limitPnL = props.player.configs[props.player.configLevel].limitPnL;
   const levelPnL = props.player.configs[props.player.configLevel].levelPnL;
+  const positionLimit =
+    props.player.configs[props.player.configLevel].positionLimit;
 
-  const positionDisplay = (openPosition) => {
-    const positionLimit =
-      props.player.configs[props.player.configLevel].positionLimit;
+  const positionDisplay = (openPosition, positionLimit) => {
     return (
       <div>
         <span>{openPosition}</span>
@@ -48,7 +54,7 @@ export default function PlayerStatus(props) {
           labelClassName={limitClass}
           valueClassName={limitClass}
           label="Position"
-          value={positionDisplay(openPosition)}
+          value={positionDisplay(openPosition, positionLimit)}
         />
         <PlayerStatusHeaderElement label="P&L" value={pnl} />
         <PlayerStatusHeaderElement label="Avg Price" value={avgPrice} />
@@ -66,19 +72,15 @@ export default function PlayerStatus(props) {
             <Tooltip id={`tooltip-level`}>
               <table className="table table-sm table-borderless w-100 mb-0">
                 <tbody>
-                { levelPnL !== "Infinity" &&
-                  <tr>
-                    <th className="text-start">Next Level P&L</th>
-                    <td className="text-end">
-                      {levelPnL}
-                    </td>
-                  </tr>
-                }
+                  {levelPnL !== "Infinity" && (
+                    <tr>
+                      <th className="text-start">Next Level P&L</th>
+                      <td className="text-end">{levelPnL}</td>
+                    </tr>
+                  )}
                   <tr>
                     <th className="text-start">Max Loss P&L</th>
-                    <td className="text-end">
-                      {props.player.configs[props.player.configLevel].limitPnL}
-                    </td>
+                    <td className="text-end">{limitPnL}</td>
                   </tr>
                 </tbody>
               </table>
