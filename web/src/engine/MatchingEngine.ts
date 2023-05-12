@@ -67,7 +67,7 @@ export class MatchingEngine {
   calcGrid(price: Number, numGridPoints: Number = 19): Grid {
     //numGridPoints: 20 points e.g. range of 99 - 101
     const midPoint = Number(price.toFixed(1));
-    const start = midPoint + 1;
+    const start = midPoint + .9;
     let strLen = String(midPoint).length; //NB: length of digits
     let gridNumMinLen = strLen;
     let gridNumMaxLen = strLen;
