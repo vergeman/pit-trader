@@ -91,6 +91,9 @@ export class Player {
   set lostPnL(val) {
     this._lostPnL = val;
   }
+  get configs(): Configs {
+    return this._configs;
+  }
   get configLevel(): number {
     return this._configLevel;
   }
@@ -239,7 +242,10 @@ export class Player {
   }
 
   incrementLevel() {
-    this._configLevel = Math.min(this._configLevel + 1, this._configs.length - 1);
+    this._configLevel = Math.min(
+      this._configLevel + 1,
+      this._configs.length - 1
+    );
   }
 
   openPosition(): number {

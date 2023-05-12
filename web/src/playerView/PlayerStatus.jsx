@@ -1,4 +1,5 @@
 import PlayerStatusHeaderElement from "./PlayerStatusHeaderElement.jsx";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 export default function PlayerStatus(props) {
   if (!props.player || !props.marketLoop || !props.riskManager) return null;
@@ -21,6 +22,17 @@ export default function PlayerStatus(props) {
   const limitClass =
     positions.open >= props.riskManager.warnPositionLimit ? "text-danger" : "";
 
+  const positionDisplay = (openPosition) => {
+    const positionLimit =
+      props.player.configs[props.player.configLevel].positionLimit;
+    return (
+      <div>
+        <span>{openPosition}</span>
+        <span className="fs-7"> / {positionLimit}</span>
+      </div>
+    );
+  };
+
   //open, avgPrice -> pnl, price, last
   return (
     <div className="player-status mb-md-2">
@@ -34,7 +46,7 @@ export default function PlayerStatus(props) {
           labelClassName={limitClass}
           valueClassName={limitClass}
           label="Position"
-          value={openPosition}
+          value={positionDisplay(openPosition)}
         />
         <PlayerStatusHeaderElement label="P&L" value={pnl} />
         <PlayerStatusHeaderElement label="Avg Price" value={avgPrice} />
@@ -43,6 +55,44 @@ export default function PlayerStatus(props) {
           value={lastPrice && lastPrice.toFixed(1)}
           className="d-none d-md-flex"
         />
+
+        {/* Level */}
+        <OverlayTrigger
+          key="tooltip-level"
+          placement="top"
+          overlay={
+            <Tooltip id={`tooltip-level`}>
+              <table className="table table-sm table-borderless w-100 mb-0">
+                <tbody>
+                  <tr>
+                    <th className="text-start p-2">Next Level P&L</th>
+                    <td className="text-end p-2">
+                      {props.player.configs[props.player.configLevel].levelPnL}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </Tooltip>
+          }
+        >
+          <div
+            className={`d-flex flex-column align-items-center`.trim()}
+            role="button"
+          >
+            <span
+              className={`player-status-label`}
+              style={{
+                textDecoration: "underline",
+                textDecorationStyle: "dashed",
+              }}
+            >
+              Level
+            </span>
+            <span className={`player-status-value fs-4`}>
+              {props.player.configLevel + 1}
+            </span>
+          </div>
+        </OverlayTrigger>
       </div>
     </div>
   );
