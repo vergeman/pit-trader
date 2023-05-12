@@ -15,7 +15,11 @@ export default function GesturesCurrent(props) {
         <tr>
           <td>{type}</td>
           <td>{action || "-"}</td>
-          <td>{props.gesture.value ? Math.abs(props.gesture.value) : null}</td>
+          <td>
+            {Number.isInteger(props.gesture.value)
+              ? Math.abs(props.gesture.value)
+              : null}
+          </td>
         </tr>
       </tbody>
     </table>
