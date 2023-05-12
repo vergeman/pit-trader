@@ -42,7 +42,10 @@ export default function LoseModal(props) {
         <Modal.Body>
           <div className="d-flex justify-content-center">
             <table className="table text-dark caption-top">
-              <caption>P&L: {props.player.lostPnL} - You Blew Up! 🤯</caption>
+              <caption>
+                P&L: {props.player.lostPnL && props.player.lostPnL.toFixed(2)} -
+                You Blew Up! 🤯
+              </caption>
               <thead>
                 <tr>
                   <th>Player</th>
@@ -55,7 +58,7 @@ export default function LoseModal(props) {
                     <tr className={p.isLive ? "isLive" : ""}>
                       <td>{p.name}</td>
                       <td className="losemodal-score">
-                        {(p.score).toLocaleString()}
+                        {p.score.toLocaleString()}
                       </td>
                     </tr>
                   );

@@ -69,21 +69,30 @@ export default function CameraGesture(props) {
       //see configs.json for details; level corresponds to array index.
       if (props.player && props.player.hasNextLevel(price)) {
         const levelPnL =
-          props.player.configs[props.player.configLevel].levelPnL
-              .toLocaleString();
+          props.player.configs[
+            props.player.configLevel
+          ].levelPnL.toLocaleString();
 
         props.player.incrementLevel();
         props.npcPlayerManager.incrementLevel();
         props.eventManager.incrementLevel();
         props.riskManager.incrementLevel();
 
-        const positionLimit = props.player.configs[props.player.configLevel].positionLimit;
+        const positionLimit =
+          props.player.configs[props.player.configLevel].positionLimit;
+
+        const limitPnL =
+          props.player.configs[
+            props.player.configLevel
+          ].limitPnL.toLocaleString();
 
         const msg = {
           type: Message.Notice,
           value: {
-            msg: `Level ${props.player.configLevel + 1} achieved! P&L exceeds ${levelPnL}.
-Position limit increased to ${positionLimit}.`
+            msg: `Level ${
+              props.player.configLevel + 1
+            } achieved! P&L exceeds ${levelPnL}.
+Position limit increased to ${positionLimit}. Max Loss P&L to ${limitPnL}.`,
           },
         };
 
