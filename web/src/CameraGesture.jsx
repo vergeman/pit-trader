@@ -59,6 +59,7 @@ export default function CameraGesture(props) {
     if (props.player && props.player.hasLost(price)) {
       props.marketLoop.stop();
       props.gestureDecision.enable = false;
+      props.eventManager.killEvent();
       gameContext.setState(GameState.LOSE);
       console.log("You Lose", props.player.lostPnL);
     } else if (gesture !== null) {
@@ -118,6 +119,7 @@ Position limit increased to ${positionLimit}. Max Loss P&L to ${limitPnL}.`,
     //issue: we do need to poll so can't just return
     if (!event) return;
 
+    //GestureDecisionEvent - aka challenge
     //one time init
     if (event && event.type == EventType.GESTUREDECISION) {
       console.log("[CameraGesture] EventManager EventType.GESTUREDECISION");

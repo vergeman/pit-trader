@@ -161,7 +161,7 @@ export class GestureDecisionEvent
     //on end, want a slight delay so user can see win/loss
     //here we allow marketloop and general execution to run
     //but events are disabled for a brie1f period
-    setTimeout(() => {
+    const endDelayTimeout = setTimeout(() => {
       this.resetState();
       this.cleanup();
       this.gestureDecision.reset();
@@ -179,6 +179,8 @@ export class GestureDecisionEvent
 
       this.dispatchHandler(msg, "messages");
     }, 3000);
+
+    this.timeouts.push(endDelayTimeout);
   }
 
   resetState() {

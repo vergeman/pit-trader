@@ -1,4 +1,4 @@
-import { GestureDecisionEvent } from "./GestureDecisionEvent";
+import { GestureDecisionEvent, GestureDecisionEventState } from "./GestureDecisionEvent";
 import { NewsEvent } from "./NewsEvent";
 import {
   events,
@@ -8,6 +8,7 @@ import {
 import MarketLoop from "./MarketLoop";
 import GestureDecision from "../gesture/GestureDecision";
 import { Configs } from "../Configs";
+import { EventType } from "./Event";
 
 export class EventManager {
   private _marketLoop: MarketLoop;
@@ -125,6 +126,17 @@ export class EventManager {
   reset() {
     this.event = null;
     this._configLevel = 0;
+  }
+
+  killEvent() {
+    if (!this.event) return false;
+    console.log("[EventManager] KillEvent", this.event)
+    this.event.end();
+    this.event.clearTimeouts();
+    this.event.cleanup();
+    if (this.event instanceof GestureDecisionEvent) {
+      this.event.gestureDecisionEventState = GestureDecisionEventState.NONE;
+    }
   }
 }
 
