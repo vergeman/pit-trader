@@ -56,11 +56,11 @@ export class EventManager {
   //TODO: tie into fps somehow, this gets polled
   //there are a lot of calcEvents even 99% happens fairly often
   //generate(): Event | null {
-  generate(prob: number = 0.99) {
+  generate() {
     if (this.hasEvent()) return null;
 
     const randomProb = Math.random();
-    if (randomProb < prob) return null;
+    if (randomProb > this._configs[this._configLevel].eventProbability) return null;
 
     console.log("[EventManager] generate");
 
