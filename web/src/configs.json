@@ -7,6 +7,7 @@
     "tick": 1000,
     "limitPnL": -3000,
     "levelPnL": 10000,
+    "eventProbability": 0.01,
     "gestureDecisionEvent": {
       "bonus": 250,
       "duration": 10000,
@@ -21,6 +22,7 @@
     "tick": 1000,
     "limitPnL": -6000,
     "levelPnL": 25000,
+    "eventProbability": 0.015,
     "gestureDecisionEvent": {
       "bonus": 750,
       "duration": 10000,
@@ -35,6 +37,7 @@
     "tick": 1000,
     "limitPnL": -10000,
     "levelPnL": 75000,
+    "eventProbability": 0.015,
     "gestureDecisionEvent": {
       "bonus": 1250,
       "duration": 10000,
@@ -49,6 +52,7 @@
     "tick": 1000,
     "limitPnL": -20000,
     "levelPnL": 125000,
+    "eventProbability": 0.015,
     "gestureDecisionEvent": {
       "bonus": 1875,
       "duration": 10000,
@@ -63,10 +67,11 @@
     "tick": 1000,
     "limitPnL": -50000,
     "levelPnL": 250000,
+    "eventProbability": 0.02,
     "gestureDecisionEvent": {
       "bonus": 2500,
       "duration": 10000,
-      "probability": 0.25
+      "probability": 0.20
     }
   },
   {
@@ -77,10 +82,11 @@
     "tick": 1000,
     "limitPnL": -50000,
     "levelPnL": 500000,
+    "eventProbability": 0.02,
     "gestureDecisionEvent": {
       "bonus": 3125,
       "duration": 10000,
-      "probability": 0.25
+      "probability": 0.20
     }
   },
   {
@@ -91,10 +97,11 @@
     "tick": 1000,
     "limitPnL": -50000,
     "levelPnL": 750000,
+    "eventProbability": 0.02,
     "gestureDecisionEvent": {
       "bonus": 3750,
       "duration": 10000,
-      "probability": 0.25
+      "probability": 0.20
     }
   },
   {
@@ -105,10 +112,11 @@
     "tick": 1000,
     "limitPnL": -75000,
     "levelPnL": 1000000,
+    "eventProbability": 0.02,
     "gestureDecisionEvent": {
       "bonus": 4375,
       "duration": 10000,
-      "probability": 0.25
+      "probability": 0.20
     }
   },
   {
@@ -119,6 +127,7 @@
     "tick": 1000,
     "limitPnL": -75000,
     "levelPnL": "Infinity",
+    "eventProbability": 0.02,
     "gestureDecisionEvent": {
       "bonus": 4375,
       "duration": 10000,

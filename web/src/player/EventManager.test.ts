@@ -21,7 +21,7 @@ describe("EventManager", () => {
     const riskManager = new RiskManager(configs);
     const gd = new GestureDecision(me, ml, p, riskManager);
 
-    const config = { gsetureDecisionEvent: { duration: 10000, probability: 0.25, bonus: 1 } }
+    const config = { gestureDecisionEvent: { duration: 10000, probability: 0.25, bonus: 1 } }
     configs[0] = {...configs[0], ...config};
 
     const eventManager = new EventManager(ml, gd, configs);
@@ -31,11 +31,11 @@ describe("EventManager", () => {
     let k = 0;
 
     while (i < numIter) {
-      const event = eventManager.generate(i);
-      if (i > 1) expect(event).toBe(null);
-
-      eventManager.hasEvent() ? j++ : k++;
+      configs[0].eventProbability = i;
+      const event = eventManager.generate();
+      if (i == 0) expect(event).toBe(null);
       event && event.begin();
+      eventManager.hasEvent() ? j++ : k++;
       i++;
     }
     expect(j).toBe(numIter - 1);

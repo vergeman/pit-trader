@@ -23,7 +23,7 @@ export default function PlayerStatus(props) {
   //calc warning indicator
   const positions = props.riskManager._calcPositions(props.player);
   const limitClass =
-    positions.open >= props.riskManager.warnPositionLimit()
+    Math.abs(positions.open) >= props.riskManager.warnPositionLimit()
       ? "text-danger"
       : "";
 

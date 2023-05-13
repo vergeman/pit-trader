@@ -40,6 +40,9 @@ export interface Config {
   tick: number,
   limitPnL: number,          //game over PnL
   levelPnL: number | string, //next level PnL
+  eventProbability: number,  //likelihood of generating any Event;
+                             //GestureDecisionEvent: specific probability below;
+                             //News isremaining (1-GDE prob)
   gestureDecisionEvent: {
     bonus: number,
     duration: number,
