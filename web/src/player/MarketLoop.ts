@@ -92,10 +92,16 @@ class MarketLoop {
     minTurnDelay: number = this._defaultMinTurnDelay,
     maxTurnDelay: number = this._defaultMaxTurnDelay
   ): number {
+    //set players skip
+    for (const player of this.npcPlayerManager.getRandomizedPlayerList()) {
+      player.markSkipped = false;
+    }
 
     if (this._isActive) return this._loopInterval;
 
     const numPlayers = this.npcPlayerManager.numPlayers;
+
+
     console.log(
       "[marketLoop] start()",
       this._isActive,
@@ -123,6 +129,11 @@ class MarketLoop {
     console.log("[marketLoop] stop()", this._loopInterval);
     clearInterval(this._loopInterval);
     this._isActive = false;
+
+    //set players to skip
+    for (const player of this.npcPlayerManager.getRandomizedPlayerList()) {
+      player.markSkipped = true;
+    }
   }
 
   getDisplayLastPrice(): number | null {
@@ -203,6 +214,7 @@ class MarketLoop {
 
     for (const player of players) {
       if (player.markRemoved) continue;
+      if (player.markSkipped) continue;
 
       console.log("TURN:", player.name, players.length);
       //delay = [minTurnDelay, maxTurnDelay] each turn takes total of
