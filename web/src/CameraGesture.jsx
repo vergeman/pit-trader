@@ -11,6 +11,7 @@ import InfoTabs from "./infopanel/InfoTabs.jsx";
 import { useGameContext, GameState } from "./GameContext.jsx";
 import { Message } from "./infopanel/Message";
 import { EventType } from "./player/Event";
+import LevelModal from "./LevelModal";
 
 export default function CameraGesture(props) {
   /* default bootstrap size */
@@ -55,6 +56,7 @@ export default function CameraGesture(props) {
     //bounce back up. This can trigger LoseModal on/off. Early terminate once a
     //loss is touched
     if (gameContext.state == GameState.LOSE) return;
+    if (gameContext.state == GameState.LEVELUP) return;
 
     if (props.player && props.player.hasLost(price)) {
       props.marketLoop.stop();
@@ -98,6 +100,7 @@ Position limit increased to ${positionLimit}. Max Loss P&L to ${limitPnL}.`,
         };
 
         console.log("Level Up", props.player.configLevel, msg);
+        gameContext.setState(GameState.LEVELUP);
         infoPanel.messagesDispatch(msg);
       }
     }
@@ -112,6 +115,9 @@ Position limit increased to ${positionLimit}. Max Loss P&L to ${limitPnL}.`,
       props.marketLoop.stop();
       return;
     }
+
+    //no events while "paused" on levelup screen
+    if (gameContext.state === GameState.LEVELUP) return;
 
     //console.log("[CameraGesture] EventManager");
     const event = props.eventManager.generate();
@@ -201,8 +207,21 @@ Position limit increased to ${positionLimit}. Max Loss P&L to ${limitPnL}.`,
   //console.log("[CameraGesture] render", gestureData);
   const isReady = gameContext.state != GameState.INIT;
 
+  //new level if GameState.LEVELUP and no event, or has event but of type News
+  //then launching a modal is OK.
+  //For EventType.GESTUREDECISION, wait until event ends before launching level modal
+  const isNewLevel = (gameContext.state == GameState.LEVELUP) &&
+        (!props.eventManager.hasEvent() ||
+         (props.eventManager.hasEvent() && props.eventManager.event.type == EventType.NEWS));
+
   return (
     <>
+      <LevelModal
+        player={props.player}
+        marketLoop={props.marketLoop}
+        show={isNewLevel}
+      />
+
       <div className="d-grid main-wrapper">
         <div className="camera text-center">
           <Camera
