@@ -15,7 +15,7 @@ export function useGameContext() {
 
 export function GameContextProvider(props) {
   const [state, setState] = useState(GameState.INIT);
-  const [gameID, setGameID] = useState(0);
+  const [gameID, setGameID] = useState((new Date()).getTime());
 
   //TODO: gameId
   return (

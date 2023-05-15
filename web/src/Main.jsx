@@ -116,7 +116,7 @@ export default function Main(props) {
       riskManager.reset();
       marketLoop.init();
 
-      gameContext.setGameID(gameContext.gameID + 1);
+      gameContext.setGameID((new Date()).getTime());
       gameContext.setState(GameState.INIT);
     }
   };

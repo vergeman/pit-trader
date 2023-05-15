@@ -2,9 +2,11 @@ import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import highscores from "./highscores.json";
+import { useGameContext, GameState } from "./GameContext.jsx";
 
 export default function LoseModal(props) {
   const [show, setShow] = useState(props.isLose);
+  const gameContext = useGameContext();
 
   const reset = () => {
     props.resetGame();
@@ -19,6 +21,7 @@ export default function LoseModal(props) {
 
   const players = [
     {
+      id: `${gameContext.gameID}-${props.player.name}`,
       name: props.player.name,
       score: Math.round(props.player.maxPnL),
       isLive: true,
