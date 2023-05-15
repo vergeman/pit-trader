@@ -4,6 +4,8 @@ import Modal from "react-bootstrap/Modal";
 import highscores from "./highscores.json";
 import { useGameContext, GameState } from "./GameContext.jsx";
 
+const NUM_HIGHSCORES = 15;
+
 export default function LoseModal(props) {
   const [show, setShow] = useState(props.isLose);
   const gameContext = useGameContext();
@@ -19,15 +21,15 @@ export default function LoseModal(props) {
 
   console.log("[LoseModal] render", props.price, props.player);
 
-  const players = [
-    {
-      id: `${gameContext.gameID}-${props.player.name}`,
-      name: props.player.name,
-      score: Math.round(props.player.maxPnL),
-      isLive: true,
-    },
-    ...highscores
-  ].sort((a, b) => b.score - a.score);
+  const current_id = `${gameContext.gameID}-${props.player.name}`;
+
+  const player_highscores = Object.keys(window.localStorage)
+    .filter((key) => key.startsWith("PT_HIGHSCORE"))
+    .map((key) => JSON.parse(localStorage.getItem(key)));
+
+  const players = [...player_highscores, ...highscores]
+    .sort((a, b) => b.score - a.score)
+    .splice(0, NUM_HIGHSCORES);
 
   return (
     <div className="modal show">
@@ -51,8 +53,9 @@ export default function LoseModal(props) {
               </thead>
               <tbody>
                 {players.map((p) => {
+                  const id = `${gameContext.gameID}-${p.name}`;
                   return (
-                    <tr className={p.isLive ? "isLive" : ""}>
+                    <tr className={p.id === id ? "isLive" : ""}>
                       <td>{p.name}</td>
                       <td className="losemodal-score">
                         {p.score.toLocaleString()}
