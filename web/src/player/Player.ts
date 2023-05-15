@@ -193,7 +193,7 @@ export class Player {
     if (fillQty == 0) return null;
 
     const avgPrice = Math.abs(pnl / fillQty);
-    return Number(avgPrice.toFixed(3));
+    return Number(avgPrice.toFixed(2));
   }
 
   orderHistories(): Transaction[] {
