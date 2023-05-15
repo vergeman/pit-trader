@@ -1,9 +1,14 @@
 import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
+import highscores from "./highscores.json";
+import { useGameContext, GameState } from "./GameContext.jsx";
+
+const NUM_HIGHSCORES = 15;
 
 export default function LoseModal(props) {
   const [show, setShow] = useState(props.isLose);
+  const gameContext = useGameContext();
 
   const reset = () => {
     props.resetGame();
@@ -16,21 +21,15 @@ export default function LoseModal(props) {
 
   console.log("[LoseModal] render", props.price, props.player);
 
-  const players = [
-    {
-      name: props.player.name,
-      score: Math.round(props.player.maxPnL),
-      isLive: true,
-    },
-    { name: "James Simons", score: 79846 },
-    { name: "Ray Dalio", score: 72611 },
-    { name: "Steven Cohen", score: 61188 },
-    { name: "Kenneth Griffin", score: 47651 },
-    { name: "George Soros", score: 41875 },
-    { name: "Paul Tudor Jones II", score: 26971 },
-    { name: "Michael Burry", score: 12532 },
-    { name: "John Paulson", score: 1364 },
-  ].sort((a, b) => b.score - a.score);
+  const current_id = `${gameContext.gameID}-${props.player.name}`;
+
+  const player_highscores = Object.keys(window.localStorage)
+    .filter((key) => key.startsWith("PT_HIGHSCORE"))
+    .map((key) => JSON.parse(localStorage.getItem(key)));
+
+  const players = [...player_highscores, ...highscores]
+    .sort((a, b) => b.score - a.score)
+    .splice(0, NUM_HIGHSCORES);
 
   return (
     <div className="modal show">
@@ -43,8 +42,13 @@ export default function LoseModal(props) {
           <div className="d-flex justify-content-center">
             <table className="table text-dark caption-top">
               <caption>
-                P&L: {props.player.lostPnL && props.player.lostPnL.toFixed(2)} -
-                You Blew Up! 🤯
+                P&L:{" "}
+                {props.player.lostPnL &&
+                  props.player.lostPnL.toLocaleString("en-US", {
+                    minimumFractionDigits: 2,
+                    maxmimumFractionDigits: 2,
+                  })}{" "}
+                - You Blew Up! 🤯
               </caption>
               <thead>
                 <tr>
@@ -54,8 +58,9 @@ export default function LoseModal(props) {
               </thead>
               <tbody>
                 {players.map((p) => {
+                  const id = `${gameContext.gameID}-${p.name}`;
                   return (
-                    <tr className={p.isLive ? "isLive" : ""}>
+                    <tr className={p.id === id ? "isLive" : ""}>
                       <td>{p.name}</td>
                       <td className="losemodal-score">
                         {p.score.toLocaleString()}

@@ -1,7 +1,27 @@
+import { useEffect } from "react";
 import PlayerStatusHeaderElement from "./PlayerStatusHeaderElement.jsx";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { useGameContext } from "../GameContext.jsx";
 
 export default function PlayerStatus(props) {
+  const gameContext = useGameContext();
+
+  //localStorage highscore update
+  useEffect(() => {
+    const player_highscore = {
+      id: `${gameContext.gameID}-${props.player.name}`,
+      name: props.player.name,
+      score: Math.round(props.player.maxPnL),
+      isLive: true,
+    };
+
+    localStorage.setItem(`PT_HIGHSCORE_${player_highscore.id}`, JSON.stringify(player_highscore));
+  }, [props.player.maxPnL]);
+
+  /*
+   * Render
+   */
+
   if (!props.player || !props.marketLoop || !props.riskManager) return null;
 
   //openPosition: held position
@@ -17,7 +37,7 @@ export default function PlayerStatus(props) {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
-  const avgPrice = props.player.calcDisplayAvgPrice();
+
   const lastPrice = props.marketLoop.getDisplayLastPrice();
 
   //calc warning indicator
@@ -65,7 +85,6 @@ export default function PlayerStatus(props) {
             label="P&L"
             value={displayPnL}
           />
-          <PlayerStatusHeaderElement label="Avg Price" value={avgPrice} />
           <PlayerStatusHeaderElement
             label="Last"
             value={lastPrice && lastPrice.toFixed(1)}

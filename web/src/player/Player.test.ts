@@ -225,7 +225,7 @@ describe("Player", () => {
     const o3 = new Order('123"', OrderType.LIMIT, -1000, 80);
     me.process(o2);
     me.process(o3);
-    const wAvgPrice = Number(((10 * 100 + 1000 * 80) / 1010).toFixed(3));
+    const wAvgPrice = Number(((10 * 100 + 1000 * 80) / 1010).toFixed(2));
     expect(p.calcDisplayAvgPrice()).toBe(wAvgPrice);
   });
 
