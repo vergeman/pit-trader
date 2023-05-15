@@ -5,7 +5,8 @@ export const GameState = {
   INIT: 1, //TODO: currently inactve, but for any loading screen
   RUN: 2,
   LOSE: 3,
-  STOP: 4,
+  LEVELUP: 4,
+  STOP: 5,
 };
 
 export function useGameContext() {

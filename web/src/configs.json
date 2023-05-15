@@ -12,6 +12,10 @@
       "bonus": 250,
       "duration": 10000,
       "probability": 0.40
+    },
+    "reward": {
+      "image": "/rewards/level-1-33.jpg",
+      "text": "Treat yourself to a fine meal!"
     }
   },
   {
@@ -27,6 +31,10 @@
       "bonus": 750,
       "duration": 10000,
       "probability": 0.35
+    },
+    "reward": {
+      "image": "/rewards/level-1-33.jpg",
+      "text": "Treat yourself to a fine meal!"
     }
   },
   {
@@ -42,6 +50,10 @@
       "bonus": 1250,
       "duration": 10000,
       "probability": 0.30
+    },
+    "reward": {
+      "image": "/rewards/level-2-33.jpg",
+      "text": "You've joined the nearby country club!"
     }
   },
   {
@@ -57,6 +69,10 @@
       "bonus": 1875,
       "duration": 10000,
       "probability": 0.25
+    },
+    "reward": {
+      "image": "/rewards/level-3-33.jpg",
+      "text": "A fancy sports car for the weekend!"
     }
   },
   {
@@ -72,6 +88,10 @@
       "bonus": 2500,
       "duration": 10000,
       "probability": 0.20
+    },
+    "reward": {
+      "image": "/rewards/level-4-33.jpg",
+      "text": "Fine art for a fine trader is a must!"
     }
   },
   {
@@ -87,6 +107,10 @@
       "bonus": 3125,
       "duration": 10000,
       "probability": 0.20
+    },
+    "reward": {
+      "image": "/rewards/level-5-33.jpg",
+      "text": "Your new penthouse awaits!"
     }
   },
   {
@@ -102,6 +126,10 @@
       "bonus": 3750,
       "duration": 10000,
       "probability": 0.20
+    },
+    "reward": {
+      "image": "/rewards/level-6-33.jpg",
+      "text": "A vacation home, because now you *summer*."
     }
   },
   {
@@ -117,6 +145,10 @@
       "bonus": 4375,
       "duration": 10000,
       "probability": 0.20
+    },
+    "reward": {
+      "image": "/rewards/level-7-33.jpg",
+      "text": "Congratulations on your new vineyard."
     }
   },
   {
@@ -132,6 +164,10 @@
       "bonus": 4375,
       "duration": 10000,
       "probability": 0.25
+    },
+    "reward": {
+      "image": "/rewards/level-8-33.jpg",
+      "text": "To infinity and beyond!"
     }
   }
 ]
