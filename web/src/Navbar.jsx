@@ -29,7 +29,7 @@ export default function NavbarComponent() {
             <a
               className="nav-link"
               href="#"
-              onClick={() => gameContext.setState(GameState.LOSE)}
+              onClick={() => gameContext.setState(GameState.QUIT)}
             >
               Leave
             </a>

@@ -83,6 +83,7 @@ export default function Main(props) {
       case GameState.RUN:
         marketLoop.start();
         break;
+      case GameState.QUIT:
       case GameState.LOSE:
       case GameState.LEVELUP:
       case GameState.STOP:
@@ -130,7 +131,6 @@ export default function Main(props) {
       <LoseModal
         player={player}
         price={marketLoop && marketLoop.getPrice()}
-        isLose={gameContext.state == GameState.LOSE}
         resetGame={resetGame}
       />
 

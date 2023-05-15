@@ -7,8 +7,8 @@ import { useGameContext, GameState } from "./GameContext.jsx";
 const NUM_HIGHSCORES = 15;
 
 export default function LoseModal(props) {
-  const [show, setShow] = useState(props.isLose);
   const gameContext = useGameContext();
+  const [show, setShow] = useState(false);
 
   const reset = () => {
     props.resetGame();
@@ -16,8 +16,11 @@ export default function LoseModal(props) {
   };
 
   useEffect(() => {
-    setShow(props.isLose);
-  }, [props.isLose]);
+    const showModal = [GameState.QUIT, GameState.LOSE].includes(
+      gameContext.state
+    );
+    setShow(showModal);
+  }, [gameContext.state]);
 
   console.log("[LoseModal] render", props.price, props.player);
 
@@ -42,13 +45,21 @@ export default function LoseModal(props) {
           <div className="d-flex justify-content-center">
             <table className="table text-dark caption-top">
               <caption>
-                P&L:{" "}
-                {props.player.lostPnL &&
-                  props.player.lostPnL.toLocaleString("en-US", {
-                    minimumFractionDigits: 2,
-                    maxmimumFractionDigits: 2,
-                  })}{" "}
-                - You Blew Up! 🤯
+                {/* LOSE */}
+                {gameContext.state == GameState.LOSE && (
+                  <span>
+                    P&L:{" "}
+                    {props.player.lostPnL &&
+                      props.player.lostPnL.toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maxmimumFractionDigits: 2,
+                      })}{" "}
+                    - You Blew Up! 🤯
+                  </span>
+                )}
+
+                {/* QUIT (NAV) */}
+                {gameContext.state == GameState.QUIT && <span>QUIT</span>}
               </caption>
               <thead>
                 <tr>

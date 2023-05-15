@@ -55,6 +55,7 @@ export default function CameraGesture(props) {
     //calcGesture time delay sometimes allow MTM to touch loss threshold but
     //bounce back up. This can trigger LoseModal on/off. Early terminate once a
     //loss is touched
+    if (gameContext.state == GameState.QUIT) return;
     if (gameContext.state == GameState.LOSE) return;
     if (gameContext.state == GameState.LEVELUP) return;
 
@@ -111,7 +112,7 @@ Position limit increased to ${positionLimit}. Max Loss P&L to ${limitPnL}.`,
    */
 
   useEffect(() => {
-    if (gameContext.state == GameState.LOSE) {
+    if ([GameState.LOSE, GameState.QUIT].includes(gameContext.state)) {
       props.marketLoop.stop();
       return;
     }
