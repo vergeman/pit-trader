@@ -6,7 +6,7 @@ import { useGameContext, GameState } from "./GameContext.jsx";
 
 const NUM_HIGHSCORES = 15;
 
-export default function LoseModal(props) {
+export default function LoseQuitModal(props) {
   const gameContext = useGameContext();
   const [show, setShow] = useState(false);
 
@@ -22,7 +22,7 @@ export default function LoseModal(props) {
     setShow(showModal);
   }, [gameContext.state]);
 
-  console.log("[LoseModal] render", props.price, props.player);
+  console.log("[LoseQuitModal] render", props.price, props.player);
 
   const current_id = `${gameContext.gameID}-${props.player.name}`;
 
@@ -79,9 +79,8 @@ export default function LoseModal(props) {
               </thead>
               <tbody>
                 {players.map((p) => {
-                  const id = `${gameContext.gameID}-${p.name}`;
                   return (
-                    <tr className={p.id === id ? "isLive" : ""}>
+                    <tr className={p.id === current_id ? "isLive" : ""}>
                       <td>{p.name}</td>
                       <td className="losemodal-score">
                         {p.score.toLocaleString()}

@@ -7,7 +7,7 @@ import NPCPlayerManager from "./player/NPCPlayerManager";
 import Player from "./player/Player";
 import GestureDecision from "./gesture/GestureDecision";
 import MarketLoop from "./player/MarketLoop";
-import LoseModal from "./LoseModal";
+import LoseQuitModal from "./LoseQuitModal";
 import Message from "./infopanel/Message";
 import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
 import { useGlobalContext } from "./GlobalContext.jsx";
@@ -128,7 +128,7 @@ export default function Main(props) {
 
   return (
     <Container id="main" className="pt-6">
-      <LoseModal
+      <LoseQuitModal
         player={player}
         price={marketLoop && marketLoop.getPrice()}
         resetGame={resetGame}

@@ -53,7 +53,7 @@ export default function CameraGesture(props) {
     const price = props.marketLoop && props.marketLoop.getPrice();
 
     //calcGesture time delay sometimes allow MTM to touch loss threshold but
-    //bounce back up. This can trigger LoseModal on/off. Early terminate once a
+    //bounce back up. This can trigger LoseQuitModal on/off. Early terminate once a
     //loss is touched
     if (gameContext.state == GameState.QUIT) return;
     if (gameContext.state == GameState.LOSE) return;
