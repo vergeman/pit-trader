@@ -6,9 +6,9 @@ import { useGameContext, GameState } from "./GameContext.jsx";
 
 const NUM_HIGHSCORES = 15;
 
-export default function LoseModal(props) {
-  const [show, setShow] = useState(props.isLose);
+export default function LoseQuitModal(props) {
   const gameContext = useGameContext();
+  const [show, setShow] = useState(false);
 
   const reset = () => {
     props.resetGame();
@@ -16,10 +16,13 @@ export default function LoseModal(props) {
   };
 
   useEffect(() => {
-    setShow(props.isLose);
-  }, [props.isLose]);
+    const showModal = [GameState.QUIT, GameState.LOSE].includes(
+      gameContext.state
+    );
+    setShow(showModal);
+  }, [gameContext.state]);
 
-  console.log("[LoseModal] render", props.price, props.player);
+  console.log("[LoseQuitModal] render", props.price, props.player);
 
   const current_id = `${gameContext.gameID}-${props.player.name}`;
 
@@ -42,13 +45,31 @@ export default function LoseModal(props) {
           <div className="d-flex justify-content-center">
             <table className="table text-dark caption-top">
               <caption>
-                P&L:{" "}
-                {props.player.lostPnL &&
-                  props.player.lostPnL.toLocaleString("en-US", {
-                    minimumFractionDigits: 2,
-                    maxmimumFractionDigits: 2,
-                  })}{" "}
-                - You Blew Up! 🤯
+                {/* LOSE */}
+                {gameContext.state == GameState.LOSE && (
+                  <span>
+                    P&L:{" "}
+                    {props.player.lostPnL &&
+                      props.player.lostPnL.toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maxmimumFractionDigits: 2,
+                      })}{" "}
+                    &mdash; You Blew Up! 🤯
+                  </span>
+                )}
+
+                {/* QUIT */}
+                {gameContext.state == GameState.QUIT && (
+                  <span>
+                    P&L:{" "}
+                    {props.player.maxPnL &&
+                      props.player.maxPnL.toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maxmimumFractionDigits: 2,
+                      })}{" "}
+                    &mdash; See you soon!
+                  </span>
+                )}
               </caption>
               <thead>
                 <tr>
@@ -58,9 +79,8 @@ export default function LoseModal(props) {
               </thead>
               <tbody>
                 {players.map((p) => {
-                  const id = `${gameContext.gameID}-${p.name}`;
                   return (
-                    <tr className={p.id === id ? "isLive" : ""}>
+                    <tr className={p.id === current_id ? "isLive" : ""}>
                       <td>{p.name}</td>
                       <td className="losemodal-score">
                         {p.score.toLocaleString()}

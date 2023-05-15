@@ -10,23 +10,25 @@ import InfoPanelProvider from "./infopanel/InfoPanelContext.jsx";
 function App() {
   return (
     <div className="App">
-      <Navbar />
-      {
-        <Routes>
-          <Route exact path="/" element={<Home />} />
-          <Route
-            path="/pit"
-            element={
-              <GameContextProvider>
+      <GameContextProvider>
+        <Navbar />
+        {
+          <Routes>
+            <Route exact path="/" element={<Home />} />
+            <Route
+              path="/pit"
+              element={
+
                 <InfoPanelProvider>
                   <Main />
                 </InfoPanelProvider>
-              </GameContextProvider>
 
-            }
-          />
-        </Routes>
-      }
+
+              }
+            />
+          </Routes>
+        }
+      </GameContextProvider>
     </div>
   );
 }

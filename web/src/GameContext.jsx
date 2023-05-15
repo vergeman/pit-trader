@@ -4,9 +4,10 @@ export const GameContext = createContext(null);
 export const GameState = {
   INIT: 1, //TODO: currently inactve, but for any loading screen
   RUN: 2,
-  LOSE: 3,
-  LEVELUP: 4,
-  STOP: 5,
+  QUIT: 3,
+  LOSE: 4,
+  LEVELUP: 5,
+  STOP: 6,
 };
 
 export function useGameContext() {
