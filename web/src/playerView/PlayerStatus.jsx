@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import PlayerStatusHeaderElement from "./PlayerStatusHeaderElement.jsx";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import PlayerLevelIcons from "./PlayerLevelIcons";
 import { useGameContext } from "../GameContext.jsx";
 
 export default function PlayerStatus(props) {
@@ -141,6 +142,10 @@ export default function PlayerStatus(props) {
           Max Loss P&L: {limitPnL.toLocaleString()}
         </div>
         <div className="p-2">Next Level P&L: {levelPnL.toLocaleString()}</div>
+        <PlayerLevelIcons
+          player={props.player}
+          level={props.player.configLevel}
+        />
       </div>
     </div>
   );
