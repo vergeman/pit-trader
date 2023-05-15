@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
+import highscores from "./highscores.json";
 
 export default function LoseModal(props) {
   const [show, setShow] = useState(props.isLose);
@@ -22,14 +23,7 @@ export default function LoseModal(props) {
       score: Math.round(props.player.maxPnL),
       isLive: true,
     },
-    { name: "James Simons", score: 79846 },
-    { name: "Ray Dalio", score: 72611 },
-    { name: "Steven Cohen", score: 61188 },
-    { name: "Kenneth Griffin", score: 47651 },
-    { name: "George Soros", score: 41875 },
-    { name: "Paul Tudor Jones II", score: 26971 },
-    { name: "Michael Burry", score: 12532 },
-    { name: "John Paulson", score: 1364 },
+    ...highscores
   ].sort((a, b) => b.score - a.score);
 
   return (
