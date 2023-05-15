@@ -62,11 +62,13 @@ export default function Main(props) {
     //for debug mode, attach instances to window for console access
     if (isDebug) {
       Object.assign(window, {
-        marketLoop,
-        riskManager,
-        npcPlayerManager,
-        player,
-        gestureDecision,
+        pitTrader: {
+          marketLoop,
+          riskManager,
+          npcPlayerManager,
+          player,
+          gestureDecision,
+        },
       });
     }
   }, []);
@@ -116,7 +118,7 @@ export default function Main(props) {
       riskManager.reset();
       marketLoop.init();
 
-      gameContext.setGameID((new Date()).getTime());
+      gameContext.setGameID(new Date().getTime());
       gameContext.setState(GameState.INIT);
     }
   };
