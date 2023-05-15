@@ -1,7 +1,27 @@
+import { useEffect } from "react";
 import PlayerStatusHeaderElement from "./PlayerStatusHeaderElement.jsx";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { useGameContext } from "../GameContext.jsx";
 
 export default function PlayerStatus(props) {
+  const gameContext = useGameContext();
+
+  //localStorage highscore update
+  useEffect(() => {
+    const player_highscore = {
+      id: `${gameContext.gameID}-${props.player.name}`,
+      name: props.player.name,
+      score: Math.round(props.player.maxPnL),
+      isLive: true,
+    };
+
+    localStorage.setItem(`PT_HIGHSCORE_${player_highscore.id}`, JSON.stringify(player_highscore));
+  }, [props.player.maxPnL]);
+
+  /*
+   * Render
+   */
+
   if (!props.player || !props.marketLoop || !props.riskManager) return null;
 
   //openPosition: held position
