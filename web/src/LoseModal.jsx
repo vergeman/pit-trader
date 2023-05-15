@@ -54,12 +54,22 @@ export default function LoseModal(props) {
                         minimumFractionDigits: 2,
                         maxmimumFractionDigits: 2,
                       })}{" "}
-                    - You Blew Up! 🤯
+                    &mdash; You Blew Up! 🤯
                   </span>
                 )}
 
-                {/* QUIT (NAV) */}
-                {gameContext.state == GameState.QUIT && <span>QUIT</span>}
+                {/* QUIT */}
+                {gameContext.state == GameState.QUIT && (
+                  <span>
+                    P&L:{" "}
+                    {props.player.maxPnL &&
+                      props.player.maxPnL.toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maxmimumFractionDigits: 2,
+                      })}{" "}
+                    &mdash; See you soon!
+                  </span>
+                )}
               </caption>
               <thead>
                 <tr>
