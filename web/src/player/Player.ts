@@ -174,6 +174,10 @@ export class Player {
   }
 
   //avgPrice of executed trades
+  //
+  //NB: deprecated: gets confusing over time - large favorable p&l and small
+  //position -> low displayed weighted avg price.
+  //Better off not using for now.
   calcDisplayAvgPrice(): number | null {
     let pnl = 0;
     let fillQty = 0;

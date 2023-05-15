@@ -17,7 +17,7 @@ export default function PlayerStatus(props) {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
-  const avgPrice = props.player.calcDisplayAvgPrice();
+
   const lastPrice = props.marketLoop.getDisplayLastPrice();
 
   //calc warning indicator
@@ -65,7 +65,6 @@ export default function PlayerStatus(props) {
             label="P&L"
             value={displayPnL}
           />
-          <PlayerStatusHeaderElement label="Avg Price" value={avgPrice} />
           <PlayerStatusHeaderElement
             label="Last"
             value={lastPrice && lastPrice.toFixed(1)}
