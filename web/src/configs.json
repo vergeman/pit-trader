@@ -14,8 +14,8 @@
       "probability": 0.40
     },
     "reward": {
-      "image": "/rewards/level-1-33.jpg",
-      "text": "Treat yourself to a fine meal!"
+      "image": "",
+      "text": ""
     }
   },
   {
@@ -72,7 +72,7 @@
     },
     "reward": {
       "image": "/rewards/level-3-33.jpg",
-      "text": "A fancy sports car for the weekend!"
+      "text": "A fancy sports car for the weekends!"
     }
   },
   {

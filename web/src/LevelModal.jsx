@@ -50,7 +50,8 @@ export default function LevelModal(props) {
       <Modal show={show} onHide={close}>
         <Modal.Header>
           <Modal.Title className="text-dark w-100 text-center">
-            Level {level} Achieved
+            {/* sync with message; index vs level */}
+            Level {level + 1} Achieved
           </Modal.Title>
         </Modal.Header>
 
