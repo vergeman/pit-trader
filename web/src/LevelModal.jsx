@@ -7,12 +7,23 @@ export default function LevelModal(props) {
   const gameContext = useGameContext();
   const [show, setShow] = useState(props.show);
 
+  const preloadImage = (level) => {
+    //fetch image so browser has image cached before display
+    const config = props.player.configs[level];
+    if (!config) return;
+
+    const img = new Image();
+    img.src = config.reward.image;
+  };
+
   const close = () => {
+    preloadImage(props.player.configLevel + 1);
     gameContext.setState(GameState.RUN);
     setShow(false);
   };
 
   useEffect(() => {
+    preloadImage(props.player.configLevel);
     setShow(props.show);
   }, [props.show]);
 
@@ -30,28 +41,42 @@ export default function LevelModal(props) {
     props.marketLoop.stop();
   }
 
+  //on modal launch, level value will have already increased
+  const level = props.player.configLevel;
+  const reward = props.player.configs[level].reward;
+
   return (
     <div className="modal show">
       <Modal show={show} onHide={close}>
         <Modal.Header>
-          <Modal.Title className="text-dark3">Level Modal</Modal.Title>
+          <Modal.Title className="text-dark w-100 text-center">
+            Level {level} Achieved
+          </Modal.Title>
         </Modal.Header>
 
-        <Modal.Body>
+        <Modal.Body className="p-0">
           <div className="d-flex justify-content-center">
-            <strong>Level {props.player.configLevel + 1} Modal</strong>
+            <img
+              onload=""
+              style={{ width: "100%", height: "100%" }}
+              src={reward.image}
+            />
           </div>
+        </Modal.Body>
 
-          <div className="d-flex justify-content-center">
+        <Modal.Footer>
+          <div className="mb-3 text-dark w-100 text-center">{reward.text}</div>
+
+          <div className="d-flex justify-content-center w-100">
             <Button
-              style={{ textAlign: "right" }}
+              style={{ textAlign: "center" }}
               variant="primary"
               onClick={() => close()}
             >
-              Close
+              Continue
             </Button>
           </div>
-        </Modal.Body>
+        </Modal.Footer>
       </Modal>
     </div>
   );
