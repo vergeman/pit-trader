@@ -42,8 +42,13 @@ export default function LoseModal(props) {
           <div className="d-flex justify-content-center">
             <table className="table text-dark caption-top">
               <caption>
-                P&L: {props.player.lostPnL && props.player.lostPnL.toFixed(2)} -
-                You Blew Up! 🤯
+                P&L:{" "}
+                {props.player.lostPnL &&
+                  props.player.lostPnL.toLocaleString("en-US", {
+                    minimumFractionDigits: 2,
+                    maxmimumFractionDigits: 2,
+                  })}{" "}
+                - You Blew Up! 🤯
               </caption>
               <thead>
                 <tr>
