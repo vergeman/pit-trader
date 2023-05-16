@@ -103,7 +103,6 @@ export class Event implements IEvent {
   cleanup() {
     this.isActive--;
     if (this.isActive === 0) {
-      //this._event = null;
       this._timeouts = [];
     }
   }
