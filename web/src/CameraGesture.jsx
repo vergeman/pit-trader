@@ -12,13 +12,14 @@ import { useGameContext, GameState } from "./GameContext.jsx";
 import { Message } from "./infopanel/Message";
 import { EventType } from "./player/Event";
 import LevelModal from "./LevelModal";
+import useEventManager from "./player/useEventManager";
 
 export default function CameraGesture(props) {
   /* default bootstrap size */
   const defaultCameraDims = { width: 636, height: 477 };
   const [gestureData, setGestureData] = useState(null);
-  const [classifier, setClassifier] = useState(null);
-  const [gestureBuilder, setGestureBuilder] = useState(null);
+  const [classifier, setClassifier] = useState(() => new Classifier() );
+  const [gestureBuilder, setGestureBuilder] = useState(() => new GestureBuilder() );
   const [gesture, setGesture] = useState(null);
   const infoPanel = useInfoPanel();
   const gameContext = useGameContext();
@@ -29,16 +30,11 @@ export default function CameraGesture(props) {
 
   useEffect(() => {
     console.log("[CameraGesture.jsx]: useEffect init");
-    const gestureBuilder = new GestureBuilder();
-    const classifier = new Classifier();
-
-    setGestureBuilder(gestureBuilder);
-    setClassifier(classifier);
 
     gestureBuilder.load().then(() => {
       classifier.load(gestureBuilder.garbage_idx);
     });
-  }, [props.me, props.player, props.marketLoop]);
+  }, [gestureBuilder, classifier]);
 
   /*
    * checkGameState every frame; determine if player lost or not, toggle
@@ -107,69 +103,7 @@ Position limit increased to ${positionLimit}. Max Loss P&L to ${limitPnL}.`,
     }
   }, [gesture]);
 
-  /*
-   * EventManager
-   */
-
-  useEffect(() => {
-    if ([GameState.LOSE, GameState.QUIT].includes(gameContext.state)) {
-      props.marketLoop.stop();
-      return;
-    }
-
-    //no events while "paused" on levelup screen
-    if (gameContext.state === GameState.LEVELUP) return;
-
-    //console.log("[CameraGesture] EventManager");
-    const event = props.eventManager.generate();
-
-    //issue: we do need to poll so can't just return
-    if (!event) return;
-
-    //GestureDecisionEvent - aka challenge
-    //one time init
-    if (event && event.type == EventType.GESTUREDECISION) {
-      console.log("[CameraGesture] EventManager EventType.GESTUREDECISION");
-
-      event.dispatchHandler = (msg, tabName = null) => {
-        infoPanel.gestureDecisionEventDispatch(msg);
-
-        if (tabName) {
-          infoPanel.activeTabDispatch({
-            type: "select",
-            value: tabName,
-          });
-        }
-      };
-
-      //initial active state
-      console.log("[CameraGesture]", event);
-      props.eventManager.executeEvent();
-      const msg = {
-        type: EventType.GESTUREDECISION,
-        value: event,
-      };
-
-      infoPanel.activeTabDispatch({
-        type: "select",
-        value: "gesture-decision-event",
-      });
-
-      infoPanel.gestureDecisionEventDispatch(msg);
-    }
-
-    /*
-     * News
-     */
-
-    if (event && event.type == EventType.NEWS) {
-      props.eventManager.executeEvent();
-      //news
-      const msg = { type: Message.NewsEvent, value: event };
-      infoPanel.messagesDispatch(msg);
-    }
-  }, [gesture]);
-
+  useEventManager({ gesture, eventManager: props.eventManager });
   /*
    * calcGesture (gesture poll)
    */
