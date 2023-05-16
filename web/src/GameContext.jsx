@@ -1,4 +1,4 @@
-import { useState, createContext, useContext, useMemo } from "react";
+import { useState, createContext, useContext, useEffect, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 
 export const GameContext = createContext(null);
@@ -17,6 +17,10 @@ function useQuery() {
   return useMemo(() => new URLSearchParams(search), [search]);
 }
 
+function buildBadgeGameID(gameID, badge) {
+  return [gameID, badge].join(" ");
+}
+
 export function useGameContext() {
   return useContext(GameContext);
 }
@@ -24,12 +28,33 @@ export function useGameContext() {
 export function GameContextProvider(props) {
   let query = useQuery();
 
-  const [state, setState] = useState(GameState.INIT);
-  const [gameID, setGameID] = useState((new Date()).getTime());
   const [isDebug, setIsDebug] = useState(query.get("debug"));
+  const [state, setState] = useState(GameState.INIT);
+  const [gameID, setGameID] = useState(new Date().getTime());
+  const [badge, setBadge] = useState(query.get("badge") || "Trader");
+  const [badgeGameID, setBadgeGameID] = useState(
+    buildBadgeGameID(gameID, badge)
+  );
+
+  //Main.jsx on resetGame, cascade the gameID change to badgeGameID
+  useEffect(() => {
+    setBadgeGameID(buildBadgeGameID(gameID, badge));
+  }, [gameID]);
 
   return (
-    <GameContext.Provider value={{ state, setState, gameID, setGameID, isDebug }}>
+    <GameContext.Provider
+      value={{
+        state,
+        setState,
+        gameID,
+        setGameID,
+        isDebug,
+        badge,
+        setBadge,
+        badgeGameID,
+        setBadgeGameID,
+      }}
+    >
       {props.children}
     </GameContext.Provider>
   );

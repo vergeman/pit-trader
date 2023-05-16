@@ -10,7 +10,7 @@ export default function PlayerStatus(props) {
   //localStorage highscore update
   useEffect(() => {
     const player_highscore = {
-      id: `${gameContext.gameID}-${props.player.name}`,
+      id: gameContext.badgeGameID,
       name: props.player.name,
       score: Math.round(props.player.maxPnL),
       isLive: true,

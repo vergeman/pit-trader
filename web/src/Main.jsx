@@ -31,9 +31,8 @@ export default function Main(props) {
       new Player("npc-D", false, configs),
     ])
   );
-  const badge = new URLSearchParams(window.location.search).get("badge");
   const [player, setPlayer] = useState(
-    new Player(badge || "Trader", true, configs)
+    new Player(gameContext.badge, true, configs)
   );
   const [marketLoop, setMarketLoop] = useState(
     new MarketLoop({ npcPlayerManager, priceSeed: 100 })
@@ -117,7 +116,8 @@ export default function Main(props) {
       riskManager.reset();
       marketLoop.init();
 
-      gameContext.setGameID(new Date().getTime());
+      const gameID = new Date().getTime();
+      gameContext.setGameID(gameID);
       gameContext.setState(GameState.INIT);
     }
   };
