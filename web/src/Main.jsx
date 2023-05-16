@@ -90,6 +90,7 @@ export default function Main(props) {
         gestureDecision.enable = false;
         eventManager.killEvent();
         marketLoop.stop();
+        break;
       case GameState.LEVELUP:
         levelUp();
       case GameState.STOP:
