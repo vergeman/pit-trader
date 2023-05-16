@@ -17,8 +17,8 @@ export default function CameraGesture(props) {
   /* default bootstrap size */
   const defaultCameraDims = { width: 636, height: 477 };
   const [gestureData, setGestureData] = useState(null);
-  const [classifier, setClassifier] = useState(new Classifier());
-  const [gestureBuilder, setGestureBuilder] = useState(new GestureBuilder());
+  const [classifier, setClassifier] = useState(null);
+  const [gestureBuilder, setGestureBuilder] = useState(null);
   const [gesture, setGesture] = useState(null);
   const infoPanel = useInfoPanel();
   const gameContext = useGameContext();
@@ -29,10 +29,16 @@ export default function CameraGesture(props) {
 
   useEffect(() => {
     console.log("[CameraGesture.jsx]: useEffect init");
+    const gestureBuilder = new GestureBuilder();
+    const classifier = new Classifier();
+
+    setGestureBuilder(gestureBuilder);
+    setClassifier(classifier);
+
     gestureBuilder.load().then(() => {
       classifier.load(gestureBuilder.garbage_idx);
     });
-  }, [gestureBuilder, classifier]);
+  }, [props.me, props.player, props.marketLoop]);
 
   /*
    * checkGameState every frame; determine if player lost or not, toggle
