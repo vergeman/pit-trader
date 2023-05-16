@@ -24,8 +24,6 @@ export default function LoseQuitModal(props) {
 
   console.log("[LoseQuitModal] render", props.price, props.player);
 
-  const current_id = `${gameContext.gameID}-${props.player.name}`;
-
   const player_highscores = Object.keys(window.localStorage)
     .filter((key) => key.startsWith("PT_HIGHSCORE"))
     .map((key) => JSON.parse(localStorage.getItem(key)));
@@ -78,9 +76,15 @@ export default function LoseQuitModal(props) {
                 </tr>
               </thead>
               <tbody>
+                {/* id to highlight here is badgeGameID for highscore / session
+                 * - see PlayerStsatus.jsx */}
                 {players.map((p) => {
                   return (
-                    <tr className={p.id === current_id ? "isLive" : ""}>
+                    <tr
+                      className={
+                        p.id === gameContext.badgeGameID ? "isLive" : ""
+                      }
+                    >
                       <td>{p.name}</td>
                       <td className="losemodal-score">
                         {p.score.toLocaleString()}

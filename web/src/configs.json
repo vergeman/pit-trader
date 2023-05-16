@@ -5,7 +5,7 @@
     "maxOrderLimit": 40,
     "qtyMax": 5,
     "tick": 1000,
-    "limitPnL": -3000,
+    "limitPnL": -5000,
     "levelPnL": 10000,
     "eventProbability": 0.01,
     "gestureDecisionEvent": {

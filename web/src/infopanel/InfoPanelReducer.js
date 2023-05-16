@@ -20,12 +20,20 @@ const populateTemplateString = (template, vars) => {
   return template;
 };
 
+
+
 export function messagesReducer(messages, action) {
   console.log("[messagesReducer]", action);
-
+  const MESSAGE_LEN = 50;
   let text;
   let transaction;
   let order;
+
+  //truncate messages after a while no need
+  if (messages.length > 2*MESSAGE_LEN) {
+    messages.splice(-MESSAGE_LEN, MESSAGE_LEN);
+  }
+
   switch (action.type) {
     case Message.SetPrice:
     case Message.SetQty:

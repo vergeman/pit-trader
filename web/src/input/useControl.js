@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { useGlobalContext } from "../GlobalContext.jsx";
+import { useGameContext } from "../GameContext.jsx";
 
 export default function useControl(controlRef) {
-  const { isDebug } = useGlobalContext();
+  const gameContext = useGameContext();
   const [control, setControl] = useState(null);
   const [fpsControl, setFPSControl] = useState(null);
 
@@ -10,7 +10,7 @@ export default function useControl(controlRef) {
     console.log("[controlFPS] useEffect");
 
     //show only on debug
-    if (!isDebug) return;
+    if (!gameContext.isDebug) return;
 
     const controlsElement = controlRef.current;
 
