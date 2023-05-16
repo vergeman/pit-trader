@@ -1,10 +1,8 @@
-import {memo} from "react";
+import { memo } from "react";
 
 const PlayerLevelItems = (props) => {
-
   const level = props.level;
-  // const reward = props.player.configs[level].reward;
-  // const icon = reward.icon;
+  console.log("[PlayerLevelItems]", level);
 
   if (!level) return null;
 
@@ -15,7 +13,12 @@ const PlayerLevelItems = (props) => {
     const title = `Level ${i}: ${icon_title}`;
 
     icons.push(
-      <span className="px-1" title={title} role="button">
+      <span
+        key={`level-icon-${i}`}
+        className="px-1"
+        title={title}
+        role="button"
+      >
         {icon}
       </span>
     );
@@ -23,12 +26,7 @@ const PlayerLevelItems = (props) => {
 
   console.log("[PlayerLevelIcons] render");
 
-  return (
-    <div className="d-none d-xl-block fs-4">
-      {icons}
-    </div>
-  );
-
+  return <div className="d-none d-xl-block fs-4">{icons}</div>;
 };
 
-export default  memo(PlayerLevelItems);
+export default memo(PlayerLevelItems);

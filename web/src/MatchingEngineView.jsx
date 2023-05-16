@@ -2,9 +2,6 @@ import { useEffect } from "react";
 import { Table } from "react-bootstrap";
 
 export default function MatchingEngineView(props) {
-  useEffect(() => {
-    console.log("[MatchingEngineView.jsx]: useEffect init");
-  }, []);
 
   if (!props.me || !props.marketLoop) return null;
 

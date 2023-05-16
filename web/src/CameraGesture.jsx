@@ -9,16 +9,16 @@ import GestureBuilder from "./gesture/GestureBuilder.ts";
 import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
 import InfoTabs from "./infopanel/InfoTabs.jsx";
 import { useGameContext, GameState } from "./GameContext.jsx";
-import { Message } from "./infopanel/Message";
-import { EventType } from "./player/Event";
-import LevelModal from "./LevelModal";
+import useEventManager from "./player/useEventManager";
 
 export default function CameraGesture(props) {
   /* default bootstrap size */
   const defaultCameraDims = { width: 636, height: 477 };
   const [gestureData, setGestureData] = useState(null);
-  const [classifier, setClassifier] = useState(null);
-  const [gestureBuilder, setGestureBuilder] = useState(null);
+  const [classifier, setClassifier] = useState(() => new Classifier());
+  const [gestureBuilder, setGestureBuilder] = useState(
+    () => new GestureBuilder()
+  );
   const [gesture, setGesture] = useState(null);
   const infoPanel = useInfoPanel();
   const gameContext = useGameContext();
@@ -27,22 +27,25 @@ export default function CameraGesture(props) {
     props.marketLoop && props.marketLoop.npcPlayerManager;
   const numNPC = npcPlayerManager && npcPlayerManager.numPlayers;
 
+  /*
+   * INIT
+   */
   useEffect(() => {
     console.log("[CameraGesture.jsx]: useEffect init");
-    const gestureBuilder = new GestureBuilder();
-    const classifier = new Classifier();
-
-    setGestureBuilder(gestureBuilder);
-    setClassifier(classifier);
 
     gestureBuilder.load().then(() => {
       classifier.load(gestureBuilder.garbage_idx);
     });
-  }, [props.me, props.player, props.marketLoop]);
+  }, [gestureBuilder, classifier]);
 
   /*
-   * checkGameState every frame; determine if player lost or not, toggle
-   * accordingly
+   * Event Generation
+   * randomly generates event per gesture frame (low probability)
+   */
+  useEventManager({ gesture, eventManager: props.eventManager });
+
+  /*
+   * checkGameState every frame; determine if player lost, levels up
    */
 
   useEffect(() => {
@@ -50,123 +53,29 @@ export default function CameraGesture(props) {
       `[checkGameState]: ${gameContext.state}, npcPlayers: ${numNPC}`
     );
 
+    const noChange = [
+      GameState.QUIT,
+      GameState.LOSE,
+      GameState.LEVELUP,
+    ].includes(gameContext.state);
+
+    if (noChange) return;
+
     const price = props.marketLoop && props.marketLoop.getPrice();
 
-    //calcGesture time delay sometimes allow MTM to touch loss threshold but
-    //bounce back up. This can trigger LoseQuitModal on/off. Early terminate once a
-    //loss is touched
-    if (gameContext.state == GameState.QUIT) return;
-    if (gameContext.state == GameState.LOSE) return;
-    if (gameContext.state == GameState.LEVELUP) return;
-
     if (props.player && props.player.hasLost(price)) {
-      props.marketLoop.stop();
-      props.gestureDecision.enable = false;
-      props.eventManager.killEvent();
       gameContext.setState(GameState.LOSE);
-      console.log("You Lose", props.player.lostPnL);
-    } else if (gesture !== null) {
-      //init -> run
-      gameContext.setState(GameState.RUN);
-
-      //level up configs
-      //see configs.json for details; level corresponds to array index.
-      if (props.player && props.player.hasNextLevel(price)) {
-        const levelPnL =
-          props.player.configs[
-            props.player.configLevel
-          ].levelPnL.toLocaleString();
-
-        props.player.incrementLevel();
-        props.npcPlayerManager.incrementLevel();
-        props.eventManager.incrementLevel();
-        props.riskManager.incrementLevel();
-
-        const positionLimit =
-          props.player.configs[props.player.configLevel].positionLimit;
-
-        const limitPnL =
-          props.player.configs[
-            props.player.configLevel
-          ].limitPnL.toLocaleString();
-
-        const msg = {
-          type: Message.Notice,
-          value: {
-            msg: `Level ${
-              props.player.configLevel + 1
-            } achieved! P&L exceeds ${levelPnL}.
-Position limit increased to ${positionLimit}. Max Loss P&L to ${limitPnL}.`,
-          },
-        };
-
-        console.log("Level Up", props.player.configLevel, msg);
-        gameContext.setState(GameState.LEVELUP);
-        infoPanel.messagesDispatch(msg);
-      }
-    }
-  }, [gesture]);
-
-  /*
-   * EventManager
-   */
-
-  useEffect(() => {
-    if ([GameState.LOSE, GameState.QUIT].includes(gameContext.state)) {
-      props.marketLoop.stop();
       return;
     }
 
-    //no events while "paused" on levelup screen
-    if (gameContext.state === GameState.LEVELUP) return;
-
-    //console.log("[CameraGesture] EventManager");
-    const event = props.eventManager.generate();
-
-    //issue: we do need to poll so can't just return
-    if (!event) return;
-
-    //GestureDecisionEvent - aka challenge
-    //one time init
-    if (event && event.type == EventType.GESTUREDECISION) {
-      console.log("[CameraGesture] EventManager EventType.GESTUREDECISION");
-
-      event.dispatchHandler = (msg, tabName = null) => {
-        infoPanel.gestureDecisionEventDispatch(msg);
-
-        if (tabName) {
-          infoPanel.activeTabDispatch({
-            type: "select",
-            value: tabName,
-          });
-        }
-      };
-
-      //initial active state
-      console.log("[CameraGesture]", event);
-      props.eventManager.executeEvent();
-      const msg = {
-        type: EventType.GESTUREDECISION,
-        value: event,
-      };
-
-      infoPanel.activeTabDispatch({
-        type: "select",
-        value: "gesture-decision-event",
-      });
-
-      infoPanel.gestureDecisionEventDispatch(msg);
+    if (props.player && props.player.hasNextLevel(price)) {
+      gameContext.setState(GameState.LEVELUP);
+      return;
     }
 
-    /*
-     * News
-     */
-
-    if (event && event.type == EventType.NEWS) {
-      props.eventManager.executeEvent();
-      //news
-      const msg = { type: Message.NewsEvent, value: event };
-      infoPanel.messagesDispatch(msg);
+    //triggers init -> run
+    if (gameContext.state === GameState.INIT && gesture !== null) {
+      gameContext.setState(GameState.RUN);
     }
   }, [gesture]);
 
@@ -208,21 +117,8 @@ Position limit increased to ${positionLimit}. Max Loss P&L to ${limitPnL}.`,
   //console.log("[CameraGesture] render", gestureData);
   const isReady = gameContext.state != GameState.INIT;
 
-  //new level if GameState.LEVELUP and no event, or has event but of type News
-  //then launching a modal is OK.
-  //For EventType.GESTUREDECISION, wait until event ends before launching level modal
-  const isNewLevel = (gameContext.state == GameState.LEVELUP) &&
-        (!props.eventManager.hasEvent() ||
-         (props.eventManager.hasEvent() && props.eventManager.event.type == EventType.NEWS));
-
   return (
     <>
-      <LevelModal
-        player={props.player}
-        marketLoop={props.marketLoop}
-        show={isNewLevel}
-      />
-
       <div className="d-grid main-wrapper">
         <div className="camera text-center">
           <Camera

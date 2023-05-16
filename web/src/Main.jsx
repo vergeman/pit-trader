@@ -8,6 +8,7 @@ import Player from "./player/Player";
 import GestureDecision from "./gesture/GestureDecision";
 import MarketLoop from "./player/MarketLoop";
 import LoseQuitModal from "./LoseQuitModal";
+import LevelModal from "./LevelModal";
 import Message from "./infopanel/Message";
 import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
 import { useGameContext, GameState } from "./GameContext.jsx";
@@ -21,35 +22,40 @@ export default function Main(props) {
   const gameContext = useGameContext();
   const { messagesDispatch, gestureDecisionEventDispatch } = useInfoPanel();
 
-  const [riskManager, setRiskManager] = useState(new RiskManager(configs));
-  const [me, setMe] = useState(new MatchingEngine());
-  const [npcPlayerManager, setNPCPlayerManager] = useState(
-    new NPCPlayerManager(me, [
-      new Player("npc-A", false, configs),
-      new Player("npc-B", false, configs),
-      new Player("npc-C", false, configs),
-      new Player("npc-D", false, configs),
-    ])
+  const [riskManager, setRiskManager] = useState(
+    () => new RiskManager(configs)
   );
+  const [me, setMe] = useState(() => new MatchingEngine());
+  const [npcPlayerManager, setNPCPlayerManager] = useState(
+    () =>
+      new NPCPlayerManager(me, [
+        new Player("npc-A", false, configs),
+        new Player("npc-B", false, configs),
+        new Player("npc-C", false, configs),
+        new Player("npc-D", false, configs),
+      ])
+  );
+
   const [player, setPlayer] = useState(
-    new Player(gameContext.badge, true, configs)
+    () => new Player(gameContext.badge, true, configs)
   );
   const [marketLoop, setMarketLoop] = useState(
-    new MarketLoop({ npcPlayerManager, priceSeed: 100 })
+    () => new MarketLoop({ npcPlayerManager, priceSeed: 100 })
   );
   const [gestureDecision, setGestureDecision] = useState(
-    new GestureDecision(
-      me,
-      marketLoop,
-      player,
-      riskManager,
-      750, //gesture Timeout
-      1000, //gestureDecision view timeout,
-      gameContext.isDebug
-    )
+    () =>
+      new GestureDecision(
+        me,
+        marketLoop,
+        player,
+        riskManager,
+        750, //gesture Timeout
+        1000, //gestureDecision view timeout,
+        gameContext.isDebug
+      )
   );
   const [eventManager, setEventManager] = useState(
-    new EventManager(marketLoop, gestureDecision, configs)
+    () => new EventManager(marketLoop, gestureDecision, configs)
   );
 
   //INIT
@@ -82,7 +88,12 @@ export default function Main(props) {
         break;
       case GameState.QUIT:
       case GameState.LOSE:
+        gestureDecision.enable = false;
+        eventManager.killEvent();
+        marketLoop.stop();
+        break;
       case GameState.LEVELUP:
+        levelUp();
       case GameState.STOP:
         marketLoop.stop();
         break;
@@ -122,6 +133,34 @@ export default function Main(props) {
     }
   };
 
+  //level up
+  //see configs.json for details; level corresponds to array index.
+  const levelUp = () => {
+    const levelPnL =
+      player.configs[player.configLevel].levelPnL.toLocaleString();
+
+    player.incrementLevel();
+    npcPlayerManager.incrementLevel();
+    eventManager.incrementLevel();
+    riskManager.incrementLevel();
+
+    const positionLimit = player.configs[player.configLevel].positionLimit;
+
+    const limitPnL =
+      player.configs[player.configLevel].limitPnL.toLocaleString();
+
+    const msg = {
+      type: Message.Notice,
+      value: {
+        msg: `Level ${player.configLevel + 1} achieved! P&L exceeds ${levelPnL}.
+Position limit increased to ${positionLimit}. Max Loss P&L to ${limitPnL}.`,
+      },
+    };
+
+    console.log("Level Up", player.configLevel, msg);
+    messagesDispatch(msg);
+  };
+
   console.log("[Main.jsx] render:", gameContext.state);
 
   return (
@@ -131,6 +170,8 @@ export default function Main(props) {
         price={marketLoop && marketLoop.getPrice()}
         resetGame={resetGame}
       />
+
+      <LevelModal player={player} marketLoop={marketLoop} eventManager={eventManager} />
 
       {/* CameraGesture set to camera poll */}
       <CameraGesture
