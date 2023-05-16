@@ -2,10 +2,10 @@ import GesturesDecisionDisplay from "./GesturesDecisionDisplay.jsx";
 import GesturesCurrent from "./GesturesCurrent.jsx";
 import GesturesLive from "./GesturesLive.jsx";
 import GesturesRecords from "./GesturesRecords.jsx";
-import { useGlobalContext } from "./GlobalContext.jsx";
+import { useGameContext } from "./GameContext.jsx";
 
 export default function GesturesPanel(props) {
-  const { isDebug } = useGlobalContext();
+  const gameContext = useGameContext();
 
   if (!props.gestureData) return null;
 
@@ -19,7 +19,7 @@ export default function GesturesPanel(props) {
     <div className="d-xl-flex justify-content-center">
       <div className="gestures-current gestures-decision gestures-prob w-100">
         <GesturesCurrent
-          isDebug={isDebug}
+          isDebug={gameContext.isDebug}
           gesture={props.gesture}
         />
         <GesturesDecisionDisplay
@@ -31,12 +31,12 @@ export default function GesturesPanel(props) {
       {/* Live Debug Probs & Past Gestures */}
       <div className="gestures-records">
         <GesturesLive
-          isDebug={isDebug}
+          isDebug={gameContext.isDebug}
           hasHands={props.gestureData.hasHands}
           probs={probs}
           gestureBuilder={props.gestureBuilder}
         />
-        <GesturesRecords isDebug={isDebug} records={records} />
+        <GesturesRecords isDebug={gameContext.isDebug} records={records} />
       </div>
     </div>
   );

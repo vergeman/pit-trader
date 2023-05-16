@@ -10,7 +10,6 @@ import MarketLoop from "./player/MarketLoop";
 import LoseQuitModal from "./LoseQuitModal";
 import Message from "./infopanel/Message";
 import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
-import { useGlobalContext } from "./GlobalContext.jsx";
 import { useGameContext, GameState } from "./GameContext.jsx";
 import { EventManager } from "./player/EventManager.ts";
 import { EventType } from "./player/Event.ts";
@@ -19,7 +18,6 @@ import { GestureDecisionEvent } from "./player/GestureDecisionEvent";
 import configs from "./Configs.ts";
 
 export default function Main(props) {
-  const { isDebug } = useGlobalContext();
   const gameContext = useGameContext();
   const { messagesDispatch, gestureDecisionEventDispatch } = useInfoPanel();
 
@@ -48,7 +46,7 @@ export default function Main(props) {
       riskManager,
       750, //gesture Timeout
       1000, //gestureDecision view timeout,
-      isDebug
+      gameContext.isDebug
     )
   );
   const [eventManager, setEventManager] = useState(
@@ -60,7 +58,7 @@ export default function Main(props) {
     marketLoop.init();
 
     //for debug mode, attach instances to window for console access
-    if (isDebug) {
+    if (gameContext.isDebug) {
       Object.assign(window, {
         pitTrader: {
           marketLoop,

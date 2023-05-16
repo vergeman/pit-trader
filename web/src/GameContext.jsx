@@ -1,4 +1,6 @@
-import { useState, createContext, useContext } from "react";
+import { useState, createContext, useContext, useMemo } from "react";
+import { useLocation } from "react-router-dom";
+
 export const GameContext = createContext(null);
 
 export const GameState = {
@@ -10,17 +12,24 @@ export const GameState = {
   STOP: 6,
 };
 
+function useQuery() {
+  const { search } = useLocation();
+  return useMemo(() => new URLSearchParams(search), [search]);
+}
+
 export function useGameContext() {
   return useContext(GameContext);
 }
 
 export function GameContextProvider(props) {
+  let query = useQuery();
+
   const [state, setState] = useState(GameState.INIT);
   const [gameID, setGameID] = useState((new Date()).getTime());
+  const [isDebug, setIsDebug] = useState(query.get("debug"));
 
-  //TODO: gameId
   return (
-    <GameContext.Provider value={{ state, setState, gameID, setGameID }}>
+    <GameContext.Provider value={{ state, setState, gameID, setGameID, isDebug }}>
       {props.children}
     </GameContext.Provider>
   );
