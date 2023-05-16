@@ -163,14 +163,6 @@ Position limit increased to ${positionLimit}. Max Loss P&L to ${limitPnL}.`,
 
   console.log("[Main.jsx] render:", gameContext.state);
 
-  //new level if GameState.LEVELUP and no event, or has event but of type News
-  //then launching a modal is OK.
-  //For EventType.GESTUREDECISION, wait until event ends before launching level modal
-  const isNewLevel =
-    gameContext.state == GameState.LEVELUP &&
-    (!eventManager.hasEvent() ||
-      (eventManager.hasEvent() && eventManager.event.type == EventType.NEWS));
-
   return (
     <Container id="main" className="pt-6">
       <LoseQuitModal
@@ -179,7 +171,7 @@ Position limit increased to ${positionLimit}. Max Loss P&L to ${limitPnL}.`,
         resetGame={resetGame}
       />
 
-      <LevelModal player={player} marketLoop={marketLoop} show={isNewLevel} />
+      <LevelModal player={player} marketLoop={marketLoop} eventManager={eventManager} />
 
       {/* CameraGesture set to camera poll */}
       <CameraGesture
