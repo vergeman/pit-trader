@@ -21,35 +21,40 @@ export default function Main(props) {
   const gameContext = useGameContext();
   const { messagesDispatch, gestureDecisionEventDispatch } = useInfoPanel();
 
-  const [riskManager, setRiskManager] = useState(new RiskManager(configs));
-  const [me, setMe] = useState(new MatchingEngine());
-  const [npcPlayerManager, setNPCPlayerManager] = useState(
-    new NPCPlayerManager(me, [
-      new Player("npc-A", false, configs),
-      new Player("npc-B", false, configs),
-      new Player("npc-C", false, configs),
-      new Player("npc-D", false, configs),
-    ])
+  const [riskManager, setRiskManager] = useState(
+    () => new RiskManager(configs)
   );
+  const [me, setMe] = useState(() => new MatchingEngine());
+  const [npcPlayerManager, setNPCPlayerManager] = useState(
+    () =>
+      new NPCPlayerManager(me, [
+        new Player("npc-A", false, configs),
+        new Player("npc-B", false, configs),
+        new Player("npc-C", false, configs),
+        new Player("npc-D", false, configs),
+      ])
+  );
+
   const [player, setPlayer] = useState(
-    new Player(gameContext.badge, true, configs)
+    () => new Player(gameContext.badge, true, configs)
   );
   const [marketLoop, setMarketLoop] = useState(
-    new MarketLoop({ npcPlayerManager, priceSeed: 100 })
+    () => new MarketLoop({ npcPlayerManager, priceSeed: 100 })
   );
   const [gestureDecision, setGestureDecision] = useState(
-    new GestureDecision(
-      me,
-      marketLoop,
-      player,
-      riskManager,
-      750, //gesture Timeout
-      1000, //gestureDecision view timeout,
-      gameContext.isDebug
-    )
+    () =>
+      new GestureDecision(
+        me,
+        marketLoop,
+        player,
+        riskManager,
+        750, //gesture Timeout
+        1000, //gestureDecision view timeout,
+        gameContext.isDebug
+      )
   );
   const [eventManager, setEventManager] = useState(
-    new EventManager(marketLoop, gestureDecision, configs)
+    () => new EventManager(marketLoop, gestureDecision, configs)
   );
 
   //INIT
