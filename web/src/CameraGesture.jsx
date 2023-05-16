@@ -9,7 +9,6 @@ import GestureBuilder from "./gesture/GestureBuilder.ts";
 import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
 import InfoTabs from "./infopanel/InfoTabs.jsx";
 import { useGameContext, GameState } from "./GameContext.jsx";
-import { Message } from "./infopanel/Message";
 import { EventType } from "./player/Event";
 import LevelModal from "./LevelModal";
 import useEventManager from "./player/useEventManager";
@@ -43,12 +42,12 @@ export default function CameraGesture(props) {
 
   /*
    * Event Generation
+   * randomly generates event per gesture frame (low probability)
    */
   useEventManager({ gesture, eventManager: props.eventManager });
 
   /*
-   * checkGameState every frame; determine if player lost or not, toggle
-   * accordingly
+   * checkGameState every frame; determine if player lost, levels up
    */
 
   useEffect(() => {
@@ -56,60 +55,29 @@ export default function CameraGesture(props) {
       `[checkGameState]: ${gameContext.state}, npcPlayers: ${numNPC}`
     );
 
+    const noChange = [
+      GameState.QUIT,
+      GameState.LOSE,
+      GameState.LEVELUP,
+    ].includes(gameContext.state);
+
+    if (noChange) return;
+
     const price = props.marketLoop && props.marketLoop.getPrice();
 
-    //calcGesture time delay sometimes allow MTM to touch loss threshold but
-    //bounce back up. This can trigger LoseQuitModal on/off. Early terminate once a
-    //loss is touched
-    if (gameContext.state == GameState.QUIT) return;
-    if (gameContext.state == GameState.LOSE) return;
-    if (gameContext.state == GameState.LEVELUP) return;
-
     if (props.player && props.player.hasLost(price)) {
-      props.marketLoop.stop();
-      props.gestureDecision.enable = false;
-      props.eventManager.killEvent();
       gameContext.setState(GameState.LOSE);
-      console.log("You Lose", props.player.lostPnL);
-    } else if (gesture !== null) {
-      //init -> run
+      return;
+    }
+
+    if (props.player && props.player.hasNextLevel(price)) {
+      gameContext.setState(GameState.LEVELUP);
+      return;
+    }
+
+    //triggers init -> run
+    if (gameContext.state === GameState.INIT && gesture !== null) {
       gameContext.setState(GameState.RUN);
-
-      //level up configs
-      //see configs.json for details; level corresponds to array index.
-      if (props.player && props.player.hasNextLevel(price)) {
-        const levelPnL =
-          props.player.configs[
-            props.player.configLevel
-          ].levelPnL.toLocaleString();
-
-        props.player.incrementLevel();
-        props.npcPlayerManager.incrementLevel();
-        props.eventManager.incrementLevel();
-        props.riskManager.incrementLevel();
-
-        const positionLimit =
-          props.player.configs[props.player.configLevel].positionLimit;
-
-        const limitPnL =
-          props.player.configs[
-            props.player.configLevel
-          ].limitPnL.toLocaleString();
-
-        const msg = {
-          type: Message.Notice,
-          value: {
-            msg: `Level ${
-              props.player.configLevel + 1
-            } achieved! P&L exceeds ${levelPnL}.
-Position limit increased to ${positionLimit}. Max Loss P&L to ${limitPnL}.`,
-          },
-        };
-
-        console.log("Level Up", props.player.configLevel, msg);
-        gameContext.setState(GameState.LEVELUP);
-        infoPanel.messagesDispatch(msg);
-      }
     }
   }, [gesture]);
 

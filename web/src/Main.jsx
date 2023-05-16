@@ -87,7 +87,11 @@ export default function Main(props) {
         break;
       case GameState.QUIT:
       case GameState.LOSE:
+        gestureDecision.enable = false;
+        eventManager.killEvent();
+        marketLoop.stop();
       case GameState.LEVELUP:
+        levelUp();
       case GameState.STOP:
         marketLoop.stop();
         break;
@@ -125,6 +129,34 @@ export default function Main(props) {
       gameContext.setGameID(gameID);
       gameContext.setState(GameState.INIT);
     }
+  };
+
+  //level up
+  //see configs.json for details; level corresponds to array index.
+  const levelUp = () => {
+    const levelPnL =
+      player.configs[player.configLevel].levelPnL.toLocaleString();
+
+    player.incrementLevel();
+    npcPlayerManager.incrementLevel();
+    eventManager.incrementLevel();
+    riskManager.incrementLevel();
+
+    const positionLimit = player.configs[player.configLevel].positionLimit;
+
+    const limitPnL =
+      player.configs[player.configLevel].limitPnL.toLocaleString();
+
+    const msg = {
+      type: Message.Notice,
+      value: {
+        msg: `Level ${player.configLevel + 1} achieved! P&L exceeds ${levelPnL}.
+Position limit increased to ${positionLimit}. Max Loss P&L to ${limitPnL}.`,
+      },
+    };
+
+    console.log("Level Up", player.configLevel, msg);
+    messagesDispatch(msg);
   };
 
   console.log("[Main.jsx] render:", gameContext.state);
