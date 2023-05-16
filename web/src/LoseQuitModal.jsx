@@ -78,9 +78,10 @@ export default function LoseQuitModal(props) {
               <tbody>
                 {/* id to highlight here is badgeGameID for highscore / session
                  * - see PlayerStsatus.jsx */}
-                {players.map((p) => {
+                {players.map((p, i) => {
                   return (
                     <tr
+                      key={`${p.name}-${i}`}
                       className={
                         p.id === gameContext.badgeGameID ? "isLive" : ""
                       }
