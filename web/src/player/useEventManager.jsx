@@ -7,7 +7,6 @@ import { Message } from "../infopanel/Message";
 export default function useEventManager({ gesture, eventManager }) {
   const infoPanel = useInfoPanel();
   const gameContext = useGameContext();
-  //const [event, setEvent] = useState()
 
   useEffect(() => {
     if (
@@ -18,18 +17,29 @@ export default function useEventManager({ gesture, eventManager }) {
       return;
 
     const event = eventManager.generate();
-
-    //issue: we do need to poll so can't just return
     if (!event) return;
 
-    console.log("[CameraGesture] EventManager");
+    /*
+     * News (common default)
+     */
 
-    //GestureDecisionEvent - aka challenge
-    //one time init
+    let msg = { type: Message.NewsEvent, value: event };
+    let dispatchFn = infoPanel.messagesDispatch;
+    let activeTabDispatchValue = "messages";
+
+    /*
+     * GestureDecisionEvent / challenge (one time init)
+     */
+
     if (event && event.type == EventType.GESTUREDECISION) {
-      console.log("[CameraGesture] EventManager EventType.GESTUREDECISION");
-
-      event.dispatchHandler = (msg, tabName = null) => {
+      // gestureDecisionEvent calls dispatchHandler in
+      // GestureDecisionEvent:onSubmitOrder(). Intercept a typical
+      // order and test for match instead of submitting to MatchingEngine.
+      //
+      // we set dispatchHandler to send messages to allow access to infoPanel
+      // dispatch. GestureDecisionEvents are a bit more complicated; have
+      // states themselves vs straightforward news event.
+      const dispatchHandler = (msg, tabName = null) => {
         infoPanel.gestureDecisionEventDispatch(msg);
 
         if (tabName) {
@@ -40,37 +50,28 @@ export default function useEventManager({ gesture, eventManager }) {
         }
       };
 
-      //initial active state
-      console.log("[CameraGesture]", event);
-      eventManager.executeEvent();
-      const msg = {
+      //replace config
+      event.setDispatchHandler(dispatchHandler);
+
+      msg = {
         type: EventType.GESTUREDECISION,
         value: event,
       };
 
-      infoPanel.activeTabDispatch({
-        type: "select",
-        value: "gesture-decision-event",
-      });
-
-      infoPanel.gestureDecisionEventDispatch(msg);
+      activeTabDispatchValue = "gesture-decision-event";
+      dispatchFn = infoPanel.gestureDecisionEventDispatch;
     }
 
     /*
-     * News
+     * Execute Event, Send Messages
      */
+    eventManager.executeEvent();
 
-    if (event && event.type == EventType.NEWS) {
-      eventManager.executeEvent();
-      //news
-      const msg = { type: Message.NewsEvent, value: event };
-      infoPanel.messagesDispatch(msg);
+    infoPanel.activeTabDispatch({
+      type: "select",
+      value: activeTabDispatchValue,
+    });
 
-      //cleanup?
-      // return () => {
-      // }
-    }
+    dispatchFn(msg);
   }, [gesture]);
-
-  //return state?
 }

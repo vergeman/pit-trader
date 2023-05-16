@@ -18,8 +18,10 @@ export default function CameraGesture(props) {
   /* default bootstrap size */
   const defaultCameraDims = { width: 636, height: 477 };
   const [gestureData, setGestureData] = useState(null);
-  const [classifier, setClassifier] = useState(() => new Classifier() );
-  const [gestureBuilder, setGestureBuilder] = useState(() => new GestureBuilder() );
+  const [classifier, setClassifier] = useState(() => new Classifier());
+  const [gestureBuilder, setGestureBuilder] = useState(
+    () => new GestureBuilder()
+  );
   const [gesture, setGesture] = useState(null);
   const infoPanel = useInfoPanel();
   const gameContext = useGameContext();
@@ -28,6 +30,9 @@ export default function CameraGesture(props) {
     props.marketLoop && props.marketLoop.npcPlayerManager;
   const numNPC = npcPlayerManager && npcPlayerManager.numPlayers;
 
+  /*
+   * INIT
+   */
   useEffect(() => {
     console.log("[CameraGesture.jsx]: useEffect init");
 
@@ -35,6 +40,11 @@ export default function CameraGesture(props) {
       classifier.load(gestureBuilder.garbage_idx);
     });
   }, [gestureBuilder, classifier]);
+
+  /*
+   * Event Generation
+   */
+  useEventManager({ gesture, eventManager: props.eventManager });
 
   /*
    * checkGameState every frame; determine if player lost or not, toggle
@@ -103,7 +113,6 @@ Position limit increased to ${positionLimit}. Max Loss P&L to ${limitPnL}.`,
     }
   }, [gesture]);
 
-  useEventManager({ gesture, eventManager: props.eventManager });
   /*
    * calcGesture (gesture poll)
    */
@@ -145,9 +154,11 @@ Position limit increased to ${positionLimit}. Max Loss P&L to ${limitPnL}.`,
   //new level if GameState.LEVELUP and no event, or has event but of type News
   //then launching a modal is OK.
   //For EventType.GESTUREDECISION, wait until event ends before launching level modal
-  const isNewLevel = (gameContext.state == GameState.LEVELUP) &&
-        (!props.eventManager.hasEvent() ||
-         (props.eventManager.hasEvent() && props.eventManager.event.type == EventType.NEWS));
+  const isNewLevel =
+    gameContext.state == GameState.LEVELUP &&
+    (!props.eventManager.hasEvent() ||
+      (props.eventManager.hasEvent() &&
+        props.eventManager.event.type == EventType.NEWS));
 
   return (
     <>

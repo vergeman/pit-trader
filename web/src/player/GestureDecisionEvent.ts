@@ -99,6 +99,9 @@ export class GestureDecisionEvent
   get state_msg(): { [key: string]: string } {
     return this._state_msg;
   }
+  setDispatchHandler(fn: (msg: any, tabName?: string) => {}) {
+    this.dispatchHandler = fn;
+  }
   //this is callback on successful gesture
   //we need access to infoPanel context/reducer
   onSubmitOrder(player: Player, order: Order) {
