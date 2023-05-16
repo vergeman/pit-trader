@@ -8,6 +8,7 @@ import Player from "./player/Player";
 import GestureDecision from "./gesture/GestureDecision";
 import MarketLoop from "./player/MarketLoop";
 import LoseQuitModal from "./LoseQuitModal";
+import LevelModal from "./LevelModal";
 import Message from "./infopanel/Message";
 import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
 import { useGameContext, GameState } from "./GameContext.jsx";
@@ -162,6 +163,14 @@ Position limit increased to ${positionLimit}. Max Loss P&L to ${limitPnL}.`,
 
   console.log("[Main.jsx] render:", gameContext.state);
 
+  //new level if GameState.LEVELUP and no event, or has event but of type News
+  //then launching a modal is OK.
+  //For EventType.GESTUREDECISION, wait until event ends before launching level modal
+  const isNewLevel =
+    gameContext.state == GameState.LEVELUP &&
+    (!eventManager.hasEvent() ||
+      (eventManager.hasEvent() && eventManager.event.type == EventType.NEWS));
+
   return (
     <Container id="main" className="pt-6">
       <LoseQuitModal
@@ -169,6 +178,8 @@ Position limit increased to ${positionLimit}. Max Loss P&L to ${limitPnL}.`,
         price={marketLoop && marketLoop.getPrice()}
         resetGame={resetGame}
       />
+
+      <LevelModal player={player} marketLoop={marketLoop} show={isNewLevel} />
 
       {/* CameraGesture set to camera poll */}
       <CameraGesture
