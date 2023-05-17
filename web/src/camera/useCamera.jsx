@@ -16,7 +16,7 @@ export default function useCamera(
   const [landmarks] = useState(new Landmarks());
   const faceDetection = useFaceDetection(canvasRef, landmarks);
   const handsDetection = useHandsDetection(canvasRef, landmarks);
-  const selfieDetection = useSelfieDetection(canvasRef, landmarks);
+  const selfieDetection = useSelfieDetection(canvasRef);
 
   const onFrame = useCallback(async () => {
     if (!(videoRef && videoRef.current)) return;

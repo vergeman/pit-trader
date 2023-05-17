@@ -1,17 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export default function useFaceDetection(canvasRef, landmarks) {
   const [faceDetection, setFaceDetection] = useState(null);
 
-  const onFaceResults = function (results) {
-    //RESET Landmarks
-    landmarks.resetFaceLandmarks();
+  const onFaceResults = useCallback(
+    (results) => {
+      //RESET Landmarks
+      landmarks.resetFaceLandmarks();
 
-    if (results.detections.length > 0) {
-      //detections[ {landmarks: [ {x,y,z} ] } ]
-      landmarks.setFaceLandmarks(results.detections[0].landmarks);
-    }
-  };
+      if (results.detections.length > 0) {
+        //detections[ {landmarks: [ {x,y,z} ] } ]
+        landmarks.setFaceLandmarks(results.detections[0].landmarks);
+      }
+    },
+    [landmarks]
+  );
 
   useEffect(() => {
     console.log("[FaceDetection] useEffect init");
@@ -29,7 +32,7 @@ export default function useFaceDetection(canvasRef, landmarks) {
     });
     _faceDetection.onResults(onFaceResults);
     setFaceDetection(_faceDetection);
-  }, [landmarks]);
+  }, [onFaceResults]);
 
   return faceDetection;
 }
