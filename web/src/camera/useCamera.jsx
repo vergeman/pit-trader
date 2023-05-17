@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import useControl from "./useControl.jsx";
 import useFaceDetection from "./useFaceDetection.jsx";
 import useHandsDetection from "./useHandsDetection.jsx";
@@ -14,12 +14,11 @@ export default function useCamera(
 ) {
   const { control, fpsControl } = useControl(controlRef);
   const [landmarks] = useState(new Landmarks());
-
   const faceDetection = useFaceDetection(canvasRef, landmarks);
   const handsDetection = useHandsDetection(canvasRef, landmarks);
   const selfieDetection = useSelfieDetection(canvasRef, landmarks);
 
-  const onFrame = async () => {
+  const onFrame = useCallback(async () => {
     if (!(videoRef && videoRef.current)) return;
 
     if (control && fpsControl) {
@@ -54,7 +53,16 @@ export default function useCamera(
     // this is the calculation bit; operations set and passed in from
     // <CameraGesture>
     await calcGesture(landmarks);
-  };
+  }, [
+    calcGesture,
+    landmarks,
+    videoRef,
+    control,
+    fpsControl,
+    selfieDetection,
+    faceDetection,
+    handsDetection,
+  ]);
 
   /*
    * In dev, index.js has <StrictMode> enabled which can "double render" and
@@ -63,7 +71,7 @@ export default function useCamera(
    * orphaned instances or ambigious _camera.stop() calls in cleanup.
    */
   useEffect(() => {
-    console.log("[Camera] useEffect start");
+    console.log("[useCamera] useEffect start");
 
     if (selfieDetection && faceDetection && handsDetection) {
       const _camera = new window.Camera(videoRef.current, {
@@ -75,11 +83,18 @@ export default function useCamera(
       }
 
       return () => {
-        console.log("[Camera] useEffect cleanup");
+        console.log("[useCamera] useEffect cleanup");
         if (_camera) {
           _camera.stop();
         }
       };
     }
-  }, [selfieDetection, faceDetection, handsDetection]);
+  }, [
+    isActive,
+    videoRef,
+    onFrame,
+    selfieDetection,
+    faceDetection,
+    handsDetection,
+  ]);
 }
