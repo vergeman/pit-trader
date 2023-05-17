@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Spinner } from "react-bootstrap";
-import Camera from "./input/Camera.jsx";
+import { Camera } from "./camera";
 import Classifier from "./lib/gesture/Classifier.js";
 import GestureBuilder from "./lib/gesture/GestureBuilder.ts";
 import GesturesPanel from "./GesturesPanel.jsx";
