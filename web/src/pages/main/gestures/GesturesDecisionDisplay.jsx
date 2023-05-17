@@ -27,6 +27,7 @@ export default function GesturesDecisionDisplay(props) {
         if (gestureDecision.qty < 0) {
           return GestureAction.SELL;
         }
+        break;
 
       default:
         return null;

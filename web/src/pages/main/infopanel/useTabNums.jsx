@@ -9,7 +9,7 @@ export default function useTabNums(activeTab, tabMap) {
   //e.g. {"messages": 2}
   const initTabNumLens = (tabMap) => {
     const initTabNums = {};
-    Array.from(tabMap.entries()).map(([k, v]) => {
+    Array.from(tabMap.entries()).forEach(([k, v]) => {
       initTabNums[k] = v.values.length;
     });
     return initTabNums;

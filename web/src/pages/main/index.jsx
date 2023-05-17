@@ -86,6 +86,8 @@ export default function Main(props) {
         break;
       case GameState.LEVELUP:
         levelUp();
+        marketLoop.stop();
+        break;
       case GameState.STOP:
         marketLoop.stop();
         break;

@@ -13,7 +13,7 @@ export default function InstructionModalContainer(props) {
       {props.button && <Button onClick={handleOpen}>{props.title}</Button>}
 
       {!props.button && (
-        <a className="nav-link" href="#" onClick={handleOpen}>
+        <a className="nav-link" href="/#" onClick={handleOpen}>
           {props.title}
         </a>
       )}
@@ -33,6 +33,7 @@ export default function InstructionModalContainer(props) {
                 <a
                   href="https://tradepractices.files.wordpress.com/2012/07/commodity-and-futures-handsignals.pdf"
                   target="_blank"
+                  rel="noreferrer"
                 >
                   CME
                 </a>
@@ -43,6 +44,7 @@ export default function InstructionModalContainer(props) {
                 <a
                   href="https://ttdevelopers.github.io/EverySingleAvatar.html"
                   target="_blank"
+                  rel="noreferrer"
                 >
                   Turntable.fm
                 </a>

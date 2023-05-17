@@ -63,7 +63,11 @@ export default function LevelModal(props) {
 
         <Modal.Body className="p-0">
           <div className="d-flex justify-content-center">
-            <img style={{ width: "100%", height: "100%" }} src={reward.image} />
+            <img
+              style={{ width: "100%", height: "100%" }}
+              src={reward.image}
+              alt={reward.text}
+            />
           </div>
         </Modal.Body>
 

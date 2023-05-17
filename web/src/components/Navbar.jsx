@@ -28,7 +28,7 @@ export default function NavbarComponent() {
           {currentPath === "/pit" && (
             <a
               className="nav-link"
-              href="#"
+              href="/#"
               onClick={() => gameContext.setState(GameState.QUIT)}
             >
               Leave
