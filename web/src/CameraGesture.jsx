@@ -115,7 +115,7 @@ export default function CameraGesture(props) {
   );
 
   //console.log("[CameraGesture] render", gestureData);
-  const isReady = gameContext.state != GameState.INIT;
+  const isReady = gameContext.state != GameState.INIT && gesture !== null;
 
   return (
     <>
@@ -130,7 +130,6 @@ export default function CameraGesture(props) {
           />
         </div>
 
-        {/*TODO: more informative loading feedback for spinner*/}
         {!isReady && (
           <div className="d-flex flex-column justify-content-center vh-75">
             <Spinner
