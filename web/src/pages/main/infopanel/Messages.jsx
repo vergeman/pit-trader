@@ -15,18 +15,18 @@ export default function Messages(props) {
 
           // highlight while event is active
           let colorClass = "";
-          if (message.type == Message.NewsEvent &&
+          if (message.type === Message.NewsEvent &&
             message.endTime > Date.now()) {
             colorClass = "text-warning";
           }
 
           //position limits error
-          if (message.type == Message.ErrorSubmitOrder) {
+          if (message.type === Message.ErrorSubmitOrder) {
             colorClass = "text-danger";
           }
 
           //level up
-          if (message.type == Message.Notice) {
+          if (message.type === Message.Notice) {
             colorClass = "text-success";
           }
 

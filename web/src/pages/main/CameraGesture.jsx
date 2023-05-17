@@ -93,7 +93,7 @@ export default function CameraGesture(props) {
       const probsArgMax = await classifier.classify(landmarks);
       const probMax = probsArgMax.probs[probsArgMax.argMax];
       const gesture = gestureBuilder.build(probsArgMax.argMax, probMax);
-      const hasHands = landmarks.handLandmarks.some((l) => l != -1);
+      const hasHands = landmarks.handLandmarks.some((l) => l !== -1);
 
       //calculates gesture and if order is built
       props.gestureDecision.calc(gesture);
@@ -115,7 +115,7 @@ export default function CameraGesture(props) {
   );
 
   //console.log("[CameraGesture] render", gestureData);
-  const isReady = gameContext.state != GameState.INIT && gesture !== null;
+  const isReady = gameContext.state !== GameState.INIT && gesture !== null;
 
   return (
     <>

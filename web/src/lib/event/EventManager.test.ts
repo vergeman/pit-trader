@@ -33,7 +33,7 @@ describe("EventManager", () => {
     while (i < numIter) {
       configs[0].eventProbability = i;
       const event = eventManager.generate();
-      if (i == 0) expect(event).toBe(null);
+      if (i === 0) expect(event).toBe(null);
       event && event.begin();
       eventManager.hasEvent() ? j++ : k++;
       i++;

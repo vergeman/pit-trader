@@ -209,9 +209,9 @@ export class GestureDecisionEvent
     //gesture is the "challenge" defined in json. order is generated live by
     //user in /gesture/GestureDecision.ts. Here we compare the two for match.
     if (
-      this.gesture.qty == order.qty &&
-      this.gesture.price == order.gesturePrice &&
-      this.gesture.orderType == order.orderType
+      this.gesture.qty === order.qty &&
+      this.gesture.price === order.gesturePrice &&
+      this.gesture.orderType === order.orderType
     ) {
       this.gestureDecisionEventState = GestureDecisionEventState.WIN;
     } else {
@@ -219,7 +219,7 @@ export class GestureDecisionEvent
     }
 
     //MATCH
-    if (this.gestureDecisionEventState == GestureDecisionEventState.WIN) {
+    if (this.gestureDecisionEventState === GestureDecisionEventState.WIN) {
       //TODO: exit early
       player.addBonus(this.bonus);
       this.clearTimeouts();

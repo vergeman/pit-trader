@@ -25,7 +25,7 @@ export default function NavbarComponent() {
             <Instructions />
           </InstructionModalContainer>
 
-          {currentPath == "/pit" && (
+          {currentPath === "/pit" && (
             <a
               className="nav-link"
               href="#"

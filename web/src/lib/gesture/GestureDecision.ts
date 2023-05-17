@@ -349,7 +349,7 @@ Order exceeds limit of ${this.riskManager.maxOrderLimit()}`;
     for (let order of this.player.orders) {
       for (let transaction of order.getNewTransactions()) {
         const type =
-          order.orderType == OrderType.LIMIT
+          order.orderType === OrderType.LIMIT
             ? Message.FillLimit
             : Message.FillMarket;
         transactionMsgs.push({
@@ -357,7 +357,7 @@ Order exceeds limit of ${this.riskManager.maxOrderLimit()}`;
           value: { order, transaction },
         });
 
-        if (transaction.status == OrderStatus.COMPLETE) {
+        if (transaction.status === OrderStatus.COMPLETE) {
           transactionMsgs.push({
             type: Message.OrderFilled,
             value: order,

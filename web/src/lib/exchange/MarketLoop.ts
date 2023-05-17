@@ -279,7 +279,7 @@ class MarketLoop {
       //for bid/offers .1 apart, maxDelta will be 0 to prevent executing at
       //own prices. In this case we add likelihood to remove bids /offers
       //to prevent 'steady' state
-      if (maxDelta == 0) {
+      if (maxDelta === 0) {
         const prob = Math.random();
 
         let orderQueue: Order[] = [];

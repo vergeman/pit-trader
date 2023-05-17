@@ -31,7 +31,7 @@ export default function useTabNums(activeTab, tabMap) {
   // resets the tabNum on active tab so there is no 'new'
   useEffect(
     () => {
-      if (gameContext.state == GameState.INIT) {
+      if (gameContext.state === GameState.INIT) {
         resetAll(tabMap);
       }
 

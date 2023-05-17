@@ -28,10 +28,10 @@ export default function LevelModal(props) {
   //
   //For EventType.GESTUREDECISION, wait until event ends before launching level modal
   const isNewLevel =
-    gameContext.state == GameState.LEVELUP &&
+    gameContext.state === GameState.LEVELUP &&
     (!props.eventManager.hasEvent() ||
       (props.eventManager.hasEvent() &&
-        props.eventManager.event.type == EventType.NEWS));
+        props.eventManager.event.type === EventType.NEWS));
 
   useEffect(() => {
     preloadImage(props.player.configLevel);

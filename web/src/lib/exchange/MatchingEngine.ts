@@ -192,7 +192,7 @@ export class MatchingEngine {
     if (
       oppOrder &&
       order.player_isLive &&
-      order.player_id == oppOrder.player_id
+      order.player_id === oppOrder.player_id
     ) {
       order.reject();
       throw new Error(`Wash Trade Restriction: cannot trade with yourself.`, {

@@ -40,7 +40,7 @@ describe("Order", () => {
 
   it("creates an internal _id", () => {
     const o1 = new Order("123", OrderType.MARKET, 50, 100);
-    expect(typeof o1.id == "string").toBeTruthy();
+    expect(typeof o1.id === "string").toBeTruthy();
     expect(o1.id.length).toEqual(36);
   });
 

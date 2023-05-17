@@ -64,7 +64,7 @@ export default function MatchingEngineView(props) {
       }
 
       const priceView = (
-        <tr key={price} className={price == lastPrice ? "me-isLast" : ""}>
+        <tr key={price} className={price === lastPrice ? "me-isLast" : ""}>
           <td className="me-order">
             {bidMaps.playerOrdersPriceQtyMap.get(Number(price))}
           </td>

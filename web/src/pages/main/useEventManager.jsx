@@ -31,7 +31,7 @@ export default function useEventManager({ gesture, eventManager }) {
      * GestureDecisionEvent / challenge (one time init)
      */
 
-    if (event && event.type == EventType.GESTUREDECISION) {
+    if (event && event.type === EventType.GESTUREDECISION) {
       // gestureDecisionEvent calls dispatchHandler in
       // GestureDecisionEvent:onSubmitOrder(). Intercept a typical
       // order and test for match instead of submitting to MatchingEngine.
