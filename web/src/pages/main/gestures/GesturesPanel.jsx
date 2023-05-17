@@ -2,7 +2,7 @@ import GesturesDecisionDisplay from "./GesturesDecisionDisplay.jsx";
 import GesturesCurrent from "./GesturesCurrent.jsx";
 import GesturesLive from "./GesturesLive.jsx";
 import GesturesRecords from "./GesturesRecords.jsx";
-import { useGameContext } from "../../../components/GameContext.jsx";
+import { useGameContext } from "../../../components";
 
 export default function GesturesPanel(props) {
   const gameContext = useGameContext();

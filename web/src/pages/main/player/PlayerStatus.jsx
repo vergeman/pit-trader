@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import PlayerStatusHeaderElement from "./PlayerStatusHeaderElement.jsx";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import PlayerLevelIcons from "./PlayerLevelIcons";
-import { useGameContext } from "../../../components/GameContext.jsx";
+import { useGameContext } from "../../../components";
 
 export default function PlayerStatus(props) {
   const gameContext = useGameContext();

@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import useControl from "./useControl.js";
-import useFaceDetection from "./useFaceDetection.js";
-import useHandsDetection from "./useHandsDetection.js";
-import useSelfieDetection from "./useSelfieDetection.js";
+import useControl from "./useControl.jsx";
+import useFaceDetection from "./useFaceDetection.jsx";
+import useHandsDetection from "./useHandsDetection.jsx";
+import useSelfieDetection from "./useSelfieDetection.jsx";
 import Landmarks from "./Landmarks.js";
 
 export default function useCamera(

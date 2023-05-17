@@ -1,5 +1,5 @@
 import { memo, useRef, useEffect, useState } from "react";
-import useCamera from "./useCamera.js";
+import useCamera from "./useCamera.jsx";
 
 function Camera(props) {
   const [width, setWidth] = useState(props.width);

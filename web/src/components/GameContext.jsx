@@ -60,4 +60,4 @@ export function GameContextProvider(props) {
   );
 }
 
-export default GameContext;
+export default useGameContext;

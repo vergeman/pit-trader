@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useGameContext, GameState } from "../../../components/GameContext.jsx";
+import { useGameContext, GameState } from "../../../components";
 
 export default function useTabNums(activeTab, tabMap) {
 
