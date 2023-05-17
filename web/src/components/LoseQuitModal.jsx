@@ -1,0 +1,116 @@
+import { useState, useEffect } from "react";
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
+import highscores from "../config/highscores.json";
+import { useGameContext, GameState } from "./GameContext.jsx";
+
+const NUM_HIGHSCORES = 15;
+
+export default function LoseQuitModal(props) {
+  const gameContext = useGameContext();
+  const [show, setShow] = useState(false);
+
+  const reset = () => {
+    props.resetGame();
+    setShow(false);
+  };
+
+  useEffect(() => {
+    const showModal = [GameState.QUIT, GameState.LOSE].includes(
+      gameContext.state
+    );
+    setShow(showModal);
+  }, [gameContext.state]);
+
+  console.log("[LoseQuitModal] render", props.price, props.player);
+
+  const player_highscores = Object.keys(window.localStorage)
+    .filter((key) => key.startsWith("PT_HIGHSCORE"))
+    .map((key) => JSON.parse(localStorage.getItem(key)));
+
+  const players = [...player_highscores, ...highscores]
+    .sort((a, b) => b.score - a.score)
+    .splice(0, NUM_HIGHSCORES);
+
+  const title =
+    gameContext.state == GameState.LOSE ? "You Lose!" : "Peak Scores";
+
+  return (
+    <div className="modal show">
+      <Modal show={show} onHide={reset}>
+        <Modal.Header>
+          <Modal.Title className="text-dark">{title}</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <div className="d-flex justify-content-center">
+            <table className="table text-dark caption-top">
+              <caption>
+                {/* LOSE */}
+                {gameContext.state == GameState.LOSE && (
+                  <span>
+                    P&L:{" "}
+                    {props.player.lostPnL &&
+                      props.player.lostPnL.toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maxmimumFractionDigits: 2,
+                      })}{" "}
+                    &mdash; You Blew Up! 🤯
+                  </span>
+                )}
+
+                {/* QUIT */}
+                {gameContext.state == GameState.QUIT && (
+                  <span>
+                    P&L:{" "}
+                    {props.player.maxPnL &&
+                      props.player.maxPnL.toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maxmimumFractionDigits: 2,
+                      })}{" "}
+                    &mdash; See you soon!
+                  </span>
+                )}
+              </caption>
+              <thead>
+                <tr>
+                  <th>Player</th>
+                  <th className="losemodal-score">Highest $</th>
+                </tr>
+              </thead>
+              <tbody>
+                {/* id to highlight here is badgeGameID for highscore / session
+                 * - see PlayerStsatus.jsx */}
+                {players.map((p, i) => {
+                  return (
+                    <tr
+                      key={`${p.name}-${i}`}
+                      className={
+                        p.id === gameContext.badgeGameID ? "isLive" : ""
+                      }
+                    >
+                      <td>{p.name}</td>
+                      <td className="losemodal-score">
+                        {p.score.toLocaleString()}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="d-flex justify-content-center">
+            <Button
+              style={{ textAlign: "right" }}
+              variant="primary"
+              onClick={() => reset()}
+            >
+              Restart
+            </Button>
+          </div>
+        </Modal.Body>
+      </Modal>
+    </div>
+  );
+}

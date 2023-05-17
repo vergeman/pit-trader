@@ -1,11 +1,11 @@
-import "./custom.scss";
-import "./App.css";
+import "./styles/custom.scss";
+import "./styles/App.css";
 import { Routes, Route } from "react-router-dom";
-import Main from "./Main.jsx";
-import Home from "./Home.jsx";
-import Navbar from "./Navbar.jsx";
-import { GameContextProvider } from "./GameContext.jsx";
-import InfoPanelProvider from "./infopanel/InfoPanelContext.jsx";
+import Main from "./pages/main/index.jsx";
+import Home from "./pages/home/index.jsx";
+import Navbar from "./components/Navbar.jsx";
+import { GameContextProvider } from "./components/GameContext.jsx";
+import InfoPanelProvider from "./pages/main/infopanel/InfoPanelContext.jsx";
 
 function App() {
   return (
