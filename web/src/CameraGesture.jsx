@@ -7,7 +7,7 @@ import MatchingEngineView from "./MatchingEngineView.jsx";
 import PlayerStatus from "./playerView/PlayerStatus.jsx";
 import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
 import InfoTabs from "./infopanel/InfoTabs.jsx";
-import { useGameContext, GameState } from "./GameContext.jsx";
+import { useGameContext, GameState } from "./components/GameContext.jsx";
 import useEventManager from "./player/useEventManager";
 
 export default function CameraGesture(props) {

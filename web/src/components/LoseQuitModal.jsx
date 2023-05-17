@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import highscores from "./highscores.json";
+import highscores from "../highscores.json";
 import { useGameContext, GameState } from "./GameContext.jsx";
 
 const NUM_HIGHSCORES = 15;

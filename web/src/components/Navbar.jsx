@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Container, Nav, Navbar } from "react-bootstrap";
-import { Instructions, InstructionModalContainer } from "./instructions";
+import { Instructions, InstructionModalContainer } from "../instructions";
 import { useGameContext, GameState } from "./GameContext";
 import { useLocation } from "react-router-dom";
 

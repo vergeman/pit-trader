@@ -3,8 +3,8 @@ import "./styles/App.css";
 import { Routes, Route } from "react-router-dom";
 import Main from "./Main.jsx";
 import Home from "./Home.jsx";
-import Navbar from "./Navbar.jsx";
-import { GameContextProvider } from "./GameContext.jsx";
+import Navbar from "./components/Navbar.jsx";
+import { GameContextProvider } from "./components/GameContext.jsx";
 import InfoPanelProvider from "./infopanel/InfoPanelContext.jsx";
 
 function App() {

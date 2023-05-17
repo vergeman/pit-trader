@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { EventType } from "../lib/event/Event";
-import { useGameContext, GameState } from "../GameContext.jsx";
+import { useGameContext, GameState } from "../components/GameContext.jsx";
 import { useInfoPanel } from "../infopanel/InfoPanelContext.jsx";
 import { Message } from "../infopanel/Message";
 

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { useGameContext, GameState } from "./GameContext.jsx";
-import { EventType } from "./lib/event";
+import { EventType } from "../lib/event";
 
 export default function LevelModal(props) {
   const gameContext = useGameContext();
