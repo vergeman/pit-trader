@@ -10,7 +10,7 @@ export default function LevelModal(props) {
 
   const preloadImage = (level) => {
     //fetch image so browser has image cached before display
-    const config = props.player.configs[level];
+    const config = props.player.getConfig(level);
     if (!config) return;
 
     const img = new Image();
@@ -49,7 +49,7 @@ export default function LevelModal(props) {
 
   //on modal launch, level value will have already increased
   const level = props.player.configLevel;
-  const reward = props.player.configs[level].reward;
+  const reward = props.player.getConfig(level).reward;
 
   return (
     <div className="modal show">

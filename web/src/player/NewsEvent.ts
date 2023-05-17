@@ -172,7 +172,13 @@ export class NewsEvent extends Event implements INewsEvent {
       this.marketLoopConfig.maxTurnDelay
     );
 
-    setTimeout(() => {
+    //we store this timeout because there are game ending
+    //cases where we don't want marketLoop to restart.
+    //so we store it in case eventManager.killEvent() is called.
+    //
+    //for other setTimeouts, they are resetting defaults and cleaning up
+    //after themselves and are isolated.
+    const _timeout = setTimeout(() => {
       console.log(
         "[Event] Cleanup",
         this.isActive,
@@ -189,6 +195,8 @@ export class NewsEvent extends Event implements INewsEvent {
 
       this.cleanup();
     }, this.duration);
+
+    this.timeouts.push(_timeout);
   }
 }
 

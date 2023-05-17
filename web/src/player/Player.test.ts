@@ -1,7 +1,7 @@
 import { Player } from "./Player";
 import { Order, OrderType, OrderStatus } from "../engine/Order";
 import MatchingEngine from "../engine/MatchingEngine";
-import configs, {Configs} from "../Configs";
+import configs, { Configs } from "../Configs";
 
 describe("Player", () => {
   it("generates an id on instance", () => {
@@ -32,33 +32,60 @@ describe("Player", () => {
   });
 
   it("hasNextLevel returns boolean indicating p&l exceeds configured levelPnl", () => {
-    const c = [{ levelPnL: 50 }, { levelPnL: 500 }, { levelPnL: "Infinity" }] as Configs;
+    const c = [
+      { levelPnL: 50 },
+      { levelPnL: 500 },
+      { levelPnL: "Infinity" },
+    ] as Configs;
     const p = new Player("test", true, c);
     //pass any price, trigger calcPnL via bonus
 
     //level 0
     p.bonus = 25;
-    expect(p.hasNextLevel(1)).toBeFalsy()
+    expect(p.hasNextLevel(1)).toBeFalsy();
     p.bonus = 100;
-    expect(p.hasNextLevel(1)).toBeTruthy()
+    expect(p.hasNextLevel(1)).toBeTruthy();
     p.incrementLevel();
 
     //level 1
-    expect(p.hasNextLevel(1)).toBeFalsy()
+    expect(p.hasNextLevel(1)).toBeFalsy();
     p.bonus = 600;
-    expect(p.hasNextLevel(1)).toBeTruthy()
+    expect(p.hasNextLevel(1)).toBeTruthy();
     p.incrementLevel();
 
     //level 2  - max level
-    expect(p.hasNextLevel(1)).toBeFalsy()
+    expect(p.hasNextLevel(1)).toBeFalsy();
     p.bonus = 1000000;
-    expect(p.hasNextLevel(1)).toBeFalsy()
+    expect(p.hasNextLevel(1)).toBeFalsy();
 
     //also does not exceed max index
     const configLevel = p.configLevel;
     p.incrementLevel();
-    expect(p.configLevel).toBe(configLevel)
-  })
+    expect(p.configLevel).toBe(configLevel);
+  });
+
+  it("getConfig() returns current config or that specified by index", () => {
+    const p = new Player("Test", true, configs);
+    p.configLevel = 4;
+
+    const configLevel0 = p.getConfig(0);
+    expect(configLevel0).toBe(configs[0]);
+
+    const configLevel3 = p.getConfig(3);
+    expect(configLevel3).toBe(configs[3]);
+
+    const configLevel8 = p.getConfig(8);
+    expect(configLevel8).toBe(configs[8]);
+
+    const configLeveln = p.getConfig(-1);
+    expect(configLeveln).toBe(null);
+
+    const configLevel100 = p.getConfig(100);
+    expect(configLevel100).toBe(null);
+
+    const configLevel4 = p.getConfig();
+    expect(configLevel4).toBe(configs[4]);
+  });
 
   describe("position & pl calculations", () => {
     it("openPosition() returns net position of executed orders", () => {
@@ -189,7 +216,7 @@ describe("Player", () => {
     });
 
     it("hasLost() returns true if player exceeds levelPnL", () => {
-      const config = { tick: 1000, levelPnL: -1000000 }
+      const config = { tick: 1000, levelPnL: -1000000 };
       configs[0] = { ...configs[0], ...config };
       const p = new Player("test", true, configs);
       const me = new MatchingEngine();
@@ -208,7 +235,7 @@ describe("Player", () => {
 
   it("calcDisplayAvgPrice() returns weighted average price of fills formatted for display", () => {
     //working orders has no mtm effect
-    const config = { tick: 1000, levelPnL: -1000000 }
+    const config = { tick: 1000, levelPnL: -1000000 };
     configs[0] = { ...configs[0], ...config };
     const p = new Player("test", true, configs);
     const me = new MatchingEngine();
@@ -279,7 +306,7 @@ describe("Player", () => {
   });
 
   it("calcPnL sets maxPnL member variable", () => {
-    const config = { tick: 1000, levelPnL: -1000000 }
+    const config = { tick: 1000, levelPnL: -1000000 };
     configs[0] = { ...configs[0], ...config };
     const p = new Player("test", true, configs);
 

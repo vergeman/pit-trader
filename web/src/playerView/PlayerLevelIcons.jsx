@@ -8,13 +8,13 @@ const PlayerLevelItems = (props) => {
 
   const icons = [];
   for (let i = 1; i <= level; i++) {
-    const icon = props.player.configs[i].reward.icon;
-    const icon_title = props.player.configs[i].reward.icon_title;
-    const title = `Level ${i}: ${icon_title}`;
+    const icon = props.player.getConfig(i).reward.icon;
+    const icon_title = props.player.getConfig(i).reward.icon_title;
+    const title = `Level ${i + 1}: ${icon_title}`;
 
     icons.push(
       <span
-        key={`level-icon-${i}`}
+        key={`level-icon-${i + 1}`}
         className="px-1"
         title={title}
         role="button"

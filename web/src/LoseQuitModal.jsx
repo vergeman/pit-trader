@@ -32,11 +32,14 @@ export default function LoseQuitModal(props) {
     .sort((a, b) => b.score - a.score)
     .splice(0, NUM_HIGHSCORES);
 
+  const title =
+    gameContext.state == GameState.LOSE ? "You Lose!" : "Peak Scores";
+
   return (
     <div className="modal show">
       <Modal show={show} onHide={reset}>
         <Modal.Header>
-          <Modal.Title className="text-dark">Peak Scores</Modal.Title>
+          <Modal.Title className="text-dark">{title}</Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
