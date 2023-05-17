@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { useGameContext, GameState } from "./GameContext.jsx";
@@ -8,14 +8,14 @@ export default function LevelModal(props) {
   const gameContext = useGameContext();
   const [show, setShow] = useState(false);
 
-  const preloadImage = (level) => {
+  const preloadImage = useCallback((level) => {
     //fetch image so browser has image cached before display
     const config = props.player.getConfig(level);
     if (!config) return;
 
     const img = new Image();
     img.src = config.reward.image;
-  };
+  },[props.player]);
 
   const close = () => {
     preloadImage(props.player.configLevel + 1);
@@ -36,7 +36,7 @@ export default function LevelModal(props) {
   useEffect(() => {
     preloadImage(props.player.configLevel);
     setShow(isNewLevel);
-  }, [isNewLevel]);
+  }, [isNewLevel, props.player.configLevel, preloadImage]);
 
   //Anytime modal is open marketLoop should be stopped
   if (show) {
