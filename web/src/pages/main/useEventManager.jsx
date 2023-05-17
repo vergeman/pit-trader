@@ -8,7 +8,13 @@ export default function useEventManager({ gesture, eventManager }) {
   const infoPanel = useInfoPanel();
   const gameContext = useGameContext();
 
+  /*
+   * currently triggered on every gesture; poll behavior
+   * TODO: even though mostly early terminates, could detach from gesture loop.
+   */
   useEffect(() => {
+    //console.log("[useEventManager] useEffect");
+
     if (
       [GameState.LOSE, GameState.QUIT, GameState.LEVELUP].includes(
         gameContext.state
@@ -73,5 +79,5 @@ export default function useEventManager({ gesture, eventManager }) {
     });
 
     dispatchFn(msg);
-  }, [gesture]);
+  }, [gesture, eventManager, infoPanel, gameContext.state]);
 }

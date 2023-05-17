@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 export const GameContext = createContext(null);
 
 export const GameState = {
-  INIT: 1, //TODO: currently inactve, but for any loading screen
+  INIT: 1,
   RUN: 2,
   QUIT: 3,
   LOSE: 4,
@@ -38,8 +38,9 @@ export function GameContextProvider(props) {
 
   //Main.jsx on resetGame, cascade the gameID change to badgeGameID
   useEffect(() => {
+    console.log("[GameContext] useEffect");
     setBadgeGameID(buildBadgeGameID(gameID, badge));
-  }, [gameID]);
+  }, [gameID, badge]);
 
   return (
     <GameContext.Provider
