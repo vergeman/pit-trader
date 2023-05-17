@@ -1,8 +1,8 @@
-import MatchingEngine from "../engine/MatchingEngine";
-import Order, { OrderType } from "../engine/Order";
-import Player from "./Player";
+import MatchingEngine from "./MatchingEngine";
+import Order, { OrderType } from "./Order";
+import Player from "../player/Player";
 import RiskManager from "./RiskManager";
-import configs from "../Configs";
+import configs from "../../Configs";
 
 describe("RiskManager", () => {
   it("sets positionLimit and warnPositionLimit from named params via constructor", () => {

@@ -1,11 +1,11 @@
-import MatchingEngine from "../engine/MatchingEngine";
-import Player from "./Player";
-import NPCPlayerManager from "./NPCPlayerManager";
-import MarketLoop from "./MarketLoop";
+import MatchingEngine from "../exchange/MatchingEngine";
+import Player from "../player/Player";
+import NPCPlayerManager from "../player/NPCPlayerManager";
+import MarketLoop from "../exchange/MarketLoop";
 import EventManager from "./EventManager";
-import RiskManager from "../player/RiskManager";
+import RiskManager from "../exchange/RiskManager";
 import GestureDecision from "../gesture/GestureDecision";
-import configs from "../Configs";
+import configs from "../../Configs";
 
 describe("EventManager", () => {
   it("generate locks further event creation()", () => {

@@ -1,20 +1,16 @@
 import { useEffect, useState, useCallback } from "react";
 import { Container } from "react-bootstrap";
 import CameraGesture from "./CameraGesture.jsx";
-import RiskManager from "./player/RiskManager";
-import MatchingEngine from "./engine/MatchingEngine";
-import NPCPlayerManager from "./player/NPCPlayerManager";
-import Player from "./player/Player";
-import GestureDecision from "./gesture/GestureDecision";
-import MarketLoop from "./player/MarketLoop";
+
+import { MarketLoop, MatchingEngine, RiskManager } from "./lib/exchange";
+import { Player, NPCPlayerManager } from "./lib/player";
+import { GestureDecision } from "./lib/gesture";
 import LoseQuitModal from "./LoseQuitModal";
 import LevelModal from "./LevelModal";
 import Message from "./infopanel/Message";
 import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
 import { useGameContext, GameState } from "./GameContext.jsx";
-import { EventManager } from "./player/EventManager.ts";
-import { EventType } from "./player/Event.ts";
-import { GestureDecisionEvent } from "./player/GestureDecisionEvent";
+import { EventManager, EventType, GestureDecisionEvent } from "./lib/event";
 
 import configs from "./Configs.ts";
 

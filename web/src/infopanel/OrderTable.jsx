@@ -1,5 +1,5 @@
 import Table from "react-bootstrap/Table";
-import { OrderType, OrderStatus } from "../engine/Order";
+import { OrderType, OrderStatus } from "../lib/exchange/Order";
 export default function OrderTable(props) {
   if (!props.orders) return null;
 

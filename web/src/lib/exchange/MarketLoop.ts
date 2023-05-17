@@ -1,8 +1,7 @@
-import NPCPlayerManager from "./NPCPlayerManager";
-import Player from "./Player";
-import MatchingEngine from "../engine/MatchingEngine";
-import { Order } from "../engine/Order";
-import { TransactionReport } from "../engine/Order";
+import NPCPlayerManager from "../player/NPCPlayerManager";
+import Player from "../player/Player";
+import MatchingEngine from "./MatchingEngine";
+import { Order, TransactionReport } from "./Order";
 
 class MarketLoop {
   private _npcPlayerManager: NPCPlayerManager;

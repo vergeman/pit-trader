@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { Spinner } from "react-bootstrap";
 import Camera from "./input/Camera.jsx";
+import Classifier from "./lib/gesture/Classifier.js";
+import GestureBuilder from "./lib/gesture/GestureBuilder.ts";
 import GesturesPanel from "./GesturesPanel.jsx";
 import MatchingEngineView from "./MatchingEngineView.jsx";
 import PlayerStatus from "./playerView/PlayerStatus.jsx";
-import Classifier from "./gesture/Classifier.js";
-import GestureBuilder from "./gesture/GestureBuilder.ts";
 import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
 import InfoTabs from "./infopanel/InfoTabs.jsx";
 import { useGameContext, GameState } from "./GameContext.jsx";

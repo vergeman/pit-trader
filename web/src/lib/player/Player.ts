@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
-import { Order, Transaction, OrderStatus, OrderType } from "../engine/Order";
-import { Configs, Config } from "../Configs";
+import { Order, Transaction, OrderStatus, OrderType } from "../exchange/Order";
+import { Configs, Config } from "../../Configs";
 
 export class Player {
   private _id: string;

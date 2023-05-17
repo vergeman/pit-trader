@@ -1,4 +1,4 @@
-import { GestureDecisionEvent } from "../player/GestureDecisionEvent";
+import { GestureDecisionEvent } from "../lib/event/GestureDecisionEvent";
 import { createContext, useContext, useReducer } from "react";
 
 import {

@@ -1,4 +1,4 @@
-import { GestureAction } from "../gesture/Gesture.ts";
+import { GestureAction } from "../lib/gesture/Gesture.ts";
 import * as glMatrix from "gl-matrix";
 glMatrix.glMatrix.setMatrixArrayType(Float64Array);
 

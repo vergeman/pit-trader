@@ -1,6 +1,6 @@
-import Order from "../engine/Order";
-import Player from "./Player";
-import { Configs } from "../Configs";
+import Order from "./Order";
+import Player from "../player/Player";
+import { Configs } from "../../Configs";
 
 export interface Positions {
   total: number;

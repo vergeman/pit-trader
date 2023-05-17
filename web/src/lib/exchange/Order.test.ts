@@ -1,4 +1,4 @@
-import { OrderStatus, OrderType, Order, TransactionReport, Transaction } from "./Order";
+import { OrderStatus, OrderType, Order } from "./Order";
 import MatchingEngine from "./MatchingEngine";
 
 describe("Order", () => {

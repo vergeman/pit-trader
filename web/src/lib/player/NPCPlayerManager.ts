@@ -1,5 +1,5 @@
 import Player from "./Player";
-import MatchingEngine from "../engine/MatchingEngine";
+import MatchingEngine from "../exchange/MatchingEngine";
 
 export default class NPCPlayerManager {
   private _me: MatchingEngine;

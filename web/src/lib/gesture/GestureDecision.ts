@@ -1,12 +1,12 @@
 import { Gesture, GestureType, GestureAction } from "./Gesture";
 import { NumberSM } from "./NumberSM";
 import { ActionSM } from "./ActionSM";
-import MatchingEngine from "../engine/MatchingEngine";
-import MarketLoop from "../player/MarketLoop";
+import MatchingEngine from "../exchange/MatchingEngine";
+import MarketLoop from "../exchange/MarketLoop";
 import Player from "../player/Player";
-import { OrderType, OrderStatus, Order } from "../engine/Order";
-import Message from "../infopanel/Message.js";
-import RiskManager from "../player/RiskManager";
+import { OrderType, OrderStatus, Order } from "../exchange/Order";
+import Message from "../../infopanel/Message.js";
+import RiskManager from "../exchange/RiskManager";
 
 export enum RenderState {
   GESTURE_DECISION, //vanilla gesture decision (partial order build)

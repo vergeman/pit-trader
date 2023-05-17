@@ -1,9 +1,9 @@
-import MatchingEngine from "../engine/MatchingEngine";
-import { Order, OrderType, OrderStatus } from "../engine/Order";
-import { Player } from "./Player";
-import NPCPlayerManager from "./NPCPlayerManager";
+import MatchingEngine from "./MatchingEngine";
+import { Order, OrderType, OrderStatus } from "./Order";
+import { Player } from "../player/Player";
+import NPCPlayerManager from "../player/NPCPlayerManager";
 import { MarketLoop } from "./MarketLoop";
-import configs from "../Configs";
+import configs from "../../Configs";
 
 describe("MarketLoop", () => {
   it("startLoop() calls run() which takes a duration of numPlayers * maxTurnDelay", async () => {

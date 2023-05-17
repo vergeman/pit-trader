@@ -1,7 +1,7 @@
 import { Event, IEvent, EventType } from "./Event";
-import { OrderType, Order } from "../engine/Order";
+import { OrderType, Order } from "../exchange/Order";
 import { GestureDecision } from "../gesture/GestureDecision";
-import { MarketLoop } from "./MarketLoop";
+import { MarketLoop } from "../exchange/MarketLoop";
 import { GestureAction } from "../gesture/Gesture";
 import Player from "../player/Player";
 //corresponds to component visuals

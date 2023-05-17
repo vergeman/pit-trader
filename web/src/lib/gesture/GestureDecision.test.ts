@@ -1,12 +1,12 @@
 import { Gesture, GestureType, GestureAction } from "./Gesture";
-import { OrderStatus } from "../engine/Order";
+import { OrderStatus } from "../exchange/Order";
 import GestureDecision from "./GestureDecision";
-import MatchingEngine from "../engine/MatchingEngine";
+import MatchingEngine from "../exchange/MatchingEngine";
 import Player from "../player/Player";
 import NPCPlayerManager from "../player/NPCPlayerManager";
-import MarketLoop from "../player/MarketLoop";
-import RiskManager from "../player/RiskManager";
-import configs from "../Configs";
+import MarketLoop from "../exchange/MarketLoop";
+import RiskManager from "../exchange/RiskManager";
+import configs from "../../Configs";
 
 const TIMEOUT = 50; //speed this up for tests. Typically 750 seems human-like.
 

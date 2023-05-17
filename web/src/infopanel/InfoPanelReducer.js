@@ -1,6 +1,6 @@
 import Message from "./Message.js";
-import { OrderType } from "../engine/Order.ts";
-import { EventType } from "../player/Event.ts";
+import { OrderType } from "../lib/exchange/Order.ts";
+import { EventType } from "../lib/event/Event.ts";
 
 export function activeTabReducer(activeTab, action) {
   switch (action.type) {

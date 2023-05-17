@@ -1,6 +1,5 @@
 import GesturesDecision from "./GesturesDecision.jsx";
-import { RenderState } from "./gesture/GestureDecision";
-import { GestureAction } from "./gesture/Gesture";
+import { RenderState, GestureAction } from "./lib/gesture";
 
 export default function GesturesDecisionDisplay(props) {
   const gestureDecisionRecord = props.gestureDecision.records[0] || {};

@@ -60,3 +60,5 @@ export class Gesture {
     return digit_length;
   }
 }
+
+export default Gesture;

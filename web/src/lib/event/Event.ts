@@ -1,4 +1,4 @@
-import MarketLoop from "./MarketLoop";
+import MarketLoop from "../exchange/MarketLoop";
 import GestureDecision from "../gesture/GestureDecision";
 
 export enum EventType {

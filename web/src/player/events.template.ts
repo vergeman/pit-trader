@@ -1,7 +1,7 @@
-import { EventType } from "./Event";
-import { OrderType } from "../engine/Order";
-import { GestureAction } from "../gesture/Gesture";
-import { GestureDecisionEventState } from "./GestureDecisionEvent";
+import { EventType } from "../lib/event/Event";
+import { OrderType } from "../lib/exchange/Order";
+import { GestureAction } from "../lib/gesture/Gesture";
+import { GestureDecisionEventState } from "../lib/event/GestureDecisionEvent";
 
 /* Defaults
  * id 0 - would affect vanilla players, but for most part want to leave vanillas
