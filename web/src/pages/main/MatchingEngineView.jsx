@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { Table } from "react-bootstrap";
 
 export default function MatchingEngineView(props) {
@@ -10,7 +9,7 @@ export default function MatchingEngineView(props) {
 
   const bidMaps = props.me.getBidMaps(props.player.id);
   const offerMaps = props.me.getOfferMaps(props.player.id);
-  const { gridNumMinLen, gridNumMaxLen, prices } = props.me.calcGrid(price);
+  const { gridNumMaxLen, prices } = props.me.calcGrid(price);
 
   const renderPrice = (price, maxLen) => {
     const priceArr = [price];

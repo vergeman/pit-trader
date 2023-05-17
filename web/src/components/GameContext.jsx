@@ -28,7 +28,7 @@ export function useGameContext() {
 export function GameContextProvider(props) {
   let query = useQuery();
 
-  const [isDebug, setIsDebug] = useState(query.get("debug"));
+  const [isDebug] = useState(query.get("debug"));
   const [state, setState] = useState(GameState.INIT);
   const [gameID, setGameID] = useState(new Date().getTime());
   const [badge, setBadge] = useState(query.get("badge") || "Trader");

@@ -94,7 +94,6 @@ describe("MarketLoop", () => {
       });
       ml.init();
 
-      const midpoints = [];
       for (let player of ordered) {
         expect(
           player.orders.every(

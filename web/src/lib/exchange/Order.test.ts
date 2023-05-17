@@ -70,7 +70,6 @@ describe("Order", () => {
     expect(transactionReport.timestamp).toBeGreaterThanOrEqual(tstamp);
   });
   it("initialQty is maintained after transactions", async () => {
-    const tstamp = Date.now();
     await new Promise((res) => setTimeout(res, 10));
     const o1 = new Order("123", OrderType.LIMIT, -50, 50);
     const o2 = new Order("abc", OrderType.MARKET, 25, NaN);

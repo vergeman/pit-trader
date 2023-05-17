@@ -18,7 +18,7 @@ export default function Home() {
     setBadge(val);
   };
 
-  const [defaultBadge, setDefaultBadge] = useState(defaultBadgeBuilder());
+  const [defaultBadge] = useState(defaultBadgeBuilder());
   const [badge, setBadge] = useState("");
 
   return (

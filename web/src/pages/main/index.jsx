@@ -1,24 +1,27 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { Container } from "react-bootstrap";
 import configs from "../../config/Configs.ts";
 import CameraGesture from "./CameraGesture.jsx";
 import { MarketLoop, MatchingEngine, RiskManager } from "../../lib/exchange";
 import { Player, NPCPlayerManager } from "../../lib/player";
 import { GestureDecision } from "../../lib/gesture";
-import { useGameContext, GameState, LoseQuitModal, LevelModal } from "../../components";
+import {
+  useGameContext,
+  GameState,
+  LoseQuitModal,
+  LevelModal,
+} from "../../components";
 import Message from "./infopanel/Message";
 import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
 import { EventManager, EventType, GestureDecisionEvent } from "../../lib/event";
 
-export default function Main(props) {
+export default function Main() {
   const gameContext = useGameContext();
   const { messagesDispatch, gestureDecisionEventDispatch } = useInfoPanel();
 
-  const [riskManager, setRiskManager] = useState(
-    () => new RiskManager(configs)
-  );
-  const [me, setMe] = useState(() => new MatchingEngine());
-  const [npcPlayerManager, setNPCPlayerManager] = useState(
+  const [riskManager] = useState(() => new RiskManager(configs));
+  const [me] = useState(() => new MatchingEngine());
+  const [npcPlayerManager] = useState(
     () =>
       new NPCPlayerManager(me, [
         new Player("npc-A", false, configs),
@@ -28,13 +31,11 @@ export default function Main(props) {
       ])
   );
 
-  const [player, setPlayer] = useState(
-    () => new Player(gameContext.badge, true, configs)
-  );
-  const [marketLoop, setMarketLoop] = useState(
+  const [player] = useState(() => new Player(gameContext.badge, true, configs));
+  const [marketLoop] = useState(
     () => new MarketLoop({ npcPlayerManager, priceSeed: 100 })
   );
-  const [gestureDecision, setGestureDecision] = useState(
+  const [gestureDecision] = useState(
     () =>
       new GestureDecision(
         me,
@@ -46,7 +47,7 @@ export default function Main(props) {
         gameContext.isDebug
       )
   );
-  const [eventManager, setEventManager] = useState(
+  const [eventManager] = useState(
     () => new EventManager(marketLoop, gestureDecision, configs)
   );
 

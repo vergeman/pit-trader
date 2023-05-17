@@ -1,7 +1,6 @@
-import { Image, Figure } from "react-bootstrap";
 import InstructionFigure from "./InstructionFigure.jsx";
 
-export default function Numbers(props) {
+export default function Numbers() {
   return (
     <div>
       <h4>Numbers</h4>

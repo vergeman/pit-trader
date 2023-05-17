@@ -299,7 +299,6 @@ describe("Player", () => {
 
   it("replenish(): generates new Live orders and adds to players own queue", () => {
     const p = new Player("test", false, configs);
-    const me = new MatchingEngine();
     expect(p.orders.length).toBe(0);
     p.replenish(100, 4);
     expect(p.orders.length).toBe(2);

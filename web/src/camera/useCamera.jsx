@@ -14,7 +14,7 @@ export default function useCamera(
 ) {
   const { control, fpsControl } = useControl(controlRef);
   const [camera, setCamera] = useState(null);
-  const [landmarks, setLandmarks] = useState(new Landmarks());
+  const [landmarks] = useState(new Landmarks());
 
   const faceDetection = useFaceDetection(canvasRef, landmarks);
   const handsDetection = useHandsDetection(canvasRef, landmarks);

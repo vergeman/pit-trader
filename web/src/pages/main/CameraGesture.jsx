@@ -15,8 +15,8 @@ export default function CameraGesture(props) {
   /* default bootstrap size */
   const defaultCameraDims = { width: 636, height: 477 };
   const [gestureData, setGestureData] = useState(null);
-  const [classifier, setClassifier] = useState(() => new Classifier());
-  const [gestureBuilder, setGestureBuilder] = useState(
+  const [classifier] = useState(() => new Classifier());
+  const [gestureBuilder] = useState(
     () => new GestureBuilder()
   );
   const [gesture, setGesture] = useState(null);
