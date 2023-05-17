@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Spinner } from "react-bootstrap";
 import { Camera } from "./camera";
-import Classifier from "./lib/gesture/Classifier.js";
-import GestureBuilder from "./lib/gesture/GestureBuilder.ts";
+import { Classifier, GestureBuilder } from "./lib/gesture";
 import GesturesPanel from "./GesturesPanel.jsx";
 import MatchingEngineView from "./MatchingEngineView.jsx";
 import PlayerStatus from "./playerView/PlayerStatus.jsx";

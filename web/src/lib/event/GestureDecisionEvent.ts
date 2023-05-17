@@ -4,6 +4,7 @@ import { GestureDecision } from "../gesture/GestureDecision";
 import { MarketLoop } from "../exchange/MarketLoop";
 import { GestureAction } from "../gesture/Gesture";
 import Player from "../player/Player";
+
 //corresponds to component visuals
 export enum GestureDecisionEventState {
   NONE,
