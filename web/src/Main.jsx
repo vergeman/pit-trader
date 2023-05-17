@@ -136,18 +136,16 @@ export default function Main(props) {
   //level up
   //see configs.json for details; level corresponds to array index.
   const levelUp = () => {
-    const levelPnL =
-      player.configs[player.configLevel].levelPnL.toLocaleString();
+    const levelPnL = player.getConfig().levelPnL.toLocaleString();
 
     player.incrementLevel();
     npcPlayerManager.incrementLevel();
     eventManager.incrementLevel();
     riskManager.incrementLevel();
 
-    const positionLimit = player.configs[player.configLevel].positionLimit;
+    const positionLimit = player.getConfig().positionLimit;
 
-    const limitPnL =
-      player.configs[player.configLevel].limitPnL.toLocaleString();
+    const limitPnL = player.getConfig().limitPnL.toLocaleString();
 
     const msg = {
       type: Message.Notice,
@@ -171,7 +169,11 @@ Position limit increased to ${positionLimit}. Max Loss P&L to ${limitPnL}.`,
         resetGame={resetGame}
       />
 
-      <LevelModal player={player} marketLoop={marketLoop} eventManager={eventManager} />
+      <LevelModal
+        player={player}
+        marketLoop={marketLoop}
+        eventManager={eventManager}
+      />
 
       {/* CameraGesture set to camera poll */}
       <CameraGesture

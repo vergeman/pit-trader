@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import { Order, Transaction, OrderStatus, OrderType } from "../engine/Order";
-import { Configs } from "../Configs";
+import { Configs, Config } from "../Configs";
 
 export class Player {
   private _id: string;
@@ -105,6 +105,9 @@ export class Player {
   get configLevel(): number {
     return this._configLevel;
   }
+  set configLevel(num: number) {
+    this._configLevel = num;
+  }
   get bonus(): number {
     return this._bonus;
   }
@@ -121,6 +124,12 @@ export class Player {
     this.lostPnL = null;
     this.bonus = 0;
     this._configLevel = 0;
+  }
+
+  getConfig(index?: number): Config | null {
+    const isInteger = Number.isInteger(index);
+    const i = isInteger ? Number(index) : this.configLevel;
+    return this.configs[i] || null;
   }
 
   hasLiveBids(): boolean {

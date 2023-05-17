@@ -48,10 +48,9 @@ export default function PlayerStatus(props) {
       ? "text-danger"
       : "";
 
-  const limitPnL = props.player.configs[props.player.configLevel].limitPnL;
-  const levelPnL = props.player.configs[props.player.configLevel].levelPnL;
-  const positionLimit =
-    props.player.configs[props.player.configLevel].positionLimit;
+  const limitPnL = props.player.getConfig().limitPnL;
+  const levelPnL = props.player.getConfig().levelPnL;
+  const positionLimit = props.player.getConfig().positionLimit;
 
   const warningLostPnLClass =
     pnl <= warnLossPnLFactor * limitPnL ? "text-danger" : "";
