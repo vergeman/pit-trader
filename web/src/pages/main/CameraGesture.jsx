@@ -1,14 +1,15 @@
 import { useCallback, useEffect, useState } from "react";
 import { Spinner } from "react-bootstrap";
-import { Camera } from "./camera";
-import { Classifier, GestureBuilder } from "./lib/gesture";
-import GesturesPanel from "./GesturesPanel.jsx";
+import { useGameContext, GameState } from "../../components/GameContext.jsx";
+import { Camera } from "../../camera";
+import { Classifier, GestureBuilder } from "../../lib/gesture";
+import GesturesPanel from "./gestures/GesturesPanel.jsx";
 import MatchingEngineView from "./MatchingEngineView.jsx";
-import PlayerStatus from "./playerView/PlayerStatus.jsx";
+import PlayerStatus from "./player/PlayerStatus.jsx";
+import useEventManager from "./useEventManager";
 import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
 import InfoTabs from "./infopanel/InfoTabs.jsx";
-import { useGameContext, GameState } from "./components/GameContext.jsx";
-import useEventManager from "./player/useEventManager";
+
 
 export default function CameraGesture(props) {
   /* default bootstrap size */

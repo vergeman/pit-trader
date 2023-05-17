@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
-import { EventType } from "../lib/event/Event";
-import { useGameContext, GameState } from "../components/GameContext.jsx";
-import { useInfoPanel } from "../infopanel/InfoPanelContext.jsx";
-import { Message } from "../infopanel/Message";
+import { useEffect } from "react";
+import { EventType } from "../../lib/event/Event";
+import { useGameContext, GameState } from "../../components/GameContext.jsx";
+import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
+import { Message } from "./infopanel/Message";
 
 export default function useEventManager({ gesture, eventManager }) {
   const infoPanel = useInfoPanel();

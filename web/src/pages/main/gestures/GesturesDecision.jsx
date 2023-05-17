@@ -1,4 +1,4 @@
-import { GestureAction, RenderState } from "./lib/gesture";
+import { GestureAction, RenderState } from "../../../lib/gesture";
 /* GestureDecision State
  * Partial state, waiting for all gestures to build action
  */

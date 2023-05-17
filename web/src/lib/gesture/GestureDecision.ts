@@ -5,7 +5,7 @@ import MatchingEngine from "../exchange/MatchingEngine";
 import MarketLoop from "../exchange/MarketLoop";
 import Player from "../player/Player";
 import { OrderType, OrderStatus, Order } from "../exchange/Order";
-import Message from "../../infopanel/Message.js";
+import Message from "../../pages/main/infopanel/Message.js";
 import RiskManager from "../exchange/RiskManager";
 
 export enum RenderState {
