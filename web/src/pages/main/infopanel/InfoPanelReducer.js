@@ -15,7 +15,7 @@ export function activeTabReducer(activeTab, action) {
 
 const populateTemplateString = (template, vars) => {
   for (let i = 1; i <= vars.length; i++) {
-    template = template.replaceAll(`\$\{${i}\}`, vars[i - 1]);
+    template = template.replaceAll(`\{${i}\}`, vars[i - 1]);
   }
   return template;
 };
