@@ -1,5 +1,5 @@
-import "./custom.scss";
-import "./App.css";
+import "./styles/custom.scss";
+import "./styles/App.css";
 import { Routes, Route } from "react-router-dom";
 import Main from "./Main.jsx";
 import Home from "./Home.jsx";
