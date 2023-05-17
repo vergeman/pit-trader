@@ -210,7 +210,7 @@ export class GestureDecisionEvent
     //user in /gesture/GestureDecision.ts. Here we compare the two for match.
     if (
       this.gesture.qty === order.qty &&
-      this.gesture.price === order.gesturePrice &&
+      Number(this.gesture.price) === order.gesturePrice &&
       this.gesture.orderType === order.orderType
     ) {
       this.gestureDecisionEventState = GestureDecisionEventState.WIN;
