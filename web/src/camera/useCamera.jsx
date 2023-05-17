@@ -13,7 +13,6 @@ export default function useCamera(
   calcGesture
 ) {
   const { control, fpsControl } = useControl(controlRef);
-  const [camera, setCamera] = useState(null);
   const [landmarks] = useState(new Landmarks());
 
   const faceDetection = useFaceDetection(canvasRef, landmarks);
@@ -23,7 +22,7 @@ export default function useCamera(
   const onFrame = async () => {
     if (!(videoRef && videoRef.current)) return;
 
-    if (fpsControl) {
+    if (control && fpsControl) {
       fpsControl.tick();
 
       /*
@@ -54,7 +53,6 @@ export default function useCamera(
 
     // this is the calculation bit; operations set and passed in from
     // <CameraGesture>
-
     await calcGesture(landmarks);
   };
 
@@ -71,7 +69,6 @@ export default function useCamera(
       const _camera = new window.Camera(videoRef.current, {
         onFrame,
       });
-      setCamera(_camera);
 
       if (isActive) {
         _camera.start();

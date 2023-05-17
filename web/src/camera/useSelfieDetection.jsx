@@ -4,6 +4,9 @@ export default function useSelfieDetection(canvasRef, landmarks) {
   const [selfieSegmentation, setSelfieSegmentation] = useState(null);
 
   const onSelfieResults = function (results) {
+
+    if (!canvasRef.current) return;
+
     const canvasCtx = canvasRef.current.getContext("2d");
 
     canvasCtx.save();
