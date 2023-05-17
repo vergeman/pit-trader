@@ -3,7 +3,7 @@ import { Order, OrderType, OrderStatus } from "./Order";
 import { Player } from "../player/Player";
 import NPCPlayerManager from "../player/NPCPlayerManager";
 import { MarketLoop } from "./MarketLoop";
-import configs from "../../Configs";
+import configs from "../../config/Configs";
 
 describe("MarketLoop", () => {
   it("startLoop() calls run() which takes a duration of numPlayers * maxTurnDelay", async () => {

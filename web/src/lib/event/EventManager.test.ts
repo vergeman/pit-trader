@@ -5,7 +5,7 @@ import MarketLoop from "../exchange/MarketLoop";
 import EventManager from "./EventManager";
 import RiskManager from "../exchange/RiskManager";
 import GestureDecision from "../gesture/GestureDecision";
-import configs from "../../Configs";
+import configs from "../../config/Configs";
 
 describe("EventManager", () => {
   it("generate locks further event creation()", () => {

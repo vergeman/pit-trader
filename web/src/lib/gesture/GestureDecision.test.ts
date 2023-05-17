@@ -6,7 +6,7 @@ import Player from "../player/Player";
 import NPCPlayerManager from "../player/NPCPlayerManager";
 import MarketLoop from "../exchange/MarketLoop";
 import RiskManager from "../exchange/RiskManager";
-import configs from "../../Configs";
+import configs from "../../config/Configs";
 
 const TIMEOUT = 50; //speed this up for tests. Typically 750 seems human-like.
 

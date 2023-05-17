@@ -1,6 +1,6 @@
 import Order from "./Order";
 import Player from "../player/Player";
-import { Configs } from "../../Configs";
+import { Configs } from "../../config/Configs";
 
 export interface Positions {
   total: number;

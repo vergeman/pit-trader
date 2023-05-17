@@ -4,10 +4,10 @@ import {
   events,
   gestureDecisionEvents,
   buildGestureDecisionEventParams,
-} from "../../player/events.template";
+} from "../../config/events.template";
 import MarketLoop from "../exchange/MarketLoop";
 import GestureDecision from "../gesture/GestureDecision";
-import { Configs } from "../../Configs";
+import { Configs } from "../../config/Configs";
 
 export class EventManager {
   private _marketLoop: MarketLoop;

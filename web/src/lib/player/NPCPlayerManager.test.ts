@@ -1,7 +1,7 @@
 import Player from "./Player";
 import NPCPlayerManager from "./NPCPlayerManager";
 import MatchingEngine from "../exchange/MatchingEngine";
-import configs from "../../Configs";
+import configs from "../../config/Configs";
 
 describe("NPCPlayerManager", () => {
   it("sets initial players in object of id-player", () => {

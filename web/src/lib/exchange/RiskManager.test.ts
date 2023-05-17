@@ -2,7 +2,7 @@ import MatchingEngine from "./MatchingEngine";
 import Order, { OrderType } from "./Order";
 import Player from "../player/Player";
 import RiskManager from "./RiskManager";
-import configs from "../../Configs";
+import configs from "../../config/Configs";
 
 describe("RiskManager", () => {
   it("sets positionLimit and warnPositionLimit from named params via constructor", () => {

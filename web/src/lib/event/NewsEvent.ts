@@ -2,7 +2,7 @@ import { IEvent, Event, EventType } from "./Event";
 import { GestureDecision } from "../gesture/GestureDecision";
 import MarketLoop from "../exchange/MarketLoop";
 import Player from "../player/Player";
-import configs from "../../Configs";
+import configs from "../../config/Configs";
 
 export interface INewsEvent extends IEvent {
   delta: number;

@@ -1,7 +1,7 @@
 import { Player } from "./Player";
 import { Order, OrderType, OrderStatus } from "../exchange/Order";
 import MatchingEngine from "../exchange/MatchingEngine";
-import configs, { Configs } from "../../Configs";
+import configs, { Configs } from "../../config/Configs";
 
 describe("Player", () => {
   it("generates an id on instance", () => {
