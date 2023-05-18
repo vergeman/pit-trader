@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Container } from "react-bootstrap";
 import configs from "../../config/Configs.ts";
 import CameraGesture from "./CameraGesture.jsx";
@@ -67,7 +67,66 @@ export default function Main() {
         },
       });
     }
-  }, []);
+  }, [
+    gameContext.isDebug,
+    gestureDecision,
+    marketLoop,
+    npcPlayerManager,
+    player,
+    riskManager,
+  ]);
+
+  //level up
+  //see configs.json for details; level corresponds to array index.
+  const levelUp = useCallback(() => {
+    const levelPnL = player.getConfig().levelPnL.toLocaleString();
+
+    player.incrementLevel();
+    npcPlayerManager.incrementLevel();
+    eventManager.incrementLevel();
+    riskManager.incrementLevel();
+
+    const positionLimit = player.getConfig().positionLimit;
+
+    const limitPnL = player.getConfig().limitPnL.toLocaleString();
+
+    const msg = {
+      type: Message.Notice,
+      value: {
+        msg: `Level ${player.configLevel + 1} achieved! P&L exceeds ${levelPnL}.
+Position limit increased to ${positionLimit}. Max Loss P&L to ${limitPnL}.`,
+      },
+    };
+
+    console.log("Level Up", player.configLevel, msg);
+    messagesDispatch(msg);
+  }, [eventManager, messagesDispatch, npcPlayerManager, player, riskManager]);
+
+  const resetGame = () => {
+    //fired on modal
+    console.log("[Main] resetGame()");
+    if (player) {
+      messagesDispatch({ type: Message.Restart }); //clear infopanel messages
+
+      gestureDecisionEventDispatch({
+        type: EventType.GESTUREDECISION,
+        value: new GestureDecisionEvent({}),
+      });
+
+      gestureDecision.resetRecords();
+      player.reset();
+      npcPlayerManager.resetAll();
+      me.reset();
+      eventManager.reset();
+      marketLoop.stop();
+      riskManager.reset();
+      marketLoop.init();
+
+      const gameID = new Date().getTime();
+      gameContext.setGameID(gameID);
+      gameContext.setState(GameState.INIT);
+    }
+  };
 
   //GAMESTATE
   useEffect(() => {
@@ -100,59 +159,14 @@ export default function Main() {
       console.log("[Main.jsx] cleanup");
       marketLoop.stop();
     };
-  }, [gameContext.state]);
-
-  const resetGame = () => {
-    //fired on modal
-    console.log("[Main] resetGame()");
-    if (player) {
-      messagesDispatch({ type: Message.Restart }); //clear infopanel messages
-
-      gestureDecisionEventDispatch({
-        type: EventType.GESTUREDECISION,
-        value: new GestureDecisionEvent({}),
-      });
-
-      gestureDecision.resetRecords();
-      player.reset();
-      npcPlayerManager.resetAll();
-      me.reset();
-      eventManager.reset();
-      marketLoop.stop();
-      riskManager.reset();
-      marketLoop.init();
-
-      const gameID = new Date().getTime();
-      gameContext.setGameID(gameID);
-      gameContext.setState(GameState.INIT);
-    }
-  };
-
-  //level up
-  //see configs.json for details; level corresponds to array index.
-  const levelUp = () => {
-    const levelPnL = player.getConfig().levelPnL.toLocaleString();
-
-    player.incrementLevel();
-    npcPlayerManager.incrementLevel();
-    eventManager.incrementLevel();
-    riskManager.incrementLevel();
-
-    const positionLimit = player.getConfig().positionLimit;
-
-    const limitPnL = player.getConfig().limitPnL.toLocaleString();
-
-    const msg = {
-      type: Message.Notice,
-      value: {
-        msg: `Level ${player.configLevel + 1} achieved! P&L exceeds ${levelPnL}.
-Position limit increased to ${positionLimit}. Max Loss P&L to ${limitPnL}.`,
-      },
-    };
-
-    console.log("Level Up", player.configLevel, msg);
-    messagesDispatch(msg);
-  };
+  }, [
+    gameContext.state,
+    eventManager,
+    gameContext,
+    gestureDecision,
+    marketLoop,
+    levelUp,
+  ]);
 
   console.log("[Main.jsx] render:", gameContext.state);
 
