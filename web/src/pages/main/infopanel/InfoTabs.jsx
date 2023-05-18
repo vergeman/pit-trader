@@ -1,10 +1,10 @@
+import { useState, useEffect } from "react";
 import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
 import GestureDecisionEvent from "./GestureDecisionEvent.jsx";
 import OrderTable from "./OrderTable.jsx";
 import Messages from "./Messages.jsx";
 import { useInfoPanel } from "./InfoPanelContext";
-import useTabNums from "./useTabNums.jsx";
 
 /*
  * NB: <Tab> subcomponents don't automatically render if extracted to own
@@ -23,8 +23,6 @@ export default function InfoTabs(props) {
   const { activeTab, activeTabDispatch, messages, gestureDecisionEvent } =
     useInfoPanel();
 
-  const challenges = [];
-
   const liveOrders = props.player
     ? []
         .concat(props.player.getLiveBids(), props.player.getLiveOffers())
@@ -41,57 +39,68 @@ export default function InfoTabs(props) {
    * Tab Value sources
    *
    * messages: context
-   * challenges: defined here, not used
+   * GDE/challenges: these aren't queued or "unseen"
    * liveOrders: filtered here
    * orderHistories: filtered here
    */
 
-  const tabMap = new Map([
-    [TabMapKey.MESSAGES, { tabTitle: "Messages", values: messages }],
-    [
-      TabMapKey.GESTUREDECISIONEVENT,
-      { tabTitle: "Challenges", values: challenges },
-    ],
-    [TabMapKey.LIVEORDERS, { tabTitle: "Live Orders", values: liveOrders }],
-    [
-      TabMapKey.ORDERHISTORY,
-      { tabTitle: "Order History", values: orderHistories },
-    ],
-  ]);
-
   //on selecting active tab, setTabs as seen by setting
   //tabNums count to equal the tabMap values' length
-  const { tabNums, setTabNumsSeen } = useTabNums(activeTab, tabMap);
+  const buildTabMap = (numMessages, numLiveOrders, numOrderHistories) => {
+    return {
+      [TabMapKey.MESSAGES]: { tabTitle: "Messages", length: numMessages },
+      [TabMapKey.GESTUREDECISIONEVENT]: { tabTitle: "Challenges", length: 0 },
+      [TabMapKey.LIVEORDERS]: {
+        tabTitle: "Live Orders",
+        length: numLiveOrders,
+      },
+      [TabMapKey.ORDERHISTORY]: {
+        tabTitle: "Order History",
+        length: numOrderHistories,
+      },
+    };
+  };
 
+  const [tabMap, setTabMap] = useState(() =>
+    buildTabMap(messages.length, liveOrders.length, orderHistories.length)
+  );
+  const [tabMapSeen] = useState(() =>
+    buildTabMap(messages.length, liveOrders.length, orderHistories.length)
+  );
+
+  const setTabSeen = (tab) => {
+    tabMapSeen[tab].length = tabMap[tab].length;
+  };
 
   //calcTabNumUnseen() takes diff from payload lengths and tabNums - a snapshot
   //of lengths when last visited/seen. The difference is the number unseen.
-  const calcTabNumUnseen = (key, tabMap, tabNums) => {
-    const num = tabMap.get(key).values.length - tabNums[key];
-    if (num >= 0) return num;
-
-    // negative values sometimes happen:
-    // .e.g working live orders are filled, so no longer live (liveOrders.length - 1)
-    // even if filtering by dates, if order is no longer live, the order simply "disappears"
-    // from the tab, as it no longer exists to be seen.
-    //
-    // Returning 0 covers up the temporary negative count until it reconciles by
-    // being marked as seen.
-    setTabNumsSeen(key);
-    return 0;
+  //we don't want negative 'unseen' values
+  const calcTabNumUnseen = (key, tabMap, tabMapSeen) => {
+    const num = tabMap[key].length - tabMapSeen[key].length;
+    return Math.max(0, num);
   };
 
   const selectTabHandler = (eventKey) => {
-    setTabNumsSeen(eventKey);
+    setTabSeen(eventKey);
     activeTabDispatch({ type: "select", value: eventKey });
   };
+
+  useEffect(() => {
+    console.log("[InfoTabs] useEFfect");
+    setTabMap(
+      buildTabMap(messages.length, liveOrders.length, orderHistories.length)
+    );
+  }, [activeTab, messages.length, liveOrders.length, orderHistories.length]);
 
   /*
    * Tab: Title + Num Unseen
    */
-  const renderTabTitleNew = (key, tabMap, tabNums) => {
-    const titleText = tabMap.get(key).tabTitle;
-    const numUnseen = key === activeTab ? 0 : calcTabNumUnseen(key, tabMap, tabNums);
+  const renderTabTitleNew = (key, tabMap, tabMapSeen) => {
+    const titleText = tabMap[key].tabTitle;
+    const numUnseen =
+      key === activeTab ? 0 : calcTabNumUnseen(key, tabMap, tabMapSeen);
+
+    setTabSeen(activeTab);
 
     const styleNum = {
       color: "red",
@@ -107,6 +116,7 @@ export default function InfoTabs(props) {
   };
 
   if (!props.player) return null;
+  console.log("[InfoTabs] render");
 
   return (
     <Tabs
@@ -116,25 +126,29 @@ export default function InfoTabs(props) {
     >
       <Tab
         eventKey={TabMapKey.MESSAGES}
-        title={renderTabTitleNew(TabMapKey.MESSAGES, tabMap, tabNums)}
+        title={renderTabTitleNew(TabMapKey.MESSAGES, tabMap, tabMapSeen)}
       >
         <Messages messages={messages} />
       </Tab>
       <Tab
         eventKey={TabMapKey.GESTUREDECISIONEVENT}
-        title={renderTabTitleNew(TabMapKey.GESTUREDECISIONEVENT, tabMap, tabNums)}
+        title={renderTabTitleNew(
+          TabMapKey.GESTUREDECISIONEVENT,
+          tabMap,
+          tabMapSeen
+        )}
       >
         <GestureDecisionEvent gestureDecisionEvent={gestureDecisionEvent} />
       </Tab>
       <Tab
         eventKey={TabMapKey.LIVEORDERS}
-        title={renderTabTitleNew(TabMapKey.LIVEORDERS, tabMap, tabNums)}
+        title={renderTabTitleNew(TabMapKey.LIVEORDERS, tabMap, tabMapSeen)}
       >
         <OrderTable type="live" orders={liveOrders} />
       </Tab>
       <Tab
         eventKey={TabMapKey.ORDERHISTORY}
-        title={renderTabTitleNew(TabMapKey.ORDERHISTORY, tabMap, tabNums)}
+        title={renderTabTitleNew(TabMapKey.ORDERHISTORY, tabMap, tabMapSeen)}
       >
         <OrderTable type="histories" orders={orderHistories} />
       </Tab>
