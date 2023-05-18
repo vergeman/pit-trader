@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
 import GestureDecisionEvent from "./GestureDecisionEvent.jsx";
@@ -9,6 +9,17 @@ import { useInfoPanel } from "./InfoPanelContext";
 /*
  * NB: <Tab> subcomponents don't automatically render if extracted to own
  * component - keep all <Tab>'s here.
+ *
+ * Basic design of InfoTabs, we have two objects of tabKey => lengths
+ * * tabMap is up to date lengths
+ * * tabMapSeen is only updated when tab is active
+ * the diff between those counts are what's "unseen"
+ *
+ * Infotabs is memoized to reduce renders, but will re-render on new tab lengths
+ * in useEffect hook, triggered by useInfoPanel context (messages, gestureEvent)
+ * Note messages trigger updates re: live orders (order submitted), and order
+ * history (fills)
+ *
  */
 
 const TabMapKey = {
@@ -18,7 +29,7 @@ const TabMapKey = {
   ORDERHISTORY: "order-history",
 };
 
-export default function InfoTabs(props) {
+const InfoTabs = (props) => {
   const defaultActiveKey = "messages";
   const { activeTab, activeTabDispatch, messages, gestureDecisionEvent } =
     useInfoPanel();
@@ -35,17 +46,6 @@ export default function InfoTabs(props) {
         .sort((a, b) => Number(a.timestamp < b.timestamp))
     : [];
 
-  /*
-   * Tab Value sources
-   *
-   * messages: context
-   * GDE/challenges: these aren't queued or "unseen"
-   * liveOrders: filtered here
-   * orderHistories: filtered here
-   */
-
-  //on selecting active tab, setTabs as seen by setting
-  //tabNums count to equal the tabMap values' length
   const buildTabMap = (numMessages, numLiveOrders, numOrderHistories) => {
     return {
       [TabMapKey.MESSAGES]: { tabTitle: "Messages", length: numMessages },
@@ -155,3 +155,5 @@ export default function InfoTabs(props) {
     </Tabs>
   );
 }
+
+export default memo(InfoTabs);

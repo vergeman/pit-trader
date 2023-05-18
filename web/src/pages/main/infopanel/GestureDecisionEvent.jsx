@@ -1,7 +1,8 @@
+import { useState, useEffect, useCallback } from "react";
 import { GestureDecisionEventState } from "../../../lib/event/";
 
 export default function GestureDecisionEvent(props) {
-  const gestureDecisionEvent = props.gestureDecisionEvent || {};
+  const gestureDecisionEvent = props.gestureDecisionEvent;
   const state = gestureDecisionEvent.gestureDecisionEventState;
   const action = gestureDecisionEvent.action;
   const market_msg =
@@ -9,9 +10,44 @@ export default function GestureDecisionEvent(props) {
       `${GestureDecisionEventState.ACTIVE}-${action}`
     ];
 
-  const countdown = (
-    Math.max(0, gestureDecisionEvent.expiry() - Date.now()) / 1000
-  ).toFixed(2);
+  const calcCountdown = useCallback(() => {
+    return (
+      Math.max(0, gestureDecisionEvent.expiry() - Date.now()) / 1000
+    ).toFixed(2);
+  }, [gestureDecisionEvent]);
+
+  const [countdown, setCountdown] = useState(() => calcCountdown());
+
+  //parent InfoTab component is memoized
+  //but to display a countdown we need to render, so aim to reduce render calls
+  //with setCountdown /setInterval
+  useEffect(() => {
+    console.log("[GestureDecisionEvent] useEffect", state);
+    let interval = null;
+
+    if (
+      [
+        GestureDecisionEventState.ACTIVE,
+        GestureDecisionEventState.NOMATCH,
+      ].includes(state)
+    ) {
+
+      interval = setInterval(() => {
+        const c = calcCountdown();
+        setCountdown(c);
+      }, 150);
+    }
+
+    return () => {
+      console.log("[GestureDecisionEvent] cleanup");
+      clearInterval(interval);
+    };
+  }, [calcCountdown, state]);
+
+
+  /*
+    * RENDER
+    */
 
   //none - empty
   if (state === GestureDecisionEventState.NONE) {
