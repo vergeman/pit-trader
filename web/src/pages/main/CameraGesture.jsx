@@ -20,7 +20,7 @@ export default function CameraGesture(props) {
     () => new GestureBuilder()
   );
   const [gesture, setGesture] = useState(null);
-  const infoPanel = useInfoPanel();
+  const {messagesDispatch} = useInfoPanel();
   const gameContext = useGameContext();
 
   const npcPlayerManager =
@@ -77,7 +77,7 @@ export default function CameraGesture(props) {
     if (gameContext.state === GameState.INIT && gesture !== null) {
       gameContext.setState(GameState.RUN);
     }
-  }, [gesture]);
+  }, [gesture, gameContext, numNPC, props.marketLoop, props.player]);
 
   /*
    * calcGesture (gesture poll)
@@ -103,7 +103,7 @@ export default function CameraGesture(props) {
 
       //send any messages populated in calc this calcGesture() pass
       for (let msg of props.gestureDecision.getNewMessages()) {
-        infoPanel.messagesDispatch(msg);
+        messagesDispatch(msg);
       }
       //NB: local gestureDecision msgQueue (not context)
       props.gestureDecision.resetMessages();
@@ -111,7 +111,7 @@ export default function CameraGesture(props) {
       setGestureData({ ...probsArgMax, gesture, hasHands });
       setGesture(gesture);
     },
-    [classifier, gestureBuilder]
+    [classifier, gestureBuilder, props.gestureDecision, messagesDispatch]
   );
 
   //console.log("[CameraGesture] render", gestureData);
