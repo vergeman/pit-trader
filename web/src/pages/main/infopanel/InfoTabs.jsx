@@ -63,11 +63,14 @@ export default function InfoTabs(props) {
   //tabNums count to equal the tabMap values' length
   const { tabNums, setTabNumsSeen } = useTabNums(activeTab, tabMap);
 
-  const calcTabNum = (key, tabMap, tabNums) => {
+
+  //calcTabNumUnseen() takes diff from payload lengths and tabNums - a snapshot
+  //of lengths when last visited/seen. The difference is the number unseen.
+  const calcTabNumUnseen = (key, tabMap, tabNums) => {
     const num = tabMap.get(key).values.length - tabNums[key];
     if (num >= 0) return num;
 
-    // negative values are possible:
+    // negative values sometimes happen:
     // .e.g working live orders are filled, so no longer live (liveOrders.length - 1)
     // even if filtering by dates, if order is no longer live, the order simply "disappears"
     // from the tab, as it no longer exists to be seen.
@@ -83,19 +86,22 @@ export default function InfoTabs(props) {
     activeTabDispatch({ type: "select", value: eventKey });
   };
 
-  const tabTitleNew = (key, tabMap, tabNums) => {
+  /*
+   * Tab: Title + Num Unseen
+   */
+  const renderTabTitleNew = (key, tabMap, tabNums) => {
     const titleText = tabMap.get(key).tabTitle;
-    const num = key === activeTab ? 0 : calcTabNum(key, tabMap, tabNums);
+    const numUnseen = key === activeTab ? 0 : calcTabNumUnseen(key, tabMap, tabNums);
 
     const styleNum = {
       color: "red",
-      visibility: num ? "visible" : "hidden", //spacing can be distracting
+      visibility: numUnseen ? "visible" : "hidden", //spacing can be distracting
     };
 
     return (
       <span>
         {titleText}
-        {<span style={styleNum}> ({num})</span>}
+        {<span style={styleNum}> ({numUnseen})</span>}
       </span>
     );
   };
@@ -110,25 +116,25 @@ export default function InfoTabs(props) {
     >
       <Tab
         eventKey={TabMapKey.MESSAGES}
-        title={tabTitleNew(TabMapKey.MESSAGES, tabMap, tabNums)}
+        title={renderTabTitleNew(TabMapKey.MESSAGES, tabMap, tabNums)}
       >
         <Messages messages={messages} />
       </Tab>
       <Tab
         eventKey={TabMapKey.GESTUREDECISIONEVENT}
-        title={tabTitleNew(TabMapKey.GESTUREDECISIONEVENT, tabMap, tabNums)}
+        title={renderTabTitleNew(TabMapKey.GESTUREDECISIONEVENT, tabMap, tabNums)}
       >
         <GestureDecisionEvent gestureDecisionEvent={gestureDecisionEvent} />
       </Tab>
       <Tab
         eventKey={TabMapKey.LIVEORDERS}
-        title={tabTitleNew(TabMapKey.LIVEORDERS, tabMap, tabNums)}
+        title={renderTabTitleNew(TabMapKey.LIVEORDERS, tabMap, tabNums)}
       >
         <OrderTable type="live" orders={liveOrders} />
       </Tab>
       <Tab
         eventKey={TabMapKey.ORDERHISTORY}
-        title={tabTitleNew(TabMapKey.ORDERHISTORY, tabMap, tabNums)}
+        title={renderTabTitleNew(TabMapKey.ORDERHISTORY, tabMap, tabNums)}
       >
         <OrderTable type="histories" orders={orderHistories} />
       </Tab>
