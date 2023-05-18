@@ -1,34 +1,39 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
-export default function useSelfieDetection(canvasRef, landmarks) {
+export default function useSelfieDetection(canvasRef) {
   const [selfieSegmentation, setSelfieSegmentation] = useState(null);
 
-  const onSelfieResults = function (results) {
-    const canvasCtx = canvasRef.current.getContext("2d");
+  const onSelfieResults = useCallback(
+    (results) => {
+      if (!canvasRef.current) return;
 
-    canvasCtx.save();
+      const canvasCtx = canvasRef.current.getContext("2d");
 
-    canvasCtx.drawImage(
-      results.image,
-      0,
-      0,
-      canvasRef.current.width,
-      canvasRef.current.height
-    );
+      canvasCtx.save();
 
-    //canvasCtx.globalCompositeOperation = 'destination-in';  //correct - canvas as transparency
-    canvasCtx.globalCompositeOperation = "destination-atop"; //correct - cropped canvas
+      canvasCtx.drawImage(
+        results.image,
+        0,
+        0,
+        canvasRef.current.width,
+        canvasRef.current.height
+      );
 
-    canvasCtx.drawImage(
-      results.segmentationMask,
-      0,
-      0,
-      canvasRef.current.width,
-      canvasRef.current.height
-    );
+      //canvasCtx.globalCompositeOperation = 'destination-in';  //correct - canvas as transparency
+      canvasCtx.globalCompositeOperation = "destination-atop"; //correct - cropped canvas
 
-    canvasCtx.restore();
-  };
+      canvasCtx.drawImage(
+        results.segmentationMask,
+        0,
+        0,
+        canvasRef.current.width,
+        canvasRef.current.height
+      );
+
+      canvasCtx.restore();
+    },
+    [canvasRef]
+  );
 
   useEffect(() => {
     console.log("[selfieDetection] useEffect init");
@@ -45,7 +50,7 @@ export default function useSelfieDetection(canvasRef, landmarks) {
     });
     selfieSegmentation.onResults(onSelfieResults);
     setSelfieSegmentation(selfieSegmentation);
-  }, []);
+  }, [onSelfieResults]);
 
   return selfieSegmentation;
 }

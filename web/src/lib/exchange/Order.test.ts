@@ -40,7 +40,7 @@ describe("Order", () => {
 
   it("creates an internal _id", () => {
     const o1 = new Order("123", OrderType.MARKET, 50, 100);
-    expect(typeof o1.id == "string").toBeTruthy();
+    expect(typeof o1.id === "string").toBeTruthy();
     expect(o1.id.length).toEqual(36);
   });
 
@@ -70,7 +70,6 @@ describe("Order", () => {
     expect(transactionReport.timestamp).toBeGreaterThanOrEqual(tstamp);
   });
   it("initialQty is maintained after transactions", async () => {
-    const tstamp = Date.now();
     await new Promise((res) => setTimeout(res, 10));
     const o1 = new Order("123", OrderType.LIMIT, -50, 50);
     const o2 = new Order("abc", OrderType.MARKET, 25, NaN);

@@ -35,7 +35,7 @@ export const buildGestureDecisionEventParams = (gde: any, price: number) => {
   const action = Math.random() <= 0.5 ? GestureAction.BUY : GestureAction.SELL;
 
   const gesture = {
-    qty: action == GestureAction.BUY ? _qty : -_qty,
+    qty: action === GestureAction.BUY ? _qty : -_qty,
     price: gesturePrice,
     orderType: OrderType.LIMIT,
   };

@@ -5,20 +5,23 @@ import CameraGesture from "./CameraGesture.jsx";
 import { MarketLoop, MatchingEngine, RiskManager } from "../../lib/exchange";
 import { Player, NPCPlayerManager } from "../../lib/player";
 import { GestureDecision } from "../../lib/gesture";
-import { useGameContext, GameState, LoseQuitModal, LevelModal } from "../../components";
+import {
+  useGameContext,
+  GameState,
+  LoseQuitModal,
+  LevelModal,
+} from "../../components";
 import Message from "./infopanel/Message";
 import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
 import { EventManager, EventType, GestureDecisionEvent } from "../../lib/event";
 
-export default function Main(props) {
+export default function Main() {
   const gameContext = useGameContext();
   const { messagesDispatch, gestureDecisionEventDispatch } = useInfoPanel();
 
-  const [riskManager, setRiskManager] = useState(
-    () => new RiskManager(configs)
-  );
-  const [me, setMe] = useState(() => new MatchingEngine());
-  const [npcPlayerManager, setNPCPlayerManager] = useState(
+  const [riskManager] = useState(() => new RiskManager(configs));
+  const [me] = useState(() => new MatchingEngine());
+  const [npcPlayerManager] = useState(
     () =>
       new NPCPlayerManager(me, [
         new Player("npc-A", false, configs),
@@ -28,13 +31,11 @@ export default function Main(props) {
       ])
   );
 
-  const [player, setPlayer] = useState(
-    () => new Player(gameContext.badge, true, configs)
-  );
-  const [marketLoop, setMarketLoop] = useState(
+  const [player] = useState(() => new Player(gameContext.badge, true, configs));
+  const [marketLoop] = useState(
     () => new MarketLoop({ npcPlayerManager, priceSeed: 100 })
   );
-  const [gestureDecision, setGestureDecision] = useState(
+  const [gestureDecision] = useState(
     () =>
       new GestureDecision(
         me,
@@ -46,7 +47,7 @@ export default function Main(props) {
         gameContext.isDebug
       )
   );
-  const [eventManager, setEventManager] = useState(
+  const [eventManager] = useState(
     () => new EventManager(marketLoop, gestureDecision, configs)
   );
 
@@ -66,38 +67,40 @@ export default function Main(props) {
         },
       });
     }
-  }, []);
+  }, [
+    gameContext.isDebug,
+    gestureDecision,
+    marketLoop,
+    npcPlayerManager,
+    player,
+    riskManager,
+  ]);
 
-  //GAMESTATE
-  useEffect(() => {
-    switch (gameContext.state) {
-      case GameState.INIT:
-        //any pre stuff?
-        gameContext.setState(GameState.RUN);
-        break;
-      case GameState.RUN:
-        marketLoop.start();
-        break;
-      case GameState.QUIT:
-      case GameState.LOSE:
-        gestureDecision.enable = false;
-        eventManager.killEvent();
-        marketLoop.stop();
-        break;
-      case GameState.LEVELUP:
-        levelUp();
-      case GameState.STOP:
-        marketLoop.stop();
-        break;
+  //level up
+  //see configs.json for details; level corresponds to array index.
+  const levelUp = useCallback(() => {
+    const levelPnL = player.getConfig().levelPnL.toLocaleString();
 
-      default:
-    }
+    player.incrementLevel();
+    npcPlayerManager.incrementLevel();
+    eventManager.incrementLevel();
+    riskManager.incrementLevel();
 
-    return () => {
-      console.log("[Main.jsx] cleanup");
-      marketLoop.stop();
+    const positionLimit = player.getConfig().positionLimit;
+
+    const limitPnL = player.getConfig().limitPnL.toLocaleString();
+
+    const msg = {
+      type: Message.Notice,
+      value: {
+        msg: `Level ${player.configLevel + 1} achieved! P&L exceeds ${levelPnL}.
+Position limit increased to ${positionLimit}. Max Loss P&L to ${limitPnL}.`,
+      },
     };
-  }, [gameContext.state]);
+
+    console.log("Level Up", player.configLevel, msg);
+    messagesDispatch(msg);
+  }, [eventManager, messagesDispatch, npcPlayerManager, player, riskManager]);
 
   const resetGame = () => {
     //fired on modal
@@ -125,31 +128,45 @@ export default function Main(props) {
     }
   };
 
-  //level up
-  //see configs.json for details; level corresponds to array index.
-  const levelUp = () => {
-    const levelPnL = player.getConfig().levelPnL.toLocaleString();
+  //GAMESTATE
+  useEffect(() => {
+    switch (gameContext.state) {
+      case GameState.INIT:
+        //any pre stuff?
+        gameContext.setState(GameState.RUN);
+        break;
+      case GameState.RUN:
+        marketLoop.start();
+        break;
+      case GameState.QUIT:
+      case GameState.LOSE:
+        gestureDecision.enable = false;
+        eventManager.killEvent();
+        marketLoop.stop();
+        break;
+      case GameState.LEVELUP:
+        levelUp();
+        marketLoop.stop();
+        break;
+      case GameState.STOP:
+        marketLoop.stop();
+        break;
 
-    player.incrementLevel();
-    npcPlayerManager.incrementLevel();
-    eventManager.incrementLevel();
-    riskManager.incrementLevel();
+      default:
+    }
 
-    const positionLimit = player.getConfig().positionLimit;
-
-    const limitPnL = player.getConfig().limitPnL.toLocaleString();
-
-    const msg = {
-      type: Message.Notice,
-      value: {
-        msg: `Level ${player.configLevel + 1} achieved! P&L exceeds ${levelPnL}.
-Position limit increased to ${positionLimit}. Max Loss P&L to ${limitPnL}.`,
-      },
+    return () => {
+      console.log("[Main.jsx] cleanup");
+      marketLoop.stop();
     };
-
-    console.log("Level Up", player.configLevel, msg);
-    messagesDispatch(msg);
-  };
+  }, [
+    gameContext.state,
+    eventManager,
+    gameContext,
+    gestureDecision,
+    marketLoop,
+    levelUp,
+  ]);
 
   console.log("[Main.jsx] render:", gameContext.state);
 

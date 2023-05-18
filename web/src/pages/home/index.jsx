@@ -18,7 +18,7 @@ export default function Home() {
     setBadge(val);
   };
 
-  const [defaultBadge, setDefaultBadge] = useState(defaultBadgeBuilder());
+  const [defaultBadge] = useState(defaultBadgeBuilder());
   const [badge, setBadge] = useState("");
 
   return (
@@ -26,7 +26,7 @@ export default function Home() {
       <img
         id="home-background-image"
         src={`${process.env.PUBLIC_URL}/blog_07-tales-from-the-pits.jpg`}
-        alt="background image pit trading"
+        alt="background pit trading"
       />
       <div className="App-header">
         <h1 id="home-hero-text">PIT TRADER</h1>

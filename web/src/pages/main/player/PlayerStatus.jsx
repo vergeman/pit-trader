@@ -9,6 +9,7 @@ export default function PlayerStatus(props) {
 
   //localStorage highscore update
   useEffect(() => {
+    console.log("[PlayerStatus] useEffect");
     const player_highscore = {
       id: gameContext.badgeGameID,
       name: props.player.name,
@@ -17,7 +18,7 @@ export default function PlayerStatus(props) {
     };
 
     localStorage.setItem(`PT_HIGHSCORE_${player_highscore.id}`, JSON.stringify(player_highscore));
-  }, [props.player.maxPnL]);
+  }, [props.player.maxPnL, props.player.name, gameContext.badgeGameID]);
 
   /*
    * Render

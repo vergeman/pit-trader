@@ -27,6 +27,7 @@ export default function GesturesDecisionDisplay(props) {
         if (gestureDecision.qty < 0) {
           return GestureAction.SELL;
         }
+        break;
 
       default:
         return null;
@@ -36,7 +37,7 @@ export default function GesturesDecisionDisplay(props) {
   const getPrice = (gestureDecision) => {
     if (!gestureDecision) return null;
 
-    if (gestureDecision.action == GestureAction.MARKET) {
+    if (gestureDecision.action === GestureAction.MARKET) {
       return GestureAction.MARKET;
     }
     return gestureDecision.price;
@@ -44,7 +45,7 @@ export default function GesturesDecisionDisplay(props) {
 
   return (
     <>
-      {props.gestureDecision.renderState == RenderState.GESTURE_DECISION && (
+      {props.gestureDecision.renderState === RenderState.GESTURE_DECISION && (
         <GesturesDecision
           renderState={props.gestureDecision.renderState}
           caption="Order Builder"
@@ -54,7 +55,7 @@ export default function GesturesDecisionDisplay(props) {
         />
       )}
 
-      {props.gestureDecision.renderState ==
+      {props.gestureDecision.renderState ===
         RenderState.GESTURE_DECISION_RECORD && (
         <GesturesDecision
           renderState={props.gestureDecision.renderState}
@@ -62,7 +63,7 @@ export default function GesturesDecisionDisplay(props) {
           action={getAction(gestureDecisionRecord)}
           qty={gestureDecisionRecord.qty}
           price={getPrice(gestureDecisionRecord)}
-          actionOnly={getAction(gestureDecisionRecord) == GestureAction.CANCEL}
+          actionOnly={getAction(gestureDecisionRecord) === GestureAction.CANCEL}
         />
       )}
 
@@ -70,7 +71,7 @@ export default function GesturesDecisionDisplay(props) {
        * Gesture Clear (not order)
        * clear and send blank text to avoid confusion of different cancel types to user
        */}
-      {props.gestureDecision.renderState == RenderState.GESTURE_CANCEL && (
+      {props.gestureDecision.renderState === RenderState.GESTURE_CANCEL && (
         <GesturesDecision
           renderState={props.gestureDecision.renderState}
           caption="Order Builder"

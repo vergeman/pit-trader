@@ -1,4 +1,4 @@
-import { memo, useRef, useEffect, useState } from "react";
+import { memo, useRef, useEffect, useState, useCallback } from "react";
 import useCamera from "./useCamera.jsx";
 
 function Camera(props) {
@@ -12,26 +12,25 @@ function Camera(props) {
 
   useCamera(props.isActive, videoRef, controlRef, canvasRef, props.calcGesture);
 
-  const handleResize = (e) => {
-    //TODO: debounce
+  const handleResize = useCallback(() => {
     const aspect_ratio = props.width / props.height;
     const w = videoCanvasRef.current.clientWidth;
     const h = w / aspect_ratio;
     setWidth(w);
     setHeight(h);
-  };
+  }, [props.width, props.height]);
 
   useEffect(() => {
     window.addEventListener("resize", handleResize);
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, []);
+  }, [handleResize]);
 
   console.log("[Camera] render");
 
   return (
-    <div className="video-canvas" ref={videoCanvasRef} onResize={handleResize}>
+    <div className="video-canvas" ref={videoCanvasRef}>
       <div className="input-output">
         <video ref={videoRef} className="input_video"></video>
         <canvas

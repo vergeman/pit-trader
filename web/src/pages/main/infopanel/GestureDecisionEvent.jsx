@@ -1,8 +1,6 @@
 import { GestureDecisionEventState } from "../../../lib/event/";
 
 export default function GestureDecisionEvent(props) {
-  let text = null;
-
   const gestureDecisionEvent = props.gestureDecisionEvent || {};
   const state = gestureDecisionEvent.gestureDecisionEventState;
   const action = gestureDecisionEvent.action;
@@ -11,9 +9,9 @@ export default function GestureDecisionEvent(props) {
       `${GestureDecisionEventState.ACTIVE}-${action}`
     ];
 
-  const countdown = (Math.max(0, gestureDecisionEvent.expiry() - Date.now()) / 1000).toFixed(2);
-
-
+  const countdown = (
+    Math.max(0, gestureDecisionEvent.expiry() - Date.now()) / 1000
+  ).toFixed(2);
 
   //none - empty
   if (state === GestureDecisionEventState.NONE) {
@@ -24,8 +22,16 @@ export default function GestureDecisionEvent(props) {
   return (
     <div className="d-flex mt-3">
       <div className="px-3">
-        <a href = "https://ttdevelopers.github.io/EverySingleAvatar.html" target="_blank">
-          <img id="gestureDecisionEvent-tab-image" src={gestureDecisionEvent.img} alt={gestureDecisionEvent.id} />
+        <a
+          href="https://ttdevelopers.github.io/EverySingleAvatar.html"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <img
+            id="gestureDecisionEvent-tab-image"
+            src={gestureDecisionEvent.img}
+            alt={gestureDecisionEvent.id}
+          />
         </a>
       </div>
 
@@ -55,12 +61,8 @@ export default function GestureDecisionEvent(props) {
           </div>
         )}
 
-        <div>
-          Expires: { countdown }
-        </div>
+        <div>Expires: {countdown}</div>
       </div>
-
-
     </div>
   );
 }

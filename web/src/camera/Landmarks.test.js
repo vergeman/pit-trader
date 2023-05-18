@@ -315,9 +315,8 @@ describe("Derived landmark methods", () => {
   });
 
   it ("get() returns combined landmark components", () => {
-    const landmarks = build(landmarks_3_offer);
     const l = new Landmarks();
     const get = l.get();
     expect(get && get.length).toBe(126 + 12 + 2 + 10);
-  })
+  });
 });

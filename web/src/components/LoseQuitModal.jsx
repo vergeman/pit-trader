@@ -33,7 +33,7 @@ export default function LoseQuitModal(props) {
     .splice(0, NUM_HIGHSCORES);
 
   const title =
-    gameContext.state == GameState.LOSE ? "You Lose!" : "Peak Scores";
+    gameContext.state === GameState.LOSE ? "You Lose!" : "Peak Scores";
 
   return (
     <div className="modal show">
@@ -47,7 +47,7 @@ export default function LoseQuitModal(props) {
             <table className="table text-dark caption-top">
               <caption>
                 {/* LOSE */}
-                {gameContext.state == GameState.LOSE && (
+                {gameContext.state === GameState.LOSE && (
                   <span>
                     P&L:{" "}
                     {props.player.lostPnL &&
@@ -60,7 +60,7 @@ export default function LoseQuitModal(props) {
                 )}
 
                 {/* QUIT */}
-                {gameContext.state == GameState.QUIT && (
+                {gameContext.state === GameState.QUIT && (
                   <span>
                     P&L:{" "}
                     {props.player.maxPnL &&

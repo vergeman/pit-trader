@@ -1,36 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export default function useFaceDetection(canvasRef, landmarks) {
   const [faceDetection, setFaceDetection] = useState(null);
 
-  const onFaceResults = function (results) {
-    // Draw the overlays.
-    const canvasElement = canvasRef.current;
-    const canvasCtx = canvasRef.current.getContext("2d");
+  const onFaceResults = useCallback(
+    (results) => {
+      //RESET Landmarks
+      landmarks.resetFaceLandmarks();
 
-    //RESET
-    landmarks.resetFaceLandmarks();
-
-    if (results.detections.length > 0) {
-      /*
-      window.drawRectangle(canvasCtx, results.detections[0].boundingBox, {
-        color: "blue",
-        lineWidth: 4,
-        fillColor: "#00000000",
-      });
-
-      //NB: landmarks order for facedetection in FaceKeypoint order left/right
-      //seem inverted - selfie mode maybe?
-      window.drawLandmarks(canvasCtx, results.detections[0].landmarks, {
-        color: "red",
-        radius: 5,
-      });
-      */
-
-      //detections[ {landmarks: [ {x,y,z} ] } ]
-      landmarks.setFaceLandmarks(results.detections[0].landmarks);
-    }
-  };
+      if (results.detections.length > 0) {
+        //detections[ {landmarks: [ {x,y,z} ] } ]
+        landmarks.setFaceLandmarks(results.detections[0].landmarks);
+      }
+    },
+    [landmarks]
+  );
 
   useEffect(() => {
     console.log("[FaceDetection] useEffect init");
@@ -48,7 +32,7 @@ export default function useFaceDetection(canvasRef, landmarks) {
     });
     _faceDetection.onResults(onFaceResults);
     setFaceDetection(_faceDetection);
-  }, [landmarks]);
+  }, [onFaceResults]);
 
   return faceDetection;
 }

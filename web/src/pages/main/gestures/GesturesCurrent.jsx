@@ -2,8 +2,8 @@
 export default function GesturesCurrent(props) {
   if (!props.isDebug) return null;
 
-  const type = props.gesture.type == "Action" ? "" : props.gesture.type;
-  const action = props.gesture.action == "Garbage" ? "" : props.gesture.action;
+  const type = props.gesture.type === "Action" ? "" : props.gesture.type;
+  const action = props.gesture.action === "Garbage" ? "" : props.gesture.action;
 
   return (
     <table

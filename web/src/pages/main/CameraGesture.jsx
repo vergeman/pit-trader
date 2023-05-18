@@ -15,12 +15,12 @@ export default function CameraGesture(props) {
   /* default bootstrap size */
   const defaultCameraDims = { width: 636, height: 477 };
   const [gestureData, setGestureData] = useState(null);
-  const [classifier, setClassifier] = useState(() => new Classifier());
-  const [gestureBuilder, setGestureBuilder] = useState(
+  const [classifier] = useState(() => new Classifier());
+  const [gestureBuilder] = useState(
     () => new GestureBuilder()
   );
   const [gesture, setGesture] = useState(null);
-  const infoPanel = useInfoPanel();
+  const {messagesDispatch} = useInfoPanel();
   const gameContext = useGameContext();
 
   const npcPlayerManager =
@@ -77,7 +77,7 @@ export default function CameraGesture(props) {
     if (gameContext.state === GameState.INIT && gesture !== null) {
       gameContext.setState(GameState.RUN);
     }
-  }, [gesture]);
+  }, [gesture, gameContext, numNPC, props.marketLoop, props.player]);
 
   /*
    * calcGesture (gesture poll)
@@ -93,7 +93,7 @@ export default function CameraGesture(props) {
       const probsArgMax = await classifier.classify(landmarks);
       const probMax = probsArgMax.probs[probsArgMax.argMax];
       const gesture = gestureBuilder.build(probsArgMax.argMax, probMax);
-      const hasHands = landmarks.handLandmarks.some((l) => l != -1);
+      const hasHands = landmarks.handLandmarks.some((l) => l !== -1);
 
       //calculates gesture and if order is built
       props.gestureDecision.calc(gesture);
@@ -103,7 +103,7 @@ export default function CameraGesture(props) {
 
       //send any messages populated in calc this calcGesture() pass
       for (let msg of props.gestureDecision.getNewMessages()) {
-        infoPanel.messagesDispatch(msg);
+        messagesDispatch(msg);
       }
       //NB: local gestureDecision msgQueue (not context)
       props.gestureDecision.resetMessages();
@@ -111,11 +111,11 @@ export default function CameraGesture(props) {
       setGestureData({ ...probsArgMax, gesture, hasHands });
       setGesture(gesture);
     },
-    [classifier, gestureBuilder]
+    [classifier, gestureBuilder, props.gestureDecision, messagesDispatch]
   );
 
   //console.log("[CameraGesture] render", gestureData);
-  const isReady = gameContext.state != GameState.INIT && gesture !== null;
+  const isReady = gameContext.state !== GameState.INIT && gesture !== null;
 
   return (
     <>

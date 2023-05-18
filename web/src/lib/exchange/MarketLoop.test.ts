@@ -94,7 +94,6 @@ describe("MarketLoop", () => {
       });
       ml.init();
 
-      const midpoints = [];
       for (let player of ordered) {
         expect(
           player.orders.every(
@@ -222,11 +221,10 @@ describe("MarketLoop", () => {
       const bid = marketLoop.me.bids.peek();
       const offer = marketLoop.me.offers.peek();
 
-      if (bid && offer) {
-        expect(price).toBeGreaterThan(bid.price);
-        expect(price).toBeLessThan(offer.price);
-        expect(price).toBe((bid.price + offer.price) / 2);
-      }
+      expect(price).toBeGreaterThan(bid?.price ?? priceSeed);
+      expect(price).toBeLessThan(offer?.price ?? priceSeed);
+      expect(price).toBe(((bid?.price ?? priceSeed) + (offer?.price ?? priceSeed)) / 2);
+
     });
 
     it("getPrice() returns midpoint of live markets when nothing traded", () => {

@@ -203,7 +203,7 @@ export class Player {
       }
     }
 
-    if (fillQty == 0) return null;
+    if (fillQty === 0) return null;
 
     const avgPrice = Math.abs(pnl / fillQty);
     return Number(avgPrice.toFixed(2));
@@ -225,7 +225,7 @@ export class Player {
 
       // fake a transaction to display a Cancelled Order
       // (we show completes and partials, it's strange not to show a cancel)
-      if (order.status == OrderStatus.CANCELLED) {
+      if (order.status === OrderStatus.CANCELLED) {
         const t: Transaction = {
           id: order.id,
           orderType: order.orderType,
@@ -280,7 +280,7 @@ export class Player {
   //otherwise allow infinite position as long as both sides net avoid sum position detection
   workingPosition(abs: boolean = false): number {
     return this.orders
-      .filter((order) => order.status == OrderStatus.LIVE)
+      .filter((order) => order.status === OrderStatus.LIVE)
       .reduce((acc: number, order: Order) => {
         const qty = abs ? Math.abs(order.qty) : order.qty;
         return acc + qty;

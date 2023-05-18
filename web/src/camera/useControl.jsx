@@ -22,7 +22,7 @@ export default function useControl(controlRef) {
 
     setControl(control);
     setFPSControl(fpsControl);
-  }, [controlRef]);
+  }, [controlRef, gameContext.isDebug]);
 
   return { control, fpsControl };
 }
