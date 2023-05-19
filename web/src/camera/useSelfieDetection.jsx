@@ -19,8 +19,16 @@ export default function useSelfieDetection(canvasRef) {
         canvasRef.current.height
       );
 
-      //canvasCtx.globalCompositeOperation = 'destination-in';  //correct - canvas as transparency
-      canvasCtx.globalCompositeOperation = "destination-atop"; //correct - cropped canvas
+
+      //destination-in: canvas as transparency
+      //chrome slight bleed on bottom
+      //firefox good
+      canvasCtx.globalCompositeOperation = 'destination-in';
+
+      //destination-atop: cropped canvas
+      //chrome has red silhouette issues
+      //firefox good
+      //canvasCtx.globalCompositeOperation = "destination-atop";
 
       canvasCtx.drawImage(
         results.segmentationMask,
