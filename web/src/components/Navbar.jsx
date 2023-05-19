@@ -10,6 +10,12 @@ export default function NavbarComponent() {
   const currentPath = location.pathname;
 
   const inheritStyle = { color: "inherit", textDecoration: "inherit" };
+
+  const leaveClickHandler = (e) => {
+    e.preventDefault();
+    gameContext.setState(GameState.QUIT);
+  };
+
   return (
     <Navbar bg="dark" variant="dark" fixed="top">
       <Container>
@@ -29,7 +35,7 @@ export default function NavbarComponent() {
             <a
               className="nav-link"
               href="/#"
-              onClick={() => gameContext.setState(GameState.QUIT)}
+              onClick={leaveClickHandler}
             >
               Leave
             </a>

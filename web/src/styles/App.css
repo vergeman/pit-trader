@@ -350,9 +350,3 @@ table#gestureDecision.table {
   max-height: 8rem;
   filter: drop-shadow(4px 4px 8px #666666);
 }
-
-@media (min-width: 768px) {
-  #gestureDecisionEvent-tab-image {
-    max-height: 12rem;
-  }
-}
