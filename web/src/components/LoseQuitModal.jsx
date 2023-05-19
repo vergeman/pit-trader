@@ -24,6 +24,8 @@ export default function LoseQuitModal(props) {
 
   console.log("[LoseQuitModal] render", props.price, props.player);
 
+  if (!show) return null;
+
   const player_highscores = Object.keys(window.localStorage)
     .filter((key) => key.startsWith("PT_HIGHSCORE"))
     .map((key) => JSON.parse(localStorage.getItem(key)));

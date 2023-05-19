@@ -16,11 +16,13 @@ export class MatchingEngine {
   private _bids: Heap<Order>;
   private _offers: Heap<Order>;
   private _transactionReports: TransactionReport[];
+  private _gridCache: {[price: number]: Grid}
 
   constructor() {
     this._bids = new Heap<Order>(this.maxComparator);
     this._offers = new Heap<Order>(this.minComparator);
     this._transactionReports = [];
+    this._gridCache = {};
   }
 
   get bids() {
@@ -64,8 +66,10 @@ export class MatchingEngine {
     };
   }
 
-  calcGrid(price: Number, numGridPoints: Number = 19): Grid {
+  calcGrid(price: number, numGridPoints: Number = 19): Grid {
     //numGridPoints: 20 points e.g. range of 99 - 101
+    if (this._gridCache[price]) return this._gridCache[price];
+
     const midPoint = Number(price.toFixed(1));
     const start = midPoint + .9;
     let strLen = String(midPoint).length; //NB: length of digits
@@ -84,7 +88,9 @@ export class MatchingEngine {
       gridNumMinLen = Math.min(strLen, gridNumMinLen);
     }
 
-    return { gridNumMinLen, gridNumMaxLen, prices };
+    const _grid = { gridNumMinLen, gridNumMaxLen, prices };
+    this._gridCache[price] = _grid;
+    return _grid;
   }
 
   addBid(order: Order) {

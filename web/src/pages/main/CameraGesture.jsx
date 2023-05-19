@@ -10,6 +10,17 @@ import useEventManager from "./useEventManager";
 import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
 import InfoTabs from "./infopanel/InfoTabs.jsx";
 
+/*
+ * CameraGestures.jsx
+ * Main "game loop" component driven by calcGesture().
+ *
+ * A gesture is extracted from each camera frame; serves as a typical game loop
+ * which re-renders the prop classes passed to GesturePanel, PlayerStatus,
+ * MatchingEngineView.
+ *
+ * Most child elements do require subtle re-renderings (price changes, message
+ * triggers, gamestate, etc.)
+ */
 export default function CameraGesture(props) {
   /* default bootstrap size */
   const defaultCameraDims = { width: 636, height: 477 };
