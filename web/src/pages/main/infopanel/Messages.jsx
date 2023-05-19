@@ -1,7 +1,11 @@
 /* News / Alert/ Challenge / Message Component */
+import { useState } from "react";
 import Table from "react-bootstrap/Table";
 import Message from "./Message";
+
 export default function Messages(props) {
+  const [endTimeRender, setEndTimeRender] = useState(false);
+
   return (
     <Table bordered size="sm" className="w-100">
       <thead>
@@ -12,12 +16,21 @@ export default function Messages(props) {
       </thead>
       <tbody>
         {props.messages.map((message, i) => {
-
           // highlight while event is active
           let colorClass = "";
-          if (message.type === Message.NewsEvent &&
-            message.endTime > Date.now()) {
+          if (
+            message.type === Message.NewsEvent &&
+            message.endTime > Date.now()
+          ) {
             colorClass = "text-warning";
+
+            //InfoTabs is memoized, need to internally trigger this component to
+            //re-render when 'active' Message event (NewsEvent) expires to reset
+            //colorClass indicator.
+            setTimeout(
+              () => setEndTimeRender(!endTimeRender),
+              message.endTime - Date.now() + 1
+            );
           }
 
           //position limits error
@@ -33,8 +46,7 @@ export default function Messages(props) {
           return (
             <tr className={colorClass} key={`message-${i}`}>
               <td className="td-time">
-                {message.time &&
-                  message.time.toLocaleTimeString()}
+                {message.time && message.time.toLocaleTimeString()}
               </td>
               <td className="w-100">{message.text}</td>
             </tr>
