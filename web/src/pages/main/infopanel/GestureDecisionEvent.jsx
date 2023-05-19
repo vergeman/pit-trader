@@ -1,7 +1,22 @@
+import { useState, useEffect, useCallback } from "react";
 import { GestureDecisionEventState } from "../../../lib/event/";
 
+/*
+ * GDE has an interval only for ACTIVE / NOMATCH GDE states.
+ * LOST / WIN there is no timer (match window over) managed in this component
+ * NONE: nothing running
+ *
+ * interval is managed internally in order to re-render countdown every
+ * setInterval.
+ *
+ * useEffect has state dependency, so a state change to NOMATCH will actually
+ * clear and then restart the interval where it left off.
+ * For expired (WIN/LOSE) or NONE states, interval will not be triggered,
+ * useEffect has no effect.
+ */
+
 export default function GestureDecisionEvent(props) {
-  const gestureDecisionEvent = props.gestureDecisionEvent || {};
+  const gestureDecisionEvent = props.gestureDecisionEvent;
   const state = gestureDecisionEvent.gestureDecisionEventState;
   const action = gestureDecisionEvent.action;
   const market_msg =
@@ -9,9 +24,45 @@ export default function GestureDecisionEvent(props) {
       `${GestureDecisionEventState.ACTIVE}-${action}`
     ];
 
-  const countdown = (
-    Math.max(0, gestureDecisionEvent.expiry() - Date.now()) / 1000
-  ).toFixed(2);
+  const calcCountdown = useCallback(() => {
+    return (
+      Math.max(0, gestureDecisionEvent.expiry() - Date.now()) / 1000
+    ).toFixed(2);
+  }, [gestureDecisionEvent]);
+
+  const [countdown, setCountdown] = useState(() => calcCountdown());
+
+  //parent InfoTab component is memoized
+  //
+  //but to display a countdown we do need to consistently re-render
+  //so aim to reduce render calls using setCountdown /setInterval
+  useEffect(() => {
+    console.log("[GestureDecisionEvent] useEffect", state);
+    let interval = null;
+
+    if (
+      [
+        GestureDecisionEventState.ACTIVE,
+        GestureDecisionEventState.NOMATCH,
+      ].includes(state)
+    ) {
+
+      interval = setInterval(() => {
+        const c = calcCountdown();
+        setCountdown(c);
+      }, 150);
+    }
+
+    return () => {
+      console.log("[GestureDecisionEvent] cleanup");
+      clearInterval(interval);
+    };
+  }, [calcCountdown, state]);
+
+
+  /*
+    * RENDER
+    */
 
   //none - empty
   if (state === GestureDecisionEventState.NONE) {
