@@ -149,6 +149,7 @@ const InfoTabs = (props) => {
       <Tab
         eventKey={TabMapKey.ORDERHISTORY}
         title={renderTabTitleNew(TabMapKey.ORDERHISTORY, tabMap, tabMapSeen)}
+        tabClassName="d-none d-md-block"
       >
         <OrderTable type="histories" orders={orderHistories} />
       </Tab>
