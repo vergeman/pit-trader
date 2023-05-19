@@ -20,6 +20,11 @@ tr.me-isLast > td.me-price {
   font-weight: 700;
 
 }
+.me table.table-sm > :not(caption) > * > * {
+  @media (min-width: 768px) {
+    padding: 0.1rem 0.15rem;
+  }
+}
 
 //deprecated
 .me-bid {
