@@ -20,11 +20,13 @@
 
 export default class EMABuffer {
 
+  public probBuffer: number[][];
+
   constructor() {
     this.probBuffer = []; //{0: [], 1: [], 2: []...}
   }
 
-  EMACalc(mArray, mRange) {
+  EMACalc(mArray : number[], mRange: number): number[] {
     const k = 2 / (mRange + 1);
     // first item is just the same as the first item in the input
     let emaArray = [mArray[0]];
@@ -35,7 +37,7 @@ export default class EMABuffer {
     return emaArray;
   }
 
-  calc(probs, N=5) {
+  calc(probs: number[], N:number=5): number[] {
 
     for (let i = 0; i < probs.length; i++) {
 

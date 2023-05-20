@@ -1,4 +1,4 @@
-import EMABuffer from "./EMABuffer.js";
+import EMABuffer from "./EMABuffer.ts";
 
 export default class Classifier {
   constructor() {
