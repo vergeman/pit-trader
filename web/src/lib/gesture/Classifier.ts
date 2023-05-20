@@ -1,21 +1,32 @@
-import EMABuffer from "./EMABuffer.ts";
+import Landmarks from "../../camera/Landmarks";
+import EMABuffer from "./EMABuffer";
+declare global {
+  interface Window {
+    ort: any; //loaded by onnx library
+  }
+}
 
 export default class Classifier {
+  public session: any;
+  public emaBuffer: EMABuffer;
+  public garbage_idx: number | null;
+  public model_index: number;
+  public MODELS: string[];
+
   constructor() {
     this.session = null;
     this.emaBuffer = new EMABuffer();
     this.garbage_idx = null;
-    console.log("CLASSIFIER");
-
     this.model_index = 1;
     this.MODELS = [
       "./model_onnx_NN.onnx",
       "./model_onnx_LogisticRegression.onnx",
       "./model_onnx_SVC.onnx",
     ];
+    console.log("CLASSIFIER");
   }
 
-  async load(garbage_idx) {
+  async load(garbage_idx: number) {
     this.garbage_idx = garbage_idx;
 
     //set running model
@@ -28,12 +39,19 @@ export default class Classifier {
     } catch (e) {}
   }
 
-  argMax(array) {
-    return [].reduce.call(array, (m, c, i, arr) => (c > arr[m] ? i : m), 0);
+  //NB: m is the accumulator - which in this case stashes the 'm' = max index
+  //(if a larger number 'c' is encountered, that index 'i' becomes m)
+  argMax(array: string[]): number | unknown {
+    return [].reduce.call(
+      array,
+      (m: unknown, c: number, i: number, arr: number[]) =>
+        c > arr[m as number] ? i : m,
+      0
+    );
   }
 
-  softmax(arr) {
-    return arr.map(function (value, index) {
+  softmax(arr: number[]) {
+    return arr.map(function (value) {
       const val = Math.exp(value);
 
       const sum = arr
@@ -48,14 +66,18 @@ export default class Classifier {
     });
   }
 
-  checkGarbageThreshold(probs, arg, threshold) {
-    if (probs.every((prob) => parseFloat(prob) < threshold)) {
+  checkGarbageThreshold(
+    probs: string[],
+    arg: number | unknown,
+    threshold: number
+  ): number | unknown | null {
+    if (probs.every((prob: string) => parseFloat(prob) < threshold)) {
       return this.garbage_idx;
     }
     return arg;
   }
 
-  async classify(landmarks) {
+  async classify(landmarks: Landmarks) {
     try {
       const data = Float64Array.from(landmarks.get());
 
@@ -63,7 +85,7 @@ export default class Classifier {
       let results;
       let output;
       let probs;
-      let argMax;
+      let argMax: number | unknown | null;
 
       // toggle models in load()
       if (this.model_index === 0) {
@@ -80,10 +102,10 @@ export default class Classifier {
         //expectations;
         live = new window.ort.Tensor("float64", data, [1, data.length]);
         results = await this.session.run({ X: live });
-        output = results.probabilities.data;
+        output = results.probabilities.data as number[];
 
         //scikit already applies softmax in pred_proba
-        probs = Array.from(output).map((p) => p.toFixed(4));
+        probs = Array.from(output).map((p: number) => p.toFixed(4));
         argMax = this.argMax(probs);
 
         //lower tolerance
