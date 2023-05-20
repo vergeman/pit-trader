@@ -18,12 +18,9 @@ function App() {
             <Route
               path="/pit"
               element={
-
                 <InfoPanelProvider>
                   <Main />
                 </InfoPanelProvider>
-
-
               }
             />
           </Routes>
