@@ -1,5 +1,6 @@
 /*
  * Issue with recognition delay
+ * Currently deprecated, but would be used in Classifier.ts
  *
  * Any kind of windowing or smoothing tends to invoke a noticeable latency with
  * gesture recognition - root is the FPS is just too slow with hands.
