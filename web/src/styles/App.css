@@ -350,3 +350,13 @@ table#gestureDecision.table {
   max-height: 8rem;
   filter: drop-shadow(4px 4px 8px #666666);
 }
+
+/* Level Modal
+ * have reward image fill modal without expanding modal
+ * while keeping responsive (max-height vh)
+ */
+#level-modal img {
+  width: 100vw;
+  max-height: 66vh;
+  object-fit: cover;
+}

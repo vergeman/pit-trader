@@ -53,7 +53,7 @@ export default function LevelModal(props) {
 
   return (
     <div className="modal show">
-      <Modal show={show} onHide={close}>
+      <Modal id="level-modal" show={show} onHide={close}>
         <Modal.Header>
           <Modal.Title className="text-dark w-100 text-center">
             {/* sync with message; index vs level */}
@@ -64,7 +64,6 @@ export default function LevelModal(props) {
         <Modal.Body className="p-0">
           <div className="d-flex justify-content-center">
             <img
-              style={{ width: "100%", height: "100%" }}
               src={reward.image}
               alt={reward.text}
             />
