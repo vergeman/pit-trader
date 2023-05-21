@@ -19,7 +19,7 @@ function App() {
               path="/pit"
               element={
                 <InfoPanelProvider>
-                  <Main />
+                  <Main cameraEnabled={true} />
                 </InfoPanelProvider>
               }
             />

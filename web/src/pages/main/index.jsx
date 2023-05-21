@@ -15,7 +15,7 @@ import Message from "./infopanel/Message";
 import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
 import { EventManager, EventType, GestureDecisionEvent } from "../../lib/event";
 
-export default function Main() {
+export default function Main(props) {
   const gameContext = useGameContext();
   const { messagesDispatch, gestureDecisionEventDispatch } = useInfoPanel();
 
@@ -186,6 +186,7 @@ Position limit increased to ${positionLimit}. Max Loss P&L to ${limitPnL}.`,
 
       {/* CameraGesture set to camera poll */}
       <CameraGesture
+        cameraEnabled={props.cameraEnabled}
         me={me}
         player={player}
         npcPlayerManager={npcPlayerManager}
