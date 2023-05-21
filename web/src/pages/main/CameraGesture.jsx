@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Spinner } from "react-bootstrap";
-import { useGameContext, GameState } from "../../components/";
+import { useGameContext, GameState } from "../../components/GameContext";
 import { Camera } from "../../camera";
 import { Classifier, GestureBuilder } from "../../lib/gesture";
 import GesturesPanel from "./gestures/GesturesPanel.jsx";

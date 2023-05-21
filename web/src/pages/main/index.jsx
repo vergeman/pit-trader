@@ -5,12 +5,9 @@ import CameraGesture from "./CameraGesture.jsx";
 import { MarketLoop, MatchingEngine, RiskManager } from "../../lib/exchange";
 import { Player, NPCPlayerManager } from "../../lib/player";
 import { GestureDecision } from "../../lib/gesture";
-import {
-  useGameContext,
-  GameState,
-  LoseQuitModal,
-  LevelModal,
-} from "../../components";
+import { useGameContext, GameState } from "../../components/GameContext.jsx";
+import { LoseQuitModal, LevelModal } from "../../components";
+
 import Message from "./infopanel/Message";
 import { useInfoPanel } from "./infopanel/InfoPanelContext.jsx";
 import { EventManager, EventType, GestureDecisionEvent } from "../../lib/event";
