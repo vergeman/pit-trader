@@ -168,7 +168,7 @@ export default function CameraGesture(props) {
               />
             </div>
 
-            <div className="gestures">
+            <div className="gestures" data-testid="gestures">
               <GesturesPanel
                 gestureData={gestureData}
                 gesture={gesture}
