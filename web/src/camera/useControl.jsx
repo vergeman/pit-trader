@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useGameContext } from "../components";
+import { useGameContext } from "../components/GameContext";
 
 export default function useControl(controlRef) {
   const gameContext = useGameContext();

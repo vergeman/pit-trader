@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Spinner } from "react-bootstrap";
-import { useGameContext, GameState } from "../../components/GameContext.jsx";
+import { useGameContext, GameState } from "../../components/GameContext";
 import { Camera } from "../../camera";
 import { Classifier, GestureBuilder } from "../../lib/gesture";
 import GesturesPanel from "./gestures/GesturesPanel.jsx";
@@ -123,14 +123,15 @@ export default function CameraGesture(props) {
   );
 
   //console.log("[CameraGesture] render", gestureData);
-  const isReady = gameContext.state !== GameState.INIT && gesture !== null;
+  const isReady = !props.cameraEnabled ||
+        (gameContext.state !== GameState.INIT && gesture !== null);
 
   return (
     <>
       <div className="d-grid main-wrapper">
         <div className="camera text-center">
           <Camera
-            isActive={true}
+            isActive={props.cameraEnabled}
             isVisible={isReady}
             width={defaultCameraDims.width}
             height={defaultCameraDims.height}
@@ -167,7 +168,7 @@ export default function CameraGesture(props) {
               />
             </div>
 
-            <div className="gestures">
+            <div className="gestures" data-testid="gestures">
               <GesturesPanel
                 gestureData={gestureData}
                 gesture={gesture}

@@ -30,7 +30,7 @@ function Camera(props) {
   console.log("[Camera] render");
 
   return (
-    <div className="video-canvas" ref={videoCanvasRef}>
+    <div className="video-canvas" ref={videoCanvasRef} data-testid="video-canvas">
       <div className="input-output">
         <video ref={videoRef} className="input_video"></video>
         <canvas

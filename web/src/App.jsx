@@ -3,7 +3,7 @@ import "./styles/App.css";
 import { Routes, Route } from "react-router-dom";
 import Main from "./pages/main/index.jsx";
 import Home from "./pages/home/index.jsx";
-import Navbar from "./components/Navbar.jsx";
+import { Navbar } from "./components";
 import { GameContextProvider } from "./components/GameContext.jsx";
 import InfoPanelProvider from "./pages/main/infopanel/InfoPanelContext.jsx";
 
@@ -18,12 +18,9 @@ function App() {
             <Route
               path="/pit"
               element={
-
                 <InfoPanelProvider>
-                  <Main />
+                  <Main cameraEnabled={true} />
                 </InfoPanelProvider>
-
-
               }
             />
           </Routes>
