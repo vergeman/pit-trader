@@ -15,7 +15,7 @@ to recognize open outcry trading pit gestures.
 docker-compose up
 # visit http://localhost:3000/
 
-# tests, lint
+# docker env for tests, lint
 ./docker_run_web.sh
 
 npm test
@@ -28,7 +28,8 @@ npm run lint
 
 * MediaPipe enables webcam and outputs landmark data points (hands, face.)
 
-* There is an implicit "Game Loop" driven by each webcam frame.
+* There is an implicit "Game Loop" driven by each webcam frame that triggers a
+  re-render of most components.
 
 * Classifier takes webcam data and infers a class label that maps to a gesture
   value.
@@ -40,29 +41,29 @@ npm run lint
 
 #### Gesture Recognition
 
-* A [`Gesture`](src/lib/gesture/Gesture.ts) is a recognized 'snapshot' of
-  MediaPipe landmark data from the [`Classifier`](src/lib/gesture/Classifier.ts).
+* A [`Gesture.ts`](src/lib/gesture/Gesture.ts) is a recognized 'snapshot' of
+  MediaPipe landmark data from the [`Classifier.ts`](src/lib/gesture/Classifier.ts).
   * Model is currently Logistic Regression, with a manually tuned probability
     threshold of `0.41`.
-* [`CameraGesture.jsx`](src/pages/main/CameraGesture.jsx): `calcGesture()`
+* [`CameraGesture.jsx#L24`](src/pages/main/CameraGesture.jsx#L24): `calcGesture()`
   function drives the recognition, and is called each webcam frame.
 * Gestures are recognized using a mini state machine, using a small timer
   before locking the input and moving to the next component input.
     * [`NumberSM.ts`](src/lib/gesture/NumberSM.ts): recognize numbers
     * [`ActionSM.ts`](src/lib/gesture/ActionSM.ts): recognizes supplemental gestures (Cancel, Market);
-* A [`GestureDecision`](src/lib/gesture/GestureDecision.ts) determines if both
+* A [`GestureDecision.ts`](src/lib/gesture/GestureDecision.ts) determines if both
   component gestures (a gesture quantity and gesture price) have been set. If
   they're valid, this triggers creation or update (e.g. cancel) of an Order.
 
 #### Gameplay
 
-* [`MarketLoop`](src/lib/exchange) cycles between
-  [`NPCPlayers`](src/lib/player/NPCPlayerManager.ts) who randomly improve bids
-  or offers to induce execution.
+* [`MarketLoop.ts`](src/lib/exchange/MarketLoop.ts) cycles between
+  [NPCs](src/lib/player/NPCPlayerManager.ts) who randomly improve bids or offers
+  to induce execution.
 * [`Events`](src/lib/event) are randomly triggered that force a gesture matching challenge, or
   update parameters (add players, induce action, etc.)
-  * Typically displayed (messages) on the [`InfoPanel`](src/pages/main/infopanel).
-* [`MatchingEngine`](src/lib/exchange/MatchingEngine.ts) matches player [`Orders`](src/lib/exchange/Order.ts) and execution.
+  * These are indicated by messages displayed on the [`InfoPanel`](src/pages/main/infopanel).
+* [`MatchingEngine.ts`](src/lib/exchange/MatchingEngine.ts) matches player [`Orders.ts`](src/lib/exchange/Order.ts) and execution.
 * Increased profit increases levels that enables more risk and reward.
 
 ### Contents

@@ -19,7 +19,7 @@ docker logs pit-trader_pytorch-minimal-notebook_1
 
 ```
 
-Jupyter URL should approximate: http://127.0.0.1:8888/lab?token=<token>
+Jupyter URL should approximate: http://127.0.0.1:8888/lab?token={token}
 
 ## Contents
 
@@ -77,5 +77,5 @@ Some other approaches and links worth considering:
 * Dynamic Time Warping
   * https://www.sicara.fr/blog-technique/sign-language-recognition-using-mediapipe
   * https://github.com/gabguerin/Sign-Language-Recognition--MediaPipe-DTW/
-* [Standardize Video FPS] https://medium.com/@kyip_7564/a-process-to-standardize-video-fps-for-machine-learning-93a936abdbc
+* [Standardize Video FPS](https://medium.com/@kyip_7564/a-process-to-standardize-video-fps-for-machine-learning-93a936abdbc)
 * HMM
