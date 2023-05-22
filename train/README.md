@@ -63,15 +63,15 @@ row in a file a snapshot of the gesture.
 * For no data (e.g. no hands in screen), values default to -1.
 
 
-| landmarks                |   size * dims      |
-| -----                    |   -----            |
-| left_hand                | 21 * 3 = 63        |
-| right_hand               | 21 * 3 = 63        |
-| face                     |  6 * 2 = 12        |
-| left_palm                |      1 =  1        |
-| right_palm               |      1 =  1        |
-| left_fingers             |      5 = 5         |
-| right_fingers            |      5 = 5         |
+| landmarks     | size * dims |
+|---------------|-------------|
+| left_hand     | 21 * 3 = 63 |
+| right_hand    | 21 * 3 = 63 |
+| face          | 6 * 2 = 12  |
+| left_palm     | 1 =  1      |
+| right_palm    | 1 =  1      |
+| left_fingers  | 5 = 5       |
+| right_fingers | 5 = 5       |
 
 
 ##### Meta.py
