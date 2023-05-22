@@ -31,7 +31,7 @@ export default function InstructionModalContainer(props) {
               <div>
                 Detailed Instructions and images courtesy of the{" "}
                 <a
-                  href="https://tradepractices.files.wordpress.com/2012/07/commodity-and-futures-handsignals.pdf"
+                  href="/commodity-and-futures-handsignals.pdf"
                   target="_blank"
                   rel="noreferrer"
                 >
