@@ -11,14 +11,13 @@ way to profit!
 https://github.com/vergeman/pit-trader/assets/797301/a143da63-f54f-4e13-b51e-55a2a8c9ba51
 
 
-
 ## Project Layout
 
 * [`/train`](train): Training data webcam capture and labeling using opencv +
   mediapipe.
 
 * [`/model`](model): notebook(s) ingest training data for NN, Logistic
-  Regression and SVC classifiers.
+  Regression and SVC classifiers. Current deploy uses Logistic Regression.
 
 * [`/web`](web): React-based game. Uses onnyx runtime and mediapipe for live
   inference.
@@ -41,7 +40,7 @@ https://github.com/vergeman/pit-trader/assets/797301/a143da63-f54f-4e13-b51e-55a
 # Models: get access url for notebooks via jupyter server logs
 #
 
-docker logs docker logs pit-trader_pytorch-minimal-notebook_1
+docker logs pit-trader_pytorch-minimal-notebook_1
 
 
 #
