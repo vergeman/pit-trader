@@ -1,0 +1,65 @@
+/*
+ * Lose Modal
+ */
+
+.losemodal-score {
+  text-align: right;
+}
+@media (min-width: 768px) {
+  .losemodal-score {
+    padding-right: 6.25rem;
+    text-align: right;
+  }
+}
+
+.isLive {
+  background: #fff3cd;
+}
+
+/*
+ * Instruction Modal
+ */
+.instructions img.fit {
+  object-fit: "contain";
+  height: 7rem;
+}
+
+@media (min-width: 768px) {
+  .instructions img.fit {
+    height: 10rem;
+  }
+}
+
+/* Instruction Modal Navbar
+ * style overrides when modal parent happens to be
+ * .navbar-nav
+ */
+
+.instructions .nav-pills .nav-link.active,
+.instructions .nav-pills .show > .nav-link {
+  color: var(--bs-nav-pills-link-active-color);
+  background-color: var(--bs-nav-pills-link-active-bg);
+}
+
+.instructions .navbar-nav {
+  --bs-nav-link-padding-x: 1rem;
+  --bs-nav-link-padding-y: 0.5rem;
+  --bs-nav-link-font-weight: ;
+  --bs-nav-link-color: var(--bs-link-color);
+  --bs-nav-link-hover-color: var(--bs-nav-link-hover-color);
+  --bs-nav-link-disabled-color: #6c757d;
+  list-style: none;
+}
+
+
+/*
+ * Level Modal
+ * have reward image fill modal without expanding modal
+ * while keeping responsive (max-height vh)
+ */
+
+#level-modal img {
+  width: 100vw;
+  max-height: 66vh;
+  object-fit: cover;
+}
