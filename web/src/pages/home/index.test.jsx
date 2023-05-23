@@ -2,7 +2,7 @@ import { BrowserRouter } from "react-router-dom";
 import { render, screen, fireEvent } from "@testing-library/react";
 import Home from "./index";
 
-describe("Home page ", () => {
+describe("Home page", () => {
   it("renders title", () => {
     const TITLE = "PIT TRADER";
 

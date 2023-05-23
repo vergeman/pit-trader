@@ -4,7 +4,7 @@ import Navbar from "./Navbar.jsx";
 import { GameContext, GameState } from "./GameContext.jsx";
 
 
-describe("Navbar ", () => {
+describe("Navbar", () => {
   const removeHost = (e) => e.href.replace("http://localhost", "");
 
   //links on home page
@@ -59,7 +59,7 @@ describe("Navbar ", () => {
   });
 
 
-  it("leave modal link triggers modal ", async () => {
+  it("leave modal link triggers modal", async () => {
     //NB: for 'Leave' there is no actual Modal component defined in Navbar
     //(unlike InstructionModalContainer) so modal isn't triggered, only the
     //click handler, leaveClickHandler, which calls gameContext.setState
@@ -69,7 +69,7 @@ describe("Navbar ", () => {
 
     const setStateMock = jest.fn();
 
-    const r = render(
+    render(
       <MemoryRouter initialEntries={['/pit?badge=abcd']}>
       <GameContext.Provider value={{setState: setStateMock}}>
           <Navbar />
