@@ -1,0 +1,23 @@
+name: web-build-test
+run-name: Frontend Web; Build Container, Run Tests
+on:
+  push:
+    branches: [ master ]
+jobs:
+  web-container-npm-run-build-test:
+    runs-on: ubuntu-latest
+    container:
+      image: node:18.12.1
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Install dependencies and build
+        working-directory: ./web
+        run: |
+          npm ci
+          npm run build
+
+      - name: Run Test (nowatch)
+        working-directory: ./web
+        run: npm run test:nowatch

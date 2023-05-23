@@ -1,8 +1,10 @@
-# webcam_trainer_lstm.py
+# webcam_classifier_scikit.py
 #
 # scratchpad media pipe demo
 # https://google.github.io/mediapipe/solutions/hands.html
 #
+import sys
+sys.path.append('..')
 from Landmark import Landmark
 from KeyClassMapping import KeyClassMapping
 from Meta import Meta
@@ -11,34 +13,12 @@ import mediapipe as mp
 import csv
 import torch
 import numpy as np
-from collections import deque
-softmax = torch.nn.Softmax(dim=1)
-
-# Define LSTM model
-class LSTMModel(torch.nn.Module):
-    def __init__(self, input_size, hidden_size, num_classes):
-        super(LSTMModel, self).__init__()
-        self.hidden_size = hidden_size
-        self.lstm = torch.nn.LSTM(input_size, hidden_size, batch_first=True)
-        self.fc = torch.nn.Linear(hidden_size, num_classes)
-
-    def forward(self, x):
-        # Set initial hidden and cell states
-        h0 = torch.zeros(1, x.size(0), self.hidden_size).to(x.device)
-        c0 = torch.zeros(1, x.size(0), self.hidden_size).to(x.device)
-
-        # Forward propagate LSTM
-        out, _ = self.lstm(x, (h0.detach(), c0.detach()))
-
-        # Decode the hidden state of the last time step
-        out = self.fc(out[:, -1, :])
-        return out
+import joblib
+#from collections import deque
 
 
-model = torch.load("./model_LSTM.pt")
-model.float()
-model.eval()
-
+model = joblib.load('model_scikit_LogisticRegression.pkl')
+#model = joblib.load('model_scikit_SVC.pkl')
 
 def output_csv_all(data_path, keyMapVal, landmark):
 
@@ -96,11 +76,6 @@ with mp_hands.Hands(
         mp_face_detection.FaceDetection(
             model_selection=0, min_detection_confidence=0.5) as face_detection:
 
-    MAXCOUNT = 30
-    count = 0
-    inputs = deque(np.zeros((MAXCOUNT, 150)), MAXCOUNT)
-    numInput = 0
-    filePrefix = None
     while cap.isOpened():
         success, image = cap.read()
         if not success:
@@ -194,36 +169,40 @@ with mp_hands.Hands(
 
         landmark.setFaceDetections(resultsFace.detections)
 
-        # Gesture -> Class
-        # garbage           → 0
-        # qty +3, price +5  → 1
-        # qty -7, price -3  → 2
-        # qty 2             → 3
-        # qty 20            → 4
-        # price 1           → 5
-        # price 4           → 6
+        #
+        # Inference
+        #
 
-        # to model
         input = landmark.to_row()
-        inputs.append(input)
 
-        landmarks = torch.tensor(np.array(inputs)).float().unsqueeze(0)
+        landmarks = np.array([input], dtype=np.float64)
 
-        out = model(landmarks)
+        out = model.predict(landmarks)
+        pred_prob = model.predict_proba(landmarks)
+        max_prob = list(pred_prob[0]).index( max(pred_prob[0])), max(pred_prob[0])
 
-        prob = softmax(out.data)     #setup for threshold or 'garbage' class
-        _, klass = torch.max(out.data, 1)
-        print("KLASS", prob[0][klass].item(), klass)
+        # NB: Anecdata of low-quality, blurring gestures
+        # blurred probs are high 50 -> 80, but generally 60's
+        #
+        # 0 - Cancel
+        # 1 - Garbage
+        # 28 - Qty +5
+        # 32 - Qty +9
+        # 47 - Qty -4
+        # 52 - Qty -9
+        #
+        # 2  - Market
+        # 21 - Price -8
+        # 11 - Price +8
+        # 31 - Qty   +8
+        # 13 - Price -0
+        # 51 - Qty   -8
+        # 60 - Qty  -80
 
-        # if (prob[0][klass].item() <= .999 or klass.item() == 0):
-        #     print("Garbage", prob[0][klass].item(), klass)
-        # else:
-        #     print("KLASS", prob[0][klass].item(), klass)
-        # output_csv_all(data_path, filePrefix, landmark)
-
-        # noticeable "delay", e.g. gesture classification "residual" as input
-        # window maintains gesture history and then over time becomes less relevant
-        # until "garbage"
+        # height is strong toggle for price -> qty recognition
+        # z - index also for price; prob is too low close to body, increases away
+        # makes sense but it's not robust
+        print("KLASS", out, max_prob, len(pred_prob[0]))
 
         if cv2.waitKey(5) & 0xFF == 27:
             break

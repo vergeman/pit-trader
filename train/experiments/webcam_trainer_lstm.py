@@ -3,6 +3,8 @@
 # scratchpad media pipe demo
 # https://google.github.io/mediapipe/solutions/hands.html
 #
+import sys
+sys.path.append('..')
 from Landmark import Landmark
 from KeyClassMapping import KeyClassMapping
 from Meta import Meta

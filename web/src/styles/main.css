@@ -1,0 +1,85 @@
+/*
+ * Main Tables
+ */
+
+#main .table > :not(caption) > * > * {
+  box-shadow: none;
+}
+#main .table caption {
+  padding: 0.25rem;
+}
+#main .table th {
+  font-weight: 400;
+  color: #8c8c8c;
+}
+#main .table {
+  background-color: #0a0a0a;
+  border-color: #2e2e2e;
+}
+
+/*
+ *  Input Video
+ */
+
+.control-panel {
+  position: absolute;
+  top: 2rem;
+  width: 100px;
+  background: black;
+  opacity: 0.65;
+  color: white;
+}
+.input_video {
+  display: none;
+}
+
+/*
+ * Matching Engine
+ */
+
+tr.me-isLast > td.me-price {
+  background: #333;
+  color: #fff;
+  font-weight: 700;
+}
+
+.me-price {
+  color: #f7f7f7;
+}
+.me-order {
+  color: orange;
+}
+
+/*
+ * Player Status
+ * profile view / score
+ */
+
+.player-status {
+  background: #013a58;
+  color: #dedede;
+  border: 1px solid #465c67;
+}
+.player-status-label {
+  color: #969696;
+}
+.player-status-value {
+  color: #dedede;
+}
+
+/*
+ * InfoPanel
+ */
+
+/* time table column */
+.td-time {
+  width: 0.1%;
+  min-width: 100px;
+  white-space: nowrap;
+}
+
+/* GestureDecisionEvent Tab */
+#gestureDecisionEvent-tab-image {
+  max-height: 8rem;
+  filter: drop-shadow(4px 4px 8px #666666);
+}

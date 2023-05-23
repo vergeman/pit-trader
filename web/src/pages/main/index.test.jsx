@@ -1,5 +1,6 @@
 import { MemoryRouter } from "react-router-dom";
 import { render, screen } from "@testing-library/react";
+import Main from "./index";
 
 jest.mock("./infopanel/InfoPanelContext", () => {
   return {
@@ -60,7 +61,7 @@ window.Camera = function () {
   };
 };
 
-import Main from "./index";
+
 
 describe("Main page /pit", () => {
   it("starts marketLoop", () => {

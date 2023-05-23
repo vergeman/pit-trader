@@ -1,67 +1,90 @@
 # Pit Trader
 
+[![.github/workflows/build-test.yml](https://github.com/vergeman/pit-trader/actions/workflows/build-test.yml/badge.svg)](https://github.com/vergeman/pit-trader/actions/workflows/build-test.yml)
 
-## Tentative Architecture
+Welcome to the Pit.
 
-* `/train`: Data Capture using opencv + mediapipe, generate labeled
-  training data from webcam, and possibly other images.
-
-* `/model`: notebook(s) ingests labeled data, classifies the gestures,
-  build a model.
-
-* `/app`: Deployed onnyx.js with model, use mediapipe + react for live
-  inference and maybe game layer.
+Make your fortune in the open outcry pits. Learn the hand signals and scalp your
+way to profit!
 
 
-## Docker Related Setup
-
-#### Docker Setup
-
-* Ensure `docker-compose.yml`: webcam mapped at `/dev/video0` for training in
-  `pytorch-minimal-notebook` container.
-* Assumes [docker group with
-privileges](https://docs.docker.com/engine/install/linux-postinstall/) - need
-`/dev/video0`*
-
-#### X windows + Camera Setup
-
-* see `docker-compose.yml` and `docker_run.sh`
-* To "receive" GUI: `xhost +local:docker` on host
-* `docker exec` necessary to pass `DISPLAY` env variable
-* sudo needed to access `dev/video0` webcam
-* need to bind mount `/tmp/.X11-unix`
+https://github.com/vergeman/pit-trader/assets/797301/a143da63-f54f-4e13-b51e-55a2a8c9ba51
 
 
-## Media Pipe Notes
 
-#### Hand Landmarks
+## Project Layout
 
-Source: https://github.com/google/mediapipe/blob/master/mediapipe/python/solutions/hands.py
+* [`/train`](train): Training data webcam capture and labeling using opencv +
+  mediapipe.
 
-* Coordinates are normalized, relative to size of window
-* example to get pixel position: `hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP].x * image_width`
+* [`/model`](model): notebook(s) ingest training data for NN, Logistic
+  Regression and SVC classifiers.
 
+* [`/web`](web): React-based game. Uses onnyx runtime and mediapipe for live
+  inference.
 
-#### Changing Capture Dimensions
-
-Capture Dims
-`ffmpeg -f video4linux2 -list_formats all -i /dev/video0`
-YUYV 4:2:2 : 640x480 160x120 320x180 320x240 424x240 640x360 640x480
-Motion-JPEG : 848x480 960x540 1280x720
-
-To enable motion jpeg and larger window below keep at default for now (640 x 480)
-
-```
-
-fourcc = cv2.VideoWriter_fourcc(*'MJPG')
-cap.set(cv2.CAP_PROP_FOURCC, fourcc)
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
-
-# default 640x480
-print("WIDTH", cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-print("HEIGHT", cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-
-```
 
 ----
+
+## Docker Dev Notes
+
+### Quickstart Dev
+
+1. Clone this repository
+2. `docker-compose up`
+3. Pit Trader game: `http://localhost:3000`
+4. Training and model environments:
+
+```
+
+#
+# Models: get access url for notebooks via jupyter server logs
+#
+
+docker logs docker logs pit-trader_pytorch-minimal-notebook_1
+
+
+#
+# Train: Python env
+#
+
+./docker_run.sh
+python train/webcam_trainer.py
+
+
+#
+# Frontend Game Env
+#
+./docker_run_web.sh
+npm test
+npm run lint
+(etc)
+
+```
+
+
+#### Dependent Images:
+
+`pytorch-minimal-notebook`:`
+  * jupyter/minimal-notebook:notebook-6.4.12
+  * python related packages: conda, pytorch, opencv (cv2), mediapipe
+
+`web`:
+  * node:18.12.1
+
+#### X windows + Camera Setup in Docker
+
+These are taken care of in `docker-compose.yml`, `docker_run.sh`, but are noted
+here:
+
+* To "receive" GUI run: `xhost +local:docker` on host before entering docker
+  environment.
+* `docker exec` necessary to pass `DISPLAY` env variable
+* Need to bind mount `/tmp/.X11-unix`
+
+
+##### `/dev/video0`
+* `user:root` needed to access `dev/video0` webcam and [docker group with
+privileges](https://docs.docker.com/engine/install/linux-postinstall/)
+* Ensure `docker-compose.yml`: webcam mapped at `/dev/video0` for training in
+  `pytorch-minimal-notebook` container.

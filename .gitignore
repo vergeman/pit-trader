@@ -1,6 +1,6 @@
 .ipynb_checkpoints/
 scratch/*
-!scratch/.gitkeep
+static-demo/*
 __pycache__/
 *.bkup
 model_*.onnx
