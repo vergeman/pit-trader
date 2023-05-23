@@ -8,7 +8,7 @@ Make your fortune in the open outcry pits. Learn the hand signals and scalp your
 way to profit!
 
 
-https://github.com/vergeman/pit-trader/assets/797301/c1a06b22-fb9f-41cc-b01f-94d09fd82b0a
+https://github.com/vergeman/pit-trader/assets/797301/a143da63-f54f-4e13-b51e-55a2a8c9ba51
 
 
 
