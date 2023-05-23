@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "react-bootstrap";
+import useGameContext from "../../components/GameContext";
 
 export default function Home() {
+  const gameContext = useGameContext();
+
   const defaultBadgeBuilder = () => {
     const badge = [];
     const iters = Math.ceil(Math.random()) + 3; //3 or 4
@@ -16,6 +19,7 @@ export default function Home() {
   const changeBadgeInputHandler = (e) => {
     const val = e.target.value.toUpperCase();
     setBadge(val);
+    gameContext.setBadge(val);
   };
 
   const [defaultBadge] = useState(defaultBadgeBuilder());
