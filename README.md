@@ -1,5 +1,7 @@
 # Pit Trader
 
+[![.github/workflows/build-test.yml](https://github.com/vergeman/pit-trader/actions/workflows/build-test.yml/badge.svg)](https://github.com/vergeman/pit-trader/actions/workflows/build-test.yml)
+
 Welcome to the Pit.
 
 Make your fortune in the open outcry pits. Learn the hand signals and scalp your
