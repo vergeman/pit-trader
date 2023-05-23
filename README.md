@@ -7,7 +7,9 @@ Welcome to the Pit.
 Make your fortune in the open outcry pits. Learn the hand signals and scalp your
 way to profit!
 
-![](intro.gif)
+
+https://github.com/vergeman/pit-trader/assets/797301/c1a06b22-fb9f-41cc-b01f-94d09fd82b0a
+
 
 
 ## Project Layout
