@@ -1,10 +1,10 @@
-name: build-test
-run-name: Build in Container, Run Test
+name: web-build-test
+run-name: Frontend Web; Build Container, Run Tests
 on:
   push:
-    branches: [ topic/README-clean ]
+    branches: [ master ]
 jobs:
-  container-npm-run-build:
+  web-container-npm-run-build-test:
     runs-on: ubuntu-latest
     container:
       image: node:18.12.1
