@@ -2,7 +2,7 @@ import { MemoryRouter } from "react-router-dom";
 import { render, screen } from "@testing-library/react";
 import Main from "./index";
 
-qjest.mock("./infopanel/InfoPanelContext", () => {
+jest.mock("./infopanel/InfoPanelContext", () => {
   return {
     useInfoPanel: () => {
       return {
