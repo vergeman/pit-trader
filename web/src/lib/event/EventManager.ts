@@ -128,8 +128,9 @@ export class EventManager {
   }
 
   killEvent() {
-    if (!this.event) return false;
     console.log("[EventManager] KillEvent", this.event)
+    this.marketLoop.stop();
+    if (!this.event) return false;
     this.event.end();
     this.event.clearTimeouts();
     this.event.cleanup();

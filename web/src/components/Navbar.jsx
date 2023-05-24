@@ -11,6 +11,11 @@ export default function NavbarComponent() {
 
   const inheritStyle = { color: "inherit", textDecoration: "inherit" };
 
+  //stop marketLoop, but don't trigger modal
+  const exitClickHandler = () => {
+    gameContext.setState(GameState.STOP);
+  };
+
   const leaveClickHandler = (e) => {
     e.preventDefault();
     gameContext.setState(GameState.QUIT);
@@ -20,7 +25,7 @@ export default function NavbarComponent() {
     <Navbar bg="dark" variant="dark" fixed="top">
       <Container>
         <Navbar.Brand>
-          <Link id="nav-home-logo" style={inheritStyle} to="/">
+          <Link id="nav-home-logo" style={inheritStyle} to="/" onClick={exitClickHandler}>
             PIT TRADER
           </Link>
         </Navbar.Brand>

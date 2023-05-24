@@ -146,6 +146,8 @@ Position limit increased to ${positionLimit}. Max Loss P&L to ${limitPnL}.`,
         marketLoop.stop();
         break;
       case GameState.STOP:
+        gestureDecision.enable = false;
+        eventManager.killEvent();
         marketLoop.stop();
         break;
 
@@ -154,6 +156,7 @@ Position limit increased to ${positionLimit}. Max Loss P&L to ${limitPnL}.`,
 
     return () => {
       console.log("[Main.jsx] cleanup");
+      eventManager.killEvent();
       marketLoop.stop();
     };
   }, [
