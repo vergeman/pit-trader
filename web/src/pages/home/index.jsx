@@ -26,7 +26,12 @@ export default function Home() {
   //NB: defaultBadge is placeholder, but initial value is blank
   const [defaultBadge] = useState(defaultBadgeBuilder());
   const [badge, setBadge] = useState("");
-  useEffect(() => gameContext.setBadge(defaultBadge), [defaultBadge, gameContext]);
+
+  useEffect(() => {
+    if (gameContext ) {
+      gameContext.setBadge(defaultBadge);
+    }
+  }, [defaultBadge, gameContext]);
 
   return (
     <div>
