@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import useGameContext from "../../components/GameContext";
@@ -13,17 +13,20 @@ export default function Home() {
       const charCode = Math.floor(Math.random() * 26 + 97); //0-25 + 97 (a)
       badge.push(String.fromCharCode(charCode).toUpperCase());
     }
+
     return badge.join("");
   };
 
   const changeBadgeInputHandler = (e) => {
     const val = e.target.value.toUpperCase();
+    gameContext.setBadge(defaultBadge);
     setBadge(val);
-    gameContext.setBadge(val);
   };
 
+  //NB: defaultBadge is placeholder, but initial value is blank
   const [defaultBadge] = useState(defaultBadgeBuilder());
   const [badge, setBadge] = useState("");
+  useEffect(() => gameContext.setBadge(defaultBadge), [defaultBadge, gameContext]);
 
   return (
     <div>
