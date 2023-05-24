@@ -9,7 +9,7 @@ way to profit!
 
 [Pit Trader](https://www.thepittrader.com/)
 
-https://github.com/vergeman/pit-trader/assets/797301/a143da63-f54f-4e13-b51e-55a2a8c9ba51
+https://github.com/vergeman/pit-trader/assets/797301/1442c6b6-cebf-496a-a12a-63a4024f8bb7
 
 
 ## Project Layout
