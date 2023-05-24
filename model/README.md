@@ -5,6 +5,8 @@
 Models are set to operate within docker environment using a running Jupyter
 server.
 
+Logistic Regression is current model used by game.
+
 NB: Jupyter server will start, but logs may be displaced by the connected front
 end node game. Query the container logs separately to get the jupyter URL with
 access token.

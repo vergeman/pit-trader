@@ -47,6 +47,17 @@ export default function InstructionModalContainer(props) {
                   Turntable.fm
                 </a>
               </div>
+              <div>
+                Project Source Code at{" "}
+                <a
+                  href="https://www.github.com/vergeman/pit-trader"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Github
+                </a>
+              </div>
+
             </div>
           </Modal.Body>
         </Modal>

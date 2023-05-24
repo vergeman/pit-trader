@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { Container, Nav, Navbar } from "react-bootstrap";
 import { Instructions, InstructionModalContainer } from "./instructions";
 import { useGameContext, GameState } from "./GameContext.jsx";
@@ -20,9 +19,9 @@ export default function NavbarComponent() {
     <Navbar bg="dark" variant="dark" fixed="top">
       <Container>
         <Navbar.Brand>
-          <Link id="nav-home-logo" style={inheritStyle} to="/">
+          <a id="nav-home-logo" style={inheritStyle} href="/">
             PIT TRADER
-          </Link>
+          </a>
         </Navbar.Brand>
 
         {/* Links */}
