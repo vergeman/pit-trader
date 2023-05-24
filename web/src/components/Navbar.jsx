@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { Container, Nav, Navbar } from "react-bootstrap";
 import { Instructions, InstructionModalContainer } from "./instructions";
 import { useGameContext, GameState } from "./GameContext.jsx";
@@ -11,11 +10,6 @@ export default function NavbarComponent() {
 
   const inheritStyle = { color: "inherit", textDecoration: "inherit" };
 
-  //stop marketLoop, but don't trigger modal
-  const exitClickHandler = () => {
-    gameContext.setState(GameState.STOP);
-  };
-
   const leaveClickHandler = (e) => {
     e.preventDefault();
     gameContext.setState(GameState.QUIT);
@@ -25,9 +19,9 @@ export default function NavbarComponent() {
     <Navbar bg="dark" variant="dark" fixed="top">
       <Container>
         <Navbar.Brand>
-          <Link id="nav-home-logo" style={inheritStyle} to="/" onClick={exitClickHandler}>
+          <a id="nav-home-logo" style={inheritStyle} href="/">
             PIT TRADER
-          </Link>
+          </a>
         </Navbar.Brand>
 
         {/* Links */}
