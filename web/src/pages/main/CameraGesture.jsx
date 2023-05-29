@@ -148,6 +148,9 @@ export default function CameraGesture(props) {
             />
             <div className="mt-3 fs-2 align-self-center">Loading</div>
             <div className="align-self-center text-center vw-100">
+              Designed for Desktop Browser
+            </div>
+            <div className="align-self-center text-center vw-100">
               Please ensure your camera is enabled (required)
             </div>
           </div>
