@@ -134,9 +134,11 @@ export class EventManager {
     this.event.end();
     this.event.clearTimeouts();
     this.event.cleanup();
+    //do want to trigger a panel change before event dies
     if (this.event instanceof GestureDecisionEvent) {
       this.event.gestureDecisionEventState = GestureDecisionEventState.NONE;
     }
+    this.event = null;
   }
 }
 
