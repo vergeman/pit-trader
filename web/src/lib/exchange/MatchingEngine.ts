@@ -126,6 +126,9 @@ export class MatchingEngine {
     }
 
     //and then earliest submission FIFO
+    if (a.timestamp === b.timestamp)
+      return 0;
+
     return a.timestamp < b.timestamp ? -1 : 1;
   }
 
@@ -140,6 +143,9 @@ export class MatchingEngine {
     }
 
     //and then earliest submission FIFO
+    if (a.timestamp === b.timestamp)
+      return 0;
+
     return a.timestamp < b.timestamp ? -1 : 1;
   }
 
