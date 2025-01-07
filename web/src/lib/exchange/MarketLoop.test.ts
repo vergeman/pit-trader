@@ -6,7 +6,7 @@ import { MarketLoop } from "./MarketLoop";
 import configs from "../../config/Configs";
 
 describe("MarketLoop", () => {
-  it("startLoop() calls run() which takes a duration of numPlayers * maxTurnDelay", async () => {
+  it("startLoop() calls run() which calls turn with a duration of between [minTurnDelay, 4*maxTurnDelay] * numPlayers", async () => {
     const me = new MatchingEngine();
     const initPlayers = [
       new Player("test1", false, configs),
@@ -17,22 +17,32 @@ describe("MarketLoop", () => {
     const ml = new MarketLoop({ npcPlayerManager, priceSeed: 100, qtySeed: 4 });
     ml.init();
 
-    const maxTurnDelay = 20;
+    const MINTURNDELAY = 10;
+    const MAXTURNDELAY = 20;
     ml.turn = jest.fn(() => {}) as jest.Mock;
 
+    //reduce overheaed
+    ml.npcPlayerManager.deletePlayer = jest.fn(() => {}) as jest.Mock;
+    ml.replenishAll = jest.fn(() => {}) as jest.Mock;
+
     const start = Date.now();
-    await ml.run(10, maxTurnDelay);
+    await ml.run(MINTURNDELAY, MAXTURNDELAY);
     const end = Date.now();
 
+    // ensure each turn is called
     const runCount = (ml.turn as jest.Mock).mock.calls.length;
     expect(runCount).toBe(npcPlayerManager.numPlayers);
 
-    //also test less than some arbitrary noise
     expect(end - start).toBeGreaterThan(
-      maxTurnDelay * npcPlayerManager.numPlayers
+      MINTURNDELAY * npcPlayerManager.numPlayers
     );
+
+    // NB: not a great test since run() has we can't guarantee overhead timing
+    //
+    // But we should still verify some degree of timeliness - more of a tripwire
+    // than test.
     expect(end - start).toBeLessThan(
-      (maxTurnDelay + 10) * npcPlayerManager.numPlayers
+      4 * MAXTURNDELAY * npcPlayerManager.numPlayers
     );
   });
 
@@ -58,7 +68,11 @@ describe("MarketLoop", () => {
   describe("init()", () => {
     it("init() populates respective players orders in player's and matching engine queues", () => {
       const me = new MatchingEngine();
-      const ordered = [new Player("a", false, configs), new Player("b", false, configs), new Player("c", false, configs)];
+      const ordered = [
+        new Player("a", false, configs),
+        new Player("b", false, configs),
+        new Player("c", false, configs),
+      ];
       const npcPlayerManager = new NPCPlayerManager(me, ordered);
       const ml = new MarketLoop({
         npcPlayerManager,
@@ -84,7 +98,11 @@ describe("MarketLoop", () => {
 
     it("init() creates list of players and with submitted bid/offer orders between midpoint price and qtySeed limits", () => {
       const me = new MatchingEngine();
-      const ordered = [new Player("a", false, configs), new Player("b", false, configs), new Player("c", false, configs)];
+      const ordered = [
+        new Player("a", false, configs),
+        new Player("b", false, configs),
+        new Player("c", false, configs),
+      ];
       const qtySeed = 4;
       const npcPlayerManager = new NPCPlayerManager(me, ordered);
       const ml = new MarketLoop({
@@ -208,7 +226,11 @@ describe("MarketLoop", () => {
     it("getPrice() returns midpoint based on seed (nothing traded)", () => {
       const priceSeed = 100;
       const me = new MatchingEngine();
-      const players = [new Player("a", false, configs), new Player("b", false, configs), new Player("c", false, configs)];
+      const players = [
+        new Player("a", false, configs),
+        new Player("b", false, configs),
+        new Player("c", false, configs),
+      ];
       const npcPlayerManager = new NPCPlayerManager(me, players);
       const marketLoop = new MarketLoop({
         npcPlayerManager,
@@ -223,8 +245,9 @@ describe("MarketLoop", () => {
 
       expect(price).toBeGreaterThan(bid?.price ?? priceSeed);
       expect(price).toBeLessThan(offer?.price ?? priceSeed);
-      expect(price).toBe(((bid?.price ?? priceSeed) + (offer?.price ?? priceSeed)) / 2);
-
+      expect(price).toBe(
+        ((bid?.price ?? priceSeed) + (offer?.price ?? priceSeed)) / 2
+      );
     });
 
     it("getPrice() returns midpoint of live markets when nothing traded", () => {
@@ -249,7 +272,11 @@ describe("MarketLoop", () => {
     it("getPrice() returns last trade for subsequent bid/offer", () => {
       const priceSeed = 100;
       const me = new MatchingEngine();
-      const players = [new Player("a", false, configs), new Player("b", false, configs), new Player("c", false, configs)];
+      const players = [
+        new Player("a", false, configs),
+        new Player("b", false, configs),
+        new Player("c", false, configs),
+      ];
       const npcPlayerManager = new NPCPlayerManager(me, players);
       const marketLoop = new MarketLoop({
         npcPlayerManager,
