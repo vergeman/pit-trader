@@ -1,13 +1,14 @@
 name: web-build-test
-run-name: Frontend Web; Build Container, Run Tests
+run-name: "Frontend Web; Build Container, Run Tests"
 on:
   push:
     branches: [ master ]
+  workflow_dispatch:
 jobs:
   web-container-npm-run-build-test:
     runs-on: ubuntu-latest
     container:
-      image: node:18.12.1
+      image: node:22.12.0
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
