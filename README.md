@@ -58,8 +58,6 @@ python train/webcam_trainer.py
 ./docker_run_web.sh
 npm test
 npm run lint
-(etc)
-
 ```
 
 

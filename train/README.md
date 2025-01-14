@@ -4,8 +4,19 @@
 `webcam_trainer.py` writes `.csv` training output to `/data`.
 
 Enables webcam stream with [MediaPipe
-library](https://google.github.io/mediapipe/solutions/solutions.html). Keypress
-captures labeled gesture data.
+library](https://ai.google.dev/edge/mediapipe/solutions/guide).
+
+For clarification, this project uses the [Hand Landmarker Python Solutions
+Library](https://github.com/google-ai-edge/mediapipe/tree/master/mediapipe/python/solutions).
+
+This achieves the same _goal_ as the [Gesture Recognition vision
+_Task_](https://ai.google.dev/edge/mediapipe/solutions/vision/gesture_recognizer),
+but instead of pre-built gestures from google's model, we train our own
+open-outcry recognition model.
+
+Once streaming is active, form the gesture, and with your other hand, execute
+the respective keypress combination to capture (and label) the hand landmark
+data. Yes, it requires some coordination the first couple of times.
 
 ### Quickstart Run
 
@@ -16,7 +27,6 @@ xhost +local      # enables webcam operation via docker
 
 # in docker env
 python train/webcam_trainer.py
-
 ```
 
 #### KeyPress
