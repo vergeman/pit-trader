@@ -1,5 +1,32 @@
 # Models
 
+## Models Recognition
+
+| Model                                                        | Accuracy |
+|--------------------------------------------------------------|----------|
+| [Logistic Regression](./scikit_models.ipynb)                 | .984     |
+| [2 Layer NN](./classifier.ipynb)                             | .9774    |
+| [SVC (Support Vector Classification)](./scikit_models.ipynb) | .955     |
+| [LSTM](./LSTM.ipynb)                                         | .8966    |
+
+
+The scikit models were intended for use as a baseline comparison, but turned out
+the scikit Logistic Regression offered the best "accuracy", with especially
+quick training time, and small model file size. Details are visible in each
+respective notebook's output.
+
+There is over-fitting in all the models (accuracy >= 90% ) - which isn't
+necessarily terrible for this problem domain:
+
+Gameplay is better served when gesture recognition is repeatable and exact.
+Frustration occurs when gestures are "generalized" and argMaxing across low
+probability possibilities: it often leads to waffling recognition that jumps
+between noisy gestures, even though the input may be unchanged from a player's
+perspective.
+
+For simplicity and gameplay testing Logistic Regression works well.
+
+
 ## Quickstart
 
 Models are set to operate within docker environment using a running Jupyter
@@ -20,6 +47,7 @@ docker logs pit-trader_pytorch-minimal-notebook_1
 ```
 
 Jupyter URL should approximate: http://127.0.0.1:8888/lab?token={token}
+
 
 ## Contents
 
@@ -45,42 +73,17 @@ notebook. Reads `.csv` from /train/data.
 
 ### Exports
 
-Models are exported via onnx for javascript runtime, and pickled pytorch for
+Models are exported via ONNX for javascript runtime, and pickled pytorch for
 experimental classifiers to `/export`.
 
-Each will be overwritten with last run.
-
-## Models
-
-| Model                                                        | Accuracy |
-|--------------------------------------------------------------|----------|
-| [Logistic Regression](./scikit_models.ipynb)                 | .984     |
-| [2 Layer NN](./classifier.ipynb)                             | .9774    |
-| [SVC (Support Vector Classification)](./scikit_models.ipynb) | .955     |
-| [LSTM](./LSTM.ipynb)                                         | .8966    |
+NB: Models are overwritten with each run.
 
 
-
-The scikit models were intended for use as a baseline comparison, but turned out
-the scikit Logistic Regression offered the best "accuracy", with especially
-quick training time, and small model file size.
-
-There is over-fitting in all the models (accuracy >= 90% ) - which isn't
-necessarily terrible for this problem domain:
-
-Gameplay is better served when gesture recognition is repeatable and exact.
-Frustration occurs when gestures are "generalized" and argMaxing across low
-probability possibilities: it often leads to waffling recognition that jumps
-between noisy gestures, even though the input may be unchanged from a player's
-perspective.
-
-For simplicity and gameplay testing Logistic Regression works well.
-
+---
 
 ### Future Work
 
-Some other approaches and links worth considering:
-
+Notes on other approaches; links:
 
 * Dynamic Time Warping
   * https://www.sicara.fr/blog-technique/sign-language-recognition-using-mediapipe
