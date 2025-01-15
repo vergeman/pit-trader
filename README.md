@@ -7,7 +7,7 @@ Welcome to the Pit.
 Make your fortune in the open outcry pits. Learn the hand signals and scalp your
 way to profit!
 
-[Pit Trader](https://www.thepittrader.com/)
+### [Pit Trader Live: https://www.thepittrader.com/](https://www.thepittrader.com/)
 
 https://github.com/vergeman/pit-trader/assets/797301/1442c6b6-cebf-496a-a12a-63a4024f8bb7
 
@@ -20,7 +20,7 @@ https://github.com/vergeman/pit-trader/assets/797301/1442c6b6-cebf-496a-a12a-63a
 * [`/model`](model): notebook(s) ingest training data for NN, Logistic
   Regression and SVC classifiers. Current deploy uses Logistic Regression.
 
-* [`/web`](web): React-based game. Uses onnyx runtime and mediapipe for live
+* [`/web`](web): React-based game. Uses ONNX runtime and mediapipe for live
   inference.
 
 
@@ -31,7 +31,7 @@ https://github.com/vergeman/pit-trader/assets/797301/1442c6b6-cebf-496a-a12a-63a
 ### Quickstart Dev
 
 1. Clone this repository
-2. `docker-compose up`
+2. `docker compose up`
 3. Pit Trader game: `http://localhost:3000`
 4. Training and model environments:
 
@@ -58,8 +58,6 @@ python train/webcam_trainer.py
 ./docker_run_web.sh
 npm test
 npm run lint
-(etc)
-
 ```
 
 
@@ -68,9 +66,10 @@ npm run lint
 `pytorch-minimal-notebook`:`
   * jupyter/minimal-notebook:notebook-6.4.12
   * python related packages: conda, pytorch, opencv (cv2), mediapipe
+  * Note: this is a large image
 
 `web`:
-  * node:18.12.1
+  * node:2.12.0
 
 #### X windows + Camera Setup in Docker
 

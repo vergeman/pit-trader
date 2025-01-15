@@ -1,11 +1,38 @@
 # Models
 
+## Models Recognition
+
+| Model                                                        | Accuracy |
+|--------------------------------------------------------------|----------|
+| [Logistic Regression](./scikit_models.ipynb)                 | .984     |
+| [2 Layer NN](./classifier.ipynb)                             | .9774    |
+| [SVC (Support Vector Classification)](./scikit_models.ipynb) | .955     |
+| [LSTM](./LSTM.ipynb)                                         | .8966    |
+
+
+The scikit models were intended for use as a baseline comparison, but turned out
+the scikit Logistic Regression offered the best "accuracy", with especially
+quick training time, and small model file size. Details are visible in each
+respective notebook's output.
+
+There is over-fitting in all the models (accuracy >= 90% ) - which isn't
+necessarily terrible for this problem domain:
+
+Gameplay is better served when gesture recognition is repeatable and exact.
+Frustration occurs when gestures are "generalized" and argMaxing across low
+probability possibilities: it often leads to waffling recognition that jumps
+between noisy gestures, even though the input may be unchanged from a player's
+perspective.
+
+For simplicity and gameplay testing Logistic Regression works well.
+
+
 ## Quickstart
 
 Models are set to operate within docker environment using a running Jupyter
 server.
 
-Logistic Regression is current model used by game.
+Logistic Regression is the current model used by game.
 
 NB: Jupyter server will start, but logs may be displaced by the connected front
 end node game. Query the container logs separately to get the jupyter URL with
@@ -13,15 +40,14 @@ access token.
 
 
 ```
-docker-compose up
+docker compose up
 
 # access browser accessible notebook url:
 docker logs pit-trader_pytorch-minimal-notebook_1
-
-
 ```
 
 Jupyter URL should approximate: http://127.0.0.1:8888/lab?token={token}
+
 
 ## Contents
 
@@ -32,14 +58,14 @@ appendix](../web/public/commodity-and-futures-handsignals.pdf)
 
 Three notebooks with respective classifiers:
 
-* `classifier.ipynb`: vanilla 2 layer NN, takes gesture snapshot
-* `LSTM.ipynb`: 1 layer LSTM, 1 layer NN; data is assumed to be a sequence of 30.
-* `scikit_models.ipynb`: Logistic and SVC (Support Vector Classifier)from
+* [./classifier.ipynb](`classifier.ipynb`): vanilla 2 layer NN, takes gesture snapshot
+* [./LSTM.ipynb](`LSTM.ipynb`): 1 layer LSTM, 1 layer NN; data is assumed to be a sequence of 30.
+* [./scikit_models.ipynb](`scikit_models.ipynb`): Logistic and SVC (Support Vector Classifier)from
   scikit-learn.
 
 ### Dataset
 
-Dataset classes: custom Pytorcch Dataset class passed to DataLoader in each
+Dataset classes: custom Pytorch Dataset class passed to DataLoader in each
 notebook. Reads `.csv` from /train/data.
 
 * `LandmarkDataset.py`: used by `classifier.ipynb`, and `scikit_models.ipynb`
@@ -47,34 +73,17 @@ notebook. Reads `.csv` from /train/data.
 
 ### Exports
 
-Models are exported via onnx for javascript runtime, and pickled pytorch for
+Models are exported via ONNX for javascript runtime, and pickled pytorch for
 experimental classifiers to `/export`.
 
-Each will be overwritten with last run.
+NB: Models are overwritten with each run.
 
-## Models
 
-Explore the individual models in the notebook. The scikit models were used to
-provide some baseline comparison, and turns out the Logistic Regression seems to
-offer the best "accuracy", training time quick, and file size is much smaller.
-
-There is some clear overfitting in all the models - which isn't necessarily
-terrible for this problem domain. Gameplay is better served when gesture
-recognition is repeatable, and of high certainty. Frustration often occurs when
-aiming to "generalize" gestures and argMaxing across low probability
-possibilities - this often leads to waffling recognition that jumps between
-noisy gestures, even though the input may be unchanged from a player's
-perspective.
-
-Explore the notebooks and outputs (accuracy, confusion matrix.) There's not a
-runaway best performer, but for simplicity and gameplay testing Logistic
-Regression works reasonably well.
-
+---
 
 ### Future Work
 
-Some other approaches and links worth considering:
-
+Notes on other approaches; links:
 
 * Dynamic Time Warping
   * https://www.sicara.fr/blog-technique/sign-language-recognition-using-mediapipe
