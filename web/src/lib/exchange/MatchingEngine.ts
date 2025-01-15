@@ -16,7 +16,7 @@ export class MatchingEngine {
   private _bids: Heap<Order>;
   private _offers: Heap<Order>;
   private _transactionReports: TransactionReport[];
-  private _gridCache: {[price: number]: Grid}
+  private _gridCache: { [price: number]: Grid };
 
   constructor() {
     this._bids = new Heap<Order>(this.maxComparator);
@@ -71,7 +71,7 @@ export class MatchingEngine {
     if (this._gridCache[price]) return this._gridCache[price];
 
     const midPoint = Number(price.toFixed(1));
-    const start = midPoint + .9;
+    const start = midPoint + 0.9;
     let strLen = String(midPoint).length; //NB: length of digits
     let gridNumMinLen = strLen;
     let gridNumMaxLen = strLen;
@@ -126,8 +126,7 @@ export class MatchingEngine {
     }
 
     //and then earliest submission FIFO
-    if (a.timestamp === b.timestamp)
-      return 0;
+    if (a.timestamp === b.timestamp) return 0;
 
     return a.timestamp < b.timestamp ? -1 : 1;
   }
@@ -143,8 +142,7 @@ export class MatchingEngine {
     }
 
     //and then earliest submission FIFO
-    if (a.timestamp === b.timestamp)
-      return 0;
+    if (a.timestamp === b.timestamp) return 0;
 
     return a.timestamp < b.timestamp ? -1 : 1;
   }
@@ -172,8 +170,19 @@ export class MatchingEngine {
 
     if (oldPrice === newPrice) return false;
 
-    //need to maintain queue order
-    //in retrospect queue was probably not a good datastructure
+    /*
+     * TODO: heap library w/ log(N) remove() operation (tree heap or something)
+     *
+     * Need to maintain queue order, but remove() of an arbitrary element is an
+     * O(N) search operation here.
+     *
+     * Practically there's no real penalty as this isn't called with any scale
+     * or frequency.
+     *
+     * Trade-off is ensuring efficient processing of order depth; when a large
+     * order consumes multiple smaller orders (at multiple prices) in order.
+     */
+
     const removed = queue.remove(order);
     if (removed) {
       order.price = newPrice;
