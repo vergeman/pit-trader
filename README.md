@@ -2,15 +2,18 @@
 
 [![.github/workflows/build-test.yml](https://github.com/vergeman/pit-trader/actions/workflows/build-test.yml/badge.svg)](https://github.com/vergeman/pit-trader/actions/workflows/build-test.yml)
 
-Welcome to the Pit.
+#### _Welcome to the Pit._
 
 Make your fortune in the open outcry pits. Learn the hand signals and scalp your
 way to profit!
 
 ### [Pit Trader Live: https://www.thepittrader.com/](https://www.thepittrader.com/)
 
+##### Website requires webcam
+
 https://github.com/vergeman/pit-trader/assets/797301/1442c6b6-cebf-496a-a12a-63a4024f8bb7
 
+---
 
 ## Project Layout
 
