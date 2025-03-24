@@ -19,10 +19,11 @@
   font-family: "Overpass", sans-serif;
   font-size: 4rem;
   text-shadow: 14px 10px 14px rgba(0, 0, 0, 0.3);
+  margin-top: 4rem;
 }
 @media (min-width: 768px) {
   #home-hero-text {
-    font-size: 8rem;
+    font-size: 7rem;
   }
 }
 
@@ -37,6 +38,31 @@
 }
 
 /*
+ * demo image
+ */
+#demo-image {
+  width: 100%;
+  @media (min-width: 768px) {
+    width: auto;
+  }
+}
+
+.demo-image-wrapper {
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  max-width: 380px;
+
+  box-shadow: 14px 10px 20px rgba(0, 0, 0, 0.25);
+
+  @media (min-width: 768px) {
+    max-width: 480px;
+    max-height: 380px;
+  }
+}
+
+
+/*
  * Badge box
  */
 
@@ -44,7 +70,7 @@
   padding: 1rem;
   background: #ecae01;
   width: 16rem;
-  margin-bottom: 2rem;
+  margin-top: 2rem;
 }
 #home-badge input {
   font-size: 2rem;
@@ -59,4 +85,21 @@
   box-shadow: none;
   background: #ecae01;
   outline: none;
+}
+
+/*
+ * CTA
+ */
+
+#home-instructions-cta {
+  margin: 1em 0;
+}
+
+#webcam-disclaimer {
+  position: absolute;
+  bottom: 0;
+  text-align: right;
+  width: 100%;
+  padding: 1rem;
+  z-index:-9999;
 }
