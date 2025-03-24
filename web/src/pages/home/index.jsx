@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "react-bootstrap";
+import { Instructions, InstructionModalContainer } from "../../components/instructions";
 import useGameContext from "../../components/GameContext";
 
 export default function Home() {
@@ -43,8 +44,16 @@ export default function Home() {
       <div className="App-header">
         <h1 id="home-hero-text">PIT TRADER</h1>
 
+        <div className="demo-image-wrapper">
+          <img
+            id="demo-image"
+            src={`${process.env.PUBLIC_URL}/demo.gif`}
+            alt="demo"
+          />
+        </div>
+
         <div id="home-badge">
-          <p className="fs-6 fw-light text-dark">Enter Badge ID</p>
+          <p className="fs-6 fw-light text-dark">Enter Name</p>
           <input
             name="badge"
             className="fw-light no-border w-100"
@@ -54,11 +63,22 @@ export default function Home() {
           />
         </div>
 
+
+        <Button id="home-instructions-cta" size="sm" variant="dark">
+          <InstructionModalContainer title="INSTRUCTIONS">
+            <Instructions />
+          </InstructionModalContainer>
+        </Button>
+
         <Link to={`/pit?badge=${badge || defaultBadge}`}>
           <Button id="home-hero-cta" size="lg" variant="dark">
-            Enter
+            ENTER
           </Button>
         </Link>
+
+
+        <div id="webcam-disclaimer">Requires Webcam </div>
+
       </div>
     </div>
   );
